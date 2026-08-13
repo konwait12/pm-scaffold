@@ -44,13 +44,13 @@ bash run_tests.sh
 
 ## Agent Entry Point
 
-New AI agents: read `CLAUDE.md` first for startup order, hard rules, and quick-start workflow.
+New AI agents: read `AGENTS.md` first for startup order, hard rules, and quick-start workflow.
 
 ## Key Files
 
 | File | Purpose |
 |---|---|
-| `CLAUDE.md` | AI agent runtime entry (startup order, hard rules) |
+| `AGENTS.md` | AI agent runtime entry (startup order, hard rules) |
 | `README.md` | Human-facing project overview |
 | `src/framework/workflow-registry.json` | Single source of truth for all stages, skills, artifacts |
 | `src/framework/thinking-core.md` | 17 shared thinking lenses |
