@@ -120,10 +120,10 @@ def validate(path: Path) -> dict[str, object]:
         if p0_count >= 2 and exc_count < p0_count:
             warnings.append(f"Semantic: {p0_count} P0 functions but only {exc_count} exception handling sections; verify completeness")
 
-        # Flag 3: interaction and business rules are both required but must stay separated.
+        # Flag 3: 功能/UX 分离——交互规则 IX 归 product-ux/interaction-rules，不应出现在 function-description。
         ix_count = len(re.findall(r"IX-\d+", text))
-        if fun_count >= 1 and ix_count == 0:
-            warnings.append("Semantic: functions exist but no interaction rules (IX-*) describe user action and system response")
+        if ix_count > 0:
+            warnings.append(f"Semantic: {ix_count} interaction rules (IX-*) found; IX belongs to product-ux/interaction-rules, not function-description")
 
         # Flag 4 (D4.4): AC-XXX must use Given/When/Then format
         # 检测两种写法：1) 表格行 `| AC-XXX | ... |`；2) 段落内 `**AC-XXX**`

@@ -8,7 +8,7 @@ Same 6 states as all Skills: draft → needs_user_input → conditional_review �
 正文（7 节，干系人/研发/测试阅读）：
 1. **项目背景与目标** (§1): Verbatim from `project-background-goal`
 2. **业务角色、用户旅程与用户故事** (§2): Verbatim from `user-journey-and-stories`
-3. **UX：功能范围、功能流程与关键状态** (§3): Verbatim from `product-ux`
+3. **UX：页面设计与交互规则** (§3): Verbatim from `product-ux`
 4. **分功能描述** (§4): Verbatim from `function-description`
 5. **按需章节** (§5): Field rules, analytics, dependencies, unresolved items
 6. **事实与决定** (§6): Consolidated key facts and human decisions

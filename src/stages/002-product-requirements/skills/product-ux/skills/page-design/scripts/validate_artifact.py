@@ -25,7 +25,7 @@ ID_PATTERN = r"FEA-\d+"               # e.g. r"\bIX-\d+\b"
 
 def _norm(h: str) -> str:
     # Strip leading numbering ("4. ") and trailing （…）suffix so headings
-    # like "## 4. 页面与原型（Framework 层）" match SECTION_NAME.
+    # like "## 2. 页面设计" match SECTION_NAME.
     return re.sub(r"\s*（[^）]*）\s*$", "", re.sub(r"^\d+\.\s*", "", h).strip()).strip()
 
 

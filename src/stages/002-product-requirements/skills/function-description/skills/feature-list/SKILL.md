@@ -9,7 +9,7 @@ description: 功能清单——从已确认的用户故事（ST-XXX）分解出�
 
 把已确认的用户故事（ST-XXX）分解为产品必须交付的完整功能清单（FEA-XXX）——这是下游所有 function-description 子 skill 消费的唯一功能总账。每个 FEA-XXX 必须追溯 ≥1 个已确认的 ST-XXX，必须有清晰、互不重叠的功能边界，必须标注 P0/P1 优先级。
 
-**Do not** 设计 UX 流程（→ `product-ux`/`ux-flow`）、交互规则（→ `product-ux`/`interaction-rules`）、页面骨架或原型（→ `product-ux`/`page-design`）、领域业务规则（→ `business-rules`）、字段校验（→ `validation-rules`）、状态机（→ `state-machine`）、异常与失败处理（→ `exception-handling`）、验收依据（→ `acceptance-criteria`）。功能清单只命名「做什么（WHAT）」；行为细节由其他子 skill 定义。
+**Do not** 设计功能流程（→ `function-description`/`functional-flow`）、交互规则（→ `product-ux`/`interaction-rules`）、页面骨架或原型（→ `product-ux`/`page-design`）、领域业务规则（→ `business-rules`）、字段校验（→ `validation-rules`）、状态机（→ `state-machine`）、异常与失败处理（→ `exception-handling`）、验收依据（→ `acceptance-criteria`）。功能清单只命名「做什么（WHAT）」；行为细节由其他子 skill 定义。
 
 ## Inputs And Outputs
 

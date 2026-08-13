@@ -125,7 +125,7 @@ open_nonblocking_unknowns: 待确认
 source_ids: 待确认
 ```
 
-## 11. Constitution Compliance
+## 12. Constitution Compliance
 
 | 原则 | 状态 | 证据 / 备注 |
 |---|---|---|
@@ -134,7 +134,7 @@ source_ids: 待确认
 | ③ 来源可追溯 | 待确认 | |
 | ④ 冲突显式保留并关闭 | 待确认 | |
 
-## 12. 版本变更摘要
+## 13. 版本变更摘要
 
 | 版本 | 变更原因 | 主要变化 | 人工确认状态 |
 |---|---|---|---|

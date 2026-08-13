@@ -5,7 +5,7 @@
 | 目录 | 能力 | 说明 |
 |---|---|---|
 | `audit/` | 审查闸门 | Skill 自审用的 checklist 和 reviewer 人类审查清单 |
-| `brainstorming/` | 发散收敛 | 模糊需求、场景穷举和方案发散收敛 |
+| `clarify/` | 提问澄清 + 问题清单 | 澄清问题、issue-record 阶段收口 |
 | `change-management/` | 变更回流 | 修改确认和跨 Work Item 选择性回流 |
 | `clarify/` | 澄清循环 | 结构化批量提问和 Issue Record |
 | `decision-log/` | 决策记录 | 结构化 DEC-XXX 记录模板 |

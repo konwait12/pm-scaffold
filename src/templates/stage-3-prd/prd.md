@@ -50,7 +50,7 @@ This PRD is a living source of truth — not a static document. When consuming t
 
 `待确认`
 
-## 3. UX：功能范围、功能流程与关键状态
+## 3. UX：页面设计与交互规则
 
 （从 `product-ux` 已确认产物完整引用）
 
@@ -68,7 +68,7 @@ This PRD is a living source of truth — not a static document. When consuming t
 
 （从 `function-description` 的字段定义表引用，如无内容标注"本期不适用"）
 
-### 5.2 埋点需求
+### 5.2 埋点需求分析
 
 （从 `tracking-plan` 分支产物引用，如无内容标注"本期不适用"）
 

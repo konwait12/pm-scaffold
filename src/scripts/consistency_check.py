@@ -77,6 +77,25 @@ def check_skill_contracts(registry: dict, errors: list[str], warnings: list[str]
                 warnings.append(f"{cap['id']}: sub-skill thinking-framework.md does not reference thinking-core.md")
         else:
             errors.append(f"{cap['id']}: sub-skill missing references/thinking-framework.md")
+    # support/branch skills: enforce SKILL.md + validate_artifact.py + references/thinking-framework.md
+    # (same contract as main work items) so a missing dir or file is caught
+    # as an error instead of being silently ignored by the registry.
+    for cap in registry.get("support_capabilities", []):
+        base = PROJECT / cap["skill_path"]
+        if not base.is_dir():
+            errors.append(f"support/{cap['id']}: skill_path directory missing → {cap['skill_path']}")
+            continue
+        if not (base / "SKILL.md").is_file():
+            errors.append(f"support/{cap['id']}: missing SKILL.md under {cap['skill_path']}")
+        if not (base / "scripts/validate_artifact.py").is_file():
+            errors.append(f"support/{cap['id']}: missing scripts/validate_artifact.py under {cap['skill_path']}")
+        tf = base / "references/thinking-framework.md"
+        if tf.is_file():
+            text = tf.read_text(encoding="utf-8")
+            if "thinking-core.md" not in text:
+                warnings.append(f"support/{cap['id']}: references/thinking-framework.md does not reference src/framework/thinking-core.md")
+        else:
+            warnings.append(f"support/{cap['id']}: missing references/thinking-framework.md")
     # reviewer roles
     for item in registry.get("work_items", []):
         roles = item.get("reviewer_roles", [])

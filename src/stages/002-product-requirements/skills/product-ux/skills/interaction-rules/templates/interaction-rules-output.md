@@ -7,13 +7,13 @@ status: draft
 upstream_artifact_id: UX-{REQ}
 ---
 
-## UX 流程与交互规则
+## 交互规则
 
-> 本节由 `interaction-rules` 子 Skill 生成，属于 product-ux §3 Structural 层。
-> 上游：product-ux §2 (FEA list) + user-journey-and-stories (用户旅程)
-> 边界：不定义 BR/VL/AC（属于 function-description）
+> 本节由 `interaction-rules` 子 Skill 生成，属于 product-ux §3 交互规则。
+> 上游：function-description §1 功能清单 (FEA-XXX) + product-ux §2 页面设计 + user-journey-and-stories (用户旅程)
+> 边界：不定义 BR/VL/AC（属于 function-description）；不定义功能流程（→ functional-flow）
 
-### UX 流程图 (Mermaid)
+### 交互流程图 (Mermaid)
 
 ```mermaid
 graph TD

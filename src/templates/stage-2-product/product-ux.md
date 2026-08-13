@@ -82,6 +82,24 @@ upstream_artifact_id: ""
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 待补充 | 待补充 | 待补充 | 待补充 | 待补充 | 待补充 | 待补充 | 待补充 | 待补充 | 待补充 | 待补充 | 待补充 | 待补充 |
 
+## 7. 下游传导摘要
+
+承接上游 `journey-and-stories.md` 的 §下游输入摘要与 §项目范围基线，向下传递给 `function-description` 的关键交接：
+
+- 确认的 `ST-XXX` 列表（已通过 MoSCoW 排序）
+- 确认的 `FEA-XXX` 草案（来自 §2 页面设计倒推）
+- 全部 `IX-XXX` 列表（来自 §3 交互规则）
+- 已锁定的页面/状态枚举（来自 §2）
+- 范围基线 In/Out/Deferred/Conditional（无变更入口——发现越界需回流 user-journey-and-stories）
+
+## 8. FUN 移交清单（给 function-description 的衔接）
+
+每个已确认的 `IX-XXX` 至少映射到 1 个 `FEA-XXX`；每个 `FEA-XXX` 至少映射到 1 个 `ST-XXX`。
+
+| FEA | IX 触发器 | 涉及 ST | 优先级 |
+|---|---|---|---|
+| FEA-XXX | IX-XXX / 页面状态 | ST-XXX | P0/P1/P2 |
+
 ## 9. 来源追溯
 
 | 来源 ID | 材料/位置 | 关键内容 | 本文落位或排除理由 |

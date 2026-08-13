@@ -4,22 +4,17 @@
 from __future__ import annotations
 
 import argparse
-import hashlib
 import json
 import re
 import sys
 from pathlib import Path
 
-from workflow_registry import find_artifact, read_frontmatter, work_items
-
-
-def artifact_content_hash(text: str) -> str:
-    canonical = re.sub(
-        r"(?m)^(status|reviewer|reviewed_at|confirmed_at):.*$",
-        r"\1: <review-metadata>",
-        text,
-    )
-    return hashlib.sha256(canonical.encode("utf-8")).hexdigest()
+from workflow_registry import (
+    artifact_content_hash,
+    find_artifact,
+    read_frontmatter,
+    work_items,
+)
 
 
 def validate_records(req_dir: Path) -> dict:

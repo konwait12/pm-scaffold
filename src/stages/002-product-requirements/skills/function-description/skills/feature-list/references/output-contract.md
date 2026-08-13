@@ -78,7 +78,7 @@ open_nonblocking_unknowns
 source_ids
 ```
 
-Do not create UX flows (→ `ux-flow`), interaction rules (→ `interaction-rules`), page skeletons (→ `page-design`), business rules (→ `business-rules`), field validations (→ `validation-rules`), state tables (→ `state-machine`), exception paths (→ `exception-handling`), or acceptance criteria (→ `acceptance-criteria`) in this handoff.
+Do not create UX flows (→ `function-description`/`functional-flow`), interaction rules (→ `interaction-rules`), page skeletons (→ `page-design`), business rules (→ `business-rules`), field validations (→ `validation-rules`), state tables (→ `state-machine`), exception paths (→ `exception-handling`), or acceptance criteria (→ `acceptance-criteria`) in this handoff.
 
 ## Clarifications Session Contract
 

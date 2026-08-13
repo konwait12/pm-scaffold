@@ -104,7 +104,7 @@ diagramify diff base.mmd modified.mmd
 | 场景 | 推荐工具 | 命令 |
 |---|---|---|
 | 画用户旅程图 (Mermaid) | `mermaid-cli` | `mmdc -i journey.md -o journey-rendered.md` |
-| 画 UX 流程图 | `mermaid-cli` | `mmdc -i ux-flow.md -o ux-flow-rendered.md` |
+| 画功能流程图 | `mermaid-cli` | `mmdc -i functional-flow.md -o functional-flow-rendered.md` |
 | 画架构图 (PlantUML/D2) | `diagram` | `diagram render arch.puml -o arch.svg` |
 | 画 ER 图/数据模型 | `mermaid-cli` | `mmdc -i erd.mmd -o erd.svg` |
 | 画甘特图 | `mermaid-cli` | `mmdc -i gantt.mmd -o gantt.svg` |

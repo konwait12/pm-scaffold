@@ -4,7 +4,6 @@
 from __future__ import annotations
 
 import argparse
-import hashlib
 import json
 import re
 import subprocess
@@ -14,7 +13,13 @@ from pathlib import Path
 
 from dor_check import check_item
 from orchestrator import build_status
-from workflow_registry import branch_capabilities, find_artifact, resolve_work_item, work_items
+from workflow_registry import (
+    artifact_content_hash,
+    branch_capabilities,
+    find_artifact,
+    resolve_work_item,
+    work_items,
+)
 
 
 def run_json(script: str, req_dir: Path) -> dict:
@@ -146,15 +151,6 @@ def init_requirement(name: str | None) -> int:
     return 0
 
 
-def artifact_content_hash(text: str) -> str:
-    canonical = re.sub(
-        r"(?m)^(status|reviewer|reviewed_at|confirmed_at):.*$",
-        r"\1: <review-metadata>",
-        text,
-    )
-    return hashlib.sha256(canonical.encode("utf-8")).hexdigest()
-
-
 def machine_gate(req_dir: Path, item: dict) -> dict:
     result = check_item(req_dir, item)
     records = run_json("branch_validator.py", req_dir)
@@ -187,7 +183,7 @@ def load_authorized_reviewer(req_dir: Path, reviewer_id: str, reviewer: str, rev
 
 
 def review(req_dir: Path, item: dict, decision: str, reviewer: str, reviewer_id: str,
-           reviewer_role: str, comments: str, waivers: list[str] | None = None) -> int:
+           reviewer_role: str, comments: str) -> int:
     normalized_reviewer = reviewer.strip().lower()
     if (not normalized_reviewer or normalized_reviewer in {"ai", "待确认", "待评审"}
             or "simulat" in normalized_reviewer or "模拟" in reviewer):
@@ -209,20 +205,6 @@ def review(req_dir: Path, item: dict, decision: str, reviewer: str, reviewer_id:
         print(f"ERROR: approval requires ready_for_human_review, got {current_status}", file=sys.stderr)
         return 1
     gate = machine_gate(req_dir, item)
-    if decision == "approve":
-        result = gate.get("work_item", {}).get("result", {})
-        issues = result.get("issues", [])
-        waiver_map = {}
-        for w in (waivers or []):
-            if "=" in w:
-                code, reason = w.split("=", 1)
-                waiver_map[code.strip()] = reason.strip()
-        for issue in issues:
-            if issue.get("severity") == "waiver_required" and issue.get("waivable"):
-                code = issue.get("code", "")
-                if code not in waiver_map:
-                    print(f"ERROR: waiver_required issue '{issue.get('message','')}' needs --waive {code}=<reason>", file=sys.stderr)
-                    return 1
     if decision == "approve" and not gate["ok"]:
         print(json.dumps(gate, ensure_ascii=False, indent=2))
         print("ERROR: machine gates must pass before approval", file=sys.stderr)
@@ -278,11 +260,8 @@ def main() -> int:
     parser.add_argument("--reviewer")
     parser.add_argument("--reviewer-id")
     parser.add_argument("--reviewer-role")
-    parser.add_argument("--waive", action="append", default=[], help="Waive a waiver_required issue: CODE=reason")
     parser.add_argument("--apply", action="store_true", help="reflow: actually flip downstream to superseded (default is dry-run)")
     parser.add_argument("--comments", default="")
-    parser.add_argument("--preset", help="Template preset to use (resolved via src/templates/resolver.py)")
-    parser.add_argument("--variant", choices=["standard", "executive", "technical"], default="standard", help="PRD output variant (prd-assembly only)")
     parser.add_argument("--json", action="store_true")
     args = parser.parse_args()
     if not args.req_dir.is_dir():
@@ -405,7 +384,7 @@ def main() -> int:
     if not args.decision or not args.reviewer or not args.reviewer_id or not args.reviewer_role:
         print("ERROR: review requires --decision, --reviewer, --reviewer-id, and --reviewer-role", file=sys.stderr)
         return 1
-    return review(args.req_dir, item, args.decision, args.reviewer, args.reviewer_id, args.reviewer_role, args.comments, args.waive)
+    return review(args.req_dir, item, args.decision, args.reviewer, args.reviewer_id, args.reviewer_role, args.comments)
 
 
 if __name__ == "__main__":

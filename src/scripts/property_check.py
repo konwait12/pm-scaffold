@@ -46,28 +46,42 @@ def parse_sections(text: str) -> dict[str, str]:
     return sections
 
 
+def section_by_keyword(text: str, *keywords: str) -> str:
+    """Return the concatenated content of sections whose heading contains any keyword.
+
+    `parse_sections` keys keep their leading numbering (e.g. "5.状态变化"), so we
+    match by keyword rather than exact name.
+    """
+    return "\n".join(
+        val for key, val in parse_sections(text).items()
+        if any(kw in key for kw in keywords)
+    )
+
+
 def check_state_machine(text: str) -> list[dict]:
-    """Check state transition completeness."""
+    """Check state transition completeness (parses the 状态变化 section only)."""
     issues = []
-    # Find state table rows
+    # Only parse the 状态变化 section, and read the 6-column table correctly:
+    # | STATE | 状态名称 | 触发事件 | 目标状态 | 条件 | 所属 FUN |
+    section = section_by_keyword(text, "状态变化")
     state_rows = re.findall(
-        r'\|\s*([^|]+?)\s*\|\s*([^|]+?)\s*\|\s*([^|]+?)\s*\|',
-        text
+        r'\|\s*[^|]+\s*\|\s*([^|]+)\s*\|\s*([^|]+)\s*\|\s*([^|]+)\s*\|',
+        section,
     )
     if not state_rows:
-        return [{"severity": "MEDIUM", "check": "state_machine", "message": "No state transition table found"}]
+        return [{"severity": "MEDIUM", "check": "state_machine", "message": "No state transition table found in 状态变化 section"}]
 
     states = set()
     events = set()
     transitions = set()
 
     for row in state_rows:
-        current = _norm(row[0])
-        event = _norm(row[1])
-        target = _norm(row[2])
+        current = _norm(row[0])   # 状态名称
+        event = _norm(row[1])     # 触发事件
+        target = _norm(row[2])    # 目标状态
         if current and event and target:
             # Skip header rows
-            if any(h in current for h in ['当前状态', '状态', 'current', 'state']):
+            if any(h in current for h in ['状态名称', '当前状态', 'state']):
                 continue
             states.add(current)
             events.add(event)
@@ -111,7 +125,7 @@ def check_exception_coverage(text: str) -> list[dict]:
     issues = []
     # Find BR rules that imply exceptions (look for "失败", "异常", "超时", "过期", etc.)
     exception_keywords = ['失败', '异常', '超时', '过期', '不', '无法', '拒绝', '禁止', '满', '冲突']
-    br_lines = re.findall(r'\|\s*(BR-\d+)\s*\|([^|]+)\|([^|]+)\|', text)
+    br_lines = re.findall(r'\|\s*(BR-\d+)\s*\|([^|]+)\|([^|]+)\|', section_by_keyword(text, "业务规则"))
     exception_brs = []
     for br_id, _, desc in br_lines:
         if any(kw in desc for kw in exception_keywords):
@@ -119,7 +133,7 @@ def check_exception_coverage(text: str) -> list[dict]:
 
     # Find exception handling entries
     ex_entries = re.findall(r'(EX-\d+|BR-\d+).*?(恢复|重试|重授权|重新|联系)',
-                            text, re.DOTALL)
+                            section_by_keyword(text, "异常"), re.DOTALL)
 
     for br_id, desc in exception_brs:
         # Check if this BR has a corresponding recovery entry
@@ -143,27 +157,31 @@ def check_exception_coverage(text: str) -> list[dict]:
 
 
 def check_vl_ac_pairing(text: str) -> list[dict]:
-    """Check every VL has a corresponding AC."""
+    """Check every VL's owning FUN has a corresponding AC (VL↔AC via 所属 FUN)."""
     issues = []
-    vl_ids = set(re.findall(r'\b(VL-\d+)\b', text))
-    ac_ids = set(re.findall(r'\b(AC-\d+)\b', text))
+    vl_section = section_by_keyword(text, "校验规则")
+    ac_section = section_by_keyword(text, "验收依据")
+    vl_ids = set(re.findall(r'\bVL-\d+\b', vl_section))
+    ac_ids = set(re.findall(r'\bAC-\d+\b', ac_section))
 
-    # Look for VL-XXX references in AC rows
-    for vl_id in sorted(vl_ids):
-        # Search for this VL ID in nearby text (AC tables often reference VLs)
-        ac_section = text[text.find("验收"):] if "验收" in text else text
-        if vl_id not in ac_section:
-            issues.append({
-                "severity": "MEDIUM",
-                "check": "vl_ac_pairing",
-                "message": f"VL {vl_id} has no corresponding AC (no AC references this validation rule)",
-            })
+    # FUN is the 5th column in both tables:
+    #   VL: | VL-001 | 校验内容 | 校验规则 | 错误提示 | FUN-XXX | 来源 |
+    #   AC: | AC-001 | 验收标准 | 量化阈值 | 来源目标 G | FUN-XXX | 优先级 |
+    vl_funs = set(re.findall(r'\|\s*VL-\d+\s*\|(?:[^|]*\|){3}\s*([^|]+?)\s*\|', vl_section))
+    ac_funs = set(re.findall(r'\|\s*AC-\d+\s*\|(?:[^|]*\|){3}\s*([^|]+?)\s*\|', ac_section))
+    uncovered = {f for f in vl_funs - ac_funs if f and f != "—"}
+    for fun in sorted(uncovered):
+        issues.append({
+            "severity": "MEDIUM",
+            "check": "vl_ac_pairing",
+            "message": f"FUN {fun} has validation rules (VL) but no acceptance criteria (AC)",
+        })
 
     if not issues:
         issues.append({
             "severity": "INFO",
             "check": "vl_ac_pairing",
-            "message": f"VL↔AC pairing: {len(vl_ids)} VLs, {len(ac_ids)} ACs — all VLs referenced in ACs",
+            "message": f"VL↔AC pairing: {len(vl_ids)} VLs, {len(ac_ids)} ACs — all VL FUNs covered by ACs",
         })
 
     return issues

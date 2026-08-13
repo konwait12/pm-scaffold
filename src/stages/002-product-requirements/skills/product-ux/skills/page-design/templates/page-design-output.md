@@ -7,7 +7,7 @@ status: draft
 upstream_artifact_id: UX-{REQ}
 ---
 
-## 页面与原型
+## 页面设计
 
 > 本节由 `page-design` 子 Skill 生成，属于 product-ux §4 Framework 层。
 > 上游：product-ux §2 (FEA) + §3 (IX/流程)

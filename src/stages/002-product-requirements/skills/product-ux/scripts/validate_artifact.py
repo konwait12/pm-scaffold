@@ -86,7 +86,7 @@ def validate(path: Path) -> dict[str, object]:
     # Semantic red flags
     if status == "ready_for_human_review":
         # Flag 1: page skeleton coverage — every confirmed page should have a skeleton row.
-        page_section = re.search(r"^##\s+\d+\.\s*页面与原型\s*$(.*?)(?=^##\s+|\Z)", text, re.MULTILINE | re.DOTALL)
+        page_section = re.search(r"^##\s+\d+\.\s*页面设计\s*$(.*?)(?=^##\s+|\Z)", text, re.MULTILINE | re.DOTALL)
         if page_section:
             page_rows = re.findall(r"^\|", page_section.group(1), re.MULTILINE)
             if len(page_rows) <= 1:

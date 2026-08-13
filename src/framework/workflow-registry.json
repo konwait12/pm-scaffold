@@ -151,7 +151,7 @@
       "parent_work_item": "product-ux",
       "order": 1,
       "skill_path": "src/stages/002-product-requirements/skills/product-ux/skills/page-design",
-      "output_section": "页面与原型"
+      "output_section": "页面设计"
     },
     {
       "id": "interaction-rules",

@@ -47,7 +47,7 @@ Every Skill must trigger a structured inquiry when ANY of these conditions occur
 | Class | Definition | PRD Treatment |
 |---|---|---|
 | **Main Trunk**（5 work_items） | `project-background-goal` / `user-journey-and-stories` / `product-ux` / `function-description` / `prd-assembly` itself | **Required, no inquiry.** Trunk content goes into the corresponding fixed PRD section without asking. |
-| **Branch / Optional**（everything else） | sub-skills of function-description, shared mechanisms (clarify, brainstorming, change-management, decision-log, intake-routing, project-init, human-gate, audit, traceability), optional support skills (competitive-research, feasibility-analysis, tracking-plan, issue-record, requirement-restate 能力, ...) | **Inquiry required.** Every branch entry triggers the inquiry template. Default behavior per artifact (see table below). |
+| **Branch / Optional**（everything else） | sub-skills of function-description, shared mechanisms (clarify, change-management, decision-log, intake-routing, project-init, human-gate, audit, traceability), optional support skills (competitive-research, feasibility-analysis, tracking-plan, issue-record, requirement-restate 能力, ...) | **Inquiry required.** Every branch entry triggers the inquiry template. Default behavior per artifact (see table below). |
 
 The main trunk is **non-negotiable** because the PRD cannot exist without background, journey, UX, functions, and assembly. Branches are **configurable** because each requirement genuinely has different scope, depth, and visibility needs.
 

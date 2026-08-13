@@ -14,6 +14,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import re
 import sys
 from pathlib import Path
@@ -23,26 +24,63 @@ SECTION_NAME = "埋点需求分析"        # sub-skill output section in parent 
 ID_PATTERN = r"EV-\d+"              # event ID prefix
 REQUIRED_REFS = (r"FUN-\d+", r"G-\d+")  # every event must link to a FUN and a G
 # Path to parent artifact, relative to the sub-skill scripts/ dir.
-PARENT_ARTIFACT = (
-    Path(__file__).resolve().parents[2]
-    / "assets"
-    / "function-description.md"
-)
+# Tracking-plan writes into the §埋点需求分析 section of the parent
+# `function-description.md`. The default points at the template that
+# ships with the repository; callers may override via CLI positional arg
+# or by setting the PM_PARENT_ARTIFACT env var.
+#
+# __file__ = src/stages/002-product-requirements/skills/tracking-plan/scripts/validate_artifact.py
+# parents[0]=scripts, [1]=tracking-plan, [2]=skills, [3]=002-product-requirements,
+# [4]=stages, [5]=src, [6]=<repo root>
+_PROJECT_ROOT = Path(__file__).resolve().parents[6]
+PARENT_ARTIFACT = Path(os.environ.get(
+    "PM_PARENT_ARTIFACT",
+    str(
+        _PROJECT_ROOT
+        / "src"
+        / "templates"
+        / "stage-2-product"
+        / "function-description.md"
+    ),
+))
 # ─────────────────────────────────────────────────────────
 
 
 def _norm(h: str) -> str:
-    return re.sub(r"^\d+\.\s*", "", h).strip()
+    """Strip leading numbering (handles both `## 5.` and `### 5.2` variants)."""
+    return re.sub(r"^\d+(\.\d+)*\.?\s*", "", h).strip()
 
 
 def _extract_section(text: str, section_name: str) -> str:
-    """Extract the body under `## <section_name>` (or its numbered variant)."""
-    pattern = (
-        r"^##\s+(?:\d+\.\s*)?" + re.escape(section_name) + r".*?$"
-        r"(.*?)(?=^##\s+|\Z)"
+    """Extract the body under `## <section_name>` (or its H3 variant).
+
+    Accepts both H2 (`## 埋点需求`) and H3 (`### 5.2 埋点需求`) headings
+    so the same validator works on either the standalone tracking-plan
+    artifact or the embedded PRD §5.2 section.
+
+    The body runs until the next H2 section (sibling break) — sub-
+    headings under the section (H3 / H4 / H5) are included so they
+    can be validated for nested content like `### 2. 事件清单（EV-XXX）`.
+    The starting heading itself is matched at H2 OR H3; if it was H3,
+    the stop is at the next H2 only (so the validator behaves correctly
+    when running on either standalone tracking-plan (H2 root) or PRD
+    §5.2 (H3 root)).
+    """
+    # Find the section start (H2 or H3).
+    start_pattern = (
+        r"^(#{2,3})\s+(?:\d+(?:\.\d+)*\.?\s*)?" + re.escape(section_name) + r".*?$"
     )
-    match = re.search(pattern, text, re.MULTILINE | re.DOTALL)
-    return match.group(1) if match else ""
+    start_match = re.search(start_pattern, text, re.MULTILINE)
+    if not start_match:
+        return ""
+    start_hash = start_match.group(1)  # "##" or "###"
+    start_level = len(start_hash)
+    start_pos = start_match.end()
+    # Find the next heading at the same level or shallower (smaller heading count).
+    end_pattern = re.compile(r"^(#{2," + str(start_level) + r"})\s+", re.MULTILINE)
+    end_match = end_pattern.search(text, pos=start_pos)
+    end_pos = end_match.start() if end_match else len(text)
+    return text[start_pos:end_pos]
 
 
 def validate(path: Path) -> dict:
@@ -52,8 +90,11 @@ def validate(path: Path) -> dict:
 
     text = path.read_text(encoding="utf-8")
 
-    # Section must exist
-    headings = [_norm(m.group(1)) for m in re.finditer(r"^##\s+(.+?)\s*$", text, re.MULTILINE)]
+    # Section must exist (accept H2 or H3)
+    headings = [
+        _norm(m.group(1))
+        for m in re.finditer(r"^#{2,3}\s+(.+?)\s*$", text, re.MULTILINE)
+    ]
     if _norm(SECTION_NAME) not in headings:
         errors.append(f"Missing required section: {SECTION_NAME}")
         return {"ok": False, "errors": errors, "warnings": warnings}

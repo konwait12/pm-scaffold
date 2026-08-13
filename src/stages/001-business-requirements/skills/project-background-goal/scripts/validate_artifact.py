@@ -30,6 +30,7 @@ REQUIRED_FRONTMATTER = {
 # Chinese-only section headings. The artifact is a Chinese report; the
 # validator matches exactly these strings.
 REQUIRED_HEADINGS = [
+    "预检输入充分度判定",
     "需求来源与触发",
     "项目与需求背景",
     "当前现状与已有做法",

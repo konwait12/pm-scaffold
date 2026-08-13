@@ -26,7 +26,7 @@
 | `00-input/` | 原始需求材料 | `待填写` |
 | `001-business-requirements/01-background-goal/` | `project-background-goal`: 项目背景与目标 | ⏸ |
 | `001-business-requirements/02-user-journey-stories/` | `user-journey-and-stories`: 用户旅程与用户故事 | ⏸ |
-| `002-product-requirements/01-product-ux/` | `product-ux`: 范围、功能清单与 UX 流程 | ⏸ |
+| `002-product-requirements/01-product-ux/` | `product-ux`: 页面设计与交互规则 | ⏸ |
 | `002-product-requirements/02-function-description/` | `function-description`: 功能描述 | ⏸ |
 | `003-prd-output/` | `prd-assembly`: PRD 汇总 | ⏸ |
 | `99-review/` | 评审记录、测试报告 | ⏸ |

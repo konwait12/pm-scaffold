@@ -22,7 +22,7 @@ trigger_examples:
 
 should_not_trigger_examples:
   - |
-    Do NOT use this sub-skill for UX flows (use product-ux / ux-flow), interaction
+    Do NOT use this sub-skill for UX flows (use function-description / functional-flow), interaction
     rules (use interaction-rules), page skeletons (use page-design), business
     rules (use business-rules), field validations (use validation-rules), state
     transitions (use state-machine), exception recovery (use exception-handling),

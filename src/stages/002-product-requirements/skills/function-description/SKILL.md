@@ -112,7 +112,6 @@ Scope or feature changes → return to product-ux. Story/goal conflicts → retu
 
 | 文件 | 用途 | 何时加载 |
 |---|---|---|
-| `references/analytics.md` | 埋点需求条件章节 | 需埋点时 |
 | `references/anti-patterns.md` | AI 常见反模式（写产物时对照规避） | Generate 时对照 |
 | `references/audit-checklist.md` | Audit 自审清单 | Audit 前 |
 | `references/ears-syntax.md` | EARS 句式标准（BR/VL 规则表述） | 写 BR/VL 规则时 |

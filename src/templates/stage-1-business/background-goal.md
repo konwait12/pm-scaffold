@@ -27,6 +27,14 @@ confirmed_at: 待确认
 
 # 项目背景与目标
 
+## 0. 预检输入充分度判定
+<!-- Preflight Input Sufficiency -->
+
+在起草背景与目标前，先判定输入材料的充分度，并按 L0–L4 标注成熟度。仅当达到 L2 及以上时进入正文撰写；L0–L1 应转入 `intake-routing` 或 `requirement-restate` 模式。
+
+| 维度 | L0（仅想法） | L1（单条稀疏来源） | L2（业务方案已存在） | L3（需求细节明确） | L4（上游已确认） |
+|---|---|---|---|---|---|
+
 ## 1. 需求来源与触发
 <!-- Requirement Source And Trigger -->
 

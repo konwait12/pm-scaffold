@@ -106,10 +106,10 @@ def build_status(req_dir: Path) -> dict:
 
     # Single-active-item check: at most one active work item may exist.
     active_items = [i for i in items if statuses[i["id"]] in ACTIVE_STATUSES]
+    active_sorted = sorted(active_items, key=lambda i: i["order"])
     invalid_active = []
     if len(active_items) > 1:
         # Keep the earliest-order active item; later ones are invalid.
-        active_sorted = sorted(active_items, key=lambda i: i["order"])
         invalid_active = [i["id"] for i in active_sorted[1:]]
 
     next_item = None

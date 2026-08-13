@@ -7,9 +7,9 @@
 | 我想画... | 用什么 | 命令/方式 |
 |---|---|---|
 | 用户旅程图 | Mermaid `graph LR` | 嵌入 `user-journey-and-stories` §2，可选 Figma `generate_diagram` 导出 FigJam |
-| UX 流程图 | Mermaid `graph TD` | 嵌入 `product-ux` §3，含决策分支+异常路径 |
+| 功能流程图 | Mermaid `graph TD` | 嵌入 `function-description` §2，含决策分支+异常路径 |
 | 系统架构图 | Figma `generate_diagram` (architecture) | 树状 Module→Feature，可编辑 |
-| 功能结构树 | Mermaid `graph TD` 或 `functional-structure` 分支模板 | `product-ux` §2.1 内嵌 |
+| 功能结构树 | Mermaid `graph TD` | `function-description` §1 功能清单（FEA 树）内嵌 |
 | 时序图 | Mermaid `sequenceDiagram` | 角色间交互、API 调用流 |
 | 甘特图 | Mermaid `gantt` | 项目排期、里程碑 |
 | ER 图/数据模型 | Mermaid `erDiagram` | `function-description` 数据模型 |
@@ -32,7 +32,7 @@ graph LR
     R1 --> R2
 ```
 
-### UX 流程图（含分支）
+### 功能流程图（含分支）
 ```mermaid
 graph TD
     A[入口页] --> B{判断}

@@ -3,12 +3,30 @@
 
 from __future__ import annotations
 
+import hashlib
 import json
 import re
 from pathlib import Path
 
 PROJECT = Path(__file__).resolve().parent.parent.parent
 REGISTRY_PATH = PROJECT / "src/framework/workflow-registry.json"
+
+
+def artifact_content_hash(text: str) -> str:
+    """Single canonical SHA-256 of an artifact's content.
+
+    Review-metadata fields (status / reviewer / reviewed_at / confirmed_at)
+    are stripped before hashing so post-confirmation edits to those fields do
+    not break `branch_validator` cross-checks against a recorded ReviewRecord.
+    Both `pipeline.py` and `branch_validator.py` import this function — keep
+    the algorithm here as the single source of truth.
+    """
+    canonical = re.sub(
+        r"(?m)^(status|reviewer|reviewed_at|confirmed_at):.*$",
+        r"\1: <review-metadata>",
+        text,
+    )
+    return hashlib.sha256(canonical.encode("utf-8")).hexdigest()
 
 
 def load_registry() -> dict:
@@ -61,7 +79,7 @@ def find_artifact(req_dir: Path, item: dict) -> Path | None:
         if preferred.exists():
             return preferred
         for path in sorted(directory.glob("*.md")):
-            if path.name != "README.md" and not any(part.startswith("v0.") for part in path.parts):
+            if path.name != "README.md" and not re.search(r"v0\.\d+", path.name):
                 return path
     return None
 

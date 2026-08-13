@@ -16,6 +16,7 @@ SCRIPTS = ROOT / "src/scripts"
 sys.path.insert(0, str(SCRIPTS))
 
 import migrate_layout_v2
+import orchestrator
 import traceability_check
 import workflow_registry
 
@@ -88,6 +89,23 @@ class WorkflowRuntimeTest(unittest.TestCase):
             for line in text.splitlines():
                 if re.match(r"^  - ", line):
                     self.assertRegex(line, r'^  - (".*"|\|)$', path)
+
+    def test_orchestrator_single_active_item_does_not_crash(self) -> None:
+        # 回归：恰好 1 个 active work item 时，build_status 曾因 active_sorted
+        # 仅在 len>1 分支定义而抛 UnboundLocalError（正常流程每次只激活一个）。
+        with tempfile.TemporaryDirectory() as temp:
+            req = Path(temp) / "REQ-ACTIVE"
+            artifact = req / "001-business-requirements/01-background-goal/background-goal.md"
+            artifact.parent.mkdir(parents=True)
+            artifact.write_text(
+                "---\nartifact_id: BG-001\nstatus: ready_for_human_review\n---\n"
+                "# 项目背景与目标\n\nFACT：a\nDECISION：b\nASSUMPTION：c\n"
+                "AI_INFERENCE：d\nUNKNOWN：e\nCONFLICT：f\n",
+                encoding="utf-8",
+            )
+            result = orchestrator.build_status(req)
+            self.assertEqual(result["active_work_item"], "project-background-goal")
+            self.assertEqual(result["next_work_item"], "project-background-goal")
 
     def test_layout_migration_is_idempotent(self) -> None:
         with tempfile.TemporaryDirectory() as temp:

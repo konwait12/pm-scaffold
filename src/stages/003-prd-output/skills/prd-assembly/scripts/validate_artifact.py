@@ -14,7 +14,7 @@ REQUIRED_FRONTMATTER = {
 
 REQUIRED_HEADINGS = [
     "项目背景与目标", "业务角色、用户旅程与用户故事",
-    "UX：功能范围、功能流程与关键状态", "分功能描述", "按需章节",
+    "UX：页面设计与交互规则", "分功能描述", "按需章节",
     "事实与决定", "验收依据", "需求追溯矩阵", "自审记录",
 ]
 
@@ -77,25 +77,13 @@ def validate(path: Path) -> dict[str, object]:
 
     # Semantic red flags specific to PRD assembly
     if status == "ready_for_human_review":
-        # Flag 1: upstream artifact IDs must be real, not placeholders
-        upstream_section = re.search(r"^##\s+\d+\.\s*上游产物清单\s*$(.*?)(?=^##\s+|\Z)", text, re.MULTILINE | re.DOTALL)
-        if upstream_section:
-            upstream_text = upstream_section.group(1)
-            pending_count = len(re.findall(r"待确认", upstream_text))
-            if pending_count >= 3:
-                warnings.append(f"Semantic: 上游产物清单 has {pending_count} 待确认 entries; upstream artifacts should be confirmed before PRD assembly")
-            # Flag 1b (D5.2): All 4 upstream artifact IDs must be present
-            upstream_ids = re.findall(r"(?:BG|JS|UX|FD)-[A-Z]+-\d+", upstream_text)
-            expected_prefixes = {"BG", "JS", "UX", "FD"}
-            found_prefixes = {p for p, _, _ in [re.match(r"([A-Z]+)-([A-Z]+)-(\d+)", i).groups() for i in upstream_ids if re.match(r"([A-Z]+)-([A-Z]+)-(\d+)", i)]}
-            missing_prefixes = expected_prefixes - found_prefixes
-            if missing_prefixes:
-                errors.append(f"PRD DoD D5.2 failed: missing upstream artifact IDs for {sorted(missing_prefixes)} (need BG + JS + UX + FD all confirmed)")
+        # Note: 上游产物清单 / 不一致报告 已移出 PRD 正文（由机器在 gate 产出、进 99-review）。
 
-        # Flag 2: inconsistency report
-        inconsistency_section = re.search(r"^##\s+\d+\.\s*不一致报告\s*$(.*?)(?=^##\s+|\Z)", text, re.MULTILINE | re.DOTALL)
-        if not inconsistency_section:
-            warnings.append("Semantic: §不一致报告 is empty or missing; even if no inconsistencies found, document the verification")
+        # Flag 1b (D5.2): PRD 必须引用 4 个上游产物（BG/JS/UX/FD），从 frontmatter upstream_artifact_ids 校验。
+        upstream_ids = re.findall(r"(BG|JS|UX|FD)-[A-Z0-9]+-\d+", meta.get("upstream_artifact_ids", ""))
+        missing_prefixes = {"BG", "JS", "UX", "FD"} - set(upstream_ids)
+        if missing_prefixes:
+            errors.append(f"PRD DoD D5.2 failed: missing upstream artifact IDs for {sorted(missing_prefixes)} (need BG + JS + UX + FD all confirmed)")
 
         # Flag 3: traceability matrices should have content + six columns G→ST→FEA→FUN→AC→BR
         rtm_section = re.search(r"^##\s+\d+\.\s*需求追溯矩阵\s*$(.*?)(?=^##\s+|\Z)", text, re.MULTILINE | re.DOTALL)

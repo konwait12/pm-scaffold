@@ -142,7 +142,7 @@
 | 工具 | 类型 | 状态 | 说明 |
 |---|---|---|---|
 | Figma `generate_diagram` (architecture) | MCP | ✅ 已内置 | 软件架构图、系统拓扑图 |
-| functional-structure branch | Skill | ✅ 已内置 | Module→Feature→Function 树状分解 |
+| feature-list 子 skill | Skill | ✅ 已内置 | FEA 功能清单（功能树状分解） |
 
 ---
 

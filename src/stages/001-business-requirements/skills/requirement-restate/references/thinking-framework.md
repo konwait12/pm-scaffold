@@ -64,7 +64,7 @@ The AI is most likely to quietly "improve" or "align" the stakeholder's phrasing
 
 ### Divergence Domain Lenses（发散领域 lens）
 
-Divergent exploration sweeps the **12 scenario dimensions** from `src/shared/brainstorming/SCENARIO_EXPANSION.md`（仍存在，未随支持目录删除）。For each dimension, ask the corresponding question and emit candidate ideas; stop a dimension once candidates repeat (saturation):
+Divergent exploration sweeps the **12 scenario dimensions** below。For each dimension, ask the corresponding question and emit candidate ideas; stop a dimension once candidates repeat (saturation):
 
 | # | 维度 Dimension | 发散提问 |
 |---|---|---|
