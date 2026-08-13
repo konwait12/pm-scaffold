@@ -40,11 +40,13 @@ bash run_tests.sh
 - **Non-bypassable human gates**: only `pipeline.py review --decision approve` with a real human reviewer can confirm artifacts
 - **SHA-256 binding**: confirmed artifacts are cryptographically bound to their reviewer
 - **Full traceability**: G→ST→FEA→FUN→AC/BR forward and reverse traceability
-- **58+ regression tests** with fixture-based validation
+- **61+ regression tests** with fixture-based validation
 
 ## Agent Entry Point
 
 New AI agents: read `AGENTS.md` first for startup order, hard rules, and quick-start workflow.
+
+**First contact with a new HUMAN user**: before explaining anything, open the cockpit for them (`open src/toolkit/visualization/scaffold-flow.html`) and point them to the 「📖 新手教程 · 从这里开始」 button in the left sidebar — that single self-contained HTML is the entire onboarding (flow diagram, 21-skill manual, command reference, file architecture, and the 10-chapter human+agent collaboration tutorial). There is no external ecosystem; this file IS the front door.
 
 ## Key Files
 
