@@ -21,6 +21,19 @@ section h2{font-size:20px;margin-bottom:4px;display:flex;align-items:center;gap:
 section h2 .badge{font-size:10px;background:#654ACB;color:#fff;padding:2px 8px;border-radius:5px;letter-spacing:.5px}
 section .desc{font-size:13px;color:#666;margin-bottom:18px}
 
+
+/* ===== 左侧导航 ===== */
+.layout{display:flex;gap:26px;align-items:flex-start}
+.sidebar{position:sticky;top:20px;width:232px;flex:0 0 232px;align-self:flex-start;max-height:calc(100vh - 40px);overflow-y:auto;background:#fff;border:1px solid #E5E5E5;border-radius:14px;padding:16px 12px}
+.side-title{font-size:15px;font-weight:700;color:#3A2E8F;margin-bottom:2px}
+.side-sub{font-size:11px;color:#999;margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid #F0F0F0}
+.nav-item{display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:8px;font-size:12.5px;color:#444;text-decoration:none;margin-bottom:2px}
+.nav-item:hover{background:#F6F4FF;color:#3A2E8F}
+.nav-item.active{background:#EEEFFF;color:#654ACB;font-weight:700}
+.nav-n{font-family:"SF Mono",Menlo,monospace;font-size:10px;color:#999;width:22px}
+.nav-item.active .nav-n{color:#654ACB}
+.content{flex:1;min-width:0}
+@media (max-width:1000px){.layout{flex-direction:column}.sidebar{position:static;width:100%;max-height:none;display:flex;flex-wrap:wrap;gap:2px}.sidebar .side-title,.sidebar .side-sub{width:100%}.nav-item{flex:1 1 auto}}
 /* ===== 图例 ===== */
 .legend{display:flex;gap:14px;flex-wrap:wrap;font-size:11.5px;color:#555;margin-bottom:14px;align-items:center}
 .legend span{display:inline-flex;align-items:center;gap:5px}
@@ -90,9 +103,26 @@ footer{margin-top:24px;text-align:center;color:#888;font-size:11px;padding-top:1
 @media (max-width:1100px){.ks-grid{grid-template-columns:repeat(3,1fr)}.branch-grid{grid-template-columns:1fr}.kpi-grid{grid-template-columns:repeat(2,1fr)}}
 </style>
 </head>
-<body>
-<div class="wrap">
-
+<body><div class="wrap">
+<div class="layout">
+<nav class="sidebar" id="sidebar">
+  <div class="side-title">PM Scaffold 工作台</div>
+  <div class="side-sub">v0.2.0 · 21 Skill · 61/61</div>
+    <a href="#sec-flow" class="nav-item" data-target="sec-flow"><span class="nav-n">01</span>主程序流程图</a>
+    <a href="#sec-cmd" class="nav-item" data-target="sec-cmd"><span class="nav-n">02</span>命令全集</a>
+    <a href="#sec-cycle" class="nav-item" data-target="sec-cycle"><span class="nav-n">03</span>8 步执行循环</a>
+    <a href="#sec-states" class="nav-item" data-target="sec-states"><span class="nav-n">04</span>六态知识标注</a>
+    <a href="#sec-gates" class="nav-item" data-target="sec-gates"><span class="nav-n">05</span>机器闸门矩阵</a>
+    <a href="#sec-skills" class="nav-item" data-target="sec-skills"><span class="nav-n">06</span>Skill 全景说明书</a>
+    <a href="#sec-artifacts" class="nav-item" data-target="sec-artifacts"><span class="nav-n">07</span>产物说明书</a>
+    <a href="#sec-scripts" class="nav-item" data-target="sec-scripts"><span class="nav-n">08</span>脚本说明书</a>
+    <a href="#sec-shared" class="nav-item" data-target="sec-shared"><span class="nav-n">09</span>共享机制</a>
+    <a href="#sec-templates" class="nav-item" data-target="sec-templates"><span class="nav-n">10</span>产物模板</a>
+    <a href="#sec-branches" class="nav-item" data-target="sec-branches"><span class="nav-n">11</span>分支 Skill 触发矩阵</a>
+    <a href="#sec-tree" class="nav-item" data-target="sec-tree"><span class="nav-n">12</span>文件完整架构</a>
+    <a href="#sec-kpi" class="nav-item" data-target="sec-kpi"><span class="nav-n">13</span>测试与质量基线</a>
+</nav>
+<div class="content">
 <header>
   <h1>PM Scaffold · 产品 AI 脚手架 · 项目工作台 · 程序流程总图</h1>
   <div class="sub">一个需求的完整程序流程：从「新需求输入」到「交付人工确认的 prd.md」——每个判断、每条线、每个回路都有明确条件 · v0.2.0</div>
@@ -104,9 +134,7 @@ footer{margin-top:24px;text-align:center;color:#888;font-size:11px;padding-top:1
     <span class="tag amber">Loop 闭环：级联失效 / 双向追溯 / 防篡改</span>
   </div>
 </header>
-
-<!-- ============ 1 · 主流程图 ============ -->
-<section>
+<section id="sec-flow">
   <h2>1. 主程序流程图 <span class="badge">每线有条件 · 每形状有含义</span></h2>
   <div class="desc">纵向主轴 = 唯一主干；绿色跑道 = 开始/结束；方框 = 处理；平行四边形 = 输入输出；菱形 = 判断（每条出线标注是/否）；红色虚线 = 回流/失效回路。右侧灰签 = 产物状态，左侧紫签 = 对应命令。</div>
   <div class="legend">
@@ -357,10 +385,21 @@ footer{margin-top:24px;text-align:center;color:#888;font-size:11px;padding-top:1
 
 </svg>
 </section>
-
-<!-- ============ 2 · 8 步循环卡片 ============ -->
-<section>
-  <h2>2. 8 步执行循环（每项必走）<span class="badge">机器止步 ready · 人工产 confirmed</span></h2>
+<section id="sec-cmd">
+  <h2>2. 命令全集 <span class="badge">pipeline.py 一条命令链</span></h2>
+  <div class="desc">所有命令都是 <code>python3 src/scripts/pipeline.py</code> 的子命令；括号内为配套脚本。</div>
+  <table>
+    <tr><th>命令</th><th>做什么</th><th>关键参数 / 检查</th><th>谁能改状态</th></tr>
+    <tr><td><code>init REQ-NNN-topic</code></td><td>从注册表生成需求骨架（目录 + 授权清单 + 来源登记表 + README）</td><td>REQ-\d{3} 命名校验；已存在则拒绝</td><td class="ok">机器（仅骨架）</td></tr>
+    <tr><td><code>status</code></td><td>全 work item 状态 + active/next/越级检测 + 信号层</td><td>B1 熔断 · B3 老化 · 范围冻结信号（orchestrator.py）</td><td class="ok">只读</td></tr>
+    <tr><td><code>entry</code></td><td>入口探索：内容六信号判定 L0-L4 + entry_blocked + 分支信号</td><td>问题/角色/约束/方案/功能/规则 六信号；L0→brainstorming、多源/歧义→restate</td><td class="ok">只读</td></tr>
+    <tr><td><code>gate --work-item X</code></td><td>机器闸门：DoR + DoD + 六态 + 自审 + B3 收口 + property + 追溯 + 哈希</td><td>dor_check / property_check(fd) / traceability(prd) / branch_validator</td><td class="ok">只读</td></tr>
+    <tr><td><code>review --decision approve/changes</code></td><td>人工评审唯一入口：真实人名 + 授权清单 + 角色 + 机器闸门全过</td><td>--reviewer / --reviewer-id / --reviewer-role / --waive CODE=reason</td><td class="warn">人工（写 confirmed 的唯一路径 + SHA-256）</td></tr>
+    <tr><td><code>reflow [--apply]</code></td><td>变更回流：dry-run 预览 → --apply 级联失效下游 + ChangeRecord（含 DEC-XXX 决策字段）</td><td>下游 confirmed/ready → superseded；next_work_item 回归最早受影响项</td><td class="warn">机器（--apply 时才写）</td></tr>
+  </table>
+</section>
+<section id="sec-cycle">
+  <h2>3. 8 步执行循环（每项必走）<span class="badge">机器止步 ready · 人工产 confirmed</span></h2>
   <div class="desc">每个 Work Item 都完整走一遍；Clarify 与 Reflow 是循环内部状态，不是独立主干。</div>
   <div class="cycle">
     <div class="cstep"><span class="n">1</span><div class="t">Preflight（预检）</div><div class="d">来源盘点、成熟度 L0-L4、无源即停</div></div>
@@ -381,10 +420,8 @@ footer{margin-top:24px;text-align:center;color:#888;font-size:11px;padding-top:1
     <span class="snode super">superseded（级联失效）</span>
   </div>
 </section>
-
-<!-- ============ 3 · 六态 ============ -->
-<section>
-  <h2>3. 六态知识标注 <span class="badge">证据与不确定性必须可见</span></h2>
+<section id="sec-states">
+  <h2>4. 六态知识标注 <span class="badge">证据与不确定性必须可见</span></h2>
   <div class="desc">每条声明必须标注知识状态；<code>ready_for_human_review</code> 强制六态全覆盖且 ASSUMPTION（假设）≤ 30%。</div>
   <div class="ks-grid">
     <div class="ks fact"><span class="cn">FACT（事实）</span><span class="ce">来源明确，追 SRC-</span></div>
@@ -395,10 +432,8 @@ footer{margin-top:24px;text-align:center;color:#888;font-size:11px;padding-top:1
     <div class="ks con"><span class="cn">CONFLICT（冲突）</span><span class="ce">需裁决</span></div>
   </div>
 </section>
-
-<!-- ============ 4 · 闸门矩阵 ============ -->
-<section>
-  <h2>4. 机器闸门矩阵 <span class="badge">gate 一次跑全</span></h2>
+<section id="sec-gates">
+  <h2>5. 机器闸门矩阵 <span class="badge">gate 一次跑全</span></h2>
   <div class="desc">gate 串联五类检查；blocking 不通过则 review 拒绝批准（waiver_required 需显式 <code>--waive CODE=reason</code>）。</div>
   <table>
     <tr><th>检查</th><th>负责脚本</th><th>检查什么</th><th>失败后果</th></tr>
@@ -415,42 +450,8 @@ footer{margin-top:24px;text-align:center;color:#888;font-size:11px;padding-top:1
   </table>
   <div class="desc" style="margin-top:14px;margin-bottom:0">信号层（status 可见，不自动执行动作）：<b>B1 熔断</b>（同一 work item 连续 3 轮 changes → 重新评估方向）· <b>B3 老化</b>（open 问题 7 天 flag / 14 天 escalate）· <b>范围冻结</b>（product-ux confirmed 后上游再评审 → 提示走 change-mgmt）。</div>
 </section>
-
-<!-- ============ 5 · 分支矩阵 ============ -->
-<section>
-  <h2>5. 分支 Skill 触发矩阵 <span class="badge">8 个 · 触发才跑</span></h2>
-  <div class="desc">分支 skill 不占主干；进入前按 Inquiry Contract 询问。prd-publish（PRD发布）的触发（PRD confirmed）可由 <code>entry</code> 机器检测并提示。</div>
-  <div class="branch-grid">
-    <div class="bcard"><b>brainstorming（发散收敛）</b><div class="trig">触发：L0 仅想法或材料稀疏（entry 机器信号）</div><div class="out">产出：候选清单（SCN-XXX）+ 人工处置（include/exclude/defer/research），include 项进入 bg 输入包</div></div>
-    <div class="bcard"><b>competitive-research（竞品调研）</b><div class="trig">触发：方案方向不清或功能设计缺乏参考</div><div class="out">产出：竞品分析（3-5 家）→ 99-review/support/</div></div>
-    <div class="bcard"><b>solution-assessment（方案评估）</b><div class="trig">触发：方案取舍影响范围/成本/风险</div><div class="out">产出：可行性报告 + 多方案对比（DEC-XXX 决策记录）</div></div>
-    <div class="bcard"><b>prd-publish（PRD 发布）</b><div class="trig">触发：prd-assembly（PRD汇总）confirmed（机器可检测 ✓）</div><div class="out">产出：发布记录（SHA-256 复核后才可发布）</div></div>
-    <div class="bcard"><b>project-scope（范围基线）</b><div class="trig">触发：项目边界不清或范围蔓延风险</div><div class="out">产出：In/Out/Deferred/Conditional 四类（S-NNN）</div></div>
-    <div class="bcard"><b>requirement-restate（需求复述）</b><div class="trig">触发：干系人语言歧义或多来源术语不一致</div><div class="out">产出：复述清单（RR-NNN，原文 verbatim）</div></div>
-    <div class="bcard"><b>tracking-plan（埋点计划）</b><div class="trig">触发：功能需要数据埋点或追踪计划</div><div class="out">产出：事件表（EV-NNN，链 FUN- + G-）+ PII 登记</div></div>
-    <div class="bcard"><b>issue-record（问题清单）</b><div class="trig">触发：任何阶段需求不明确/冲突/风险</div><div class="out">产出：六类问题清单（BLK/RSK/DEC/INF/CLS/OUT）</div></div>
-  </div>
-</section>
-
-
-<!-- ============ CMD · 命令全集 ============ -->
-<section>
-  <h2>命令全集 <span class="badge">pipeline.py 一条命令链</span></h2>
-  <div class="desc">所有命令都是 <code>python3 src/scripts/pipeline.py</code> 的子命令；括号内为配套脚本。</div>
-  <table>
-    <tr><th>命令</th><th>做什么</th><th>关键参数 / 检查</th><th>谁能改状态</th></tr>
-    <tr><td><code>init REQ-NNN-topic</code></td><td>从注册表生成需求骨架（目录 + 授权清单 + 来源登记表 + README）</td><td>REQ-\d{3} 命名校验；已存在则拒绝</td><td class="ok">机器（仅骨架）</td></tr>
-    <tr><td><code>status</code></td><td>全 work item 状态 + active/next/越级检测 + 信号层</td><td>B1 熔断 · B3 老化 · 范围冻结信号（orchestrator.py）</td><td class="ok">只读</td></tr>
-    <tr><td><code>entry</code></td><td>入口探索：内容六信号判定 L0-L4 + entry_blocked + 分支信号</td><td>问题/角色/约束/方案/功能/规则 六信号；L0→brainstorming、多源/歧义→restate</td><td class="ok">只读</td></tr>
-    <tr><td><code>gate --work-item X</code></td><td>机器闸门：DoR + DoD + 六态 + 自审 + B3 收口 + property + 追溯 + 哈希</td><td>dor_check / property_check(fd) / traceability(prd) / branch_validator</td><td class="ok">只读</td></tr>
-    <tr><td><code>review --decision approve/changes</code></td><td>人工评审唯一入口：真实人名 + 授权清单 + 角色 + 机器闸门全过</td><td>--reviewer / --reviewer-id / --reviewer-role / --waive CODE=reason</td><td class="warn">人工（写 confirmed 的唯一路径 + SHA-256）</td></tr>
-    <tr><td><code>reflow [--apply]</code></td><td>变更回流：dry-run 预览 → --apply 级联失效下游 + ChangeRecord（含 DEC-XXX 决策字段）</td><td>下游 confirmed/ready → superseded；next_work_item 回归最早受影响项</td><td class="warn">机器（--apply 时才写）</td></tr>
-  </table>
-</section>
-
-<!-- ============ SKILLS · 21 Skill 全景说明书 ============ -->
-<section>
-  <h2>Skill 全景说明书 <span class="badge">5 主 + 8 子 + 8 分支 = 21</span></h2>
+<section id="sec-skills">
+  <h2>6. Skill 全景说明书 <span class="badge">5 主 + 8 子 + 8 分支 = 21</span></h2>
   <div class="desc">每个 skill 统一结构：SKILL.md（10 节）+ references（7 类）+ agents/openai.yaml + validate_artifact.py + README + 回归测试。数据来自 workflow-registry.json。</div>
   <h3 style="margin:14px 0 8px">主 skill（5 · 主干必做，永不询问）</h3>
   <table><tr><th>Skill</th><th>阶段/顺序</th><th>产物文件</th><th>ID 前缀</th><th>前置（须 confirmed）</th><th>评审角色</th><th>一句话定位</th></tr>
@@ -483,9 +484,8 @@ footer{margin-top:24px;text-align:center;color:#888;font-size:11px;padding-top:1
     <tr><td><code>brainstorming</code>（发散收敛）</td><td>L0 仅想法或材料稀疏</td><td>001 业务需求</td><td><code>project-background-goal</code></td><td><code>99-review/support/</code></td><td>Diverge, cluster and converge sparse ideas (L0 idea only or thin materials) into an AI_INFERENCE candidate set, get huma</td></tr>
   </table>
 </section>
-<!-- ============ ARTIFACTS · 产物说明书 ============ -->
-<section>
-  <h2>产物说明书 <span class="badge">10 个正式产物 + 支持产物</span></h2>
+<section id="sec-artifacts">
+  <h2>7. 产物说明书 <span class="badge">10 个正式产物 + 支持产物</span></h2>
   <div class="desc">一个 artifact 一个位置、原地演进（v0.* 快照）；每条链路：上游确认 → 产物 → PRD 落点。</div>
   <table>
     <tr><th>产物</th><th>生产者</th><th>文件</th><th>进入 PRD 的位置</th><th>依赖上游</th></tr>
@@ -502,10 +502,8 @@ footer{margin-top:24px;text-align:center;color:#888;font-size:11px;padding-top:1
   </table>
   <div class="desc" style="margin-top:10px;margin-bottom:0">支持产物（不直接进 PRD）：候选清单 SCN-XXX（brainstorming）· 复述清单 RR-NNN（restate）· 范围文档 S-NNN（scope）· 埋点事件表 EV-NNN（tracking）· 问题清单 ISS-NNN（issue-record，§13 收口表）· 竞品/方案/发布记录（99-review/support/）。</div>
 </section>
-
-<!-- ============ SCRIPTS · 脚本说明书 ============ -->
-<section>
-  <h2>脚本说明书 <span class="badge">11 个 · 机器循环引擎</span></h2>
+<section id="sec-scripts">
+  <h2>8. 脚本说明书 <span class="badge">11 个 · 机器循环引擎</span></h2>
   <div class="desc">全部 stdlib-only（Python 3.10+），无外部依赖；对不存在的路径全部优雅报错。</div>
   <table><tr><th>脚本</th><th>职责</th><th>关键行为</th></tr>
     <tr><td><code>pipeline.py</code><br><span style="color:#888;font-size:11px">★ 命令链入口</span></td><td colspan="2" style="padding-top:10px">init / status / entry / gate / review / reflow(--apply)。全仓唯一写 confirmed 的路径在 review() approve 分支；reflow 写 superseded + ChangeRecord（DEC-XXX 字段）；entry 做内容六信号判定与分支信号。</td></tr>
@@ -520,9 +518,8 @@ footer{margin-top:24px;text-align:center;color:#888;font-size:11px;padding-top:1
     <tr><td><code>render_diagrams.sh / render_mermaid_local.html</code><br><span style="color:#888;font-size:11px">图表辅助</span></td><td colspan="2" style="padding-top:10px">本地渲染 Mermaid 流程图的辅助工具（CDN mermaid）。</td></tr>
   </table>
 </section>
-<!-- ============ SHARED · 共享机制 ============ -->
-<section>
-  <h2>共享机制 <span class="badge">9 模块 · 横向复用</span></h2>
+<section id="sec-shared">
+  <h2>9. 共享机制 <span class="badge">9 模块 · 横向复用</span></h2>
   <div class="desc">服务所有阶段的控制能力，不独立构成业务阶段。</div>
   <table><tr><th>模块</th><th>职责</th></tr>
     <tr><td><code>audit（审查闸门）</code></td><td>Skill 自审 checklist、reviewer 清单、7 标签评审分类、子 skill 校验器模板</td></tr>
@@ -536,9 +533,8 @@ footer{margin-top:24px;text-align:center;color:#888;font-size:11px;padding-top:1
     <tr><td><code>project-init（项目初始化）</code></td><td>一键创建 REQ-DIR 骨架（init 命令的模板源）</td></tr>
   </table>
 </section>
-<!-- ============ TEMPLATES · 模板 ============ -->
-<section>
-  <h2>产物模板 <span class="badge">24 个 · resolver.py 解析</span></h2>
+<section id="sec-templates">
+  <h2>10. 产物模板 <span class="badge">24 个 · resolver.py 解析</span></h2>
   <div class="desc">所有产物按模板起草；模板优先级栈 resolver.py（overrides > presets > extensions > core）。</div>
   <div class="branch-grid" style="grid-template-columns:repeat(3,1fr)">
     <div class="bcard" style="padding:6px 10px"><code style="font-size:11px">src/templates/_frontmatter-schema.md</code></div>
@@ -567,9 +563,22 @@ footer{margin-top:24px;text-align:center;color:#888;font-size:11px;padding-top:1
     <div class="bcard" style="padding:6px 10px"><code style="font-size:11px">src/templates/support/solution-comparison.md</code></div>
   </div>
 </section>
-<!-- ============ 7 · 文件完整架构 ============ -->
-<section>
-  <h2>7. 文件完整架构 <span class="badge">21 Skill · 9 共享模块 · 11 脚本</span></h2>
+<section id="sec-branches">
+  <h2>11. 分支 Skill 触发矩阵 <span class="badge">8 个 · 触发才跑</span></h2>
+  <div class="desc">分支 skill 不占主干；进入前按 Inquiry Contract 询问。prd-publish（PRD发布）的触发（PRD confirmed）可由 <code>entry</code> 机器检测并提示。</div>
+  <div class="branch-grid">
+    <div class="bcard"><b>brainstorming（发散收敛）</b><div class="trig">触发：L0 仅想法或材料稀疏（entry 机器信号）</div><div class="out">产出：候选清单（SCN-XXX）+ 人工处置（include/exclude/defer/research），include 项进入 bg 输入包</div></div>
+    <div class="bcard"><b>competitive-research（竞品调研）</b><div class="trig">触发：方案方向不清或功能设计缺乏参考</div><div class="out">产出：竞品分析（3-5 家）→ 99-review/support/</div></div>
+    <div class="bcard"><b>solution-assessment（方案评估）</b><div class="trig">触发：方案取舍影响范围/成本/风险</div><div class="out">产出：可行性报告 + 多方案对比（DEC-XXX 决策记录）</div></div>
+    <div class="bcard"><b>prd-publish（PRD 发布）</b><div class="trig">触发：prd-assembly（PRD汇总）confirmed（机器可检测 ✓）</div><div class="out">产出：发布记录（SHA-256 复核后才可发布）</div></div>
+    <div class="bcard"><b>project-scope（范围基线）</b><div class="trig">触发：项目边界不清或范围蔓延风险</div><div class="out">产出：In/Out/Deferred/Conditional 四类（S-NNN）</div></div>
+    <div class="bcard"><b>requirement-restate（需求复述）</b><div class="trig">触发：干系人语言歧义或多来源术语不一致</div><div class="out">产出：复述清单（RR-NNN，原文 verbatim）</div></div>
+    <div class="bcard"><b>tracking-plan（埋点计划）</b><div class="trig">触发：功能需要数据埋点或追踪计划</div><div class="out">产出：事件表（EV-NNN，链 FUN- + G-）+ PII 登记</div></div>
+    <div class="bcard"><b>issue-record（问题清单）</b><div class="trig">触发：任何阶段需求不明确/冲突/风险</div><div class="out">产出：六类问题清单（BLK/RSK/DEC/INF/CLS/OUT）</div></div>
+  </div>
+</section>
+<section id="sec-tree">
+  <h2>12. 文件完整架构 <span class="badge">21 Skill · 9 共享模块 · 11 脚本</span></h2>
   <div class="desc">每个目录/文件一句话职责。★ = 唯一真相源 / 核心引擎。每个 skill 内部统一为：<code>SKILL.md</code>（10 节）+ <code>references/</code>（7 类）+ <code>agents/openai.yaml</code> + <code>scripts/validate_artifact.py</code> + <code>README.md</code>。</div>
   <pre style="font-family:&#39;SF Mono&#39;,Menlo,monospace;font-size:11.5px;line-height:1.75;background:#F8F8FA;border:1px solid #E5E5E5;border-radius:10px;padding:18px 20px;overflow-x:auto;color:#333">
 PM Scaffold · 文件完整架构
@@ -633,10 +642,8 @@ PM Scaffold · 文件完整架构
    └─ skills/&lt;skill-id&gt;/      每 skill：fixtures（正例 + violation 负例）+ test_validate_artifact.py
   </pre>
 </section>
-
-<!-- ============ 6 · 质量基线 ============ -->
-<section>
-  <h2>6. 测试与质量基线 <span class="badge">61/61</span></h2>
+<section id="sec-kpi">
+  <h2>13. 测试与质量基线 <span class="badge">61/61</span></h2>
   <div class="desc">run_tests.sh 由注册表驱动：5 主 + 8 子 + 8 分支校验器全量语法检查与 fixture 验证；<b>violation 负例反向断言</b>——故意违规样本必须被校验器拒绝，否则 FAIL。</div>
   <div class="kpi-grid">
     <div class="kpi"><div class="n">61/61</div><div class="l">回归检查（含 4 负例反向断言）</div></div>
@@ -645,11 +652,29 @@ PM Scaffold · 文件完整架构
     <div class="kpi"><div class="n">0</div><div class="l">一致性错误（consistency_check）</div></div>
   </div>
 </section>
-
 <footer>
   PM Scaffold · v0.2.0 · 本图与 src/framework/workflow-registry.json 同源——registry 是唯一机器真相，本图仅作人类可读视图。测试数与 Skill 数以 <code>bash run_tests.sh</code> 与 registry 实测为准。
 </footer>
-
 </div>
-</body>
+</div>
+</div></body>
+
+<script>
+(function(){
+  var links = Array.prototype.slice.call(document.querySelectorAll('.nav-item'));
+  function spy(){
+    var y = window.scrollY + 100, cur = null;
+    links.forEach(function(a){
+      var s = document.getElementById(a.dataset.target);
+      if (s && s.offsetTop <= y) cur = a;
+    });
+    links.forEach(function(a){ a.classList.remove('active'); });
+    if (cur) cur.classList.add('active');
+  }
+  window.addEventListener('scroll', spy, {passive:true});
+  spy();
+  document.documentElement.style.scrollBehavior = 'smooth';
+})();
+</script>
+
 </html>
