@@ -2,7 +2,7 @@
 name: pm-scaffold
 description: PRD-only product manager AI scaffold. Convert raw requirements (BRDs, meeting notes, emails, PPTs) into structured, human-confirmed Chinese PRDs through a 3-stage registry-driven pipeline.
 version: 4.0.0
-author: Project_001
+author: PM Scaffold
 tags: [pm, prd, requirements, product-management, spec-driven]
 ---
 
@@ -40,7 +40,7 @@ bash run_tests.sh
 - **Non-bypassable human gates**: only `pipeline.py review --decision approve` with a real human reviewer can confirm artifacts
 - **SHA-256 binding**: confirmed artifacts are cryptographically bound to their reviewer
 - **Full traceability**: G→ST→FEA→FUN→AC/BR forward and reverse traceability
-- **44+ regression tests** with fixture-based validation
+- **47+ regression tests** with fixture-based validation
 
 ## Agent Entry Point
 
@@ -60,7 +60,7 @@ New AI agents: read `CLAUDE.md` first for startup order, hard rules, and quick-s
 ## Validation
 
 ```bash
-bash run_tests.sh                              # Full regression (44+ tests)
+bash run_tests.sh                              # Full regression (47+ tests)
 python3 src/scripts/consistency_check.py       # Cross-document drift check
 python3 src/scripts/property_check.py <fd.md>  # Rule completeness properties
 ```

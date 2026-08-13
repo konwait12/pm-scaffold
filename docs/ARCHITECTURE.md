@@ -1,4 +1,4 @@
-# Project_001 产品 AI 脚手架 · 架构文档
+# PM Scaffold · 产品 AI 脚手架 · 架构文档
 
 > **版本**：v0.1 · 2026-08-12
 > **范围**：3 阶段 × 5 主 Skill × 8 子 Skill × 9 共享模块 × 7 分支 Skill 的整体架构说明
@@ -37,10 +37,10 @@ flowchart TB
         SH4["brainstorming / decision-log / project-init"]
     end
 
-    subgraph SU["支持层 (3 support-skills)"]
-        SU1["competitive-research"]
-        SU2["solution-assessment"]
-        SU3["prd-publish"]
+    subgraph SU["分支层 (7 branch-skills)"]
+        SU1["competitive-research / solution-assessment / prd-publish"]
+        SU2["project-scope / requirement-restate"]
+        SU3["tracking-plan / issue-record"]
     end
 
     I1 --> I2 --> A1
@@ -120,12 +120,12 @@ PRD 输出（`prd-assembly`）是下游。
 | 工作流注册 | `src/framework/workflow-registry.json` |
 | 5 主 Skill | `src/stages/{001,002,003}-*/skills/*/` |
 | 8 子 Skill | `src/stages/002-product-requirements/skills/{function-description,product-ux}/skills/*/` |
-| 3 支持 Skill | `src/support-skills/{competitive-research,solution-assessment,prd-publish}/` |
+| 7 分支 Skill | `src/support-skills/*/` + `src/stages/*/skills/{project-scope,requirement-restate,tracking-plan}/` + `src/shared/clarify/skills/issue-record/` |
 | 9 共享模块 | `src/shared/{audit,human-gate,clarify,...}/` |
 | 11 产物模板 | `src/templates/stage-{1,2,3}-*/*.md` + `src/templates/support/*.md` |
 | 8 核心脚本 | `src/scripts/{orchestrator,pipeline,workflow_registry,consistency_check,traceability_check,dor_check,property_check,branch_validator}.py` |
 | 模板库接口 | `src/templates/library/{README.md,manifest.schema.json,classifier-interface.md}` |
-| 测试 | `test/skills/*/`（9 套 fixture）+ `test/scripts/*.py`（集成测试） |
+| 测试 | `test/skills/*/`（16 套 fixture）+ `test/scripts/*.py`（集成测试） |
 
 ---
 
@@ -133,15 +133,15 @@ PRD 输出（`prd-assembly`）是下游。
 
 ### 5.1 测试
 
-`run_tests.sh` 跑 9 类检查：
+`run_tests.sh` 跑 8 类检查：
 - 跨文档一致性（`consistency_check.py`）
-- 9 个主 Skill 产物校验（`validate_artifact.py` × 9）
+- 5 个主 Skill 产物校验
 - 8 个子 Skill 产物校验
-- 3 个支持 Skill 产物校验
-- 6 个 unit 单元测试
+- 7 个分支 Skill 校验器（注册表驱动）
+- 单元/集成测试（workflow_runtime / cross_skill_integration / 5 主 skill 校验器）
 - 需求目录状态 / 记录 / RTM 校验
 
-**当前结果**：44/44 PASS（含 5 个跨 Skill 集成测试）
+**当前结果**：47/47 PASS
 
 ### 5.2 发布
 

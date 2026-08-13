@@ -9,7 +9,12 @@ function Run-Check($Label, $Command) {
     else { Write-Host "FAIL $Label"; $script:Fail++ }
 }
 
+# ---- Phase 0: cross-document consistency (must pass before anything else) ----
+Run-Check "consistency/registry-vs-docs" "python3 `"$Root\src\scripts\consistency_check.py`""
+
 $Registry = Get-Content "$Root\src\framework\workflow-registry.json" | ConvertFrom-Json
+
+# Main work items: fixture-test their validators
 foreach ($Item in $Registry.work_items) {
     $Validator = "$Root\$($Item.skill_path)\scripts\validate_artifact.py"
     $Fixtures = "$Root\test\skills\$($Item.id)\fixtures"
@@ -19,10 +24,27 @@ foreach ($Item in $Registry.work_items) {
     }
 }
 
+# Branch/support skills (registry-driven): syntax-check validators + fixture-test
+foreach ($Cap in $Registry.support_capabilities) {
+    $Validator = "$Root\$($Cap.skill_path)\scripts\validate_artifact.py"
+    if (Test-Path $Validator) {
+        Run-Check "branch-validator/$($Cap.id)" "python3 -c `"compile(open('$Validator').read(),'$Validator','exec')`""
+    } else {
+        Write-Host "FAIL missing branch validator $($Cap.id)"; $script:Fail++
+    }
+    $Fixtures = "$Root\test\skills\$($Cap.id)\fixtures"
+    foreach ($Fixture in Get-ChildItem "$Fixtures\*.md" -ErrorAction SilentlyContinue) {
+        if ($Fixture.Name -like "*violation*") { continue }
+        Run-Check "branch-skill/$($Cap.id)/$($Fixture.Name)" "python3 `"$Validator`" `"$($Fixture.FullName)`" --json"
+    }
+}
+
+# Unit and integration tests
 foreach ($Test in Get-ChildItem "$Root\test" -Filter "test_*.py" -File -Recurse) {
     Run-Check "unit/$($Test.FullName.Substring($Root.Length + 6))" "python3 `"$($Test.FullName)`""
 }
 
+# Requirement dirs (if any)
 foreach ($Req in Get-ChildItem "$Root\requirements\REQ-*" -Directory) {
     Run-Check "status/$($Req.Name)" "python3 `"$Root\src\scripts\orchestrator.py`" `"$($Req.FullName)`" --json"
     Run-Check "records/$($Req.Name)" "python3 `"$Root\src\scripts\branch_validator.py`" `"$($Req.FullName)`" --json"

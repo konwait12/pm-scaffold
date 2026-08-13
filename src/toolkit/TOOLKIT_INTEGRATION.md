@@ -1,12 +1,12 @@
 # 外部 Skill 工具链集成清单
 
-> 本文档定义 Project_001 脚手架如何调用外部 Claude Code Skill 来增强原型、设计、旅程和战略能力。
+> 本文档定义 PM Scaffold 脚手架如何调用外部 Claude Code Skill 来增强原型、设计、旅程和战略能力。
 > 这些是"可插拔"的外部能力——脚手架注册表不管理它们，但 AI 执行体在特定阶段应主动调用。
 
 ## 集成架构
 
 ```text
-Project_001 脚手架 (注册表驱动，PRD-only)
+PM Scaffold 脚手架 (注册表驱动，PRD-only)
 │
 ├── Stage 1: 业务需求 ────────────────────────────────────
 │   ├── project-background-goal

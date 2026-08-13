@@ -1,4 +1,4 @@
-# Project_001 产品 AI 脚手架 — Agent 唯一入口
+# PM Scaffold · 产品 AI 脚手架 — Agent 唯一入口
 
 > 任何 AI 执行体（Claude Code / Codex / Cursor / Copilot / 其他）进入本项目的**第一份必读文件**。
 > 读完本文件后，按「启动顺序」依次读框架文件，再开始工作。不要跳过、不要先读别的。
