@@ -24,8 +24,8 @@
 
 ## 输出
 
-- `feasibility-report.md` — 见 `feasibility-templates/feasibility-report.md`（市场空间 / 技术可行性 / 投入产出 / 风险评估 / 结论）
-- `solution-comparison.md` — 见 `solution-comparison-templates/solution-comparison.md`（候选方案 / 方案对比矩阵 / AI 推荐 / 人工决策）
+- `feasibility-report.md` — 见 `src/templates/support/feasibility-report.md`（市场空间 / 技术可行性 / 投入产出 / 风险评估 / 结论）
+- `solution-comparison.md` — 见 `src/templates/support/solution-comparison.md`（候选方案 / 方案对比矩阵 / AI 推荐 / 人工决策）
 
 ## 触发判断
 
@@ -46,6 +46,6 @@
 
 - `agents/openai.yaml` · OpenAI / Anthropic Agent 路由元数据
 - `references/` · 思考透镜 / 两种模式指南 / 产物契约 / 审计与评审清单 / 提问模板 / 来源处理 / 反模式
-- `feasibility-templates/feasibility-report.md` · 可行性模板
-- `solution-comparison-templates/solution-comparison.md` · 多方案对比模板
+- `src/templates/support/feasibility-report.md` · 可行性模板
+- `src/templates/support/solution-comparison.md` · 多方案对比模板
 - `scripts/validate_artifact.py` · 校验脚本

@@ -43,7 +43,7 @@
 
 ## Output
 
-Use the template at `solution-comparison-templates/solution-comparison.md` (relative to this skill root): `## 候选方案` / `## 方案对比矩阵` / `## AI 推荐` / `## 人工决策`.
+Use the template at `src/templates/support/solution-comparison.md` (relative to project root): `## 候选方案` / `## 方案对比矩阵` / `## AI 推荐` / `## 人工决策`.
 
 ## Key Rule
 

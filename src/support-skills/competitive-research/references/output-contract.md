@@ -34,7 +34,7 @@
 
 ## Required Sections
 
-Use all headings from the template at `src/support-skills/competitive-research/templates/competitive-analysis.md`:
+Use all headings from the template at `src/templates/support/competitive-analysis.md`:
 
 - `## 竞品列表` — every selected competitor with selection rationale (direct/indirect/aspirational)
 - `## 逐品分析` — per-competitor deep dive using the selected framework, with SRC-IDs

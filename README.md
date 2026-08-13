@@ -34,10 +34,11 @@ python3 src/scripts/pipeline.py requirements/REQ-001-my-feature status
 # 4. AI 按 SKILL.md 起草 → 跑机器闸门
 python3 src/scripts/pipeline.py requirements/REQ-001-my-feature gate --work-item project-background-goal
 
-# 5. 真实人工确认（只有人能设 confirmed）
+# 5. 真实人工确认（只有人能设 confirmed；--reviewer-id 需与 00-input/authorized-reviewers.json 一致）
 python3 src/scripts/pipeline.py requirements/REQ-001-my-feature review \
   --work-item project-background-goal --decision approve \
-  --reviewer "评审人姓名" --reviewer-role "business_owner"
+  --reviewer "评审人姓名" --reviewer-id "飞书或组织稳定用户ID" \
+  --reviewer-role "business_owner"
 ```
 
 AI 执行体请读 [`AGENTS.md`](AGENTS.md)（唯一入口）。要求 Python 3.10+（核心脚本仅用标准库）。

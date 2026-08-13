@@ -15,7 +15,7 @@ Take a **confirmed** PRD (SHA-256 verified) and export it to requested delivery 
 
 Inputs: a PRD with status `confirmed`, a valid ReviewRecord with SHA-256, the source file hash matching current content (tamper check), authorized reviewers in `00-input/authorized-reviewers.json`, and the requested target formats (Feishu / PDF / HTML / Markdown). If the PRD is not confirmed or the hash mismatches, STOP — do not publish.
 
-Output: `publish-record.md` using the template at `src/support-skills/prd-publish/templates/publish-record.md`, placed in `99-review/support/`, plus the delivered channel copies.
+Output: `publish-record.md` using the template at `src/templates/others/publish-record.md`, placed in `99-review/support/`, plus the delivered channel copies.
 
 Load `references/thinking-framework.md` (which references `src/framework/thinking-core.md` §1 mandatory lenses) before analysis. Load `references/source-handling.md` at Intake. Load `references/question-patterns.md` at Clarify. Load `references/output-contract.md` before drafting. Load `references/anti-patterns.md` at Generate. Load `references/audit-checklist.md` and `references/reviewer-checklist.md` before handoff. Run `scripts/validate_artifact.py <artifact> --json` before review.
 

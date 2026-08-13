@@ -20,8 +20,6 @@ from pathlib import Path
 # ── Per-sub-skill configuration (edit these) ──────────────
 SECTION_NAME = "待修改"          # e.g. "交互规则"
 ID_PATTERN = r"待修改"            # e.g. r"\bIX-\d+\b"
-# Path to parent artifact, relative to the sub-skill scripts/ dir.
-PARENT_ARTIFACT = Path(__file__).resolve().parents[2] / "assets" / "parent.md"
 # ─────────────────────────────────────────────────────────
 
 
@@ -57,11 +55,13 @@ def validate(path: Path) -> dict:
 def main() -> int:
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument("artifact", type=Path, nargs="?", default=None,
-                   help="Parent artifact path. Defaults to configured path.")
+                   help="Parent artifact path.")
     p.add_argument("--json", action="store_true", dest="j")
     args = p.parse_args()
-    target = args.artifact if args.artifact else PARENT_ARTIFACT
-    r = validate(target)
+    if args.artifact is None:
+        print("Usage: python3 validate_artifact.py <artifact.md> [--json]", file=sys.stderr)
+        sys.exit(2)
+    r = validate(args.artifact)
     if args.j:
         print(json.dumps(r, ensure_ascii=False, indent=2))
     else:

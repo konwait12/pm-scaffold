@@ -15,7 +15,7 @@
 
 ## 输出
 
-`publish-record.md` 模板（位于 `templates/publish-record.md`），含：
+`publish-record.md` 模板（位于 `src/templates/others/publish-record.md`），含：
 
 - artifact_id / version / status
 - 授权审阅人列表（id + 角色）
@@ -39,5 +39,5 @@
 
 - `agents/openai.yaml` · OpenAI / Anthropic Agent 路由元数据
 - `references/` · 思考透镜 / 产物契约 / 审计与评审清单 / 提问模板 / 来源处理 / 反模式
-- `templates/publish-record.md` · 发布记录模板
+- `src/templates/others/publish-record.md` · 发布记录模板
 - `scripts/validate_artifact.py` · 校验脚本

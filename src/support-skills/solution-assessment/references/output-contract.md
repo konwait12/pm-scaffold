@@ -36,7 +36,7 @@
 
 ### Feasibility mode
 
-Use all headings from `src/support-skills/solution-assessment/feasibility-templates/feasibility-report.md`:
+Use all headings from `src/templates/support/feasibility-report.md`:
 
 - `## 市场空间` — target users, penetration, theoretical space
 - `## 技术可行性` — each challenge → Verified / Needs Verification / Not Feasible
@@ -46,7 +46,7 @@ Use all headings from `src/support-skills/solution-assessment/feasibility-templa
 
 ### Comparison mode
 
-Use all headings from `src/support-skills/solution-assessment/solution-comparison-templates/solution-comparison.md`:
+Use all headings from `src/templates/support/solution-comparison.md`:
 
 - `## 候选方案` — every solution at equal depth (description, cost, scope, timeline, risk, pros/cons)
 - `## 方案对比矩阵` — weighted criteria (defined BEFORE scoring) × scores = ranked results

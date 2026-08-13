@@ -40,7 +40,7 @@
 
 ## Output
 
-Use the template at `feasibility-templates/feasibility-report.md` (relative to this skill root): `## 市场空间` / `## 技术可行性` / `## 投入产出` / `## 风险评估` / `## 结论`.
+Use the template at `src/templates/support/feasibility-report.md` (relative to project root): `## 市场空间` / `## 技术可行性` / `## 投入产出` / `## 风险评估` / `## 结论`.
 
 ## Knowledge States
 

@@ -20,11 +20,6 @@ from pathlib import Path
 # ── Per-sub-skill configuration (edit these) ──────────────
 SECTION_NAME = "分功能详述"          # e.g. "交互规则"（子 Skill 输出父产物章节）
 ID_PATTERN = r"\bEX-\d+\b"        # e.g. r"\bIX-\d+\b"
-# Path to parent artifact, relative to the sub-skill scripts/ dir.
-# NOTE: this sub-skill is nested two levels deep
-# (skills/function-description/skills/exception-handling/scripts/), so the parent
-# artifact lives at parents[3] (…/skills/function-description/assets/).
-PARENT_ARTIFACT = Path(__file__).resolve().parents[3] / "assets" / "function-description.md"
 # ─────────────────────────────────────────────────────────
 
 
@@ -60,11 +55,13 @@ def validate(path: Path) -> dict:
 def main() -> int:
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument("artifact", type=Path, nargs="?", default=None,
-                   help="Parent artifact path. Defaults to configured path.")
+                   help="Parent artifact path.")
     p.add_argument("--json", action="store_true", dest="j")
     args = p.parse_args()
-    target = args.artifact if args.artifact else PARENT_ARTIFACT
-    r = validate(target)
+    if args.artifact is None:
+        print("Usage: python3 validate_artifact.py <artifact.md> [--json]", file=sys.stderr)
+        sys.exit(2)
+    r = validate(args.artifact)
     if args.j:
         print(json.dumps(r, ensure_ascii=False, indent=2))
     else:

@@ -15,7 +15,7 @@ When the product direction lacks reference — "what do competitors do?", "is th
 
 Inputs: a confirmed business baseline (`background-goal.md` with confirmed goals) or scope baseline, a research goal (business-level vs functional-level), and registered competitor sources (official sites, app-store pages, user reviews, public docs, industry reports). If no confirmed background or research goal exists, stop at `needs_user_input` — do not research in a vacuum.
 
-Output: `competitive-analysis.md` using the template at `src/support-skills/competitive-research/templates/competitive-analysis.md`.
+Output: `competitive-analysis.md` using the template at `src/templates/support/competitive-analysis.md`.
 
 Load `references/thinking-framework.md` (which references `src/framework/thinking-core.md` §1 mandatory lenses) before analysis. Load `references/source-handling.md` at Intake. Load `references/question-patterns.md` at Clarify. Load `references/output-contract.md` before drafting. Load `references/anti-patterns.md` at Generate. Load `references/audit-checklist.md` and `references/reviewer-checklist.md` before handoff. Run `scripts/validate_artifact.py <artifact> --json` before review.
 

@@ -89,10 +89,11 @@ python3 src/scripts/pipeline.py requirements/REQ-005-topic-name status
 python3 src/scripts/pipeline.py requirements/REQ-005-topic-name gate \
   --work-item project-background-goal
 
-# 5. 人工确认（只有人，带真实姓名 + 角色）
+# 5. 人工确认（只有人，带真实姓名 + 角色；--reviewer-id 需与 00-input/authorized-reviewers.json 一致）
 python3 src/scripts/pipeline.py requirements/REQ-005-topic-name review \
   --work-item project-background-goal --decision approve \
-  --reviewer "评审人姓名" --reviewer-role "business_owner"
+  --reviewer "评审人姓名" --reviewer-id "飞书或组织稳定用户ID" \
+  --reviewer-role "business_owner"
 
 # 6. 变更回流预览 / 应用级联失效
 python3 src/scripts/pipeline.py requirements/REQ-005-topic-name reflow --work-item project-background-goal

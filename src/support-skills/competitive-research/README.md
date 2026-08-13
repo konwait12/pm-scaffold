@@ -17,7 +17,7 @@
 
 ## 输出
 
-`competitive-analysis.md`，结构见 `templates/competitive-analysis.md`：
+`competitive-analysis.md`，结构见 `src/templates/support/competitive-analysis.md`：
 
 - `## 竞品列表` — 竞品选择与理由（直接/间接/参照）
 - `## 逐品分析` — 基于所选框架的深度分析，带 SRC-*
@@ -42,5 +42,5 @@
 
 - `agents/openai.yaml` · OpenAI / Anthropic Agent 路由元数据
 - `references/` · 思考透镜 / 产物契约 / 审计与评审清单 / 提问模板 / 来源处理 / 反模式
-- `templates/competitive-analysis.md` · 竞品分析模板
+- `src/templates/support/competitive-analysis.md` · 竞品分析模板
 - `scripts/validate_artifact.py` · 校验脚本

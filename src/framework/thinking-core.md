@@ -3,11 +3,11 @@
 > 本文件是所有 Work Item Skill（5 个主 Skill + 8 个子 Skill）**共享的通用思想引导层**。
 > 各 Skill 的 `references/thinking-framework.md` 必须引用本文件并遵守本文件的使用协议。
 > 与 `src/framework/workflow.md`（通用执行循环）一致；本文件是 AI 运行时权威。
-> 变更顺序：先改本文件 → 再同步 02 文档 §1 → 再同步各 Skill 的 `thinking-framework.md` 引用。
+> 变更顺序：先改本文件 → 再同步 `src/framework/workflow.md` → 再同步各 Skill 的 `thinking-framework.md` 引用。
 
 ## 使用协议（AI 必读，违反即工作流缺陷）
 
-1. **循环强制（最高优先级）**：每个 Work Item（含 5 个主项与 8 个子项）都必须完整走一遍 `Preflight → Intake → Think → Clarify → Generate → Audit → Human Gate → Commit / Reflow`（见 `src/framework/workflow.md` 与 02 文档 §1）。**没有任何产物可以绕过人工确认进入下游**——PRD 汇总产物同样必须人工确认后才能交付。机器校验只能产生 `ready_for_human_review`，不能产生 `confirmed`。
+1. **循环强制（最高优先级）**：每个 Work Item（含 5 个主项与 8 个子项）都必须完整走一遍 `Preflight → Intake → Think → Clarify → Generate → Audit → Human Gate → Commit / Reflow`（见 `src/framework/workflow.md`）。**没有任何产物可以绕过人工确认进入下游**——PRD 汇总产物同样必须人工确认后才能交付。机器校验只能产生 `ready_for_human_review`，不能产生 `confirmed`。
 2. **三件套**：每个 lens 必须按"触发时机 → 核心问题（≤3 个）→ 产出落点"使用，禁止只读不产出。
 3. **分层使用**：通用核心层（本文件 §1）每个 Work Item 必用；校验层（§2）在 Audit / Human Gate 前用；发散与决策层（§3）由各 Skill 按需挑用。
 4. **单次上限**：一次产出最多应用 8-10 个 lens，宁缺毋滥。不把本文件全文塞进产物。
@@ -143,6 +143,6 @@
 
 使用规则：
 1. **文本规则是权威，技法产物是增强**：原型/切片不替代 page-design §4、interaction-rules §5、function-description 的文字详述。
-2. **按需触发，不设全局闸门**：与「图表不设必须先询问的全局闸门」原则一致（见 02 文档 §6）。
+2. **按需触发，不设全局闸门**：与「图表不设必须先询问的全局闸门」原则一致（见 `src/framework/governance.md`）。
 3. **忠于输入**：原型不发明页面、不静默补状态；缺失信息标记 `待确认` 交人工。
 4. **版本联动**：PRD 内嵌切片路径必须与原型版本一一对应，绝不覆盖历史版本。

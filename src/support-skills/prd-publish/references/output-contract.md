@@ -33,7 +33,7 @@ The default posture of a publish record: **the content was FACT/confirmed at sou
 
 ## Required Sections
 
-Use all headings from the template at `src/support-skills/prd-publish/templates/publish-record.md`:
+Use all headings from the template at `src/templates/others/publish-record.md`:
 
 - `## 发布前检查` — PRD confirmed, hash verified, all 5 Work Items confirmed, DoD passed, no open REVISION-level issues
 - `## 发布渠道` — each channel (飞书 Docx / PDF / HTML / Markdown) with status and link/path

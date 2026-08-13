@@ -15,7 +15,7 @@ When a product decision has ≥2 materially different solutions (build vs. buy, 
 
 Inputs: a concrete product-level solution (from `product-ux` or `function-description`) or an explicit feasibility/multi-solution decision request, upstream evidence (background-goal, cost/constraint/compliance inputs), and a named decision-owner. If the decision would change confirmed scope, cost, compliance, or risk posture, stop at `needs_user_input` until the decision owner is identified.
 
-Output: `feasibility-report.md` using the template at `src/support-skills/solution-assessment/feasibility-templates/feasibility-report.md` (Go/No-Go/Conditional-Go), or `solution-comparison.md` using the template at `src/support-skills/solution-assessment/solution-comparison-templates/solution-comparison.md` (multi-solution weighted comparison).
+Output: `feasibility-report.md` using the template at `src/templates/support/feasibility-report.md` (Go/No-Go/Conditional-Go), or `solution-comparison.md` using the template at `src/templates/support/solution-comparison.md` (multi-solution weighted comparison).
 
 Load `references/thinking-framework.md` (which references `src/framework/thinking-core.md` §1 mandatory lenses) before analysis. Load `references/source-handling.md` at Intake. Load `references/question-patterns.md` at Clarify. Load `references/output-contract.md` before drafting. Load `references/anti-patterns.md` at Generate. Load `references/audit-checklist.md` and `references/reviewer-checklist.md` before handoff. Run `scripts/validate_artifact.py <artifact> --json` before review.
 
