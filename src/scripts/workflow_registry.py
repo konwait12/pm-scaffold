@@ -13,7 +13,7 @@ REGISTRY_PATH = PROJECT / "src/framework/workflow-registry.json"
 
 def load_registry() -> dict:
     registry = json.loads(REGISTRY_PATH.read_text(encoding="utf-8"))
-    if registry.get("schema_version") not in (3, 4, 5):
+    if registry.get("schema_version") not in (3, 4, 5, 6):
         raise ValueError("Unsupported workflow registry schema")
     return registry
 

@@ -1,5 +1,5 @@
 {
-  "schema_version": 5,
+  "schema_version": 6,
   "stages": [
     {
       "id": "001-business-requirements",
@@ -60,9 +60,7 @@
       "artifact_file": "journey-and-stories.md",
       "artifact_prefix": "JS-",
       "required_outputs": [
-        "user-journey-map",
-        "user-story-set",
-        "scope-baseline"
+        "journey-and-stories"
       ],
       "predecessors": [
         "project-background-goal"
@@ -85,10 +83,7 @@
       "artifact_file": "product-ux.md",
       "artifact_prefix": "UX-",
       "required_outputs": [
-        "feature-list",
-        "ux-functional-flow",
-        "interaction-rules",
-        "page-design"
+        "product-ux"
       ],
       "predecessors": [
         "user-journey-and-stories"
@@ -218,76 +213,23 @@
       "depends_on": []
     },
     {
-      "id": "user-journey-map",
-      "name": "用户旅程地图",
+      "id": "journey-and-stories",
+      "name": "用户旅程与用户故事（含范围基线）",
       "producer": "user-journey-and-stories",
       "artifact_file": "001-business-requirements/02-user-journey-stories/journey-and-stories.md",
-      "prd_destination": "角色、业务生命周期、场景路径与角色交接",
+      "prd_destination": "角色、业务生命周期、场景路径、用户故事、范围基线（In/Out/Deferred/Conditional）",
       "depends_on": [
         "project-background-goals"
       ]
     },
     {
-      "id": "user-story-set",
-      "name": "用户故事集",
-      "producer": "user-journey-and-stories",
-      "artifact_file": "001-business-requirements/02-user-journey-stories/journey-and-stories.md",
-      "prd_destination": "用户故事、业务价值与旅程覆盖关系",
-      "depends_on": [
-        "user-journey-map"
-      ]
-    },
-    {
-      "id": "scope-baseline",
-      "name": "项目范围基线（业务决策）",
-      "producer": "user-journey-and-stories",
-      "artifact_file": "001-business-requirements/02-user-journey-stories/journey-and-stories.md",
-      "prd_destination": "Stage 1 §10 范围基线 → Stage 2 引用",
-      "depends_on": [
-        "project-background-goals",
-        "user-story-set"
-      ]
-    },
-    {
-      "id": "feature-list",
-      "name": "功能清单",
+      "id": "product-ux",
+      "name": "产品 UX（功能清单/UX 流程/交互规则/页面设计）",
       "producer": "product-ux",
       "artifact_file": "002-product-requirements/01-product-ux/product-ux.md",
-      "prd_destination": "模块与功能清单、故事到功能映射",
+      "prd_destination": "模块与功能清单、UX/功能流程、交互规则、页面骨架",
       "depends_on": [
-        "scope-baseline",
-        "user-story-set"
-      ]
-    },
-    {
-      "id": "ux-functional-flow",
-      "name": "UX/功能流程",
-      "producer": "product-ux",
-      "artifact_file": "002-product-requirements/01-product-ux/product-ux.md",
-      "prd_destination": "入口、页面/步骤、状态、主支流程与跨系统交接",
-      "depends_on": [
-        "feature-list",
-        "user-journey-map"
-      ]
-    },
-    {
-      "id": "page-design",
-      "name": "页面与原型",
-      "producer": "product-ux",
-      "artifact_file": "002-product-requirements/01-product-ux/product-ux.md",
-      "prd_destination": "页面骨架（§4）",
-      "depends_on": [
-        "ux-functional-flow"
-      ]
-    },
-    {
-      "id": "interaction-rules",
-      "name": "交互规则 IX（Structural）",
-      "producer": "product-ux",
-      "artifact_file": "002-product-requirements/01-product-ux/product-ux.md",
-      "prd_destination": "交互规则 IX-XXX（§3.3 Structural 层）",
-      "depends_on": [
-        "page-design"
+        "journey-and-stories"
       ]
     },
     {
@@ -295,11 +237,9 @@
       "name": "功能描述与规则集",
       "producer": "function-description",
       "artifact_file": "002-product-requirements/02-function-description/function-description.md",
-      "prd_destination": "FUN 功能描述，引用已确认 IX，并补充 BR、VL、权限、状态、异常恢复与 AC",
+      "prd_destination": "FUN 功能描述 + BR/VL/State/Exception/AC/字段规则",
       "depends_on": [
-        "feature-list",
-        "ux-functional-flow",
-        "interaction-rules"
+        "product-ux"
       ]
     },
     {
@@ -310,14 +250,9 @@
       "prd_destination": "最终唯一产品交付 prd.md",
       "depends_on": [
         "project-background-goals",
-        "user-journey-map",
-        "user-story-set",
-        "scope-baseline",
-        "feature-list",
-        "ux-functional-flow",
-        "function-specifications",
-        "page-design",
-        "interaction-rules"
+        "journey-and-stories",
+        "product-ux",
+        "function-specifications"
       ]
     }
   ],
@@ -332,53 +267,34 @@
       ],
       "output_location": "99-review/support/",
       "resume_work_item": null,
-      "responsible_role": "business_owner"
+      "responsible_role": "business_owner",
+      "output_kind": "artifact"
     },
     {
-      "id": "solution-assessment",
-      "skill_path": "src/support-skills/solution-assessment",
-      "trigger": "已有产品级方案且可行性或多方案取舍影响范围/成本/风险",
-      "applicable_stages": [
-        "002-product-requirements"
-      ],
-      "output_location": "99-review/support/",
-      "resume_work_item": null,
-      "responsible_role": "business_owner"
-    },
-    {
-      "id": "prd-publish",
-      "skill_path": "src/support-skills/prd-publish",
-      "trigger": "PRD confirmed",
-      "applicable_stages": [
-        "003-prd-output"
-      ],
-      "output_location": "99-review/support/",
-      "resume_work_item": null,
-      "responsible_role": "business_owner"
-    },
-    {
-      "id": "project-scope",
-      "name": "项目范围基线",
-      "skill_path": "src/stages/001-business-requirements/skills/project-scope",
-      "trigger": "项目边界不清或范围蔓延风险",
+      "id": "feasibility-analysis",
+      "skill_path": "src/support-skills/feasibility-analysis",
+      "trigger": "进入主干前评估可行性（市场/技术/投入产出/风险）",
       "applicable_stages": [
         "001-business-requirements"
       ],
       "output_location": "99-review/support/",
-      "resume_work_item": null,
-      "responsible_role": "business_owner"
+      "resume_work_item": "project-background-goal",
+      "responsible_role": "business_owner",
+      "name": "可行性分析",
+      "output_kind": "artifact"
     },
     {
       "id": "requirement-restate",
-      "name": "需求复述确认",
+      "name": "需求重举（复述 + 发散，能力）",
       "skill_path": "src/stages/001-business-requirements/skills/requirement-restate",
-      "trigger": "干系人语言歧义或多来源术语不一致",
+      "trigger": "材料稀疏 / 多源歧义 / L0 仅想法",
       "applicable_stages": [
         "001-business-requirements"
       ],
       "output_location": "99-review/support/",
-      "resume_work_item": null,
-      "responsible_role": "business_owner"
+      "resume_work_item": "project-background-goal",
+      "responsible_role": "business_owner",
+      "output_kind": "process"
     },
     {
       "id": "tracking-plan",
@@ -390,7 +306,8 @@
       ],
       "output_location": "99-review/support/",
       "resume_work_item": null,
-      "responsible_role": "business_owner"
+      "responsible_role": "business_owner",
+      "output_kind": "artifact"
     },
     {
       "id": "issue-record",
@@ -404,19 +321,8 @@
       ],
       "output_location": "99-review/support/",
       "resume_work_item": null,
-      "responsible_role": "business_owner"
-    },
-    {
-      "id": "brainstorming",
-      "name": "需求发散收敛",
-      "skill_path": "src/support-skills/brainstorming",
-      "trigger": "L0 仅想法或材料稀疏",
-      "applicable_stages": [
-        "001-business-requirements"
-      ],
-      "output_location": "99-review/support/",
-      "resume_work_item": "project-background-goal",
-      "responsible_role": "business_owner"
+      "responsible_role": "business_owner",
+      "output_kind": "artifact"
     }
   ],
   "issue_policy": {

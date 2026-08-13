@@ -46,10 +46,11 @@ Valid transitions:
 8. **假设、AI 推断、未知与冲突** (§7): ASSUMPTION/AI_INFERENCE/UNKNOWN/CONFLICT register
 9. **待确认问题** (§8): Pending questions with conclusions
 10. **Clarifications**: Session log (see Clarifications Session Contract)
-11. **来源追溯** (§9): Source traceability
-12. **下游输入摘要** (§10): Handoff summary for product-ux
-13. **Constitution Compliance** (§11): 4-principle compliance check
-14. **版本变更摘要** (§12): Version history
+11. **范围基线（In/Out/Deferred/Conditional 四分类）** (§10): In/Out/Deferred/Conditional 范围项 + 验收依据 + 来源追溯（见 Scope Baseline Section Format）
+12. **来源追溯** (§11): Source traceability
+13. **下游输入摘要** (§12): Handoff summary for product-ux
+14. **Constitution Compliance** (§13): 4-principle compliance check
+15. **版本变更摘要** (§14): Version history
 
 ## Story Card Format (Canonical)
 
@@ -74,6 +75,38 @@ Each (stage × role) cell must contain:
 - `类型` (path type): normal / alternative / exception / failure / handoff / recovery
 - `来源` (source): SRC-* reference from upstream background
 - `知识状态` (knowledge state): FACT / DECISION / ASSUMPTION / AI_INFERENCE / UNKNOWN / CONFLICT
+
+## Scope Baseline Section Format（§范围基线 · In/Out/Deferred/Conditional 四分类）
+
+The artifact must include a **范围基线** section — one of the three chapters of the `journey-and-stories.md` artifact（范围基线 / 旅程 / 故事）. It turns every stakeholder expectation or candidate into exactly **one of four categories**, each backed by a verifiable acceptance criterion, a knowledge-state label, and a source or decision:
+
+| 子标题 | 含义 | 判定 |
+|---|---|---|
+| 范围总览 | In/Out/Deferred/Conditional 四分类计数 | 先给计数，再列明细 |
+| In-Scope | **In · 本期做**（已确认纳入本期） | 必须有可验证验收依据，模糊项不得列入 |
+| Out-of-Scope | **Out · 本期不做**（已确认排除 + 原因） | 原因 = 约束 / 决议 / 未来工作，不得静默丢弃 |
+| Deferred | **Deferred · 延后**（暂缓做 + 触发/重开条件） | 记录触发条件；低成本高不确定项优先延后 |
+| Conditional | **Conditional · 条件触发**（条件成立则纳入） | 如"预算通过则…"/"法务签字则…"，是真实范围，必须显式列出 |
+
+若某类无已确认内容，写 `待确认` 并链接到 §8 待确认问题 或 §7 UNKNOWN ID，不得删除该子标题。
+
+### Scope Item Schema（S-NNN）
+
+Each scope item must have:
+
+| Field | Required | Description |
+|---|---|---|
+| `S-NNN` (ID) | Yes | 本产物内单调递增 |
+| `description` | Yes | 一句可测试的描述 |
+| `knowledge_state` | Yes | FACT / DECISION / ASSUMPTION / AI_INFERENCE / UNKNOWN / CONFLICT |
+| `source_or_decision` | Yes | SRC-* 或 DEC-*（可追溯） |
+| `acceptance_criterion` | Yes (In) / Optional (Out/Deferred/Conditional) | 如何判定完成或排除 |
+| `stakeholder` | Optional | 提出/负责该范围项的干系人 |
+| `notes` | Optional | 边界情况、依赖 |
+
+**Mutual Exclusivity**: 一项不得同时 In 且 Out，也不得同时 In 且 Deferred。争议边界必须显式路由到决策者（goal decision owner / business sponsor），AI 不得自行裁决。
+
+**Downstream Handoff**: confirmed 后，范围基线随 `journey-and-stories.md` 交接 product-ux：`in_count / out_count / deferred_count / conditional_count` + 范围项清单（S-NNN）+ 开放非阻断未知。
 
 ## Clarifications Session Contract
 

@@ -20,7 +20,7 @@
 
 当人类用户第一次接触本项目（问「这是什么 / 怎么用 / 从哪开始」）时，按顺序：
 
-1. **先打开驾驶舱给他们看**：`open src/toolkit/visualization/scaffold-flow.html`（浏览器打开）——里面是项目流程图、21 Skill 说明书、命令全集、文件架构。
+1. **先打开驾驶舱给他们看**：`open src/toolkit/visualization/scaffold-flow.html`（浏览器打开）——里面是项目流程图、18 Skill 说明书、命令全集、文件架构。
 2. **引导点左侧「📖 新手教程 · 从这里开始」**——那是给人类看的协作手册（用什么 Agent、怎么下指令、从零到 PRD 的完整剧本）。这是硬核项目、没有外部生态，这个 HTML 是唯一的入门门面。
 3. **本文件是你的工作合同，不要直接甩给用户读**——用户需要的是「怎么用」，不是「你的规则」。等用户看完教程、按他们的指令开始协作后，你按本文件 §2-§8 执行。
 
@@ -82,7 +82,7 @@ requirements/REQ-NNN-topic/
 
 一个 artifact 原地演进；快照与评审/变更记录保存历史，不创建竞争的「最终版」副本。
 
-**入口探索序列**（进入 project-background-goal 前）：`entry` 判定 L0-L4（内容六信号）→ L0 先 `brainstorming`（发散收敛，候选人工处置）→ 多源/歧义时 `requirement-restate`（需求复述）→ 主干 bg（DoR 硬检查 ≥1 个 SRC 材料）。
+**入口探索序列**（进入 project-background-goal 前）：`entry` 判定 L0-L4（内容六信号）→ L0 先 `requirement-restate`（需求重举·发散模式）→ 多源/歧义时（需求重举·复述模式）→ 主干 bg（DoR 硬检查 ≥1 个 SRC 材料）。
 
 **B3 每阶段强制收口**：任何 work item 送审 `ready_for_human_review` 前，`99-review/support/issue-record.md` 必须存在且 §13 收口表含该 work item 行（空阶段也落行）；产物每个「待确认」必须带 Q-/ISS-/DEC-/SRC- 引用。dor_check 硬检查，缺失即阻断送审。
 
@@ -122,7 +122,7 @@ python3 src/scripts/consistency_check.py
 
 ---
 
-## 7. Skill 全景（5 主 + 8 子 + 8 分支 = 21）
+## 7. Skill 全景（5 主 + 8 子 + 4 分支 + 1 能力 = 18）
 
 **主 skill（5，主干必做，永不询问）**
 `project-background-goal` → `user-journey-and-stories` → `product-ux` → `function-description` → `prd-assembly`
@@ -131,8 +131,8 @@ python3 src/scripts/consistency_check.py
 `product-ux` 内：`ux-flow` / `page-design` / `interaction-rules`
 `function-description` 内：`business-rules` / `validation-rules` / `state-machine` / `exception-handling` / `acceptance-criteria`
 
-**分支/条件 skill（8，触发才跑）**
-`brainstorming`（发散收敛）、`competitive-research`（竞品调研）、`solution-assessment`（方案评估）、`prd-publish`（PRD 发布）、`project-scope`（范围基线）、`requirement-restate`（需求复述）、`tracking-plan`（埋点计划）、`issue-record`（问题清单）
+**分支/条件 skill（4 产物 + 1 能力，触发才跑）**
+`competitive-research`（竞品调研）、`feasibility-analysis`（可行性分析）、`tracking-plan`（埋点计划）、`issue-record`（问题清单）——另 `requirement-restate`（需求重举能力：复述+发散，过程记录）
 
 每个 skill 的权威行为见各自的 `SKILL.md`（含 8 步 Thinking Prompts、Anti-Patterns、示例、Load References、Completion 清单）。
 

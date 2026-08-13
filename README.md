@@ -30,7 +30,7 @@ AI 写需求最大的风险不是写得慢，而是：**推断冒充事实、没
 - **变更闭环（Loop）**：上游变更自动级联失效下游并回流重跑（`reflow --apply`），不让失效产物流入下游。
 - **B3 每阶段强制收口**：每个工作项送审前，问题清单必须存在且收口表含该工作项行（空阶段也是审计证据），每个「待确认」必须带问题引用。
 - **入口探索阶段**：`entry` 按材料内容判定 L0-L4；L0（仅想法）先发散收敛（候选人工处置），多源/歧义先需求复述——不带着糊涂需求进主干。
-- **21 个同等丰富的 Skill**：5 主 + 8 子 + 8 分支，每个都有 10 节执行协议 + 7 类知识库 + 机器校验器 + 回归测试。
+- **18 个同等丰富的 Skill**：5 主 + 8 子 + 4 分支产物 + 1 能力，每个都有 10 节执行协议 + 7 类知识库 + 机器校验器 + 回归测试。
 
 ## 快速开始
 
@@ -70,7 +70,7 @@ flowchart LR
     SH[9 共享机制<br/>审计/澄清/变更/闸门/追溯] -.服务.-> S1
     SH -.服务.-> S2
     SH -.服务.-> S3
-    BR[8 分支 skill<br/>发散/竞品/方案/发布/范围/复述/埋点/澄清] -.按需触发.-> S1
+    BR[4 分支产物 + 1 能力<br/>竞品/可行性/埋点/问题清单 + 需求重举] -.按需触发.-> S1
     BR -.按需触发.-> S2
 ```
 
@@ -90,7 +90,7 @@ flowchart LR
 |---|---|
 | 主（5 · 主干必做） | `project-background-goal`（项目背景与目标）· `user-journey-and-stories`（用户旅程与故事）· `product-ux`（产品 UX）· `function-description`（功能描述）· `prd-assembly`（PRD 汇总，只聚合不发明） |
 | 子（8 · 挂父产物章节） | `ux-flow`（UX 流程）· `page-design`（页面设计）· `interaction-rules`（交互规则）· `business-rules`（业务规则）· `validation-rules`（校验规则）· `state-machine`（状态机）· `exception-handling`（异常处理）· `acceptance-criteria`（验收标准） |
-| 分支（8 · 触发才跑） | `brainstorming`（发散收敛·L0）· `competitive-research`（竞品调研）· `solution-assessment`（方案评估）· `prd-publish`（PRD 发布·SHA-256 复核）· `project-scope`（范围基线）· `requirement-restate`（需求复述）· `tracking-plan`（埋点计划）· `issue-record`（问题清单·B3 收口） |
+| 分支产物（4 · 触发才跑） | `competitive-research`（竞品调研）· `feasibility-analysis`（可行性分析）· `tracking-plan`（埋点计划）· `issue-record`（问题清单·B3 收口） |
 
 每个 skill 拥有统一的完整结构：`SKILL.md`（10 节执行协议）+ `references/`（7 类知识库）+ `agents/openai.yaml`（Agent 路由元数据）+ `validate_artifact.py`（机器校验器）+ 示例 + 回归测试（含 violation 负例反向断言）。
 
@@ -126,7 +126,7 @@ requirements/        你的需求实例（运行时生成，gitignore——每�
 - **gate 被拦了？** 三种原因按序排查：① `entry_material`——00-input 还没有 SRC-*.md 材料；② 六态不全覆盖或 ASSUMPTION >30%；③ `stage_closeup`——issue-record 不存在或收口表缺当前工作项（空阶段也要落行）。
 - **review 报错？** `--reviewer`（真实人名）/`--reviewer-id`/`--reviewer-role` 缺一不可，且必须与 00-input/authorized-reviewers.json 逐项匹配。
 - **requirements/ 哪去了？** 被 gitignore——每个用户的需求是自己的，用 `init` 随时生成。
-- **L0 只有一句想法？** 先 brainstorming 发散候选（人工四值处置），include 的候选就是背景目标的输入。
+- **L0 只有一句想法？** 先需求重举（发散模式）发散候选（人工四值处置），include 的候选就是背景目标的输入。
 
 ## 验证
 

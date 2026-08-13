@@ -48,12 +48,14 @@ Load `references/thinking-framework.md` (which references `src/framework/thinkin
 - Fill the §系统校验 table. One check per row: field, check type (必填/格式/范围/长度/枚举/跨字段/唯一性), rule expression, trigger, error message, source.
 - Every VL carries a user-facing Chinese error message stating "what is wrong + how to fix it" — no internal error codes.
 - Status: use `draft`, `needs_user_input`, or `conditional_review` — **never `confirmed`**.
+- 按需产出字段定义表（并入老版字段规则说明：字段名称、类型、长度、校验规则、来源），字段须引用来源（上游 IX/FUN）与关联校验 VL-XXX。
 
 ### 6. Audit
 - **Decidability**: every VL has an executable value domain; no "校验手机号格式" without the format.
 - **Error message**: every VL has a user-facing message; none are English/internal codes.
 - **Coverage**: every user input field has ≥1 VL; no invisible-input gaps; no validation on read-only/system fields (never-trigger rules).
 - **Cross-field**: A-required-when-B-selected dependencies match the referenced BR/UX.
+- **字段定义表（按需）**：如产出，表头含「字段名/类型」，每个 F-XXX 有来源引用与关联 VL；缺失仅记 warning，记入审计说明。
 - Run `scripts/validate_artifact.py <artifact> --json`. Fix all errors. Warnings → document in audit notes.
 - **B3 收口**：确认 issue-record 的 §13 阶段收口表已更新本 work item 行（问题数 / 收口日期 / 状态；空阶段也落行）。
 

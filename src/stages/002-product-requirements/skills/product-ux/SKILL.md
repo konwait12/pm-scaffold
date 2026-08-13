@@ -34,7 +34,7 @@ This mirrors how senior PMs sequence product definition: scope first, then rules
 ## Inputs And Outputs
 
 **Input**: confirmed `user-journey-and-stories` (stories, scope baseline, roles, lifecycle).
-**Output**: single `product-ux.md` with feature list (FEA), functional structure, Mermaid flows, IX rules (§3.3), page skeletons (§4).
+**Output**: single `product-ux.md` with **four sections** — §功能清单 (FEA, produced by this skill itself, no sub-skill), §UX 流程 (Mermaid flows, `ux-flow` sub-skill), §交互规则 (IX rules §3.3, `interaction-rules` sub-skill), §页面设计 (page skeletons §4, `page-design` sub-skill).
 
 Load `references/thinking-framework.md` (→ `thinking-core.md` §1 mandatory) before analysis.
 
@@ -77,10 +77,10 @@ For each P0 FEA, design:
 - 遇到「待确认 / 冲突 / 信息缺口」信号：主动询问是否登记 issue-record（问题清单，见 `src/shared/clarify/skills/issue-record`）；送审前 dor_check 会硬检查收口与引用。
 
 ### 5. Generate
-Fill template in 3 ordered phases (A→B→C):
-- A: §2 FEA list + functional structure + in/out boundaries
-- B: §3 Mermaid flows + IX rules (delegate to ux-flow + interaction-rules sub-skills)
-- C: §4 page skeletons (delegate to page-design sub-skill)
+Fill template in 3 ordered phases (A→B→C). One artifact `product-ux.md` with four sections: the **§功能清单 is produced by this skill itself** (no sub-skill); the other three sections are delegated to sub-skills, which write their section into the same file:
+- A: §2 功能结构 + §2.2 功能清单（FEA + in/out boundaries）—— **本 skill 自产**
+- B: §3 UX 流程与交互规则 —— 委托子 skill：§3.1/§3.2 由 `ux-flow` 产出，§3.3 由 `interaction-rules` 产出
+- C: §4 页面与原型 —— 委托 `page-design` 子 skill 产出
 
 Prototype (HTML) can accompany the spec as communication aid, but written rules remain authoritative. If generating prototype, reference `skills/pm-scaffold/` toolkit integration manifest for prototype skill pipeline.
 
@@ -122,7 +122,7 @@ Scope changes → return to user-journey-and-stories. Feature changes → re-ent
 |---|---|---|
 | `references/anti-patterns.md` | AI 常见反模式 | Generate 时对照 |
 | `references/audit-checklist.md` | Audit 自审清单 | Audit 前 |
-| `references/output-contract.md` | 产物结构与 ID 契约 (IX 属于 §3.3) | Draft 前 |
+| `references/output-contract.md` | 产物结构与 ID 契约（一个产物 4 章节：功能清单自产，§3.1/§3.2→`ux-flow`，§3.3→`interaction-rules`，§4→`page-design`） | Draft 前 |
 | `references/question-patterns.md` | Clarify 提问模板 | Clarify 提问时 |
 | `references/reviewer-checklist.md` | 人工评审清单 | Human Gate 前 |
 | `references/source-handling.md` | 来源处理规则 | Intake 时 |

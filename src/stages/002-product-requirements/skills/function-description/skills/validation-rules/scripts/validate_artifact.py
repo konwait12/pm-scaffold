@@ -27,6 +27,52 @@ def _norm(h: str) -> str:
     return re.sub(r"^\d+\.\s*", "", h).strip()
 
 
+# 字段定义表 (field definition table) — merged from the legacy 字段规则说明.
+# Optional, warning-level only: triggers only when a 字段定义表 section exists.
+FIELD_TABLE_HEADING_RE = re.compile(r"^#{1,4}\s*字段定义表\s*$", re.MULTILINE)
+FIELD_ID_RE = re.compile(r"\bF-\d+\b")
+FIELD_SOURCE_RE = re.compile(r"\b(?:IX|FUN)-\d+\b")
+
+
+def _field_definition_table_warnings(text: str) -> list:
+    """Optional check for the 字段定义表 section (legacy 字段规则说明).
+
+    Warning-level only — never produces errors. If the section is absent,
+    no check runs, so existing fixtures are unaffected.
+    """
+    warnings = []
+    m = FIELD_TABLE_HEADING_RE.search(text)
+    if not m:
+        return warnings
+
+    # Collect contiguous markdown table lines following the heading.
+    table_lines = []
+    for line in text[m.end():].splitlines():
+        line = line.strip()
+        if line.startswith("|"):
+            table_lines.append(line)
+        elif table_lines:
+            break
+
+    if not table_lines:
+        warnings.append("字段定义表: 章节存在但未找到表格")
+        return warnings
+
+    header = table_lines[0]
+    if "字段名" not in header or "类型" not in header:
+        warnings.append("字段定义表: 表头缺少「字段名」或「类型」列")
+
+    # Skip the separator row (`|---|`) if present; otherwise all lines are rows.
+    rows_start = 2 if len(table_lines) > 1 and "---" in table_lines[1] else 1
+    for row in table_lines[rows_start:]:
+        fid = FIELD_ID_RE.search(row)
+        if fid and not FIELD_SOURCE_RE.search(row):
+            warnings.append(
+                f"字段定义表: 字段 {fid.group(0)} 缺少来源引用（上游 IX-XXX / FUN-XXX）"
+            )
+    return warnings
+
+
 def validate(path: Path) -> dict:
     errors, warnings = [], []
     if not path.is_file():
@@ -48,6 +94,9 @@ def validate(path: Path) -> dict:
     # Knowledge state tags present for traceable content
     if not any(tag in text for tag in ("FACT", "DECISION", "AI_INFERENCE", "UNKNOWN")):
         warnings.append("No knowledge-state tags (FACT/DECISION/AI_INFERENCE/UNKNOWN) found")
+
+    # Optional: 字段定义表 (legacy 字段规则说明) — warning-level, non-blocking.
+    warnings.extend(_field_definition_table_warnings(text))
 
     return {"ok": not errors, "errors": errors, "warnings": warnings}
 

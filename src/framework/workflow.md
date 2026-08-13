@@ -40,7 +40,6 @@ Clarification and reflow are states inside the current work item, not mandatory 
 ## Conditional Support
 
 - `competitive-research`: business or function mode when external evidence is needed.
-- `solution-assessment`: alternatives and feasibility when a material choice exists.
-- `prd-publish`: export only after the PRD is confirmed.
+- `feasibility-analysis`: feasibility across market/technical/cost/risk before entering the main trunk; multi-solution tradeoffs handled as a chapter.
 
 Visualization remains a toolkit capability. It is required only where the work-item contract explicitly requires a flow representation.

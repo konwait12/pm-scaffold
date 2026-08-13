@@ -7,7 +7,7 @@ Issue-record sources are the phase artifacts plus raw materials that carry issue
 ```text
 source_id
 title_or_description
-format                  (background-goal / project-scope / journey / UX / function-description / prd / 会议 / 邮件 / 口头)
+format                  (background-goal / 范围基线 / journey / UX / function-description / prd / 会议 / 邮件 / 口头)
 author_or_speaker
 provided_by
 created_at

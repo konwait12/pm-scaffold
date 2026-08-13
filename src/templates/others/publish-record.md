@@ -1,4 +1,4 @@
-<!-- PRD 发布记录模板 · prd-publish skill -->
+<!-- PRD 发布记录模板 · 发布复核（branch_validator SHA-256） -->
 # PRD 发布记录
 
 | 字段 | 值 |

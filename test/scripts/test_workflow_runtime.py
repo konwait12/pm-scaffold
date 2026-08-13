@@ -42,7 +42,7 @@ class WorkflowRuntimeTest(unittest.TestCase):
         items = {item["id"]: item for item in registry["work_items"]}
         artifacts = {artifact["id"]: artifact for artifact in registry["artifact_types"]}
 
-        self.assertGreaterEqual(len(artifacts), 8)  # 8 base + sub-skill artifacts
+        self.assertEqual(len(artifacts), 5)  # 5 main artifacts (one per main work item)
         self.assertEqual(
             {output for item in items.values() for output in item["required_outputs"]},
             set(artifacts),
@@ -68,7 +68,7 @@ class WorkflowRuntimeTest(unittest.TestCase):
             self.assertTrue(capability["output_section"])
 
     def test_support_skills_have_single_authoritative_location(self) -> None:
-        expected = {"competitive-research", "solution-assessment", "prd-publish", "brainstorming"}
+        expected = {"competitive-research", "feasibility-analysis"}
         support_root = ROOT / "src/support-skills"
         self.assertEqual({path.name for path in support_root.iterdir() if path.is_dir()}, expected)
         for name in expected:

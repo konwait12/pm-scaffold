@@ -63,6 +63,34 @@ section .desc{font-size:13px;color:#666;margin-bottom:18px}
 .tut-content table{font-size:12.5px}
 @media (max-width:800px){.tut-toc{display:none}.modal-body{flex-direction:column}}
 
+
+/* ===== 全景节点树 ===== */
+.tree-actions{display:flex;gap:8px;margin-bottom:12px}
+.tree-btn{padding:6px 14px;border-radius:8px;border:1px solid #C9C2EE;background:#fff;color:#3A2E8F;font-size:12.5px;font-weight:600;cursor:pointer}
+.tree-btn:hover{background:#F6F4FF}
+.tree{font-size:13px}
+.tnode{border-left:2px solid #E8E6F4;margin-left:14px;padding-left:10px}
+.tnode-h{display:flex;align-items:center;gap:8px;padding:6px 8px;border-radius:8px;cursor:pointer;user-select:none}
+.tnode-h:hover{background:#F6F4FF}
+.ttoggle{width:14px;color:#888;font-size:11px;transition:transform .2s}
+.tnode.open > .tnode-h .ttoggle{transform:rotate(90deg)}
+.ttoggle.leaf{visibility:hidden}
+.tbadge{font-size:10px;font-weight:700;padding:1px 7px;border-radius:6px;white-space:nowrap}
+.tname{font-weight:600;color:#222}
+.tnode-d{font-size:12px;color:#666;line-height:1.6;margin:2px 0 4px 22px;padding-left:10px;border-left:2px solid #EFEFF4}
+.tchildren{max-height:0;overflow:hidden;transition:max-height .35s ease}
+.tnode.open > .tchildren{max-height:4000px}
+/* 类型配色 */
+.t-root > .tnode-h .tname{font-size:15px;color:#3A2E8F}
+.t-entry .tbadge{background:#FFF1E8;color:#A8542A}
+.t-cap .tbadge{background:#FEF3C7;color:#92580A}
+.t-branch .tbadge{background:#E6F9EE;color:#0F8A4A}
+.t-cmd .tbadge{background:#F3F4F6;color:#555}
+.t-stage .tbadge{background:#654ACB;color:#fff}
+.t-main .tbadge{background:#EEEFFF;color:#3A2E8F}
+.t-sub .tbadge{background:#EAF4FF;color:#1F5A8B}
+.t-mech .tbadge{background:#F3F4F6;color:#666}
+
 /* ===== 图例 ===== */
 .legend{display:flex;gap:14px;flex-wrap:wrap;font-size:11.5px;color:#555;margin-bottom:14px;align-items:center}
 .legend span{display:inline-flex;align-items:center;gap:5px}
@@ -136,7 +164,7 @@ footer{margin-top:24px;text-align:center;color:#888;font-size:11px;padding-top:1
 <div class="layout">
 <nav class="sidebar" id="sidebar">
   <div class="side-title">PM Scaffold 驾驶舱</div>
-  <div class="side-sub">v0.2.0 · 21 Skill · 61/61</div>
+  <div class="side-sub">v0.2.0 · 18 Skill · 61/61</div>
   <button class="tut-btn" id="tut-open">📖 新手教程 · 从这里开始</button>
     <a href="#sec-flow" class="nav-item" data-target="sec-flow"><span class="nav-n">01</span>主程序流程图</a>
     <a href="#sec-cmd" class="nav-item" data-target="sec-cmd"><span class="nav-n">02</span>命令全集</a>
@@ -159,7 +187,7 @@ footer{margin-top:24px;text-align:center;color:#888;font-size:11px;padding-top:1
   <div class="tags">
     <span class="tag green">● 61/61 测试绿</span>
     <span class="tag">3 阶段</span>
-    <span class="tag">21 Skill（5 主 + 8 子 + 8 分支）</span>
+    <span class="tag">18 Skill（5 主 + 8 子 + 4 分支产物 + 1 能力）</span>
     <span class="tag">9 共享模块</span>
     <span class="tag amber">Loop 闭环：级联失效 / 双向追溯 / 防篡改</span>
   </div>
@@ -222,10 +250,10 @@ footer{margin-top:24px;text-align:center;color:#888;font-size:11px;padding-top:1
   <text x="610" y="305" text-anchor="middle" font-size="12.5" font-weight="700" fill="#92580A">entry 成熟度判定</text>
   <text x="610" y="323" text-anchor="middle" font-size="10.5" fill="#92580A">L0 仅想法 / L1-L4 有材料？</text>
 
-  <!-- L0 branch: brainstorming（已注册为第 8 分支 skill） -->
+  <!-- L0 branch: requirement-restate（发散模式 · 能力） -->
   <line x1="480" y1="310" x2="368" y2="310" stroke="#C9C2EE" stroke-width="1.5" stroke-dasharray="5 4" marker-end="url(#ar-purple)"/>
   <rect x="130" y="268" width="236" height="84" rx="8" fill="#F6F4FF" stroke="#C9C2EE" stroke-width="1.5" stroke-dasharray="5 4"/>
-  <text x="248" y="288" text-anchor="middle" font-size="12" font-weight="700" fill="#3A2E8F">brainstorming（发散收敛）</text>
+  <text x="248" y="288" text-anchor="middle" font-size="12" font-weight="700" fill="#3A2E8F">需求重举（发散模式）</text>
   <text x="248" y="304" text-anchor="middle" font-size="10" fill="#555">候选发散 → 人工处置：</text>
   <text x="248" y="318" text-anchor="middle" font-size="10" fill="#555">include / exclude / defer / research</text>
   <text x="248" y="332" text-anchor="middle" font-size="10" fill="#555">仅 include 候选进入 bg 输入包</text>
@@ -236,7 +264,7 @@ footer{margin-top:24px;text-align:center;color:#888;font-size:11px;padding-top:1
   <!-- L1-L4 branch: requirement-restate（多源/歧义时触发） -->
   <line x1="740" y1="310" x2="890" y2="310" stroke="#C9C2EE" stroke-width="1.5" stroke-dasharray="5 4" marker-end="url(#ar-purple)"/>
   <rect x="892" y="268" width="268" height="84" rx="8" fill="#F6F4FF" stroke="#C9C2EE" stroke-width="1.5" stroke-dasharray="5 4"/>
-  <text x="1026" y="288" text-anchor="middle" font-size="12" font-weight="700" fill="#3A2E8F">requirement-restate（需求复述）</text>
+  <text x="1026" y="288" text-anchor="middle" font-size="12" font-weight="700" fill="#3A2E8F">需求重举（复述模式）</text>
   <text x="1026" y="304" text-anchor="middle" font-size="10" fill="#555">触发：≥2 SRC 多源 / 材料含歧义待确认</text>
   <text x="1026" y="318" text-anchor="middle" font-size="10" fill="#555">CONFLICT → ISS（CLS 类）</text>
   <text x="1026" y="332" text-anchor="middle" font-size="10" fill="#555">UNKNOWN → Q-XXX（INF 类）</text>
@@ -368,8 +396,8 @@ footer{margin-top:24px;text-align:center;color:#888;font-size:11px;padding-top:1
   <line x1="726" y1="1606" x2="950" y2="1606" stroke="#C9C2EE" stroke-width="1.5" stroke-dasharray="5 4" marker-end="url(#ar-purple)"/>
   <text x="838" y="1596" text-anchor="middle" font-size="10.5" fill="#654ACB">是</text>
   <rect x="952" y="1580" width="208" height="52" rx="8" fill="#F6F4FF" stroke="#C9C2EE" stroke-width="1.5" stroke-dasharray="5 4"/>
-  <text x="1056" y="1600" text-anchor="middle" font-size="12" font-weight="700" fill="#3A2E8F">prd-publish（PRD 发布）</text>
-  <text x="1056" y="1618" text-anchor="middle" font-size="10" fill="#666">分支 Skill · SHA-256 复核后发布</text>
+  <text x="1056" y="1600" text-anchor="middle" font-size="12" font-weight="700" fill="#3A2E8F">发布动作</text>
+  <text x="1056" y="1618" text-anchor="middle" font-size="10" fill="#666">SHA-256 复核由 branch_validator 自动执行</text>
 
   <!-- to END -->
   <line x1="610" y1="1666" x2="610" y2="1712" stroke="#555" stroke-width="1.5" marker-end="url(#ar)"/>
@@ -405,10 +433,10 @@ footer{margin-top:24px;text-align:center;color:#888;font-size:11px;padding-top:1
   <!-- ================= 分支 Skill 总挂载（左下） ================= -->
   <g>
     <rect x="130" y="1470" width="300" height="96" rx="8" fill="#F6F4FF" stroke="#C9C2EE" stroke-width="1.5" stroke-dasharray="5 4"/>
-    <text x="280" y="1490" text-anchor="middle" font-size="11.5" font-weight="700" fill="#3A2E8F">8 分支 Skill（按触发条件运行）</text>
-    <text x="280" y="1510" text-anchor="middle" font-size="10" fill="#555">competitive-research（竞品调研）· solution-assessment（方案评估）</text>
-    <text x="280" y="1526" text-anchor="middle" font-size="10" fill="#555">project-scope（范围基线）· requirement-restate（需求复述）</text>
-    <text x="280" y="1542" text-anchor="middle" font-size="10" fill="#555">tracking-plan（埋点计划）· issue-record（问题清单）· prd-publish（PRD发布）</text>
+    <text x="280" y="1490" text-anchor="middle" font-size="11.5" font-weight="700" fill="#3A2E8F">4 分支产物 Skill + 1 能力（按触发条件运行）</text>
+    <text x="280" y="1510" text-anchor="middle" font-size="10" fill="#555">competitive-research（竞品调研）· feasibility-analysis（可行性分析）</text>
+    <text x="280" y="1526" text-anchor="middle" font-size="10" fill="#555">tracking-plan（埋点计划）· issue-record（问题清单）</text>
+    <text x="280" y="1542" text-anchor="middle" font-size="10" fill="#555">requirement-restate（需求重举 · 能力：复述 + 发散）</text>
     <text x="280" y="1558" text-anchor="middle" font-size="10" fill="#888">进入前按 Inquiry Contract 询问</text>
   </g>
   <path d="M300 1470 C300 1430 480 1410 468 1396" fill="none" stroke="#C9C2EE" stroke-width="1.3" stroke-dasharray="5 4" marker-end="url(#ar-purple)"/>
@@ -422,7 +450,7 @@ footer{margin-top:24px;text-align:center;color:#888;font-size:11px;padding-top:1
     <tr><th>命令</th><th>做什么</th><th>关键参数 / 检查</th><th>谁能改状态</th></tr>
     <tr><td><code>init REQ-NNN-topic</code></td><td>从注册表生成需求骨架（目录 + 授权清单 + 来源登记表 + README）</td><td>REQ-\d{3} 命名校验；已存在则拒绝</td><td class="ok">机器（仅骨架）</td></tr>
     <tr><td><code>status</code></td><td>全 work item 状态 + active/next/越级检测 + 信号层</td><td>B1 熔断 · B3 老化 · 范围冻结信号（orchestrator.py）</td><td class="ok">只读</td></tr>
-    <tr><td><code>entry</code></td><td>入口探索：内容六信号判定 L0-L4 + entry_blocked + 分支信号</td><td>问题/角色/约束/方案/功能/规则 六信号；L0→brainstorming、多源/歧义→restate</td><td class="ok">只读</td></tr>
+    <tr><td><code>entry</code></td><td>入口探索：内容六信号判定 L0-L4 + entry_blocked + 分支信号</td><td>问题/角色/约束/方案/功能/规则 六信号；L0→需求重举（发散）、多源/歧义→需求重举（复述）</td><td class="ok">只读</td></tr>
     <tr><td><code>gate --work-item X</code></td><td>机器闸门：DoR + DoD + 六态 + 自审 + B3 收口 + property + 追溯 + 哈希</td><td>dor_check / property_check(fd) / traceability(prd) / branch_validator</td><td class="ok">只读</td></tr>
     <tr><td><code>review --decision approve/changes</code></td><td>人工评审唯一入口：真实人名 + 授权清单 + 角色 + 机器闸门全过</td><td>--reviewer / --reviewer-id / --reviewer-role / --waive CODE=reason</td><td class="warn">人工（写 confirmed 的唯一路径 + SHA-256）</td></tr>
     <tr><td><code>reflow [--apply]</code></td><td>变更回流：dry-run 预览 → --apply 级联失效下游 + ChangeRecord（含 DEC-XXX 决策字段）</td><td>下游 confirmed/ready → superseded；next_work_item 回归最早受影响项</td><td class="warn">机器（--apply 时才写）</td></tr>
@@ -481,7 +509,7 @@ footer{margin-top:24px;text-align:center;color:#888;font-size:11px;padding-top:1
   <div class="desc" style="margin-top:14px;margin-bottom:0">信号层（status 可见，不自动执行动作）：<b>B1 熔断</b>（同一 work item 连续 3 轮 changes → 重新评估方向）· <b>B3 老化</b>（open 问题 7 天 flag / 14 天 escalate）· <b>范围冻结</b>（product-ux confirmed 后上游再评审 → 提示走 change-mgmt）。</div>
 </section>
 <section id="sec-skills">
-  <h2>6. Skill 全景说明书 <span class="badge">5 主 + 8 子 + 8 分支 = 21</span></h2>
+  <h2>6. Skill 全景说明书 <span class="badge">5 主 + 8 子 + 4 分支产物 + 1 能力 = 18</span></h2>
   <div class="desc">每个 skill 统一结构：SKILL.md（10 节）+ references（7 类）+ agents/openai.yaml + validate_artifact.py + README + 回归测试。数据来自 workflow-registry.json。</div>
   <h3 style="margin:14px 0 8px">主 skill（5 · 主干必做，永不询问）</h3>
   <table><tr><th>Skill</th><th>阶段/顺序</th><th>产物文件</th><th>ID 前缀</th><th>前置（须 confirmed）</th><th>评审角色</th><th>一句话定位</th></tr>
@@ -502,35 +530,27 @@ footer{margin-top:24px;text-align:center;color:#888;font-size:11px;padding-top:1
     <tr><td><code>exception-handling</code>（异常处理）</td><td><code>function-description</code></td><td>异常与失败处理</td><td>\bEX-\d+\b</td><td>Enumerate failure modes, retry/rollback/recovery policy, and user-visible prompts (EX-XXX) for each P0 function so the p</td></tr>
     <tr><td><code>acceptance-criteria</code>（验收标准）</td><td><code>function-description</code></td><td>验收依据</td><td>\bAC-\d+\b</td><td>Write atomic, measurable acceptance criteria AC-XXX in Given/When/Then for each P0 function, with quantified thresholds </td></tr>
   </table>
-  <h3 style="margin:14px 0 8px">分支 skill（8 · 触发才跑，进入前按 Inquiry Contract 询问）</h3>
-  <table><tr><th>分支 Skill</th><th>触发条件</th><th>适用阶段</th><th>回归点</th><th>产物落点</th><th>一句话定位</th></tr>
+  <h3 style="margin:14px 0 8px">分支产物 skill（4）+ 能力（1 · 触发才跑，进入前按 Inquiry Contract 询问）</h3>
+  <table><tr><th>分支产物 / 能力</th><th>触发条件</th><th>适用阶段</th><th>回归点</th><th>产物落点</th><th>一句话定位</th></tr>
     <tr><td><code>competitive-research</code>（竞品调研）</td><td>方案方向不清或功能设计缺乏参考</td><td>001 业务需求 / 002 产品需求</td><td><code>—</code></td><td><code>99-review/support/</code></td><td>Conduct competitive analysis when business solution is unclear and reference is lacking. Use structured frameworks (feat</td></tr>
-    <tr><td><code>solution-assessment</code>（方案评估）</td><td>已有产品级方案且可行性或多方案取舍影响范围/成本/风险</td><td>002 产品需求</td><td><code>—</code></td><td><code>99-review/support/</code></td><td>Compare materially different product solutions and assess feasibility using weighted decision matrix when scope, cost, c</td></tr>
-    <tr><td><code>prd-publish</code>（PRD 发布）</td><td>PRD confirmed</td><td>003 PRD 输出</td><td><code>—</code></td><td><code>99-review/support/</code></td><td>Export a human-confirmed PRD to requested delivery formats without changing content, decisions, or confirmation state. V</td></tr>
-    <tr><td><code>project-scope</code>（范围基线）</td><td>项目边界不清或范围蔓延风险</td><td>001 业务需求</td><td><code>—</code></td><td><code>99-review/support/</code></td><td>Standalone project scope definition — explicitly enumerate In-Scope, Out-of-Scope, Deferred, and Conditional-Scope items</td></tr>
-    <tr><td><code>requirement-restate</code>（需求复述）</td><td>干系人语言歧义或多来源术语不一致</td><td>001 业务需求</td><td><code>—</code></td><td><code>99-review/support/</code></td><td>Restate original requirements in the stakeholder's own words back to them as a structured list, before any design or PRD</td></tr>
+    <tr><td><code>feasibility-analysis</code>（可行性分析）</td><td>进入主干前评估可行性（市场/技术/投入产出/风险），或 ≥2 实质方案取舍</td><td>001 业务需求</td><td><code>project-background-goal</code></td><td><code>99-review/support/</code></td><td>Assess whether a concrete product-level solution is feasible across 市场空间/技术可行性/投入产出/风险评估, and produce 做/不做/有条件做 recommendation with explicit AI confidence. ≥2 materially different solutions → §多方案取舍 chapter (weighted matrix) inside the report</td></tr>
     <tr><td><code>tracking-plan</code>（埋点计划）</td><td>功能需要数据埋点或追踪计划</td><td>002 产品需求</td><td><code>—</code></td><td><code>99-review/support/</code></td><td>埋点与追踪计划 — 为每个 P0 功能定义事件、属性、触发时机、上报时机、平台、PII 标记与关联指标/目标，产出数据团队与工程团队可直接落地的 `tracking-plan.md`。Use when a function needs da</td></tr>
     <tr><td><code>issue-record</code>（问题清单）</td><td>任何阶段需求不明确、冲突或存在风险</td><td>001 业务需求 / 002 产品需求 / 003 PRD 输出</td><td><code>—</code></td><td><code>99-review/support/</code></td><td>跨阶段共享的问题清单 — 集中登记 BLK / RSK / DEC / INF / CLS / OUT 六类问题；任何阶段遇到需求不明确时 AI 主动询问是否登记。任何 Skill 都可以登记 / 引用 / 升级问题。</td></tr>
-    <tr><td><code>brainstorming</code>（发散收敛）</td><td>L0 仅想法或材料稀疏</td><td>001 业务需求</td><td><code>project-background-goal</code></td><td><code>99-review/support/</code></td><td>Diverge, cluster and converge sparse ideas (L0 idea only or thin materials) into an AI_INFERENCE candidate set, get huma</td></tr>
+    <tr><td><code>requirement-restate</code>（需求重举 · 能力）</td><td>材料稀疏 / 多源歧义 / L0 仅想法（entry 机器可判定）</td><td>001 业务需求</td><td><code>project-background-goal</code></td><td><code>99-review/support/</code></td><td>能力（output_kind=process）：复述 + 发散双模式，过程记录不进 PRD — 模式一以 stakeholder 原话 verbatim 复述确认；模式二按 12 维度发散候选交人工四值处置（仅 include 进 bg 输入包）。</td></tr>
   </table>
 </section>
 <section id="sec-artifacts">
-  <h2>7. 产物说明书 <span class="badge">10 个正式产物 + 支持产物</span></h2>
+  <h2>7. 产物说明书 <span class="badge">5 个主产物 + 支持产物</span></h2>
   <div class="desc">一个 artifact 一个位置、原地演进（v0.* 快照）；每条链路：上游确认 → 产物 → PRD 落点。</div>
   <table>
     <tr><th>产物</th><th>生产者</th><th>文件</th><th>进入 PRD 的位置</th><th>依赖上游</th></tr>
     <tr><td><code>project-background-goals</code>（项目背景与目标基线）</td><td><code>project-background-goal</code></td><td><code>001-business-requirements/01-background-goal/background-goal.md</code></td><td>项目背景、现状、问题、目标、角色、约束与范围依据</td><td>—（源头）</td></tr>
-    <tr><td><code>user-journey-map</code>（用户旅程地图）</td><td><code>user-journey-and-stories</code></td><td><code>001-business-requirements/02-user-journey-stories/journey-and-stories.md</code></td><td>角色、业务生命周期、场景路径与角色交接</td><td>project-background-goals</td></tr>
-    <tr><td><code>user-story-set</code>（用户故事集）</td><td><code>user-journey-and-stories</code></td><td><code>001-business-requirements/02-user-journey-stories/journey-and-stories.md</code></td><td>用户故事、业务价值与旅程覆盖关系</td><td>user-journey-map</td></tr>
-    <tr><td><code>scope-baseline</code>（项目范围基线（业务决策））</td><td><code>user-journey-and-stories</code></td><td><code>001-business-requirements/02-user-journey-stories/journey-and-stories.md</code></td><td>Stage 1 §10 范围基线 → Stage 2 引用</td><td>project-background-goals、user-story-set</td></tr>
-    <tr><td><code>feature-list</code>（功能清单）</td><td><code>product-ux</code></td><td><code>002-product-requirements/01-product-ux/product-ux.md</code></td><td>模块与功能清单、故事到功能映射</td><td>scope-baseline、user-story-set</td></tr>
-    <tr><td><code>ux-functional-flow</code>（UX/功能流程）</td><td><code>product-ux</code></td><td><code>002-product-requirements/01-product-ux/product-ux.md</code></td><td>入口、页面/步骤、状态、主支流程与跨系统交接</td><td>feature-list、user-journey-map</td></tr>
-    <tr><td><code>page-design</code>（页面与原型）</td><td><code>product-ux</code></td><td><code>002-product-requirements/01-product-ux/product-ux.md</code></td><td>页面骨架（§4）</td><td>ux-functional-flow</td></tr>
-    <tr><td><code>interaction-rules</code>（交互规则 IX（Structural））</td><td><code>product-ux</code></td><td><code>002-product-requirements/01-product-ux/product-ux.md</code></td><td>交互规则 IX-XXX（§3.3 Structural 层）</td><td>page-design</td></tr>
-    <tr><td><code>function-specifications</code>（功能描述与规则集）</td><td><code>function-description</code></td><td><code>002-product-requirements/02-function-description/function-description.md</code></td><td>FUN 功能描述，引用已确认 IX，并补充 BR、VL、权限、状态、异常恢复与 AC</td><td>feature-list、ux-functional-flow、interaction-rules</td></tr>
-    <tr><td><code>final-prd</code>（最终 PRD）</td><td><code>prd-assembly</code></td><td><code>003-prd-output/prd.md</code></td><td>最终唯一产品交付 prd.md</td><td>project-background-goals、user-journey-map、user-story-set、scope-baseline、feature-list、ux-functional-flow、function-specifications、page-design、interaction-rules</td></tr>
+    <tr><td><code>journey-and-stories</code>（用户旅程与故事）</td><td><code>user-journey-and-stories</code></td><td><code>001-business-requirements/02-user-journey-stories/journey-and-stories.md</code></td><td>用户旅程地图、用户故事集与业务范围基线（§10）</td><td>project-background-goals</td></tr>
+    <tr><td><code>product-ux</code>（产品 UX）</td><td><code>product-ux</code></td><td><code>002-product-requirements/01-product-ux/product-ux.md</code></td><td>功能清单、UX/功能流程、页面骨架（§4）与交互规则 IX-XXX</td><td>journey-and-stories</td></tr>
+    <tr><td><code>function-specifications</code>（功能描述与规则集）</td><td><code>function-description</code></td><td><code>002-product-requirements/02-function-description/function-description.md</code></td><td>FUN 功能描述，引用已确认 IX，并补充 BR、VL、权限、状态、异常恢复与 AC</td><td>product-ux</td></tr>
+    <tr><td><code>final-prd</code>（最终 PRD）</td><td><code>prd-assembly</code></td><td><code>003-prd-output/prd.md</code></td><td>最终唯一产品交付 prd.md</td><td>project-background-goals、journey-and-stories、product-ux、function-specifications</td></tr>
   </table>
-  <div class="desc" style="margin-top:10px;margin-bottom:0">支持产物（不直接进 PRD）：候选清单 SCN-XXX（brainstorming）· 复述清单 RR-NNN（restate）· 范围文档 S-NNN（scope）· 埋点事件表 EV-NNN（tracking）· 问题清单 ISS-NNN（issue-record，§13 收口表）· 竞品/方案/发布记录（99-review/support/）。</div>
+  <div class="desc" style="margin-top:10px;margin-bottom:0">支持产物（不直接进 PRD）：复述清单 RR-NNN / 发散候选 SCN-XXX（requirement-restate 能力，过程记录）· 埋点事件表 EV-NNN（tracking-plan）· 问题清单 ISS-NNN（issue-record，§13 收口表）· 竞品调研 / 可行性分析记录（99-review/support/）。</div>
 </section>
 <section id="sec-scripts">
   <h2>8. 脚本说明书 <span class="badge">11 个 · 机器循环引擎</span></h2>
@@ -558,7 +578,7 @@ footer{margin-top:24px;text-align:center;color:#888;font-size:11px;padding-top:1
     <tr><td><code>change-management（变更回流）</code></td><td>变更提案/审批/归档 + reflow 级联失效</td></tr>
     <tr><td><code>traceability（追溯）</code></td><td>跨产物 G→ST→FEA→FUN→AC→BR 追溯链</td></tr>
     <tr><td><code>decision-log（决策记录）</code></td><td>DEC-XXX 结构化决策记录模板</td></tr>
-    <tr><td><code>brainstorming（发散）</code></td><td>候选发散/场景穷举/处置表（已注册为正式分支 skill）</td></tr>
+    <tr><td><code>brainstorming（发散）</code></td><td>候选发散/场景穷举/处置表（需求重举能力 · 发散模式的机制支撑）</td></tr>
     <tr><td><code>intake-routing（入口路由）</code></td><td>L0-L4 成熟度判定 + entry-assessment 六信号</td></tr>
     <tr><td><code>project-init（项目初始化）</code></td><td>一键创建 REQ-DIR 骨架（init 命令的模板源）</td></tr>
   </table>
@@ -594,21 +614,50 @@ footer{margin-top:24px;text-align:center;color:#888;font-size:11px;padding-top:1
   </div>
 </section>
 <section id="sec-branches">
-  <h2>11. 分支 Skill 触发矩阵 <span class="badge">8 个 · 触发才跑</span></h2>
-  <div class="desc">分支 skill 不占主干；进入前按 Inquiry Contract 询问。prd-publish（PRD发布）的触发（PRD confirmed）可由 <code>entry</code> 机器检测并提示。</div>
+  <h2>11. 分支 Skill 触发矩阵 <span class="badge">4 分支产物 + 1 能力 · 触发才跑</span></h2>
+  <div class="desc">分支产物 skill 与能力不占主干；进入前按 Inquiry Contract 询问。发布已从 skill 变为动作：SHA-256 复核由 <code>branch_validator</code> 自动执行。</div>
   <div class="branch-grid">
-    <div class="bcard"><b>brainstorming（发散收敛）</b><div class="trig">触发：L0 仅想法或材料稀疏（entry 机器信号）</div><div class="out">产出：候选清单（SCN-XXX）+ 人工处置（include/exclude/defer/research），include 项进入 bg 输入包</div></div>
     <div class="bcard"><b>competitive-research（竞品调研）</b><div class="trig">触发：方案方向不清或功能设计缺乏参考</div><div class="out">产出：竞品分析（3-5 家）→ 99-review/support/</div></div>
-    <div class="bcard"><b>solution-assessment（方案评估）</b><div class="trig">触发：方案取舍影响范围/成本/风险</div><div class="out">产出：可行性报告 + 多方案对比（DEC-XXX 决策记录）</div></div>
-    <div class="bcard"><b>prd-publish（PRD 发布）</b><div class="trig">触发：prd-assembly（PRD汇总）confirmed（机器可检测 ✓）</div><div class="out">产出：发布记录（SHA-256 复核后才可发布）</div></div>
-    <div class="bcard"><b>project-scope（范围基线）</b><div class="trig">触发：项目边界不清或范围蔓延风险</div><div class="out">产出：In/Out/Deferred/Conditional 四类（S-NNN）</div></div>
-    <div class="bcard"><b>requirement-restate（需求复述）</b><div class="trig">触发：干系人语言歧义或多来源术语不一致</div><div class="out">产出：复述清单（RR-NNN，原文 verbatim）</div></div>
+    <div class="bcard"><b>feasibility-analysis（可行性分析）</b><div class="trig">触发：进入主干前评估可行性，或 ≥2 实质方案取舍</div><div class="out">产出：可行性报告 + §多方案取舍（DEC-XXX 决策记录）</div></div>
     <div class="bcard"><b>tracking-plan（埋点计划）</b><div class="trig">触发：功能需要数据埋点或追踪计划</div><div class="out">产出：事件表（EV-NNN，链 FUN- + G-）+ PII 登记</div></div>
     <div class="bcard"><b>issue-record（问题清单）</b><div class="trig">触发：任何阶段需求不明确/冲突/风险</div><div class="out">产出：六类问题清单（BLK/RSK/DEC/INF/CLS/OUT）</div></div>
+    <div class="bcard"><b>requirement-restate（需求重举 · 能力）</b><div class="trig">触发：材料稀疏 / 多源歧义 / L0 仅想法（entry 机器信号）</div><div class="out">产出：过程记录（复述清单 RR-NNN / 发散候选 SCN-XXX + 四值处置），仅 include 候选进入 bg 输入包</div></div>
   </div>
 </section>
+
+<!-- ================= 全景节点图（可展开） ================= -->
+<section id="sec-tree2">
+  <h2>全景节点图 <span class="badge">所有节点 · 点击展开</span></h2>
+  <div class="desc">全部 18 个 Skill、5 主产物、9 共享机制、信号层都在这一棵树上。点击任意节点标题展开/收起其子节点；用下面两个按钮可展开/收起整棵树。</div>
+  <div class="tree-actions">
+    <button class="tree-btn" id="tree-expand">⤢ 展开全部</button>
+    <button class="tree-btn" id="tree-collapse">⤡ 收起全部</button>
+  </div>
+  <div class="tree" id="tree">
+<div class="tnode t-root" data-depth="0"><div class="tnode-h"><span class="ttoggle">▸</span><span class="tbadge">总览</span><span class="tname">PM Scaffold 全景节点图</span></div><div class="tnode-d">18 个 Skill（5 主 + 8 子 + 4 分支产物 + 1 能力）+ 5 主产物 + 9 共享机制 + 信号层。点击任意节点展开/收起。</div><div class="tchildren">
+<div class="tnode t-entry" data-depth="1"><div class="tnode-h"><span class="ttoggle">▸</span><span class="tbadge">入口</span><span class="tname">入口探索（Stage 0）</span></div><div class="tnode-d">进入主干前的判定与理解：材料六信号判 L0-L4 → 发散/复述/可行性 → 主干 bg。</div><div class="tchildren">
+<div class="tnode t-cmd" data-depth="2"><div class="tnode-h"><span class="ttoggle leaf"></span><span class="tbadge">命令</span><span class="tname">entry 内容判定（L0-L4）</span></div><div class="tnode-d">读 00-input 内容六信号（问题/角色/约束/方案/功能/规则）判成熟度；L0/L1 输出 entry_blocked（材料不足）。</div></div><div class="tnode t-cap" data-depth="2"><div class="tnode-h"><span class="ttoggle leaf"></span><span class="tbadge">能力</span><span class="tname">需求重举能力（requirement-restate）</span></div><div class="tnode-d">output_kind=process（能力，过程记录不进 PRD）。<b>复述模式</b>：RR-NNN verbatim 复述确认，CONFLICT→issue-record(CLS)、UNKNOWN→Q-XXX(INF)。<b>发散模式</b>：SCN-XXX 候选 12 维度发散 → 人工四值处置（include/exclude/defer/research）→ include 候选进 bg 输入包。</div></div><div class="tnode t-branch" data-depth="2"><div class="tnode-h"><span class="ttoggle leaf"></span><span class="tbadge">分支产物</span><span class="tname">可行性分析（feasibility-analysis）</span></div><div class="tnode-d">分支产物。四要素：市场空间 / 技术可行性 / 投入产出 / 风险评估；多方案决策矩阵为其一章。</div></div>
+</div></div><div class="tnode t-stage" data-depth="1"><div class="tnode-h"><span class="ttoggle">▸</span><span class="tbadge">阶段</span><span class="tname">001 业务需求</span></div><div class="tnode-d">业务真相与范围的源头。</div><div class="tchildren">
+<div class="tnode t-main" data-depth="2"><div class="tnode-h"><span class="ttoggle leaf"></span><span class="tbadge">主 skill</span><span class="tname">主① project-background-goal（项目背景与目标）</span></div><div class="tnode-d">产物 background-goal.md（BG-）。DoR 硬检查「00-input ≥1 SRC」。背景/现状/问题/目标/角色/约束，六态标注。评审角色：business_owner / product_owner。</div></div><div class="tnode t-main" data-depth="2"><div class="tnode-h"><span class="ttoggle leaf"></span><span class="tbadge">主 skill</span><span class="tname">主② user-journey-and-stories（用户旅程与故事）</span></div><div class="tnode-d">产物 journey-and-stories.md（1 文件 3 章节：范围基线 In/Out/Deferred/Conditional + 旅程 + 故事 ST-）。前置：主① confirmed。评审：business_owner / product_owner。</div></div>
+</div></div><div class="tnode t-stage" data-depth="1"><div class="tnode-h"><span class="ttoggle">▸</span><span class="tbadge">阶段</span><span class="tname">002 产品需求</span></div><div class="tnode-d">把业务需求细化为产品方案。</div><div class="tchildren">
+<div class="tnode t-main" data-depth="2"><div class="tnode-h"><span class="ttoggle">▸</span><span class="tbadge">主 skill</span><span class="tname">主③ product-ux（产品 UX）</span></div><div class="tnode-d">产物 product-ux.md（1 文件 4 章节：功能清单 FEA- / UX 流程 / 交互规则 IX- / 页面设计）。评审：product_owner。</div><div class="tchildren">
+<div class="tnode t-sub" data-depth="3"><div class="tnode-h"><span class="ttoggle leaf"></span><span class="tbadge">子 skill</span><span class="tname">子 ux-flow（UX 流程）</span></div><div class="tnode-d">§UX 流程章节。每 P0 FEA≥1 图、分支互斥穷尽、每步追溯 ST/FEA。</div></div><div class="tnode t-sub" data-depth="3"><div class="tnode-h"><span class="ttoggle leaf"></span><span class="tbadge">子 skill</span><span class="tname">子 interaction-rules（交互规则）</span></div><div class="tnode-d">§交互规则 IX-XXX。操作/反馈/权限/可逆性，状态覆盖 loading/empty/error/disabled。</div></div><div class="tnode t-sub" data-depth="3"><div class="tnode-h"><span class="ttoggle leaf"></span><span class="tbadge">子 skill</span><span class="tname">子 page-design（页面设计）</span></div><div class="tnode-d">§页面设计。页面骨架 + 可点击原型（两步流程：页面清单先人工确认 → 单文件 HTML）。</div></div>
+</div></div><div class="tnode t-main" data-depth="2"><div class="tnode-h"><span class="ttoggle">▸</span><span class="tbadge">主 skill</span><span class="tname">主④ function-description（功能描述）</span></div><div class="tnode-d">产物 function-description.md（FUN- 含 BR/VL/State/EX/AC + 字段定义表）。gate 额外跑 property_check（状态机穷尽/异常恢复/VL↔AC/规则密度）。评审：product_owner / business_owner。</div><div class="tchildren">
+<div class="tnode t-sub" data-depth="3"><div class="tnode-h"><span class="ttoggle leaf"></span><span class="tbadge">子 skill</span><span class="tname">子 business-rules（业务规则 BR-）</span></div><div class="tnode-d">计算/约束/条件/权限/时序五类，每条可执行。</div></div><div class="tnode t-sub" data-depth="3"><div class="tnode-h"><span class="ttoggle leaf"></span><span class="tbadge">子 skill</span><span class="tname">子 validation-rules（校验规则 VL- + 字段定义表）</span></div><div class="tnode-d">VL- 校验规则 + 字段定义表（字段名/类型/长度/来源）。</div></div><div class="tnode t-sub" data-depth="3"><div class="tnode-h"><span class="ttoggle leaf"></span><span class="tbadge">子 skill</span><span class="tname">子 state-machine（状态机 STATE-）</span></div><div class="tnode-d">状态定义 + 转换表 + 禁止转换显式声明 + 终态不可回退。</div></div><div class="tnode t-sub" data-depth="3"><div class="tnode-h"><span class="ttoggle leaf"></span><span class="tbadge">子 skill</span><span class="tname">子 exception-handling（异常处理 EX-）</span></div><div class="tnode-d">六类失败源，恢复方式（重试/手动/自动/终止）+ 用户提示。</div></div><div class="tnode t-sub" data-depth="3"><div class="tnode-h"><span class="ttoggle leaf"></span><span class="tbadge">子 skill</span><span class="tname">子 acceptance-criteria（验收标准 AC-）</span></div><div class="tnode-d">Given/When/Then + 量化阈值 + 追溯 G-XXX。</div></div>
+</div></div>
+</div></div><div class="tnode t-stage" data-depth="1"><div class="tnode-h"><span class="ttoggle">▸</span><span class="tbadge">阶段</span><span class="tname">003 PRD 输出</span></div><div class="tnode-d">聚合为唯一交付物。</div><div class="tchildren">
+<div class="tnode t-main" data-depth="2"><div class="tnode-h"><span class="ttoggle leaf"></span><span class="tbadge">主 skill</span><span class="tname">主⑤ prd-assembly（PRD 汇总）</span></div><div class="tnode-d">产物 prd.md（唯一最终交付）。只聚合不发明；gate 跑双向追溯。评审：product_owner / business_owner。发布复核：SHA-256 由 branch_validator 自动执行。</div></div>
+</div></div><div class="tnode t-branch" data-depth="1"><div class="tnode-h"><span class="ttoggle">▸</span><span class="tbadge">分支产物</span><span class="tname">分支产物与贯穿（4 分支 + 问题清单）</span></div><div class="tnode-d">触发才跑，默认不进 PRD 正文。</div><div class="tchildren">
+<div class="tnode t-branch" data-depth="2"><div class="tnode-h"><span class="ttoggle leaf"></span><span class="tbadge">分支产物</span><span class="tname">competitive-research（竞品调研）</span></div><div class="tnode-d">方向不清/缺参考时触发。竞品 3-5 家对比。→ 99-review/support/</div></div><div class="tnode t-branch" data-depth="2"><div class="tnode-h"><span class="ttoggle leaf"></span><span class="tbadge">分支产物</span><span class="tname">tracking-plan（埋点计划）</span></div><div class="tnode-d">需要数据埋点时触发。EV-NNN 事件表 + 覆盖矩阵 + PII 登记。</div></div><div class="tnode t-branch" data-depth="2"><div class="tnode-h"><span class="ttoggle leaf"></span><span class="tbadge">分支产物</span><span class="tname">issue-record（问题清单，独立产物贯穿）</span></div><div class="tnode-d">六类问题 BLK/RSK/DEC/INF/CLS/OUT（ISS-）。B3 每阶段强制收口：§13 收口表 + 待确认引用。7 天 flag / 14 天 escalate。</div></div>
+</div></div><div class="tnode t-mech" data-depth="1"><div class="tnode-h"><span class="ttoggle">▸</span><span class="tbadge">机制</span><span class="tname">贯穿机制（9 共享 + 闸门 + 信号）</span></div><div class="tnode-d">不占主干，横向复用。</div><div class="tchildren">
+<div class="tnode t-mech" data-depth="2"><div class="tnode-h"><span class="ttoggle leaf"></span><span class="tbadge">机制</span><span class="tname">8 步循环</span></div><div class="tnode-d">Preflight→Intake→Think→Clarify→Generate→Audit→Human Gate→Commit/Reflow，每个工作项必走。</div></div><div class="tnode t-mech" data-depth="2"><div class="tnode-h"><span class="ttoggle leaf"></span><span class="tbadge">机制</span><span class="tname">9 共享机制</span></div><div class="tnode-d">audit / human-gate / clarify / change-management / traceability / decision-log / brainstorming(发散库) / intake-routing / project-init。</div></div><div class="tnode t-mech" data-depth="2"><div class="tnode-h"><span class="ttoggle leaf"></span><span class="tbadge">机制</span><span class="tname">机器闸门（dor_check）</span></div><div class="tnode-d">DoR（上游 confirmed + 入口材料）+ DoD（校验器 + 六态 + 自审 + B3 收口）。</div></div><div class="tnode t-mech" data-depth="2"><div class="tnode-h"><span class="ttoggle leaf"></span><span class="tbadge">机制</span><span class="tname">信号层（orchestrator）</span></div><div class="tnode-d">B1 熔断（连续 3 轮 changes）/ B3 老化（7/14 天）/ 范围冻结（product-ux 确认后上游变更）。</div></div><div class="tnode t-mech" data-depth="2"><div class="tnode-h"><span class="ttoggle leaf"></span><span class="tbadge">机制</span><span class="tname">六态知识标注</span></div><div class="tnode-d">FACT / DECISION / ASSUMPTION(≤30%) / AI_INFERENCE / UNKNOWN / CONFLICT。</div></div>
+</div></div>
+</div></div>
+  </div>
+</section>
+
 <section id="sec-tree">
-  <h2>12. 文件完整架构 <span class="badge">21 Skill · 9 共享模块 · 11 脚本</span></h2>
+  <h2>12. 文件完整架构 <span class="badge">18 Skill · 9 共享模块 · 11 脚本</span></h2>
   <div class="desc">每个目录/文件一句话职责。★ = 唯一真相源 / 核心引擎。每个 skill 内部统一为：<code>SKILL.md</code>（10 节）+ <code>references/</code>（7 类）+ <code>agents/openai.yaml</code> + <code>scripts/validate_artifact.py</code> + <code>README.md</code>。</div>
   <pre style="font-family:&#39;SF Mono&#39;,Menlo,monospace;font-size:11.5px;line-height:1.75;background:#F8F8FA;border:1px solid #E5E5E5;border-radius:10px;padding:18px 20px;overflow-x:auto;color:#333">
 PM Scaffold · 文件完整架构
@@ -624,7 +673,7 @@ PM Scaffold · 文件完整架构
 ├─ skills/pm-scaffold/SKILL.md  打包清单（对外安装入口）
 ├─ src/
 │  ├─ framework/                治理层（Agent 先读这里）
-│  │  ├─ workflow-registry.json  ★ 唯一机器真相源（schema v5：5 主 + 8 子 + 8 分支）
+│  │  ├─ workflow-registry.json  ★ 唯一机器真相源（schema v6：5 主 + 8 子 + 4 分支产物 + 1 能力）
 │  │  ├─ constitution.md         6 条硬宪法
 │  │  ├─ contracts.md            六态知识标注 + 确认不变式（SHA-256）
 │  │  ├─ workflow.md             8 步循环 + Entry And Exit
@@ -641,25 +690,22 @@ PM Scaffold · 文件完整架构
 │  │  ├─ property_check.py      逻辑完备（状态机/异常/VL↔AC/规则密度，fd 专属）
 │  │  ├─ branch_validator.py    评审记录真实性 + SHA-256 比对
 │  │  └─ migrate_layout_v2.py   一次性迁移工具（--apply 需 --confirm 防护）
-│  ├─ stages/                   3 阶段 × 5 主 + 8 子 + 3 分支
+│  ├─ stages/                   3 阶段 × 5 主 + 8 子 + 1 分支产物 + 1 能力
 │  │  ├─ 001-business-requirements/
 │  │  │  ├─ skills/project-background-goal/    主① 项目背景与目标
 │  │  │  ├─ skills/user-journey-and-stories/   主② 用户旅程与故事
-│  │  │  ├─ skills/project-scope/              分支 · 范围基线
-│  │  │  └─ skills/requirement-restate/        分支 · 需求复述
+│  │  │  └─ skills/requirement-restate/        能力 · 需求重举（复述 + 发散）
 │  │  ├─ 002-product-requirements/
 │  │  │  ├─ skills/product-ux/                 主③ 产品 UX
 │  │  │  │  └─ skills/{ux-flow, page-design, interaction-rules}/   3 子
 │  │  │  ├─ skills/function-description/       主④ 功能描述
 │  │  │  │  └─ skills/{business-rules, validation-rules, state-machine,
 │  │  │  │            exception-handling, acceptance-criteria}/      5 子
-│  │  │  └─ skills/tracking-plan/              分支 · 埋点计划
+│  │  │  └─ skills/tracking-plan/              分支产物 · 埋点计划
 │  │  └─ 003-prd-output/skills/prd-assembly/   主⑤ PRD 汇总（只聚合不发明）
-│  ├─ support-skills/           4 支持 skill（按需触发，resume→bg）
-│  │  ├─ brainstorming/         发散收敛（L0 触发 · 候选四值处置）
+│  ├─ support-skills/           2 支持 skill（按需触发）
 │  │  ├─ competitive-research/  竞品调研
-│  │  ├─ solution-assessment/   方案评估
-│  │  └─ prd-publish/           PRD 发布（SHA-256 复核）
+│  │  └─ feasibility-analysis/  可行性分析（resume→bg）
 │  ├─ shared/                   9 共享机制（横向复用，不占主干）
 │  │  ├─ audit/ human-gate/ clarify/（含 issue-record skill + 收口表）
 │  │  ├─ change-management/ traceability/ decision-log/
@@ -674,11 +720,11 @@ PM Scaffold · 文件完整架构
 </section>
 <section id="sec-kpi">
   <h2>13. 测试与质量基线 <span class="badge">61/61</span></h2>
-  <div class="desc">run_tests.sh 由注册表驱动：5 主 + 8 子 + 8 分支校验器全量语法检查与 fixture 验证；<b>violation 负例反向断言</b>——故意违规样本必须被校验器拒绝，否则 FAIL。</div>
+  <div class="desc">run_tests.sh 由注册表驱动：5 主 + 8 子 + 4 分支产物 + 1 能力校验器全量语法检查与 fixture 验证；<b>violation 负例反向断言</b>——故意违规样本必须被校验器拒绝，否则 FAIL。</div>
   <div class="kpi-grid">
     <div class="kpi"><div class="n">61/61</div><div class="l">回归检查（含 4 负例反向断言）</div></div>
-    <div class="kpi"><div class="n">21</div><div class="l">Skill（5 主 + 8 子 + 8 分支）</div></div>
-    <div class="kpi"><div class="n">21</div><div class="l">手写 validate_artifact.py</div></div>
+    <div class="kpi"><div class="n">18</div><div class="l">Skill（5 主 + 8 子 + 4 分支产物 + 1 能力）</div></div>
+    <div class="kpi"><div class="n">18</div><div class="l">手写 validate_artifact.py</div></div>
     <div class="kpi"><div class="n">0</div><div class="l">一致性错误（consistency_check）</div></div>
   </div>
 </section>
@@ -732,7 +778,7 @@ PM Scaffold · 文件完整架构
 
 <h4>1.2 它由哪些部分组成</h4>
 <ul>
-  <li><b>21 个 Skill（5 主 + 8 子 + 8 分支）</b>：5 个主干 skill 是必做主线——<code>project-background-goal</code>（项目背景与目标）→ <code>user-journey-and-stories</code>（用户旅程与故事）→ <code>product-ux</code>（产品 UX）→ <code>function-description</code>（功能描述）→ <code>prd-assembly</code>（PRD 汇总）。8 个子 skill 挂在两个主干下面细化（product-ux 内：ux-flow / page-design / interaction-rules；function-description 内：business-rules / validation-rules / state-machine / exception-handling / acceptance-criteria）。8 个分支 skill 按需触发（brainstorming、competitive-research、solution-assessment、prd-publish、project-scope、requirement-restate、tracking-plan、issue-record）。每个 skill 都自带标准章节执行协议、7 类参考知识库和机器校验器，数量全部来自注册表 workflow-registry.json（唯一真相源）。</li>
+  <li><b>18 个 Skill（5 主 + 8 子 + 4 分支产物 + 1 能力）</b>：5 个主干 skill 是必做主线——<code>project-background-goal</code>（项目背景与目标）→ <code>user-journey-and-stories</code>（用户旅程与故事）→ <code>product-ux</code>（产品 UX）→ <code>function-description</code>（功能描述）→ <code>prd-assembly</code>（PRD 汇总）。8 个子 skill 挂在两个主干下面细化（product-ux 内：ux-flow / page-design / interaction-rules；function-description 内：business-rules / validation-rules / state-machine / exception-handling / acceptance-criteria）。4 个分支产物 skill 按需触发（competitive-research、feasibility-analysis、tracking-plan、issue-record），另 1 个能力：requirement-restate（需求重举 · 复述 + 发散双模式，过程记录不进 PRD）。每个 skill 都自带标准章节执行协议、7 类参考知识库和机器校验器，数量全部来自注册表 workflow-registry.json（唯一真相源）。</li>
   <li><b>11 个脚本</b>（在 src/scripts/）：pipeline.py（命令入口：init / status / entry / gate / review / reflow）、orchestrator.py（状态机 + 信号层）、dor_check.py（闸门检查）、workflow_registry.py（注册表访问器）、consistency_check.py（跨文档一致性）、traceability_check.py（双向追溯）、property_check.py（逻辑完备）、branch_validator.py（评审记录与哈希校验）、migrate_layout_v2.py（布局迁移）、render_diagrams.sh 与 render_mermaid_local.html（图表辅助）。全部只用 Python 标准库，AI 不需要装任何第三方包。</li>
   <li><b>9 个共享机制</b>（在 src/shared/）：audit（审查闸门）、human-gate（人工闸门）、clarify（澄清循环）、change-management（变更回流）、traceability（追溯）、decision-log（决策记录）、brainstorming（需求发散）、intake-routing（入口路由）、project-init（项目初始化）。它们横向服务所有阶段，是脚手架的「公共服务」。</li>
 </ul>
@@ -827,7 +873,7 @@ bash run_tests.sh   # 第一次自检：看到 "Result: 61 passed / 0 failed" �
 <p>先弄明白 run_tests.sh 到底在跑什么（按顺序）：</p>
 <ul>
   <li><b>① 跨文档一致性检查</b>（consistency_check.py）：注册表、技能路径、模板引用互相能不能对上——对不上说明架构「说一套做一套」。</li>
-  <li><b>② 21 个 Skill 的校验器检查</b>：每个 skill 的 validate_artifact.py 语法正确 + 正例样本必须通过；<b>故意违规的样本（violation）必须被拒绝</b>——拒绝不了说明校验器形同虚设（负例反向断言）。</li>
+  <li><b>② 18 个 Skill 的校验器检查</b>：每个 skill 的 validate_artifact.py 语法正确 + 正例样本必须通过；<b>故意违规的样本（violation）必须被拒绝</b>——拒绝不了说明校验器形同虚设（负例反向断言）。</li>
   <li><b>③ 单元测试</b>：test/ 目录下的回归测试。</li>
   <li><b>④ 已有需求实例的体检</b>：状态、分支记录、追溯检查（没有需求实例会自动跳过）。</li>
 </ul>
@@ -848,7 +894,7 @@ bash run_tests.sh   # 第一次自检：看到 "Result: 61 passed / 0 failed" �
   <li><b>src/stages/</b>：3 个阶段 × 5 个主 skill + 8 个子 skill 的实现。</li>
   <li><b>src/scripts/</b>：11 个脚本（命令入口 + 校验器们）。</li>
   <li><b>src/shared/</b>：9 个共享机制。</li>
-  <li><b>src/support-skills/</b>：4 个支持 skill（发散、竞品、方案、发布）。</li>
+  <li><b>src/support-skills/</b>：2 个支持 skill（竞品调研、可行性分析）。</li>
   <li><b>src/templates/</b>：24 个产物模板。</li>
   <li><b>src/toolkit/</b>：工具指南（本教程所在的驾驶舱 HTML 就在这里）。</li>
   <li><b>test/</b>：回归测试。</li>
@@ -949,7 +995,7 @@ bash run_tests.sh   # 第一次自检：看到 "Result: 61 passed / 0 failed" �
 <p><b>你说：</b></p>
 <pre class="tut-code">"帮我初始化一个新需求，编号 REQ-001，主题是客户邀约。
  然后把我的材料放进 00-input，跑一下入口判定，告诉我成熟度。"</pre>
-<p><b>AI 做：</b>建好需求骨架目录（含授权清单和来源登记表），把材料登记成 SRC-001、SRC-002…，跑 entry 判定。如果材料只有想法，它会说：<i>「entry 判定结果：L0 仅想法，材料不足。建议先跑 brainstorming（发散收敛）——我把候选列出来，你来处置。」</i></p>
+<p><b>AI 做：</b>建好需求骨架目录（含授权清单和来源登记表），把材料登记成 SRC-001、SRC-002…，跑 entry 判定。如果材料只有想法，它会说：<i>「entry 判定结果：L0 仅想法，材料不足。建议先跑需求重举（发散模式）——我把候选列出来，你来处置。」</i></p>
 <p><b>你确认：</b>要么补材料，要么说「<i>好，先发散</i>」——等候选清单出来后，你人工勾选 include（进入需求）/ exclude（排除）/ defer（延后）/ research（待研究）。只有 include 的候选进入背景目标的输入包。</p>
 
 <h4>第 2 幕 · 业务需求（背景目标 → 旅程故事）</h4>
@@ -1056,7 +1102,7 @@ ERROR: machine gates must pass before approval
 <h4>④ 最终交付确认</h4>
 <p>prd.md 确认后，流程还没完，还有三件收尾：</p>
 <ul>
-  <li><b>发布</b>：触发 prd-publish（PRD 发布）分支 skill——它在 SHA-256 复核后产出发布记录，把「这份 prd.md 就是这个版本、就是这份内容」固化下来；</li>
+  <li><b>发布</b>：执行发布动作——它由 branch_validator 自动做 SHA-256 复核后产出发布记录，把「这份 prd.md 就是这个版本、就是这份内容」固化下来；</li>
   <li><b>双 Agent 复核</b>：让另一个 Agent（如 Codex）对最终 PRD 做独立验收（做法见第 10 章）；</li>
   <li><b>交付业务方</b>：把 prd.md 和相关评审记录交给业务方收口——最终交付的确认和发布，由你（或授权业务方）完成。</li>
 </ul>
@@ -1075,11 +1121,11 @@ ERROR: machine gates must pass before approval
 "跑 entry 判定，告诉我当前成熟度（L0-L4）和下一步建议。"
 
 # ④ 发散（L0 仅想法时）
-"材料不够，跑 brainstorming 发散收敛：把候选列成清单，我来处置
+"材料不够，跑需求重举（发散模式）：把候选列成清单，我来处置
  （include / exclude / defer / research）。"
 
 # ⑤ 复述（多来源 / 术语有歧义时）
-"材料里同一个概念说法不一致，跑 requirement-restate，把我的原话逐条复述成清单让我核对。"</pre>
+"材料里同一个概念说法不一致，跑需求重举（复述模式），把我的原话逐条复述成清单让我核对。"</pre>
 
 <h4>8.2 起草与子 skill</h4>
 <pre class="tut-code"># ⑥ 起草项目背景与目标
@@ -1132,7 +1178,7 @@ ERROR: machine gates must pass before approval
 "汇总 PRD，只聚合已确认产物；发现缺口告诉我回哪一步补。用 {standard / executive / technical} 变体输出。"
 
 # ⑲ 发布
-"prd.md 已确认，执行 prd-publish：SHA-256 复核后产出发布记录。"
+"prd.md 已确认，执行发布动作：branch_validator 自动做 SHA-256 复核后产出发布记录。"
 
 # ⑳ 自检
 "跑一遍 bash run_tests.sh 全量自检，把结果贴给我。"
@@ -1149,7 +1195,7 @@ ERROR: machine gates must pass before approval
 <p><b>① 入口材料不足（entry_material）</b>——第一项工作项送审前必须至少有 1 份 SRC 材料：</p>
 <pre class="tut-code">FAIL entry_material 00-input SRC materials: 0 (need >= 1)
 → 修法：把原始材料（纪要/邮件/PPT）放进 00-input 并登记成 SRC-001 起，
-  或用 brainstorming 发散出候选。没有材料，背景目标就无从谈起。</pre>
+  或用需求重举（发散模式）发散出候选。没有材料，背景目标就无从谈起。</pre>
 <p><b>② 六态覆盖不全（knowledge_state_coverage）</b>——送审产物必须六态全出现、假设占比不超 30%：</p>
 <pre class="tut-code">FAIL knowledge_state_coverage missing=FACT,UNKNOWN | covered=4/6 total=12 assumption_ratio=0.25
 → 修法：让 AI 补上缺失的标注——把有依据的标 FACT、把没依据的标 UNKNOWN，
@@ -1200,22 +1246,19 @@ ERROR: waiver_required issue 'xxx' needs --waive CODE=&lt;reason&gt;
 <p>用另一个 Agent（比如 Codex）：<i>「检查 requirements/REQ-001 的产物是否满足 AGENTS.md 的红线，逐条给结论，不要修改任何文件。」</i>——两个 Agent 互相制衡，谁都不能自说自话。</p>
 
 <h3 id="tut-10">10. 进阶玩法</h3>
-<p>这一章讲四个「更进一步」的能力：分支 skill、信号层、双 Agent 制衡、技法吸收。</p>
+<p>这一章讲四个「更进一步」的能力：分支产物 skill 与能力、信号层、双 Agent 制衡、技法吸收。</p>
 
-<h4>10.1 分支 Skill：什么时候触发、对话里怎么触发</h4>
-<p>分支 skill 不占主干，只在<b>触发条件满足时</b>跑，产物默认落在 99-review/support/，不进 PRD 正文。8 个的触发条件（来自注册表 trigger 字段）与对话触发方式：</p>
+<h4>10.1 分支产物 Skill 与能力：什么时候触发、对话里怎么触发</h4>
+<p>分支产物 skill 与能力不占主干，只在<b>触发条件满足时</b>跑，产物默认落在 99-review/support/，不进 PRD 正文。4 个分支产物 + 1 能力的触发条件（来自注册表 trigger 字段）与对话触发方式：</p>
 <table>
-  <tr><th>分支 Skill</th><th>什么时候触发（注册表原文）</th><th>对话怎么触发</th></tr>
-  <tr><td><code>brainstorming</code>（发散收敛）</td><td>L0 仅想法或材料稀疏（entry 机器可判定）</td><td>"材料不够，跑 brainstorming 发散，候选我来处置"</td></tr>
+  <tr><th>分支产物 / 能力</th><th>什么时候触发（注册表原文）</th><th>对话怎么触发</th></tr>
   <tr><td><code>competitive-research</code>（竞品调研）</td><td>方案方向不清或功能设计缺乏参考</td><td>"这个功能没有参考，跑竞品调研，3-5 家"</td></tr>
-  <tr><td><code>solution-assessment</code>（方案评估）</td><td>已有产品级方案且可行性或多方案取舍影响范围/成本/风险</td><td>"A 和 B 两个方案取舍会影响成本，跑方案评估"</td></tr>
-  <tr><td><code>prd-publish</code>（PRD 发布）</td><td>PRD confirmed（entry 可机器提示）</td><td>"prd.md 已确认，执行 prd-publish 发布"</td></tr>
-  <tr><td><code>project-scope</code>（范围基线）</td><td>项目边界不清或范围蔓延风险</td><td>"边界总在变，跑 project-scope 把 In/Out/Deferred 定下来"</td></tr>
-  <tr><td><code>requirement-restate</code>（需求复述）</td><td>干系人语言歧义或多来源术语不一致</td><td>"两个材料说法不一致，先复述给我核对"</td></tr>
+  <tr><td><code>feasibility-analysis</code>（可行性分析）</td><td>进入主干前评估可行性（市场/技术/投入产出/风险）</td><td>"进主干前先跑可行性分析，评估市场/技术/投入产出/风险"</td></tr>
   <tr><td><code>tracking-plan</code>（埋点计划）</td><td>功能需要数据埋点或追踪计划</td><td>"这个功能要埋点，跑 tracking-plan 出事件表"</td></tr>
   <tr><td><code>issue-record</code>（问题清单）</td><td>任何阶段需求不明确、冲突或存在风险</td><td>"把这些问题都登记进 issue-record"（AI 也会主动问你「要不要登记」）</td></tr>
+  <tr><td><code>requirement-restate</code>（需求重举 · 能力）</td><td>材料稀疏 / 多源歧义 / L0 仅想法（entry 机器可判定）</td><td>"两个材料说法不一致或材料不够，先跑需求重举（复述/发散）核对"</td></tr>
 </table>
-<p>触发前 AI 会问你「要不要跑」——你同意才进。8 个分支 skill 的产物：候选清单 SCN-XXX（发散）、竞品分析（3-5 家）、可行性报告与方案对比（DEC-XXX）、发布记录（SHA-256 复核）、范围文档 S-NNN（In/Out/Deferred/Conditional 四类）、复述清单 RR-NNN（原文 verbatim）、埋点事件表 EV-NNN（链 FUN- 与 G-）、问题清单 ISS-NNN（BLK/RSK/DEC/INF/CLS/OUT 六类）。</p>
+<p>触发前 AI 会问你「要不要跑」——你同意才进。4 个分支产物 skill 的产物：竞品分析（3-5 家）、可行性报告（含 §多方案取舍 DEC-XXX）、埋点事件表 EV-NNN（链 FUN- 与 G-）、问题清单 ISS-NNN（BLK/RSK/DEC/INF/CLS/OUT 六类）；requirement-restate 能力的产物是过程记录（复述清单 RR-NNN 原文 verbatim / 发散候选 SCN-XXX + 四值处置，仅 include 进 bg 输入包）。发布是动作而非 skill：SHA-256 复核由 branch_validator 自动执行。</p>
 
 <h4>10.2 信号层：三种信号的含义与应对</h4>
 <p>随时可以问 AI「<i>当前需求有什么信号</i>」——它读的是 orchestrator 的信号层（全部是提示，不会自动执行动作）：</p>
@@ -1288,6 +1331,30 @@ ERROR: waiver_required issue 'xxx' needs --waive CODE=&lt;reason&gt;
   window.addEventListener('scroll', spy, {passive:true});
   spy();
   document.documentElement.style.scrollBehavior = 'smooth';
+})();
+</script>
+
+
+<script>
+(function(){
+  function bindTree(){
+    document.querySelectorAll('.tnode-h').forEach(function(h){
+      if (!h.querySelector('.ttoggle.leaf')) {
+        h.addEventListener('click', function(e){
+          e.stopPropagation();
+          var node = h.parentElement;
+          node.classList.toggle('open');
+        });
+      }
+    });
+  }
+  var exp = document.getElementById('tree-expand');
+  var col = document.getElementById('tree-collapse');
+  if (exp) exp.addEventListener('click', function(){ document.querySelectorAll('#tree .tnode').forEach(function(n){ if(n.querySelector('.tchildren')) n.classList.add('open'); }); });
+  if (col) col.addEventListener('click', function(){ document.querySelectorAll('#tree .tnode').forEach(function(n){ n.classList.remove('open'); }); });
+  bindTree();
+  // 默认展开前两层（root + 顶层类别）
+  document.querySelectorAll('#tree > .tnode').forEach(function(n){ n.classList.add('open'); });
 })();
 </script>
 

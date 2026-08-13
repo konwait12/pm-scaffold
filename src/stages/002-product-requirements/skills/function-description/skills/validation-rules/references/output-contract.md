@@ -51,6 +51,19 @@ Use all headings from `src/templates/stage-2-product/function-description.md` fo
 |---|---|---|---|---|---|---|---|
 | VL-XXX | what is checked | executable value domain | when it fails | Chinese message (≤30 chars) | F-XXX | BR-XXX | FACT/DECISION/... |
 
+## 字段定义表 (Field Definition Table)
+
+按需产出（P1 按需），并入老版「字段规则说明」（字段名称、类型、长度、校验规则、来源）；同域合并到本 Skill。当上游 product-ux 的字段定义需要补充实现级字段契约时，在 §系统校验 内产出 `字段定义表` 小节。字段级校验逻辑由 VL-XXX 承担，本表只登记字段契约，不重复撰写校验表达式。
+
+| 字段 ID | 字段名 | 类型 | 长度/范围 | 必填 | 来源（上游 IX/FUN） | 关联校验 VL-XXX |
+|---|---|---|---|---|---|---|
+| F-XXX | field name | string/int/... | length or value domain | 是/否 | IX-XXX / FUN-XXX | VL-XXX |
+
+- 每个 `F-XXX` 全局唯一、零填充，不得与 `BR-XXX` / `VL-XXX` 混淆。
+- `来源（上游 IX/FUN）` 必须引用上游已确认的 interaction-rules（IX-XXX）或 function-description（FUN-XXX）。
+- 每个 F-XXX 至少关联一个 VL-XXX；未定义校验的字段在 `校验覆盖检查` 中标 ⚠️。
+- 表头缺「字段名/类型」或字段无来源引用时，`validate_artifact.py` 仅记 warning（不阻塞），由人工评审把关。
+
 ## Human Responsibilities
 
 - Product owner: confirms check boundaries and error-message copy.

@@ -92,7 +92,7 @@ Present: 按类别与状态计数、critical top5、待决清单、accepted 风�
 
 ## Example: Sufficient Input → Sufficient Output
 
-**Input**: 全流程产物：background-goal 遗留 2 个 UNKNOWN、project-scope 有 1 个边界争议、function-description 发现 1 个合规风险、prd-assembly 发现 1 个待决上线范围.
+**Input**: 全流程产物：background-goal 遗留 2 个 UNKNOWN、范围基线 有 1 个边界争议、function-description 发现 1 个合规风险、prd-assembly 发现 1 个待决上线范围.
 **Output**: 完整 issue-record.md——
 - BLK-001（ISS-001）：上线范围待决，owner=业务负责人，target_close=本周五。
 - RSK-101（ISS-002）：合规风险（跨境数据），mitigation=法务 review + 分阶段放开。

@@ -21,7 +21,7 @@ confirmed_at: （授权人工 review 后填写）
 - 项目 ID：REQ-XXX
 - 项目名称：（待确认）
 - 关联背景：background-goal.md §（待确认）
-- 关联范围：project-scope.md §（待确认）
+- 关联范围：范围基线.md §（待确认）
 - 评审版本：v0.1
 
 ## 2. 总览（按类别与状态计数）

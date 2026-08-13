@@ -27,16 +27,14 @@
 | `page-design` | product-ux | §Page | `stages/002-product-requirements/skills/product-ux/skills/page-design/README.md` |
 | `interaction-rules` | product-ux | §IX | `stages/002-product-requirements/skills/product-ux/skills/interaction-rules/README.md` |
 
-## 分支 Skill 索引（8 个 · registry `support_capabilities`）
+## 分支 Skill 索引（4 产物 + 1 能力 · registry `support_capabilities`）
 
 | Skill | 用途 | 触发条件 | 位置 |
 |---|---|---|---|
-| `brainstorming` | 需求发散收敛 | L0 仅想法/材料稀疏 | `support-skills/brainstorming/` |
 | `competitive-research` | 竞品分析 | 方向不清/缺参考 | `support-skills/competitive-research/` |
-| `solution-assessment` | 可行性与多方案对比 | 方案取舍影响范围/成本/风险 | `support-skills/solution-assessment/` |
-| `prd-publish` | PRD 发布记录 | PRD confirmed | `support-skills/prd-publish/` |
-| `project-scope` | 项目范围基线 | 边界不清/范围蔓延 | `stages/001-business-requirements/skills/project-scope/` |
-| `requirement-restate` | 需求复述确认 | 语言歧义/术语不一致 | `stages/001-business-requirements/skills/requirement-restate/` |
+| `feasibility-analysis` | 可行性分析 | 进入主干前评估可行性 | `support-skills/feasibility-analysis/` |
+| `feasibility-analysis` | 可行性分析（市场/技术/投入产出/风险；多方案取舍为其章节） | 进入主干前可行性评估或方案取舍影响范围/成本/风险 | `support-skills/feasibility-analysis/` |
+| `requirement-restate` | 需求重举能力（复述+发散） | 材料稀疏/多源歧义/L0 | `stages/001-business-requirements/skills/requirement-restate/` |
 | `tracking-plan` | 埋点与追踪计划 | 需要数据埋点 | `stages/002-product-requirements/skills/tracking-plan/` |
 | `issue-record` | 跨阶段问题清单 | 任何阶段需求不明确/冲突 | `shared/clarify/skills/issue-record/` |
 

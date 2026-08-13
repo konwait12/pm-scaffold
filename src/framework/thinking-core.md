@@ -112,7 +112,7 @@
 | 同理心视角 / Empathy | 旅程/UX/功能分析 | 换到每个角色身上，他的场景、挫败点、期望是什么？ | user-journey-and-stories, product-ux |
 | MECE 穷举 / MECE Enumeration | 场景发散、功能清单 | 按角色×生命周期×路径类型切矩阵，先切分再填充，禁止直接列清单 | user-journey-and-stories（B2 场景发散） |
 | 边界扫描 / Boundary Scan | 范围基线、UX Scope | 哪些是本期不做但相邻的？边界在哪、谁负责交界处？ | product-ux（Scope 层） |
-| 奥卡姆剃刀 / Occam's Razor | 多方案对比 | 两个方案都能达标时，哪个依赖最少、下游影响最小？ | solution-assessment |
+| 奥卡姆剃刀 / Occam's Razor | 多方案取舍 | 两个方案都能达标时，哪个依赖最少、下游影响最小？ | feasibility-analysis |
 | 机会成本视角 / Opportunity Cost | 范围收口 | 做这个的代价是放弃什么？值得吗？ | product-ux, prd-assembly |
 | 一致性校验 / Consistency Check | PRD 汇总 | 正向：每个产物都有章节；反向：每节都能追溯；有无自相矛盾？ | prd-assembly |
 
@@ -126,7 +126,7 @@
 | §1.5 确认偏误 / §1.6 知识边界 | `contracts.md` Knowledge States（6 标签） | `validate_artifact.py`（ready/confirmed 必须含非 FACT 标签） |
 | §2.7 事前验尸 | B3 问题收口（IssueRecord） | `branch_validator.py`（B3 记录完整性） |
 | §2.9 可测试性 | AC-XXX 验收依据 | `validate_artifact.py`（AC 量化判据检查） |
-| §3 发散决策 | support-skills（solution-assessment 等） | 人工触发，不设全局闸门 |
+| §3 发散决策 | support-skills（feasibility-analysis 等） | 人工触发，不设全局闸门 |
 
 
 ---

@@ -1,7 +1,7 @@
 # PM Scaffold · 产品 AI 脚手架 · 架构文档
 
 > **版本**：v0.1 · 2026-08-12
-> **范围**：3 阶段 × 5 主 Skill × 8 子 Skill × 9 共享模块 × 7 分支 Skill 的整体架构说明
+> **范围**：3 阶段 × 5 主 Skill × 8 子 Skill × 9 共享模块 × 4 分支 + 1 能力 的整体架构说明
 > **目的**：帮助新成员快速理解项目结构与数据流；为外部协作者提供架构门面
 
 ---
@@ -34,12 +34,12 @@ flowchart TB
         SH1["audit / human-gate"]
         SH2["clarify / intake-routing"]
         SH3["change-management / traceability"]
-        SH4["brainstorming / decision-log / project-init"]
+        SH4["decision-log / project-init"]
     end
 
-    subgraph SU["分支层 (7 branch-skills)"]
-        SU1["competitive-research / solution-assessment / prd-publish"]
-        SU2["project-scope / requirement-restate"]
+    subgraph SU["分支层 (4 branch-skills + 1 capability)"]
+        SU1["competitive-research / feasibility-analysis"]
+        SU2["tracking-plan / issue-record / requirement-restate(能力)"]
         SU3["tracking-plan / issue-record"]
     end
 
@@ -101,7 +101,7 @@ PRD 输出（`prd-assembly`）是下游。
   → product-ux (UX 流程+页面+交互)
   → function-description (BR/VL/State/Exception/AC 五章节)
   → prd-assembly (汇总 → prd.md)
-  → prd-publish (正式发布)
+  → 发布复核（SHA-256）
 ```
 
 每步产物都有：
@@ -120,7 +120,7 @@ PRD 输出（`prd-assembly`）是下游。
 | 工作流注册 | `src/framework/workflow-registry.json` |
 | 5 主 Skill | `src/stages/{001,002,003}-*/skills/*/` |
 | 8 子 Skill | `src/stages/002-product-requirements/skills/{function-description,product-ux}/skills/*/` |
-| 7 分支 Skill | `src/support-skills/*/` + `src/stages/*/skills/{project-scope,requirement-restate,tracking-plan}/` + `src/shared/clarify/skills/issue-record/` |
+| 4 分支产物 + 1 能力 | `src/support-skills/*/`（竞品/可行性）+ `src/stages/*/skills/{requirement-restate,tracking-plan}/` + `src/shared/clarify/skills/issue-record/` |
 | 9 共享模块 | `src/shared/{audit,human-gate,clarify,...}/` |
 | 26 产物模板 | `src/templates/stage-{1,2,3}-*/` + `src/templates/{support,others,records}/` |
 | 8 核心脚本 | `src/scripts/{orchestrator,pipeline,workflow_registry,consistency_check,traceability_check,dor_check,property_check,branch_validator}.py` |
@@ -137,7 +137,7 @@ PRD 输出（`prd-assembly`）是下游。
 - 跨文档一致性（`consistency_check.py`）
 - 5 个主 Skill 产物校验
 - 8 个子 Skill 产物校验
-- 7 个分支 Skill 校验器（注册表驱动）
+- 5 个分支/能力 Skill 校验器（注册表驱动：4 产物 + 1 能力）
 - 单元/集成测试（workflow_runtime / cross_skill_integration / 5 主 skill 校验器）
 - 需求目录状态 / 记录 / RTM 校验
 
@@ -145,7 +145,7 @@ PRD 输出（`prd-assembly`）是下游。
 
 ### 5.2 发布
 
-`prd-publish` 是 PRD 流程的"封口"环节，要求：
+发布复核是 PRD 流程的"封口"动作（SHA-256 由 branch_validator 自动执行），要求：
 - 关联 `authorized-reviewers.json` 人工授权
 - 记录 `artifact_content_sha256`（下游 `branch_validator.py` 用其比对）
 - AI 不得自动标记 published
@@ -165,7 +165,7 @@ PRD 输出（`prd-assembly`）是下游。
 
 ### 6.2 外部 Agent 接入
 
-每个 Skill 都有 `agents/openai.yaml` 元数据（5 主 + 8 子 + 7 分支 = 20 份），描述：
+每个 Skill 都有 `agents/openai.yaml` 元数据（5 主 + 8 子 + 4 分支 + 1 能力 = 18 份），描述：
 - `display_name` · `short_description`
 - `default_prompt` · `trigger_examples` · `should_not_trigger_examples`
 

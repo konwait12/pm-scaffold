@@ -154,6 +154,24 @@ def validate(path: Path) -> dict[str, object]:
                     f"Advisory: {cells[0]} conflict description still placeholder"
                 )
 
+    # Optional SCN-XXX divergence-mode candidate table check（模式二 发散收敛）.
+    # Runs only when SCN- rows are present; an RR-only artifact is unaffected.
+    scn_body = _extract_section(
+        text, r"^##\s+\d+\.\s*发散收敛候选清单.*?$(.*?)(?=^##\s+|\Z)"
+    )
+    scn_rows = _collect_rows(scn_body, "SCN-") or _collect_rows(text, "SCN-")
+    for cells in scn_rows:
+        # columns: ID | 发散维度 | Candidate | Evidence | Impact | 知识状态
+        if len(cells) >= 5:
+            scn_placeholders = ("待确认", "待填写", "待补充", "TBD")
+            if any(p in cells[3] for p in scn_placeholders) or any(
+                p in cells[4] for p in scn_placeholders
+            ):
+                warnings.append(
+                    f"Advisory: {cells[0]} divergence candidate has placeholder "
+                    f"Evidence or Impact"
+                )
+
     if status == "confirmed":
         unresolved = [
             k for k in ("stakeholder", "reviewer", "confirmed_at")
