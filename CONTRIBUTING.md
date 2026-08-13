@@ -5,7 +5,7 @@
 ## 快速上手
 
 ```bash
-git clone <repo-url>
+git clone https://github.com/konwait12/pm-scaffold.git
 cd pm-scaffold
 bash run_tests.sh                          # 全量回归（应全绿）
 python3 src/scripts/consistency_check.py   # 跨文档一致性（应 0 errors）

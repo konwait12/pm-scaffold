@@ -3,6 +3,7 @@
 > **PRD-only 产品经理 AI 工作流**：把原始需求材料（BRD、会议纪要、邮件、PPT）逐步转化为一份**经真实人工确认、可沟通、可实现、可核验的中文 `prd.md`**。
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+[![Repo](https://img.shields.io/badge/GitHub-konwait12%2Fpm--scaffold-blue.svg)](https://github.com/konwait12/pm-scaffold)
 
 ---
 
