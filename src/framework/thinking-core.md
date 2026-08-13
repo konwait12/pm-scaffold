@@ -2,7 +2,7 @@
 
 > 本文件是所有 Work Item Skill（5 个主 Skill + 8 个子 Skill）**共享的通用思想引导层**。
 > 各 Skill 的 `references/thinking-framework.md` 必须引用本文件并遵守本文件的使用协议。
-> 与 `docs/00-plan/02-共享机制与产物契约.md` §1（通用执行循环）一致；本文件是 AI 运行时权威。
+> 与 `src/framework/workflow.md`（通用执行循环）一致；本文件是 AI 运行时权威。
 > 变更顺序：先改本文件 → 再同步 02 文档 §1 → 再同步各 Skill 的 `thinking-framework.md` 引用。
 
 ## 使用协议（AI 必读，违反即工作流缺陷）

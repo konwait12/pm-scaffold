@@ -146,4 +146,4 @@ test/                回归测试（fixtures + 单元/集成测试）
 requirements/        需求实例（运行时生成，gitignore）
 ```
 
-更多：人类视角读 `README.md`；完整进化史读 `docs/00-plan/`；打包安装读 `skills/pm-scaffold/SKILL.md`。
+更多：人类视角读 `README.md`；打包安装读 `skills/pm-scaffold/SKILL.md`。

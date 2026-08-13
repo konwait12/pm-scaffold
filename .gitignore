@@ -20,9 +20,8 @@ CLAUDE.md
 assets/_shared/js/
 assets/_shared/fonts/
 
-# Archives (history lives in git, not on disk)
-docs/_archive/
-docs/00-plan/_archive/
+# Internal plan library (项目内部计划库 — 不推公开仓库)
+docs/00-plan/
 
 # Generated diagrams
 **/99_review/diagrams/

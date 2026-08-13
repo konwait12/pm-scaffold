@@ -175,7 +175,7 @@ PRD 输出（`prd-assembly`）是下游。
 
 ## 7. 进一步阅读
 
-- 详细计划：`docs/00-plan/01-三阶段主流程与工作事项.md`
-- 共享机制：`docs/00-plan/02-共享机制与产物契约.md`
-- 迁移验证：`docs/00-plan/03-实施迁移与验证计划.md`
+- 运行规则：`src/framework/workflow.md`
+- 阶段边界：各 `src/stages/*/STAGE.md`
+- Skill 行为：各 `skills/*/SKILL.md`
 - 变更日志：`CHANGELOG.md`

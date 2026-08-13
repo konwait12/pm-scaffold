@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Cross-document consistency check: workflow-registry.json ↔ PM docs ↔ Skill files.
+"""Cross-document consistency check: workflow-registry.json ↔ Skill files.
 
 Checks:
 1. Registry paths (stages / work_items / internal_capabilities / support_capabilities)
@@ -8,11 +8,10 @@ Checks:
    references/thinking-framework.md that references src/framework/thinking-core.md.
 3. Artifact types: every artifact_type.producer maps to a known work item; every
    artifact_type.depends_on entry maps to a known artifact_type id.
-4. PM doc 01 (三阶段主流程与工作事项) formal-output table (rows 1-10) is consistent
-   with registry artifact_types (id + producer), so PM-facing and machine-facing
-   definitions do not drift.
-5. Reviewer roles: every work item's reviewer_roles is non-empty and each role is
+4. Reviewer roles: every work item's reviewer_roles is non-empty and each role is
    a known role token (business_owner / product_owner / tech_owner / designer / qa).
+5. requirements/ content: REQ-* dirs must be structurally valid; surfaces when no
+   real (non-simulated) requirement product exists yet.
 
 Exit code 0 = consistent, 1 = inconsistencies found (non-interactive must fail).
 """
@@ -26,7 +25,6 @@ from pathlib import Path
 
 PROJECT = Path(__file__).resolve().parent.parent.parent
 REGISTRY = PROJECT / "src/framework/workflow-registry.json"
-DOC_01 = PROJECT / "docs/00-plan/01-三阶段主流程与工作事项.md"
 THINKING_CORE = PROJECT / "src/framework/thinking-core.md"
 
 KNOWN_ROLES = {"business_owner", "product_owner", "tech_owner", "designer", "qa", "tester", "legal", "ops"}
@@ -98,26 +96,6 @@ def check_artifact_types(registry: dict, errors: list[str]) -> None:
         for dep in a.get("depends_on", []):
             if dep not in artifact_ids:
                 errors.append(f"Artifact type '{a['id']}': depends_on '{dep}' is not a known artifact type")
-
-
-def check_doc01_vs_registry(registry: dict, errors: list[str], warnings: list[str]) -> None:
-    if not DOC_01.is_file():
-        warnings.append("PM doc 01 missing; skipping doc↔registry comparison")
-        return
-    doc = DOC_01.read_text(encoding="utf-8")
-    artifact_types = registry.get("artifact_types", [])
-    # 01 document table lists 10 formal outputs with producer names in col 2.
-    # Producers used in 01: project-background-goal, user-journey-and-stories,
-    # product-ux, function-description, prd-assembly.
-    doc_producers = set(re.findall(r"`(project-background-goal|user-journey-and-stories|product-ux|function-description|prd-assembly)`", doc))
-    registry_producers = {a["producer"] for a in artifact_types}
-    if not registry_producers.issubset(doc_producers):
-        missing = registry_producers - doc_producers
-        warnings.append(f"Producers in registry not mentioned in PM doc 01: {sorted(missing)}")
-    # Check the 10 output rows exist (marker rows 1 and 10)
-    if "项目背景与目标基线" not in doc or "最终 PRD" not in doc:
-        errors.append("PM doc 01 missing formal-output table markers (项目背景与目标基线 / 最终 PRD)")
-
 
 
 def check_requirements_content(warnings: list[str]) -> None:
@@ -208,7 +186,6 @@ def main() -> int:
     check_paths(registry, errors)
     check_skill_contracts(registry, errors, warnings)
     check_artifact_types(registry, errors)
-    check_doc01_vs_registry(registry, errors, warnings)
     check_reference_integrity(registry, errors, warnings)
     check_requirements_content(warnings)
 

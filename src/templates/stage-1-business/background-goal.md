@@ -122,7 +122,7 @@ Rules:
 
 ## 14. Constitution Compliance
 
-> 本节由 `docs/00-plan/01-前四阶段主流程与节点框架.md` §8 强制要求：5 个主干步骤的产物模板末尾必须包含本章节，用于显式审计与项目宪法的对齐情况。
+> 本节由 `src/framework/constitution.md` 强制要求：每个主干产物模板末尾必须包含本章节，用于显式审计与项目宪法的对齐情况。
 
 | 原则 | 状态（PASS / FAIL / JUSTIFIED） | 证据 / 备注 |
 |---|---|---|
