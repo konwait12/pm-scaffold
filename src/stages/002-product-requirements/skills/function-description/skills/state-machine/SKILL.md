@@ -41,6 +41,7 @@ Load `references/thinking-framework.md` (which references `src/framework/thinkin
 - Batch remaining questions with: AI preliminary judgment, evidence, options, impact, owner, blocking flag.
 - **Stop at `needs_user_input`** when an undefined transition or guard condition changes lifecycle behavior, cost, or risk.
 - Limit: ≤5 questions per session. Order by impact.
+- 遇到「待确认 / 冲突 / 信息缺口」信号：主动询问是否登记 issue-record（问题清单，见 `src/shared/clarify/skills/issue-record`）；送审前 dor_check 会硬检查收口与引用。
 
 ### 5. Generate
 - Fill the §状态变化 table: state definitions (进入/退出条件) + transition table (当前状态 | 触发事件 | 目标状态 | 条件 | 副作用 | 来源) + Mermaid state diagram.
@@ -54,6 +55,7 @@ Load `references/thinking-framework.md` (which references `src/framework/thinkin
 - **Consistency**: transitions agree with the BR-XXX rules and IX references they cite.
 - **Terminal semantics**: terminal/cancel states cannot transition back; no semantic contradiction.
 - Run `scripts/validate_artifact.py <artifact> --json`. Fix all errors. Warnings → document in audit notes.
+- **B3 收口**：确认 issue-record 的 §13 阶段收口表已更新本 work item 行（问题数 / 收口日期 / 状态；空阶段也落行）。
 
 ### 7. Human Gate
 Present candidate §状态变化, evidence summary (which story/BR supports each transition), unknowns and impact, required decisions, audit result, change summary.

@@ -13,7 +13,9 @@ from __future__ import annotations
 
 import argparse
 import json
+import re
 import sys
+from datetime import datetime, timezone
 from pathlib import Path
 
 from workflow_registry import artifact_status, find_artifact, load_registry, read_frontmatter, work_items
@@ -21,6 +23,81 @@ from workflow_registry import artifact_status, find_artifact, load_registry, rea
 
 # Statuses that count as "active" (in progress, awaiting human, etc.)
 ACTIVE_STATUSES = {"needs_user_input", "conditional_review", "ready_for_human_review"}
+
+
+def loop_signals(req_dir: Path, statuses: dict) -> list[dict]:
+    """一闸门两分支的信号层：B1 熔断 / B3 老化 / 范围冻结。
+
+    全部是提示信号（不自动执行动作）；B1/B3 的硬门禁在 dor_check。
+    """
+    signals: list[dict] = []
+    review_dir = req_dir / "99-review"
+
+    # B1 纠错熔断：同一 work item 连续 changes ≥3 轮
+    streak: dict[str, int] = {}
+    if review_dir.is_dir():
+        for p in sorted(review_dir.glob("review-*.md")):
+            text = p.read_text(encoding="utf-8", errors="ignore")
+            m_wi = re.search(r"(?m)^- work_item:\s*(\S+)", text)
+            m_dec = re.search(r"(?m)^- decision:\s*(\S+)", text)
+            if not (m_wi and m_dec):
+                continue
+            wi = m_wi.group(1)
+            if m_dec.group(1) == "changes":
+                streak[wi] = streak.get(wi, 0) + 1
+            else:
+                streak[wi] = 0
+        for wi, n in streak.items():
+            if n >= 3:
+                signals.append({
+                    "loop": "B1",
+                    "severity": "escalate",
+                    "message": f"{wi} 连续 {n} 轮 changes——停下重新评估修改方向（熔断）",
+                })
+
+    # B3 问题老化：open/discussing 问题 7 天 flag / 14 天 escalate
+    ir = req_dir / "99-review" / "support" / "issue-record.md"
+    if ir.is_file():
+        today = datetime.now(timezone.utc).date()
+        for line in ir.read_text(encoding="utf-8", errors="ignore").splitlines():
+            if "ISS-" not in line or ("open" not in line and "discussing" not in line):
+                continue
+            m = re.search(r"20\d{2}-\d{2}-\d{2}", line)
+            if not m:
+                continue
+            try:
+                age = (today - datetime.strptime(m.group(0), "%Y-%m-%d").date()).days
+            except ValueError:
+                continue
+            if age > 14:
+                signals.append({"loop": "B3", "severity": "escalate",
+                                "message": f"open 问题超过 14 天未关闭，升级处理：{line.strip()[:50]}"})
+                break
+            if age > 7:
+                signals.append({"loop": "B3", "severity": "flag",
+                                "message": f"open 问题超过 7 天，请关注：{line.strip()[:50]}"})
+                break
+
+    # 范围冻结：product-ux confirmed 后上游 journey 被重新评审
+    if statuses.get("product-ux") == "confirmed" and review_dir.is_dir():
+        ux_at = js_at = ""
+        for p in sorted(review_dir.glob("review-*.md")):
+            text = p.read_text(encoding="utf-8", errors="ignore")
+            m_wi = re.search(r"(?m)^- work_item:\s*(\S+)", text)
+            m_at = re.search(r"(?m)^- reviewed_at:\s*(\S+)", text)
+            if not (m_wi and m_at):
+                continue
+            if m_wi.group(1) == "product-ux":
+                ux_at = m_at.group(1)
+            elif m_wi.group(1) == "user-journey-and-stories":
+                js_at = m_at.group(1)
+        if ux_at and js_at and js_at > ux_at:
+            signals.append({
+                "loop": "change",
+                "severity": "flag",
+                "message": "范围冻结：product-ux 确认后 journey 又被评审——变更须走 change-mgmt / reflow",
+            })
+    return signals
 
 
 def build_status(req_dir: Path) -> dict:
@@ -73,6 +150,7 @@ def build_status(req_dir: Path) -> dict:
         "blocked": bool(blockers),
         "blockers": blockers,
         "complete": next_item is None and not invalid_active,
+        "signals": loop_signals(req_dir, statuses),
     }
 
 

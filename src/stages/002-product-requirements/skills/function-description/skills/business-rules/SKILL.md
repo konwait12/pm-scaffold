@@ -42,6 +42,7 @@ Load `references/thinking-framework.md` (which references `src/framework/thinkin
 - Batch remaining questions with: AI preliminary judgment, evidence, options, impact, owner, blocking flag.
 - **Stop at `needs_user_input`** when a missing constraint or policy decision changes a rule's outcome, scope, cost, or risk.
 - Limit: ≤5 questions per session. Order by impact.
+- 遇到「待确认 / 冲突 / 信息缺口」信号：主动询问是否登记 issue-record（问题清单，见 `src/shared/clarify/skills/issue-record`）；送审前 dor_check 会硬检查收口与引用。
 
 ### 5. Generate
 - Fill the §业务规则 table. One rule per row; force a class: 计算 / 约束 / 条件 / 权限 / 时序.
@@ -53,6 +54,7 @@ Load `references/thinking-framework.md` (which references `src/framework/thinkin
 - **Traceability**: every BR-XXX links to a ST-XXX / FEA-XXX; every P0 FUN has ≥1 BR.
 - **Conflict scan**: no two BRs contradict; conflicts stay visible until an authorized human resolves them.
 - Run `scripts/validate_artifact.py <artifact> --json`. Fix all errors. Warnings → document in audit notes.
+- **B3 收口**：确认 issue-record 的 §13 阶段收口表已更新本 work item 行（问题数 / 收口日期 / 状态；空阶段也落行）。
 
 ### 7. Human Gate
 Present candidate §业务规则, evidence summary (which story/UX supports each rule), unknowns and their impact, required decisions, audit result, change summary.

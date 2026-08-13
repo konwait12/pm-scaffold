@@ -58,6 +58,7 @@ Load `references/thinking-framework.md` (which references `src/framework/thinkin
 ### 5. Generate
 - 填模板。每个问题：ID（`ISS-NNN`）、category、state、title、description、owner、knowledge_state、source、affected_artifact、raised_at；BLK/DEC 加 target_close，RSK 加 mitigation，resolved 加 resolution，escalated 加 escalated_to。
 - 登记必须先经用户确认（AI 主动询问）。
+- **阶段收口（B3 强制）**：每个 work item 送审 `ready_for_human_review` 前，更新 §13 阶段收口表对应行（问题数 / 收口日期 / 状态）；空阶段也必须落行（问题数=0），这是审计证据。dor_check 会在 gate 时硬检查本表与引用。
 - Status: use `draft`, `needs_user_input`, or `conditional_review` — **never `confirmed`**.
 
 ### 6. Audit

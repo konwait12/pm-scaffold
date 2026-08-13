@@ -110,6 +110,18 @@ confirmed_at: （授权人工 review 后填写）
 - 跨阶段对齐：✅ 已对齐（待确认 / UNKNOWN / CONFLICT 均已收录或记录关闭理由）
 - AI 主动询问：✅ 已对齐（所有登记都先经用户确认）
 
+## 13. 阶段收口表（每个 work item 送审前必填 · 空阶段=审计证据）
+
+> B3 强制语义：每个 work item 的产物在 `ready_for_human_review` 送审前，必须在本表落收口行（空阶段也落行，问题数=0 即审计证据）。
+
+| 阶段 | Work Item | 问题数 | 收口日期 | 状态 |
+|---|---|---|---|---|
+| 001-business-requirements | project-background-goal | 0 | 待填写 | open |
+| 001-business-requirements | user-journey-and-stories | 0 | 待填写 | open |
+| 002-product-requirements | product-ux | 0 | 待填写 | open |
+| 002-product-requirements | function-description | 0 | 待填写 | open |
+| 003-prd-output | prd-assembly | 0 | 待填写 | open |
+
 ## 版本变更摘要
 
 - v0.1: 初稿

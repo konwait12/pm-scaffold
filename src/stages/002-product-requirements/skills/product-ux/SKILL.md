@@ -74,6 +74,7 @@ For each P0 FEA, design:
 - Batch questions about: feature boundaries, interaction behavior, state transitions visible to users.
 - Do not ask about business rules (belongs to function-description).
 - Trigger `competitive-research` if feature design lacks reference.
+- 遇到「待确认 / 冲突 / 信息缺口」信号：主动询问是否登记 issue-record（问题清单，见 `src/shared/clarify/skills/issue-record`）；送审前 dor_check 会硬检查收口与引用。
 
 ### 5. Generate
 Fill template in 3 ordered phases (A→B→C):
@@ -89,6 +90,7 @@ Prototype (HTML) can accompany the spec as communication aid, but written rules 
 - **State completeness**: every page accounts for normal + error + empty + loading + edge.
 - **No BR/VL/AC leakage**: scan for business-rule keywords (format/regex/formula/permission/only-admin-can).
 - Run validator. Fix all errors.
+- **B3 收口**：确认 issue-record 的 §13 阶段收口表已更新本 work item 行（问题数 / 收口日期 / 状态；空阶段也落行）。
 
 ### 7. Human Gate
 Present: feature list (FEA) with priority rationale, Mermaid flows, IX rules, page skeletons, coverage gaps.

@@ -84,6 +84,7 @@ Walk all 11 path types for each lifecycle stage where applicable: normal, altern
 - Create journey skeleton first. Batch questions that materially affect: role ownership, lifecycle boundaries, required events, business scope, candidate selection.
 - Keep AI-added scenes as `AI_INFERENCE` until business owner selects them.
 - Limit: ≤5 questions per session. Order by journey impact.
+- 遇到「待确认 / 冲突 / 信息缺口」信号：主动询问是否登记 issue-record（问题清单，见 `src/shared/clarify/skills/issue-record`）；送审前 dor_check 会硬检查收口与引用。
 
 ### 5. Generate
 
@@ -110,6 +111,7 @@ A Mermaid view may accompany the authoritative matrix when useful, but no separa
 - **Story-card quality**: Every story uses canonical format + MoSCoW priority + knowledge state.
 - **Bidirectional links**: Every story references a journey entry; uncovered entries have a reason.
 Run validator. Repair non-business defects.
+- **B3 收口**：确认 issue-record 的 §13 阶段收口表已更新本 work item 行（问题数 / 收口日期 / 状态；空阶段也落行）。
 
 ### 7. Human Gate
 Present: journey map (with emotions + pain points), persona cards, story cards (with MoSCoW priorities), coverage gaps, unselected candidates (excluded evidence, not requirements).

@@ -84,3 +84,21 @@ The main trunk is **non-negotiable** because the PRD cannot exist without backgr
 ### Why This Is Global
 
 PRD-only scope and "no fixed PRD template" are both constitutional principles. The Inquiry Contract is the operational form of "every decision is a human decision" — it does not hard-code the PRD structure, it lets the human configure it per requirement. The Main Trunk vs. Branch distinction lets us guarantee the PRD always has the 5 required sections, while every other artifact gets a deliberate "do you want this visible?" gate.
+
+## Entry Exploration Sequence（入口业务需求探索）
+
+进入第一个主干 work item 之前，入口按以下序列探索（机器信号由 `pipeline.py entry` 输出）：
+
+1. **材料判定**：`00-input/` 的内容信号（问题陈述 / 受影响角色 / 约束 / 产品级方案 / 功能清单 / 业务规则 六信号）判定 L0-L4；L0/L1 输出 `entry_blocked`（材料不足）。
+2. **brainstorming（发散收敛）**：L0 触发。候选发散 → 人工处置（include/exclude/defer/research）→ 仅 include 候选进入 project-background-goal 输入包。
+3. **requirement-restate（需求复述）**：多源（≥2 SRC）或材料含歧义/待确认标记时触发。CONFLICT 路由 issue-record（CLS），UNKNOWN 路由 Q-XXX（INF）。
+4. **project-background-goal 主干**：DoR 硬检查「00-input 至少 1 个 SRC 材料」（无源即停的机器版）。brainstorming 与 requirement-restate 的 `resume_work_item` 均为 project-background-goal。
+
+## Stage Closeout（B3 每阶段强制收口）
+
+每个 work item 产物在 `ready_for_human_review` 送审前（dor_check 硬门禁）：
+
+1. `99-review/support/issue-record.md` 必须存在，且 §13 阶段收口表含本 work item 行——**空阶段也必须落行（问题数=0），这是审计证据**。
+2. 产物正文每个「待确认」标记必须带同一行的 Q-/ISS-/DEC-/SRC- 引用。
+
+伴随信号（不自动执行动作）：B1 连续 3 轮 changes 熔断提示；B3 open 问题 7 天 flag / 14 天 escalate；范围冻结（product-ux confirmed 后上游再评审 → 提示走 change-mgmt）。

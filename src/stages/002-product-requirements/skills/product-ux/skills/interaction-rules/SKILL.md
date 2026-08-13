@@ -43,6 +43,7 @@ Load `references/thinking-framework.md` (which references `src/framework/thinkin
 - Batch remaining questions with: AI preliminary judgment, evidence, options, impact, owner, blocking flag.
 - **Stop at `needs_user_input`** when the answer changes a P0 page's interaction or feedback behavior.
 - Limit: ≤5 questions per session. Do not ask about business rules (→ function-description) or visual styling.
+- 遇到「待确认 / 冲突 / 信息缺口」信号：主动询问是否登记 issue-record（问题清单，见 `src/shared/clarify/skills/issue-record`）；送审前 dor_check 会硬检查收口与引用。
 
 ### 5. Generate
 - One rule per interactive element or behavior, in §3.3 table form or paragraph form per `rule-writing-format.md`.
@@ -55,6 +56,7 @@ Load `references/thinking-framework.md` (which references `src/framework/thinkin
 - **Boundary**: scan for validation/calculation/permission keywords → route to function-description.
 - **Implementability**: no "合理提示"/"适当反馈" vagueness; each response is a concrete action or state.
 - Run `scripts/validate_artifact.py <product-ux.md> --json`. Fix all errors. Warnings → document.
+- **B3 收口**：确认 issue-record 的 §13 阶段收口表已更新本 work item 行（问题数 / 收口日期 / 状态；空阶段也落行）。
 
 ### 7. Human Gate
 Present: the IX rule list grouped by layer (entry/identity, core operation, feedback/exception), per-rule trigger→response, and any rule marked `AI_INFERENCE`.

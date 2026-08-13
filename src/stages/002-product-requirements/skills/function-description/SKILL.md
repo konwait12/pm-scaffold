@@ -55,6 +55,7 @@ Each path → identify: what BR applies? what VL checks? what state change? what
 ### 4. Clarify
 Batch questions that affect: user-visible behavior, business policy, permission rules, validation logic, state transitions, failure recovery, measurement thresholds.
 Trigger `solution-assessment` (support skill) when material feasibility or multi-solution tradeoff exists.
+- 遇到「待确认 / 冲突 / 信息缺口」信号：主动询问是否登记 issue-record（问题清单，见 `src/shared/clarify/skills/issue-record`）；送审前 dor_check 会硬检查收口与引用。
 
 ### 5. Generate
 Fill template (resolved by `src/templates/resolver.py function-description.md`).
@@ -73,6 +74,7 @@ Rule density guard: each FUN must have ≥3 BR+VL+AC (validator will warn if und
 - **Exception coverage**: every BR's exception branch has a defined recovery path.
 - **AC measurability**: every AC has a quantified threshold or observable outcome.
 Run `scripts/validate_artifact.py <artifact> --json`. Fix all errors.
+- **B3 收口**：确认 issue-record 的 §13 阶段收口表已更新本 work item 行（问题数 / 收口日期 / 状态；空阶段也落行）。
 
 ### 7. Human Gate
 Product owner confirms behavior + policy. Business owner confirms rule alignment with scope. Development reviews implementability. Testing reviews verifiability (AC completeness).

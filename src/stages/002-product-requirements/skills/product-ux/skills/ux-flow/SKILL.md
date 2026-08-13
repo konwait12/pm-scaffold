@@ -44,6 +44,7 @@ Load `references/thinking-framework.md` (which references `src/framework/thinkin
 - Batch remaining questions with: AI preliminary judgment, evidence, options, impact, owner, blocking flag.
 - **Stop at `needs_user_input`** when the answer changes a P0 flow's entry, steps, branches, or exit.
 - Limit: ≤5 questions per session. Order by impact. Do not ask about page layout or rules (downstream skills).
+- 遇到「待确认 / 冲突 / 信息缺口」信号：主动询问是否登记 issue-record（问题清单，见 `src/shared/clarify/skills/issue-record`）；送审前 dor_check 会硬检查收口与引用。
 
 ### 5. Generate
 - Draw one Mermaid diagram per P0 FEA covering entry → steps → decisions → exit. Add error/empty/loading branches.
@@ -56,6 +57,7 @@ Load `references/thinking-framework.md` (which references `src/framework/thinkin
 - **Traceability**: each step traces to a story/feature; no orphan steps.
 - **Downstream Usability**: can page-design and interaction-rules enumerate pages from these steps?
 - Run `scripts/validate_artifact.py <product-ux.md> --json`. Fix all errors. Warnings → document in audit notes.
+- **B3 收口**：确认 issue-record 的 §13 阶段收口表已更新本 work item 行（问题数 / 收口日期 / 状态；空阶段也落行）。
 
 ### 7. Human Gate
 Present: per-FEA flow summary, the paths drawn, the states covered, branch conditions, and any steps tagged `AI_INFERENCE`.

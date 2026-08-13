@@ -182,6 +182,18 @@ class WorkflowRuntimeTest(unittest.TestCase):
             target = req / "001-business-requirements/01-background-goal/background-goal.md"
             target.parent.mkdir(parents=True)
             self.write_reviewer_registry(req)
+            # entry_material DoR: bg approval requires >= 1 registered source
+            (req / "00-input").mkdir(parents=True, exist_ok=True)
+            (req / "00-input/SRC-001.md").write_text("# 需求来源（测试）\n业务方代表A 提出的邀约转化率优化需求。\n", encoding="utf-8")
+            # B3 每阶段强制收口：issue-record 必须存在且含 bg 收口行
+            support = req / "99-review" / "support"
+            support.mkdir(parents=True, exist_ok=True)
+            (support / "issue-record.md").write_text(
+                "# Issue Record（测试）\n\n## 13. 阶段收口表\n\n"
+                "| 阶段 | Work Item | 问题数 | 收口日期 | 状态 |\n|---|---|---|---|---|\n"
+                "| 001-business-requirements | project-background-goal | 0 | 2026-08-13 | closed |\n",
+                encoding="utf-8",
+            )
             fixture = ROOT / "test/skills/project-background-goal/fixtures/hire-website-confirmed.md"
             text = fixture.read_text(encoding="utf-8")
             text = re.sub(r"(?m)^status:\s*\S+", "status: ready_for_human_review", text, count=1)

@@ -42,6 +42,7 @@ Load `references/thinking-framework.md` (which references `src/framework/thinkin
 - Batch remaining questions with: AI preliminary judgment, evidence, options, impact, owner, blocking flag.
 - **Stop at `needs_user_input`** when a validation boundary or error-message wording changes data acceptance, cost, or risk.
 - Limit: ≤5 questions per session. Order by impact.
+- 遇到「待确认 / 冲突 / 信息缺口」信号：主动询问是否登记 issue-record（问题清单，见 `src/shared/clarify/skills/issue-record`）；送审前 dor_check 会硬检查收口与引用。
 
 ### 5. Generate
 - Fill the §系统校验 table. One check per row: field, check type (必填/格式/范围/长度/枚举/跨字段/唯一性), rule expression, trigger, error message, source.
@@ -54,6 +55,7 @@ Load `references/thinking-framework.md` (which references `src/framework/thinkin
 - **Coverage**: every user input field has ≥1 VL; no invisible-input gaps; no validation on read-only/system fields (never-trigger rules).
 - **Cross-field**: A-required-when-B-selected dependencies match the referenced BR/UX.
 - Run `scripts/validate_artifact.py <artifact> --json`. Fix all errors. Warnings → document in audit notes.
+- **B3 收口**：确认 issue-record 的 §13 阶段收口表已更新本 work item 行（问题数 / 收口日期 / 状态；空阶段也落行）。
 
 ### 7. Human Gate
 Present candidate §系统校验, evidence summary (which field/BR supports each VL), unknowns and impact, required decisions, audit result, change summary.

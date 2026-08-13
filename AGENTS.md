@@ -67,10 +67,14 @@ requirements/REQ-NNN-topic/
 │   ├── 01-product-ux/
 │   └── 02-function-description/
 ├── 003-prd-output/prd.md          # 唯一最终交付物
-└── 99-review/                     # 评审记录 + 支持产物
+└── 99-review/                     # 评审记录 + support/issue-record.md（B3 收口）
 ```
 
 一个 artifact 原地演进；快照与评审/变更记录保存历史，不创建竞争的「最终版」副本。
+
+**入口探索序列**（进入 project-background-goal 前）：`entry` 判定 L0-L4（内容六信号）→ L0 先 `brainstorming`（发散收敛，候选人工处置）→ 多源/歧义时 `requirement-restate`（需求复述）→ 主干 bg（DoR 硬检查 ≥1 个 SRC 材料）。
+
+**B3 每阶段强制收口**：任何 work item 送审 `ready_for_human_review` 前，`99-review/support/issue-record.md` 必须存在且 §13 收口表含该 work item 行（空阶段也落行）；产物每个「待确认」必须带 Q-/ISS-/DEC-/SRC- 引用。dor_check 硬检查，缺失即阻断送审。
 
 ---
 

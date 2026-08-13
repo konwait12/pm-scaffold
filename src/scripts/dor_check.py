@@ -97,6 +97,41 @@ def knowledge_state_check(artifact_text: str, status: str) -> dict:
             "detail": "all six states covered, ASSUMPTION ≤ 30% | " + " ".join(detail_parts)}
 
 
+def stage_closeup_check(req_dir: Path, item: dict, artifact_text: str, status: str) -> dict:
+    """B3 每阶段强制收口（旧循环语义）——仅送审 ready_for_human_review 时强制：
+
+    1. 99-review/support/issue-record.md 必须存在且阶段收口表含本 work item 行
+       （空清单也是审计证据）
+    2. 产物正文每个「待确认」标记必须带引用（Q-/ISS-/DEC-/SRC-，同一行）
+    """
+    if status != "ready_for_human_review":
+        return {"name": "stage_closeup", "pass": True, "skipped": True,
+                "detail": f"status={status}（送审才强制）"}
+    issues: list[str] = []
+    ir = req_dir / "99-review" / "support" / "issue-record.md"
+    if not ir.is_file():
+        issues.append("99-review/support/issue-record.md 不存在（B3 每阶段强制收口，空清单也是审计证据）")
+    else:
+        ir_text = ir.read_text(encoding="utf-8")
+        if item["id"] not in ir_text:
+            issues.append(f"issue-record 阶段收口表缺 {item['id']} 收口行")
+    # 待确认引用检查（跳过 frontmatter 与标题行）
+    body = re.sub(r"^---\s*\n.*?\n---\s*\n?", "", artifact_text, flags=re.DOTALL)
+    unreferenced = []
+    for line in body.splitlines():
+        if "待确认" not in line:
+            continue
+        if line.lstrip().startswith("#"):
+            continue
+        if re.search(r"(Q-\d+|ISS-\d+|DEC-\d+|SRC-\d+)", line):
+            continue
+        unreferenced.append(line.strip()[:60])
+    if unreferenced:
+        issues.append(f"{len(unreferenced)} 处「待确认」无 Q-/ISS-/DEC-/SRC- 引用，示例：{unreferenced[0]}")
+    return {"name": "stage_closeup", "pass": not issues,
+            "detail": " | ".join(issues) if issues else "收口行 + 待确认引用齐全"}
+
+
 def run_validator(item: dict, artifact: Path) -> tuple[bool, str]:
     validator = skill_path(item) / "scripts/validate_artifact.py"
     if not validator.exists():
@@ -117,6 +152,15 @@ def check_item(req_dir: Path, item: dict) -> dict:
     dor_ok = all(state == "confirmed" for state in predecessor_states.values())
     artifact = find_artifact(req_dir, item)
     checks = []
+    # Entry material DoR: project-background-goal must have registered sources
+    # (machine version of the SKILL.md Preflight "no source → STOP" rule).
+    if item["id"] == "project-background-goal":
+        input_dir = req_dir / "00-input"
+        src_files = sorted(input_dir.glob("SRC-*.md")) if input_dir.is_dir() else []
+        material_ok = len(src_files) >= 1
+        checks.append({"name": "entry_material", "pass": material_ok,
+                       "detail": f"00-input SRC materials: {len(src_files)} (need >= 1)"})
+        dor_ok = dor_ok and material_ok
     if artifact:
         valid, detail = run_validator(item, artifact)
         checks.append({"name": "artifact_validator", "pass": valid, "detail": detail})
@@ -125,6 +169,8 @@ def check_item(req_dir: Path, item: dict) -> dict:
         checks.append({"name": "audit_evidence", "pass": has_audit})
         # v2: knowledge state coverage hard gate (only fires for review-ready statuses)
         checks.append(knowledge_state_check(text, artifact_status(req_dir, item)))
+        # B3: per-stage forced closeout (issue-record exists + 待确认 references)
+        checks.append(stage_closeup_check(req_dir, item, text, artifact_status(req_dir, item)))
     else:
         checks.append({"name": "artifact_exists", "pass": False})
     dod_ok = bool(artifact) and all(check["pass"] for check in checks)

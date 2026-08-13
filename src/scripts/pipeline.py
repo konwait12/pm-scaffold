@@ -41,11 +41,49 @@ def run_property_check(artifact: Path) -> dict:
 
 ACTIVE = {"needs_user_input", "conditional_review", "ready_for_human_review"}
 
+# Entry-assessment content signals (src/shared/intake-routing 的 6 信号落地)
+ENTRY_SIGNAL_KEYWORDS = {
+    "problem": ("问题", "痛点", "现状", "目标", "为什么"),
+    "roles": ("角色", "用户", "部门", "干系人", "业务方", "客户"),
+    "constraints": ("约束", "时间", "预算", "合规", "法律", "期限"),
+    "solution": ("方案", "系统", "平台", "页面", "流程设计", "原型"),
+    "features": ("功能", "模块", "能力"),
+    "rules": ("规则", "条件", "触发", "计算", "权限"),
+}
 
-def branch_skill_signals(statuses: dict) -> list[dict]:
+
+def entry_content_signals(req_dir: Path) -> dict[str, bool]:
+    """Read 00-input material content and detect the 6 entry-assessment signals."""
+    text = ""
+    input_dir = req_dir / "00-input"
+    if input_dir.is_dir():
+        for p in sorted(input_dir.glob("*.md")):
+            text += p.read_text(encoding="utf-8", errors="ignore") + "\n"
+    return {name: any(k in text for k in keywords) for name, keywords in ENTRY_SIGNAL_KEYWORDS.items()}
+
+
+def entry_branch_signals(req_dir: Path) -> list[dict]:
+    """Entry-stage branch-skill signals derived from 00-input material."""
+    input_dir = req_dir / "00-input"
+    src_files = sorted(input_dir.glob("SRC-*.md")) if input_dir.is_dir() else []
+    text = ""
+    for p in src_files:
+        text += p.read_text(encoding="utf-8", errors="ignore") + "\n"
+    out: list[dict] = []
+    if not src_files:
+        out.append({"id": "brainstorming", "signal": "L0 无源材料，建议发散收敛", "auto_detect": False})
+    if len(src_files) >= 2:
+        out.append({"id": "requirement-restate", "signal": "多源材料（≥2 SRC），建议需求复述确认", "auto_detect": False})
+    elif any(k in text for k in ("歧义", "不一致", "待确认", "待定", "可能", "也许")):
+        out.append({"id": "requirement-restate", "signal": "材料含歧义/待确认标记，建议需求复述确认", "auto_detect": False})
+    return out
+
+
+def branch_skill_signals(req_dir: Path, statuses: dict) -> list[dict]:
     """Detect machine-checkable triggers for conditional/branch skills.
 
-    Only prd-publish has a fully deterministic trigger (prd-assembly confirmed).
+    Deterministic triggers: prd-publish (prd-assembly confirmed), and
+    entry-stage signals from 00-input content (brainstorming / restate).
     Semantic triggers (competitive-research, solution-assessment) remain
     AI-judged and are surfaced as hints, never auto-invoked.
     """
@@ -54,6 +92,7 @@ def branch_skill_signals(statuses: dict) -> list[dict]:
         signals.append({"id": "prd-publish", "signal": "prd-assembly confirmed", "auto_detect": True})
     if "needs_user_input" in statuses.values():
         signals.append({"id": "issue-record", "signal": "存在 needs_user_input 产物", "auto_detect": False})
+    signals.extend(entry_branch_signals(req_dir))
     return signals
 
 
@@ -281,9 +320,22 @@ def main() -> int:
         elif artifact_count > 0:
             maturity, entry = f"L1 已有 {artifact_count} 份产物", "Stage 1 (user-journey-and-stories)"
         elif src_count > 0:
-            maturity, entry = f"L1 有 {src_count} 份原始材料", "Stage 1 (project-background-goal)"
+            sig = entry_content_signals(args.req_dir)
+            if sig["features"] and sig["rules"]:
+                maturity, entry = "L3 材料含功能清单与业务规则", "Stage 1 (project-background-goal 快速起草)"
+            elif sig["solution"]:
+                maturity, entry = "L2 材料含产品级方案", "Stage 1 (project-background-goal)"
+            else:
+                maturity, entry = f"L1 有 {src_count} 份原始材料（内容信号 {sum(sig.values())}/6）", "Stage 1 (project-background-goal)"
         else:
-            maturity, entry = "L0 仅想法", "brainstorming 发散"
+            maturity, entry = "L0 仅想法", "brainstorming（发散收敛）→ Stage 1"
+
+        entry_blocked = None
+        if not result["invalid_active_items"] and confirmed_count == 0 and not result["work_items"].get("project-background-goal") in ACTIVE:
+            if src_count == 0:
+                entry_blocked = "L0 材料不足：先发散候选（brainstorming）或补充材料，再进入 Stage 1"
+            elif sum(entry_content_signals(args.req_dir).values()) < 2:
+                entry_blocked = "L1 材料稀疏：建议补料或 requirement-restate（需求复述）确认理解"
 
         print(json.dumps({
             "requirement": result["requirement"],
@@ -292,12 +344,14 @@ def main() -> int:
             "confirmed_count": confirmed_count,
             "maturity": maturity,
             "recommended_entry": entry,
+            "entry_blocked": entry_blocked,
+            "content_signals": entry_content_signals(args.req_dir),
             "workflow_valid": result["workflow_valid"],
             "active_work_item": result["active_work_item"],
             "invalid_active_items": result["invalid_active_items"],
             "next_work_item": result["next_work_item"],
             "blockers": result["blockers"],
-            "branch_skill_signals": branch_skill_signals(result["work_items"]),
+            "branch_skill_signals": branch_skill_signals(args.req_dir, result["work_items"]),
         }, ensure_ascii=False, indent=2))
         return 0
     if not (args.work_item or args.wave):
@@ -341,6 +395,8 @@ def main() -> int:
                     f"# Change Record: reflow {item['id']}", "",
                     f"- trigger: {item['id']} changed", f"- applied_at: {now}",
                     f"- superseded: {', '.join(results['superseded'])}", "",
+                    "- decision_id: 待填写（DEC-NNN，对齐 src/templates/others/decision-record.md）",
+                    "- decider: 待填写", "- rationale: 待填写", "",
                     "Downstream artifacts were flipped to `superseded`; they must be re-validated",
                     "after the earliest affected work item is re-confirmed.", "",
                 ]), encoding="utf-8",

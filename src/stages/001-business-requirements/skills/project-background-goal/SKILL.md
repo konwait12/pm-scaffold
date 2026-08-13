@@ -43,6 +43,7 @@ Load `references/thinking-framework.md` (which references `src/framework/thinkin
 - Batch remaining questions with: AI preliminary judgment, evidence, options, impact, owner, blocking flag.
 - **Stop at `needs_user_input`** when an answer can change the problem, goal, role, scope, cost, timing, or risk.
 - Limit: ≤5 questions per session. Order by impact.
+- 遇到「待确认 / 冲突 / 信息缺口」信号：主动询问是否登记 issue-record（问题清单，见 `src/shared/clarify/skills/issue-record`）；送审前 dor_check 会硬检查收口与引用。
 
 ### 5. Generate
 - Fill the template. Narrative gets sourced content; uncertain content goes in explicit registers (§6-§8).
@@ -54,6 +55,7 @@ Load `references/thinking-framework.md` (which references `src/framework/thinkin
 - **Source Fidelity**: Does each claim trace to a source statement?
 - **Downstream Usability**: Can journey-and-stories pick this up without re-researching?
 - Run `scripts/validate_artifact.py <artifact> --json`. Fix all errors. Warnings → document in audit notes.
+- **B3 收口**：确认 issue-record 的 §13 阶段收口表已更新本 work item 行（问题数 / 收口日期 / 状态；空阶段也落行）。
 
 ### 7. Human Gate
 Present: candidate summary, evidence summary (what sources support each claim), unknowns and their impact, required decisions, audit result, change summary.

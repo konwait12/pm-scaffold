@@ -43,6 +43,7 @@ Load `references/thinking-framework.md` (which references `src/framework/thinkin
 - Batch remaining questions with: AI preliminary judgment, evidence, options, impact, owner, blocking flag.
 - **Stop at `needs_user_input`** when the answer changes a P0 page's entry, preconditions, content, actions, or next state.
 - Limit: ≤5 questions per session. Do not ask about visual styling (out of scope) or rules (downstream).
+- 遇到「待确认 / 冲突 / 信息缺口」信号：主动询问是否登记 issue-record（问题清单，见 `src/shared/clarify/skills/issue-record`）；送审前 dor_check 会硬检查收口与引用。
 
 ### 5. Generate
 - One row per page/step in the §4.1 table: 页面/步骤, 所属功能, 入口, 前置条件, 主要内容, 操作, 下一状态.
@@ -55,6 +56,7 @@ Load `references/thinking-framework.md` (which references `src/framework/thinkin
 - **Boundary**: no visual styling, no interaction micro-details, no BR/VL/AC.
 - **Traceability**: each row traces to FEA-XXX and a flow step.
 - Run `scripts/validate_artifact.py <product-ux.md> --json`. Fix all errors. Warnings → document.
+- **B3 收口**：确认 issue-record 的 §13 阶段收口表已更新本 work item 行（问题数 / 收口日期 / 状态；空阶段也落行）。
 
 ### 7. Human Gate
 Present: the page inventory, per-page entry/precondition/action/next-state, pages marked `AI_INFERENCE`, and any page that over-reaches into visual design.
