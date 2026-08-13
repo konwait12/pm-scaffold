@@ -34,6 +34,35 @@ section .desc{font-size:13px;color:#666;margin-bottom:18px}
 .nav-item.active .nav-n{color:#654ACB}
 .content{flex:1;min-width:0}
 @media (max-width:1000px){.layout{flex-direction:column}.sidebar{position:static;width:100%;max-height:none;display:flex;flex-wrap:wrap;gap:2px}.sidebar .side-title,.sidebar .side-sub{width:100%}.nav-item{flex:1 1 auto}}
+
+/* ===== 教程弹窗 ===== */
+.tut-btn{display:flex;align-items:center;gap:8px;margin:0 0 12px;padding:10px 12px;border-radius:10px;background:linear-gradient(135deg,#654ACB,#8A6BE0);color:#fff;font-size:13px;font-weight:700;cursor:pointer;border:none;width:100%;text-align:left}
+.tut-btn:hover{opacity:.92}
+.modal-overlay{position:fixed;inset:0;background:rgba(15,16,32,.55);z-index:999;display:flex;align-items:center;justify-content:center;padding:24px}
+.modal{background:#fff;border-radius:16px;width:min(1080px,96vw);height:min(92vh,900px);display:flex;flex-direction:column;overflow:hidden;box-shadow:0 24px 64px rgba(0,0,0,.25)}
+.modal-top{display:flex;align-items:center;justify-content:space-between;padding:16px 22px;border-bottom:1px solid #EDEDF2}
+.modal-title{font-size:16px;font-weight:700;color:#3A2E8F}
+.modal-close{border:none;background:#F3F4F6;width:32px;height:32px;border-radius:8px;font-size:14px;cursor:pointer;color:#555}
+.modal-close:hover{background:#E5E5EA}
+.modal-body{flex:1;display:flex;overflow:hidden}
+.tut-toc{width:240px;flex:0 0 240px;overflow-y:auto;padding:16px 14px;border-right:1px solid #F0F0F0;background:#FAFAFC}
+.tut-toc-title{font-size:12px;font-weight:700;color:#888;margin-bottom:10px}
+.tut-toc a{display:block;padding:6px 10px;border-radius:8px;font-size:12.5px;color:#444;cursor:pointer;margin-bottom:2px}
+.tut-toc a:hover{background:#F6F4FF;color:#654ACB}
+.tut-toc a.on{background:#EEEFFF;color:#654ACB;font-weight:700}
+.tut-content{flex:1;overflow-y:auto;padding:22px 28px 60px}
+.tut-content h3{margin:26px 0 10px;font-size:18px;color:#3A2E8F;padding-top:4px}
+.tut-content h3:first-child{margin-top:0}
+.tut-content p{margin:8px 0;font-size:13.5px}
+.tut-content ul{margin:8px 0 8px 20px;font-size:13.5px}
+.tut-content li{margin:4px 0}
+.tut-code{background:#0F1020;color:#D8DAEE;border-radius:10px;padding:14px 16px;font-family:"SF Mono",Menlo,monospace;font-size:12px;line-height:1.85;overflow-x:auto;margin:10px 0}
+.tut-callout{border-radius:10px;padding:10px 14px;margin:8px 0;font-size:13px}
+.tut-callout.ok{background:#E6F9EE;border:1px solid #9AD9B4;color:#0F4A2A}
+.tut-callout.bad{background:#FDF0F0;border:1px solid #E5A8A8;color:#7A2A2A}
+.tut-content table{font-size:12.5px}
+@media (max-width:800px){.tut-toc{display:none}.modal-body{flex-direction:column}}
+
 /* ===== 图例 ===== */
 .legend{display:flex;gap:14px;flex-wrap:wrap;font-size:11.5px;color:#555;margin-bottom:14px;align-items:center}
 .legend span{display:inline-flex;align-items:center;gap:5px}
@@ -108,6 +137,7 @@ footer{margin-top:24px;text-align:center;color:#888;font-size:11px;padding-top:1
 <nav class="sidebar" id="sidebar">
   <div class="side-title">PM Scaffold 工作台</div>
   <div class="side-sub">v0.2.0 · 21 Skill · 61/61</div>
+  <button class="tut-btn" id="tut-open">📖 新手教程 · 从这里开始</button>
     <a href="#sec-flow" class="nav-item" data-target="sec-flow"><span class="nav-n">01</span>主程序流程图</a>
     <a href="#sec-cmd" class="nav-item" data-target="sec-cmd"><span class="nav-n">02</span>命令全集</a>
     <a href="#sec-cycle" class="nav-item" data-target="sec-cycle"><span class="nav-n">03</span>8 步执行循环</a>
@@ -674,6 +704,168 @@ PM Scaffold · 文件完整架构
   window.addEventListener('scroll', spy, {passive:true});
   spy();
   document.documentElement.style.scrollBehavior = 'smooth';
+})();
+</script>
+
+
+<!-- ================= 新手教程弹窗 ================= -->
+<div class="modal-overlay" id="tut-overlay" hidden>
+  <div class="modal">
+    <div class="modal-top">
+      <div class="modal-title">📖 PM Scaffold 新手教程 · 从零到第一份 prd.md</div>
+      <button class="modal-close" id="tut-close" title="关闭（Esc）">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="tut-toc" id="tut-toc">
+        <div class="tut-toc-title">目录（点击跳转）</div>
+        <a data-t="tut-1">1. 这个脚手架是什么</a>
+        <a data-t="tut-2">2. 三句话理解它的核心</a>
+        <a data-t="tut-3">3. 30 秒上手</a>
+        <a data-t="tut-4">4. 核心概念</a>
+        <a data-t="tut-5">5. 完整工作流（逐段详解）</a>
+        <a data-t="tut-6">6. 命令参考</a>
+        <a data-t="tut-7">7. 红线（不可做清单）</a>
+        <a data-t="tut-8">8. 新手常见问题 FAQ</a>
+        <a data-t="tut-9">9. 目录结构速查</a>
+        <a data-t="tut-10">10. 进阶：分支 Skill 与信号层</a>
+      </div>
+      <div class="tut-content">
+
+<h3 id="tut-1">1. 这个脚手架是什么</h3>
+<p><b>PM Scaffold（产品 AI 脚手架）</b>是一个 <b>PRD-only</b> 的产品经理 AI 工作流：把原始需求材料（BRD、会议纪要、邮件、PPT、图片）逐步转化为一份<b>经真实人工确认、可沟通、可实现、可核验的中文 <code>prd.md</code></b>。</p>
+<p>它解决 AI 写需求最大的三个风险：</p>
+<ul>
+  <li><b>推断冒充事实</b> → 每条声明必须标注六态（FACT / DECISION / ASSUMPTION / AI_INFERENCE / UNKNOWN / CONFLICT）</li>
+  <li><b>没有人明确拍板</b> → <code>confirmed</code> 只能由真实评审人通过命令产生，机器永远只能推到「待评审」</li>
+  <li><b>改了上游下游不知道</b> → 变更级联失效（reflow）、双向追溯、B3 阶段收口</li>
+</ul>
+<p>它<b>不做</b>：研发任务拆分、技术架构设计、测试用例、用户手册。唯一交付物是 <code>prd.md</code>。</p>
+
+<h3 id="tut-2">2. 三句话理解它的核心</h3>
+<div class="tut-callout ok"><b>① 业务真相由人类拥有。</b> AI 只起草；每个工作项的产物必须由真实评审人 approve 才进入下游。</div>
+<div class="tut-callout ok"><b>② 证据与不确定性必须可见。</b> 每条声明标注六态；「待确认」必须有问题引用；假设占比硬顶 30%。</div>
+<div class="tut-callout ok"><b>③ AI 不得伪造人工确认。</b> 全仓只有一条命令能写 <code>confirmed</code>：<code>review --decision approve</code>（真实人名 + 授权清单 + SHA-256 绑定）。</div>
+
+<h3 id="tut-3">3. 30 秒上手</h3>
+<pre class="tut-code"># ① 初始化一个新需求骨架
+python3 src/scripts/pipeline.py init REQ-001-my-feature
+
+# ② 把原始材料放进 00-input/（一个材料一个 SRC-*.md 文件）
+# ③ 看入口判定（L0-L4 + 建议动作）
+python3 src/scripts/pipeline.py requirements/REQ-001-my-feature entry
+
+# ④ 跑第一个工作项：AI 按 SKILL.md 起草背景目标 → 跑机器闸门
+python3 src/scripts/pipeline.py requirements/REQ-001-my-feature gate --work-item project-background-goal
+
+# ⑤ 真实人工确认（只有人）
+python3 src/scripts/pipeline.py requirements/REQ-001-my-feature review \
+  --work-item project-background-goal --decision approve \
+  --reviewer "评审人姓名" --reviewer-id "飞书ID" --reviewer-role "business_owner"
+
+# ⑥ 依次完成 5 个工作项 → prd-assembly 产出 prd.md
+# ⑦ 全程自检
+bash run_tests.sh && python3 src/scripts/consistency_check.py</pre>
+
+<h3 id="tut-4">4. 核心概念</h3>
+<p><b>需求目录（REQ-DIR）</b>：一个需求一个目录，所有产物原地演进（v0.* 快照），不建「最终版」副本。</p>
+<pre class="tut-code">requirements/REQ-001-my-feature/
+├── 00-input/                # 原始材料 SRC-*.md + authorized-reviewers.json
+├── 001-business-requirements/
+│   ├── 01-background-goal/       # background-goal.md（主① 项目背景与目标）
+│   └── 02-user-journey-stories/  # journey-and-stories.md（主② 用户旅程与故事）
+├── 002-product-requirements/
+│   ├── 01-product-ux/            # product-ux.md（主③ 产品 UX）
+│   └── 02-function-description/  # function-description.md（主④ 功能描述）
+├── 003-prd-output/prd.md         # 主⑤ PRD 汇总 · 唯一最终交付
+└── 99-review/                    # 评审记录 + support/issue-record.md（B3 收口）</pre>
+<p><b>5 主 + 8 子 + 8 分支 = 21 个 Skill</b>：主 skill 是主干必做；子 skill 挂在父产物章节；分支 skill 触发才跑。</p>
+<p><b>8 步循环</b>：每个工作项必须完整走一遍 <code>Preflight → Intake → Think → Clarify → Generate → Audit → Human Gate → Commit/Reflow</code>。</p>
+<p><b>产物状态机</b>：<code>draft → needs_user_input / conditional_review / ready_for_human_review → confirmed</code>（<code>superseded</code>=上游变更被级联失效）。机器上限是 ready；confirmed 只有人能写。</p>
+<p><b>六态知识标注</b>：FACT（事实，追 SRC-）/ DECISION（人类拍板）/ ASSUMPTION（假设，≤30% 硬顶）/ AI_INFERENCE（AI 推断）/ UNKNOWN（未知，链问题 ID）/ CONFLICT（冲突，需裁决）。送审 ready 时六态必须全覆盖。</p>
+
+<h3 id="tut-5">5. 完整工作流（逐段详解）</h3>
+<p><b>阶段 0 · 入口探索</b>：<code>entry</code> 读材料内容做 L0-L4 判定。L0（仅想法）→ 先跑 <code>brainstorming（发散收敛）</code>：候选发散 → 人工处置（include/exclude/defer/research）→ 仅 include 候选进入背景目标。多源（≥2 SRC）或材料含歧义 → 先跑 <code>requirement-restate（需求复述）</code>确认理解。L0/L1 时 entry 会输出 <code>entry_blocked</code>（材料不足）。</p>
+<p><b>阶段 1 · 业务需求</b>：主① project-background-goal（背景目标基线，DoR 硬检查「00-input 至少 1 个 SRC」）→ 人工确认 → 主② user-journey-and-stories（旅程与故事 + 范围基线）→ 人工确认。</p>
+<p><b>阶段 2 · 产品需求</b>：主③ product-ux（功能清单 + UX 流程 + 页面 + 交互规则；内嵌 3 个子 skill）→ 人工确认 → 主④ function-description（业务规则/校验/状态机/异常/验收；内嵌 5 个子 skill；gate 时额外跑逻辑完备性 property_check）→ 人工确认。</p>
+<p><b>阶段 3 · PRD 输出</b>：主⑤ prd-assembly（<b>只聚合、不发明</b>；gate 时跑双向追溯）→ 人工确认 → <code>prd.md</code> → 需要发布时跑 prd-publish（SHA-256 复核后发布）。</p>
+<p><b>贯穿全程的循环</b>：</p>
+<ul>
+  <li><b>B1 纠错</b>：评审驳回（review --decision changes）→ 回到 draft 修改 → 再送审；连续 3 轮被拒会触发「重新评估方向」信号。</li>
+  <li><b>B2/B3 补全</b>：每个工作项送审前必须做<b>阶段收口</b>——issue-record（问题清单）必须存在且收口表含本工作项行（空阶段也落行=审计证据）；产物里每个「待确认」必须带 Q-/ISS- 引用。缺失 → gate 直接阻断。</li>
+  <li><b>变更回流</b>：已确认产物被改 → <code>reflow --apply</code> 把下游翻为 superseded → 从最早受影响项重跑。</li>
+  <li><b>信号层</b>（status 可见）：B1 熔断、B3 老化（7 天 flag/14 天升级）、范围冻结提示。</li>
+</ul>
+
+<h3 id="tut-6">6. 命令参考</h3>
+<table>
+  <tr><th>命令</th><th>作用</th><th>谁能改状态</th></tr>
+  <tr><td><code>init REQ-NNN-topic</code></td><td>建需求骨架（目录 + 授权清单 + 来源登记表）</td><td>机器（仅骨架）</td></tr>
+  <tr><td><code>status</code></td><td>全工作项状态 + next + 越级检测 + 信号层</td><td>只读</td></tr>
+  <tr><td><code>entry</code></td><td>L0-L4 成熟度 + entry_blocked + 分支信号</td><td>只读</td></tr>
+  <tr><td><code>gate --work-item X</code></td><td>机器闸门（DoR/DoD/六态/自审/B3 收口/追溯）</td><td>只读</td></tr>
+  <tr><td><code>review --decision approve/changes</code></td><td>人工评审（真实人名+授权清单+角色）</td><td><b>人工（唯一写 confirmed 的路径）</b></td></tr>
+  <tr><td><code>reflow [--apply]</code></td><td>变更回流（dry-run 预览 → --apply 级联失效）</td><td>机器（--apply 才写）</td></tr>
+</table>
+
+<h3 id="tut-7">7. 红线（不可做清单）</h3>
+<div class="tut-callout bad">① 任何 AI/脚本/--yes 都不得产生 <code>confirmed</code> ——只有真人 review approve。</div>
+<div class="tut-callout bad">② 上游未 confirmed，不启动下游 ——orchestrator 会检测越级并阻止。</div>
+<div class="tut-callout bad">③ prd-assembly 只聚合不发明 ——发现缺口路由回最早的 work item。</div>
+<div class="tut-callout bad">④ 每条声明必须标六态；ASSUMPTION 占比 ≤30%；待确认必须带引用。</div>
+<div class="tut-callout bad">⑤ 产物单点存放 ——不在别处复制「最终版」；历史靠快照与评审记录。</div>
+<div class="tut-callout bad">⑥ 变更已确认内容 → 下游级联失效，从最早受影响项重跑。</div>
+<div class="tut-callout bad">⑦ 注册表（workflow-registry.json）是唯一真相源 ——不要硬编码路径/Skill 名。</div>
+
+<h3 id="tut-8">8. 新手常见问题 FAQ</h3>
+<p><b>Q：init 之后直接 gate 为什么被拦？</b><br>A：三类原因，按顺序排查：① <code>entry_material</code> —— 00-input 里还没有 SRC-*.md 材料（入口 DoR 要求 ≥1 个）；② 产物还没写或状态不对；③ <code>stage_closeup</code> —— 99-review/support/issue-record.md 不存在或收口表缺本工作项行（B3 强制收口，空阶段也落行）。</p>
+<p><b>Q：review approve 一直报错？</b><br>A：四件套缺一不可：<code>--reviewer</code>（真实人名，不能是 AI/模拟）、<code>--reviewer-id</code>、<code>--reviewer-role</code>（必须在注册表 reviewer_roles 里）、且三者必须与 00-input/authorized-reviewers.json 逐项匹配；产物状态必须是 ready_for_human_review。</p>
+<p><b>Q：六态怎么算「覆盖」？</b><br>A：正文里出现六种标注（表格单元格 | FACT |、行首/标点后的「FACT：」都算），且 ASSUMPTION 不超过全部条目的 30%。</p>
+<p><b>Q：什么时候用 reflow？</b><br>A：上游已确认的产物被改了 → 先 <code>reflow</code>（dry-run 预览影响面）→ 确认无误再 <code>reflow --apply</code>（下游翻 superseded + 写 ChangeRecord）。</p>
+<p><b>Q：requirements/ 目录哪去了？</b><br>A：它被 gitignore——每个用户的需求是自己的，不进仓库。用 <code>init</code> 命令随时生成。</p>
+<p><b>Q：L0 只有一句想法怎么办？</b><br>A：先 brainstorming 发散候选（人工四值处置），include 的候选就是背景目标的输入；或先补材料。</p>
+
+<h3 id="tut-9">9. 目录结构速查</h3>
+<pre class="tut-code">src/framework/    # 宪法/契约/17透镜/注册表（先读这里）
+src/stages/       # 3 阶段 × 5 主 + 8 子 + 3 分支 skill
+src/support-skills/  # 4 支持 skill（brainstorming/竞品/方案/发布）
+src/shared/       # 9 共享机制（审计/澄清/变更/闸门/追溯…）
+src/scripts/      # pipeline/orchestrator/dor_check 等 11 个脚本
+src/templates/    # 24 个产物模板 + resolver.py
+test/             # 61 项回归（fixtures 正反例 + 集成测试）
+docs/             # ARCHITECTURE.md 架构说明</pre>
+
+<h3 id="tut-10">10. 进阶：分支 Skill 与信号层</h3>
+<p><b>8 个分支 skill（触发才跑）</b>：brainstorming（发散收敛·L0）、competitive-research（竞品调研）、solution-assessment（方案评估）、prd-publish（PRD 发布·SHA-256 复核）、project-scope（范围基线）、requirement-restate（需求复述）、tracking-plan（埋点计划）、issue-record（问题清单·B3 收口）。进入前按 Inquiry Contract 询问，默认不进 PRD 正文。</p>
+<p><b>信号层（status 自动输出）</b>：B1 熔断（连续 3 轮 changes → 重新评估方向）、B3 老化（open 问题 7 天 flag / 14 天 escalate）、范围冻结（product-ux 确认后上游再评审 → 提示走 change-mgmt）。信号只提示、不自动执行动作。</p>
+<p><b>技法吸收</b>：原型（两步流程：页面清单先人工确认 → 单文件 HTML）、参考图还原、PRD 结构参考（只聚合不发明的聚合视图）、需求采集、旅程体验验证——都已内置在各 skill 的 references 里。</p>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<script>
+(function(){
+  var overlay = document.getElementById('tut-overlay');
+  var btn = document.getElementById('tut-open');
+  var close = document.getElementById('tut-close');
+  var tocLinks = Array.prototype.slice.call(document.querySelectorAll('.tut-toc a'));
+  var content = document.querySelector('.tut-content');
+  function open(){ overlay.hidden = false; document.body.style.overflow = 'hidden'; }
+  function shut(){ overlay.hidden = true; document.body.style.overflow = ''; }
+  if (btn) btn.addEventListener('click', open);
+  if (close) close.addEventListener('click', shut);
+  document.addEventListener('keydown', function(e){ if (e.key === 'Escape' && !overlay.hidden) shut(); });
+  overlay.addEventListener('click', function(e){ if (e.target === overlay) shut(); });
+  tocLinks.forEach(function(a){
+    a.addEventListener('click', function(){
+      var t = document.getElementById(a.dataset.t);
+      if (t) content.scrollTo({top: t.offsetTop - content.offsetTop - 12, behavior: 'smooth'});
+      tocLinks.forEach(function(x){ x.classList.remove('on'); });
+      a.classList.add('on');
+    });
+  });
 })();
 </script>
 
