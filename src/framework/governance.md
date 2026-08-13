@@ -47,7 +47,7 @@ Every Skill must trigger a structured inquiry when ANY of these conditions occur
 | Class | Definition | PRD Treatment |
 |---|---|---|
 | **Main Trunk**（5 work_items） | `project-background-goal` / `user-journey-and-stories` / `product-ux` / `function-description` / `prd-assembly` itself | **Required, no inquiry.** Trunk content goes into the corresponding fixed PRD section without asking. |
-| **Branch / Optional**（everything else） | sub-skills of function-description, shared mechanisms (clarify, brainstorming, change-management, decision-log, intake-routing, project-init, human-gate, audit, traceability), optional support skills (project-scope, tracking-plan, requirement-restate, issue-record, competitive-research, solution-assessment, field-rules, ...) | **Inquiry required.** Every branch entry triggers the inquiry template. Default behavior per artifact (see table below). |
+| **Branch / Optional**（everything else） | sub-skills of function-description, shared mechanisms (clarify, brainstorming, change-management, decision-log, intake-routing, project-init, human-gate, audit, traceability), optional support skills (project-scope, tracking-plan, requirement-restate, issue-record, competitive-research, solution-assessment, ...) | **Inquiry required.** Every branch entry triggers the inquiry template. Default behavior per artifact (see table below). |
 
 The main trunk is **non-negotiable** because the PRD cannot exist without background, journey, UX, functions, and assembly. Branches are **configurable** because each requirement genuinely has different scope, depth, and visibility needs.
 
@@ -69,7 +69,6 @@ The main trunk is **non-negotiable** because the PRD cannot exist without backgr
 | `project-scope` | Branch (001) | Optional (§5.1 范围) | Inquiry at Skill entry + prd-assembly §5 | In/Out/Deferred/Conditional lists in §5.1 if user accepts |
 | `requirement-restate` | Branch (001) | Default NOT in PRD | Inquiry at Skill entry | User can attach RR-XXX provenance to §0 |
 | `issue-record` | Branch (shared) | Default NOT in PRD | Inquiry at Skill entry + prd-assembly §9 | User can expose risk summary in §9 / §10 if visibility is needed |
-| `field-rules` | Sub of §4 | Optional (§5.3 字段) | Inquiry at sub-skill entry | User can inline or split to §5.3 |
 | `competitive-research` | Branch (support) | Optional (supporting evidence) | Inquiry at Skill entry | User can attach comparison table to §0 or as appendix |
 | `solution-assessment` | Branch (support) | Optional (supporting evidence) | Inquiry at Skill entry | User can attach trade-off analysis to §0 or as appendix |
 | `brainstorming` | Branch (shared) | Optional (process record) | Inquiry at Skill entry | User can attach distilled outcomes to §0 |

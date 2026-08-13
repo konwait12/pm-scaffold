@@ -122,10 +122,10 @@ PRD 输出（`prd-assembly`）是下游。
 | 8 子 Skill | `src/stages/002-product-requirements/skills/{function-description,product-ux}/skills/*/` |
 | 7 分支 Skill | `src/support-skills/*/` + `src/stages/*/skills/{project-scope,requirement-restate,tracking-plan}/` + `src/shared/clarify/skills/issue-record/` |
 | 9 共享模块 | `src/shared/{audit,human-gate,clarify,...}/` |
-| 11 产物模板 | `src/templates/stage-{1,2,3}-*/*.md` + `src/templates/support/*.md` |
+| 26 产物模板 | `src/templates/stage-{1,2,3}-*/` + `src/templates/{support,others,records}/` |
 | 8 核心脚本 | `src/scripts/{orchestrator,pipeline,workflow_registry,consistency_check,traceability_check,dor_check,property_check,branch_validator}.py` |
 | 模板库接口 | `src/templates/library/{README.md,manifest.schema.json,classifier-interface.md}` |
-| 测试 | `test/skills/*/`（16 套 fixture）+ `test/scripts/*.py`（集成测试） |
+| 测试 | `test/skills/*/`（20 套 fixture）+ `test/scripts/*.py`（集成测试） |
 
 ---
 
@@ -141,7 +141,7 @@ PRD 输出（`prd-assembly`）是下游。
 - 单元/集成测试（workflow_runtime / cross_skill_integration / 5 主 skill 校验器）
 - 需求目录状态 / 记录 / RTM 校验
 
-**当前结果**：47/47 PASS
+**当前结果**：52/52 PASS
 
 ### 5.2 发布
 

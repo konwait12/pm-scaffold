@@ -35,12 +35,12 @@ bash run_tests.sh
 
 - **5 Work Items** across 3 stages: business requirements → product requirements → PRD output
 - **8 sub-skills** for detailed UX (page-design, interaction-rules, ux-flow) and function (business-rules, validation-rules, state-machine, exception-handling, acceptance-criteria) specification
-- **3 support skills**: competitive research, solution assessment, PRD publish
+- **7 branch skills**: competitive research, solution assessment, PRD publish, project scope, requirement restate, tracking plan, issue record
 - **17-lens thinking framework** shared across all skills
 - **Non-bypassable human gates**: only `pipeline.py review --decision approve` with a real human reviewer can confirm artifacts
 - **SHA-256 binding**: confirmed artifacts are cryptographically bound to their reviewer
 - **Full traceability**: G→ST→FEA→FUN→AC/BR forward and reverse traceability
-- **47+ regression tests** with fixture-based validation
+- **52+ regression tests** with fixture-based validation
 
 ## Agent Entry Point
 
@@ -60,13 +60,13 @@ New AI agents: read `AGENTS.md` first for startup order, hard rules, and quick-s
 ## Validation
 
 ```bash
-bash run_tests.sh                              # Full regression (47+ tests)
+bash run_tests.sh                              # Full regression (52+ tests)
 python3 src/scripts/consistency_check.py       # Cross-document drift check
 python3 src/scripts/property_check.py <fd.md>  # Rule completeness properties
 ```
 
 ## Requirements
 
-- Python 3.11+
+- Python 3.10+
 - Git (for version control of artifacts)
 - lark-cli (optional, for Feishu document integration)

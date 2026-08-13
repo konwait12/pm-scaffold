@@ -105,10 +105,20 @@ def apply_migration(req_dir: Path, plan: dict) -> dict:
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description=__doc__)
+    parser = argparse.ArgumentParser(
+        description="One-shot migration tool: flat Wave layout -> v2 stage layout. "
+                    "Only needed for requirements created before the v2 layout.",
+    )
     parser.add_argument("req_dirs", nargs="+", type=Path)
-    parser.add_argument("--apply", action="store_true")
+    parser.add_argument("--apply", action="store_true", help="Actually move/rewrite requirement files")
+    parser.add_argument("--confirm", action="store_true",
+                        help="Required with --apply: acknowledge that files will be moved and rewritten")
     args = parser.parse_args()
+    if args.apply and not args.confirm:
+        print("ERROR: --apply moves directories and rewrites .md content in place.", file=sys.stderr)
+        print("       This is a one-shot migration tool; run without --apply for a dry-run,", file=sys.stderr)
+        print("       or re-run with --apply --confirm to proceed.", file=sys.stderr)
+        return 2
     results = []
     for req_dir in args.req_dirs:
         if not req_dir.is_dir():

@@ -56,7 +56,7 @@ All notable changes to PM Scaffold · 产品 AI 脚手架 are documented here. T
 ### Added · 文档
 - `docs/ARCHITECTURE.md` · 整体架构说明
 - 9 份 sub-skill README（sub-skill/README.md）
-- `docs/immediate-actionable-optimization-plan.md` · 立即可执行优化任务清单
+- `docs/immediate-actionable-optimization-plan.md` · 立即可执行优化任务清单（已于 v0.2.0 起移出仓库）
 - `src/templates/library/` · 模板库接口预留（README / manifest.schema.json / classifier-interface.md）
 
 ### Changed
