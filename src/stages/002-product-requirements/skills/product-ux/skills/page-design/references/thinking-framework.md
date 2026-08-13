@@ -30,15 +30,15 @@
 
 ## 5. Traceability lens（可追溯透镜）
 
-**提问：** 这个页面属于哪个 `FEA-\d+`？对应 `ux-flow` 中的哪一步、上游哪个故事？删除它有没有依据？
+**提问：** 这个页面属于哪个 `FEA-\d+`？对应 `functional-flow`（功能流程）中的哪一步、上游哪个故事？删除它有没有依据？
 
-**反模式：** 凭空新增未在 `ux-flow` 出现的页面，或把同一功能的多个页面按"屏幕数"机械拆分；任何页面都必须能向上追溯到功能、流程、故事，否则就是范围蔓延。
+**反模式：** 凭空新增未在 `functional-flow`（功能流程）出现的页面，或把同一功能的多个页面按"屏幕数"机械拆分；任何页面都必须能向上追溯到功能、流程、故事，否则就是范围蔓延。
 
 ---
 
 ## Low-Density Degradation Mode
 
-当上游 `ux-flow` 步骤缺失或只有一个模糊页面概念、没有任何流程材料时（见 `SKILL.md` §1 Preflight 判定），五个领域透镜无法产生有效工作。
+当上游 `functional-flow`（功能流程）步骤缺失或只有一个模糊页面概念、没有任何流程材料时（见 `SKILL.md` §1 Preflight 判定），五个领域透镜无法产生有效工作。
 
 ```text
 low-density input → skip 5-lens ideation
@@ -53,7 +53,7 @@ low-density input → skip 5-lens ideation
 Degradation triggers（任一即触发）:
 
 - 只有一句"给 X 做个页面"，没有任何流程步骤
-- 上游 ux-flow 未 confirmed 或步骤为空
+- 上游 functional-flow 未 confirmed 或步骤为空
 - 用户要求"设计页面"却无法说清页面数量与用途
 
 这不是失败状态，而是信息不足时的正确响应——省下人工评审时间，产出一批干净的澄清问题，而不是一张满是 `待确认` 的页面表。
