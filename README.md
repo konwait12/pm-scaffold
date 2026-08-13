@@ -85,7 +85,7 @@ src/stages/          3 阶段 × 5 主 skill + 8 子 skill
 src/shared/          9 共享机制（审计/澄清/变更/闸门/追溯等）
 src/support-skills/  4 支持 skill（+4 分支 skill 散见 stages/shared，共 8）
 src/scripts/         pipeline / orchestrator / 校验器
-src/templates/       26 个产物模板 + resolver
+src/templates/       24 个产物模板 + resolver
 src/toolkit/         工具指南（Figma / Mermaid / lark-cli）
 test/                回归测试（fixtures + 单元/集成）
 ```
