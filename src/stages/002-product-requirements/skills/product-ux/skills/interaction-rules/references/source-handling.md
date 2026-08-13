@@ -1,6 +1,6 @@
 # Source Handling · interaction-rules
 
-本子 Skill 消费的是**已确认的上游产物**而非原始材料。因此"来源"指：上游 `page-design` 页面清单（§4）、`ux-flow` 流程（§3.1/§3.2）、父产物 `product-ux` §2 功能清单，以及更早的 `SRC-*` 原始来源。
+本子 Skill 消费的是**已确认的上游产物**而非原始材料。因此"来源"指：上游 `page-design` 页面清单（§2 页面设计）、`functional-flow`（function-description）功能流程（§2.1 主流程 / §2.2 分支流程 / §2.3 异常流程）、`feature-list`（function-description）功能清单，以及更早的 `SRC-*` 原始来源。
 
 ## Upstream Register
 
@@ -8,10 +8,10 @@
 
 ```text
 rule_id            # IX-XXX，本子 Skill 生成的规则 ID
-applicable_page    # PG-XXX，来自 page-design §4
-feature_id         # FEA-XXX，来自父产物 §2
-flow_step          # 来自 ux-flow 的步骤（规则对应的流程节点）
-upstream_version   # page-design / ux-flow 的 confirmed 版本
+applicable_page    # PG-XXX，来自 page-design §2 页面设计
+feature_id         # FEA-XXX，来自 function-description 的 feature-list
+flow_step          # 来自 functional-flow 功能流程的步骤（规则对应的流程节点）
+upstream_version   # page-design / functional-flow 的 confirmed 版本
 source_ids         # 透传上游引用的原始 SRC-*
 ```
 
@@ -20,7 +20,7 @@ source_ids         # 透传上游引用的原始 SRC-*
 ## Rule-Claim Extraction Rules
 
 1. 先从页面清单的"操作"列与流程的分支条件逐字摘取交互事实，再写规则。
-2. 规则中的术语（页面名、操作名、状态名）与 §4、§3.1 一致，不自造。
+2. 规则中的术语（页面名、操作名、状态名）与 §2 页面设计、functional-flow 功能流程一致，不自造。
 3. 为补全而增加的响应/状态：分离"上游写了"（FACT）与"我推测该有"（AI_INFERENCE）。
 4. 排除的上游交互点要写理由（重复 / 出范围 / 已被更新），不静默丢弃。
 5. 上游未提的反馈（错误文案、超时行为）**不视为确认不存在**——标 `UNKNOWN` 交人工。
@@ -34,7 +34,7 @@ source_ids         # 透传上游引用的原始 SRC-*
 - 标 `CONFLICT-XXX` 并停止：若该冲突改变 P0 交互或反馈行为，交给产品负责人裁决。
 - **绝不静默选择更方便的响应。**
 
-上游产物的版本关系：`page-design` / `ux-flow` 为 `confirmed` 才有权作为规则输入；`superseded` 版本的页面/流程不采用，除非确认的变更记录明确沿用。
+上游产物的版本关系：`page-design` / `functional-flow` 为 `confirmed` 才有权作为规则输入；`superseded` 版本的页面/流程不采用，除非确认的变更记录明确沿用。
 
 ## Research Boundary
 

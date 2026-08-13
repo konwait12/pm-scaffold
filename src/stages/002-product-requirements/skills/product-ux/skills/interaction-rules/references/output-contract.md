@@ -1,14 +1,14 @@
 # Output Contract · interaction-rules
 
-本子 Skill 产出父级 `product-ux.md` 的 **§3.3 交互规则 IX-XXX**（隶属 `## 3. UX 流程与交互规则（Structural 层）`）。不产出独立产物；所有内容直接写入父产物对应章节。
+本子 Skill 产出父级 `product-ux.md` 的 **§3 交互规则 IX-XXX**（隶属 `## 3. 交互规则`）。不产出独立产物；所有内容直接写入父产物对应章节。
 
 ## ID 契约
 
 | ID 类型 | 格式 | 规则 |
 |---|---|---|
 | 交互规则 | `IX-XXX` | 全局唯一，按 `IX-001`、`IX-002` 递增；一条规则一个交互行为；无跳号、无重复 |
-| 适用页面 | `PG-XXX` | 每条规则必须引用 `page-design` §4 存在的页面行；无孤儿规则 |
-| 功能 | `FEA-XXX` | 每条规则可回溯到父产物 §2 的 FEA；不引入 §2 之外的功能 |
+| 适用页面 | `PG-XXX` | 每条规则必须引用 `page-design` §2 页面设计存在的页面行；无孤儿规则 |
+| 功能 | `FEA-XXX` | 每条规则可回溯到 function-description 的 feature-list 功能清单的 FEA；不引入清单之外的功能 |
 | 冲突 | `CONFLICT-XXX` | 规则与页面/流程矛盾时显式保留，交人工裁决 |
 
 规则类别可含：入口与身份、核心操作、反馈与异常、导航、a11y。类别不产生新的 ID 前缀；统一用 `IX-XXX`。
@@ -43,7 +43,7 @@
 
 ## Required Section Content
 
-父产物 `## 3. UX 流程与交互规则` 下 `### 3.3 交互规则 IX-XXX`：
+父产物 `## 3. 交互规则` 下：
 
 - 表格六列：ID、规则描述、触发条件、系统响应、适用页面/功能、来源。
 - 每条规则满足「触发条件 → 系统响应」结构；系统响应为确定动作或界面状态，无「合理提示」类模糊措辞。
@@ -69,4 +69,4 @@ source_ids                 # FEA-XXX / PG-XXX / SRC-*
 
 ## Clarifications Session Contract
 
-沿用父产物 `## Clarifications` 表，一行一个 Session（`CL-NNN`），字段与父级一致。`reflow_target` 必须指向本子 Skill 影响的章节（`§3.3`）。`audit_recheck` 为最后填写字段；若 `fail`，状态回退 `needs_user_input` 并开新一轮 Session。
+沿用父产物 `## Clarifications` 表，一行一个 Session（`CL-NNN`），字段与父级一致。`reflow_target` 必须指向本子 Skill 影响的章节（`§3`）。`audit_recheck` 为最后填写字段；若 `fail`，状态回退 `needs_user_input` 并开新一轮 Session。

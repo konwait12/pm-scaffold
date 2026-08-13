@@ -1,7 +1,7 @@
 # Interaction Rules · 交互规则
 
 > **Sub-skill of** [`product-ux`](../SKILL.md)
-> **输出章节**：父级 `product-ux.md` §3.3 交互规则 IX-XXX
+> **输出章节**：父级 `product-ux.md` §3 交互规则 IX-XXX
 > **执行顺序**：3 / 3（最后生成，约束前两层）
 
 ## 用途
@@ -10,12 +10,12 @@
 
 ## 输入
 
-- `ux-flow` 的 confirmed 流程（§3.1/§3.2）
-- `page-design` 的 confirmed 页面清单（§4，含操作列）
+- `functional-flow`（function-description）的 confirmed 功能流程（§2.1 主流程 / §2.2 分支流程 / §2.3 异常流程）
+- `page-design` 的 confirmed 页面清单（§2 页面设计，含操作列）
 
 ## 产物
 
-`§3.3` 区块（写作格式遵循 `rule-writing-format.md`）：
+`§3` 区块（写作格式遵循 `rule-writing-format.md`）：
 
 | 字段 | 说明 |
 |---|---|
@@ -29,7 +29,7 @@
 ## 触发判断
 
 - 看到 "交互规则" / "IX" / "输入约束" / "反馈时机" / "可访问性" / "a11y" → 触发
-- 看到 "UX 流程" → **不触发**（走 `ux-flow`）
+- 看到 "功能流程" → **不触发**（走 `functional-flow`，在 function-description）
 - 看到 "页面设计" / "组件" → **不触发**（走 `page-design`）
 
 ## 关键约束
@@ -49,7 +49,7 @@ Preflight → Intake → Think → Clarify → Generate → Audit → Human Gate
 - `agents/openai.yaml` · OpenAI / Anthropic Agent 路由元数据
 - `references/anti-patterns.md` · AI 常见反模式
 - `references/audit-checklist.md` · 审计清单
-- `references/output-contract.md` · §3.3 输出契约
+- `references/output-contract.md` · §3 输出契约
 - `references/question-patterns.md` · Clarify 提问模板
 - `references/reviewer-checklist.md` · 人工评审清单
 - `references/rule-writing-format.md` · 规则书写格式（必读）

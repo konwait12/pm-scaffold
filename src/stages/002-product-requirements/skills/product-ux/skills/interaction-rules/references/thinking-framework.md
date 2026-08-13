@@ -42,17 +42,17 @@
 
 ## Lens 5：追溯性（Traceability）
 
-**问题**：每一条 IX 规则能否追溯到 page-design 的某个页面，并对应到 ux-flow 中的某个流程步骤？
+**问题**：每一条 IX 规则能否追溯到 page-design 的某个页面，并对应到 functional-flow 功能流程中的某个流程步骤？
 
-核对反向覆盖：ux-flow 中出现的每个页面在交互规则中都有 IX；没有对应的页面不得凭空产生孤儿规则。「来源」列必须写明适用的页面/功能。
+核对反向覆盖：functional-flow 功能流程中出现的每个页面在交互规则中都有 IX；没有对应的页面不得凭空产生孤儿规则。「来源」列必须写明适用的页面/功能。
 
-**反模式**：产生与页面清单无对应关系的孤儿 IX（如凭空写「全局刷新」），或漏掉 ux-flow 中已存在的关键页面交互。
+**反模式**：产生与页面清单无对应关系的孤儿 IX（如凭空写「全局刷新」），或漏掉 functional-flow 功能流程中已存在的关键页面交互。
 
 ---
 
 ## Low-Density Degradation Mode
 
-当上游 page-design / ux-flow 页面不完整、交互点不清晰时（见 `SKILL.md` §1 Preflight 判定），五个领域透镜无法产生有效工作。
+当上游 page-design / functional-flow 页面不完整、交互点不清晰时（见 `SKILL.md` §1 Preflight 判定），五个领域透镜无法产生有效工作。
 
 ```text
 low-density input → skip 5-lens ideation

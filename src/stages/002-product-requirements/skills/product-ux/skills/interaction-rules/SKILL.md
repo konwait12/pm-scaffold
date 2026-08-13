@@ -1,6 +1,6 @@
 ---
 name: interaction-rules
-description: Define page-level interaction rules IX-XXX — user operation → system response, covering normal/error/empty/loading/edge behavior. MUST stay at the page layer; business rules belong to function-description. Sub-skill of product-ux, fills §3.3.
+description: Define page-level interaction rules IX-XXX — user operation → system response, covering normal/error/empty/loading/edge behavior. MUST stay at the page layer; business rules belong to function-description. Sub-skill of product-ux, fills §3 交互规则 of product-ux.md.
 ---
 
 # Interaction Rules
@@ -13,7 +13,7 @@ Define, for each interactive element on a confirmed page, the exact pair "user o
 
 ## Inputs And Outputs
 
-Inputs: the confirmed page skeleton (§4) from `page-design`, the confirmed UX flow (§3.1/§3.2) from `ux-flow`, and the parent product-ux §2 feature list. Output: §3.3 交互规则 IX-XXX of the parent `product-ux.md` — a rule table (ID, 规则描述, 触发条件, 系统响应, 适用页面/功能, 来源) written per `references/rule-writing-format.md`. Not a standalone artifact.
+Inputs: the confirmed page skeleton (§2 页面设计) from `page-design`, the confirmed functional flow (§2.1 主流程 / §2.2 分支流程 / §2.3 异常流程) from `functional-flow` (in function-description), and the feature list (`FEA-XXX`) from function-description's `feature-list`. Output: §3 交互规则 IX-XXX of the parent `product-ux.md` — a rule table (ID, 规则描述, 触发条件, 系统响应, 适用页面/功能, 来源) written per `references/rule-writing-format.md`. Not a standalone artifact.
 
 Load `references/thinking-framework.md` (which references `src/framework/thinking-core.md` §1 mandatory lenses) before analysis. Load `references/output-contract.md` before drafting. Load `references/rule-writing-format.md` before writing any rule. Load `references/audit-checklist.md` and `references/reviewer-checklist.md` before handoff. Run `scripts/validate_artifact.py <product-ux.md> --json` before review.
 
@@ -21,12 +21,12 @@ Load `references/thinking-framework.md` (which references `src/framework/thinkin
 
 ### 1. Preflight
 - "Which pages and interactive elements are confirmed? Which FEA and flow step does each rule trace to?"
-- Enumerate pages from §4; on each, list clickable/tappable elements from the actions column.
+- Enumerate pages from §2 页面设计 (page-design); on each, list clickable/tappable elements from the actions column.
 - **If the page skeleton is missing or unconfirmed**, return a routing receipt and STOP — rules cannot be attached to invented pages.
 
 ### 2. Intake
 - "What does each confirmed action actually trigger — not what a generic pattern says it should?"
-- Collect verbatim from §4 actions and §3.1 flow branches: the operation, its precondition, and the intended outcome.
+- Collect verbatim from §2 actions (page-design) and §2.2 分支流程 branches (functional-flow): the operation, its precondition, and the intended outcome.
 - Classify each rule claim as `FACT`, `DECISION`, `ASSUMPTION`, `AI_INFERENCE`, `UNKNOWN`, or `CONFLICT` per `src/framework/contracts.md`.
 - A response I invent for completeness must be tagged `AI_INFERENCE`.
 
@@ -46,7 +46,7 @@ Load `references/thinking-framework.md` (which references `src/framework/thinkin
 - 遇到「待确认 / 冲突 / 信息缺口」信号：主动询问是否登记 issue-record（问题清单，见 `src/shared/clarify/skills/issue-record`）；送审前 dor_check 会硬检查收口与引用。
 
 ### 5. Generate
-- One rule per interactive element or behavior, in §3.3 table form or paragraph form per `rule-writing-format.md`.
+- One rule per interactive element or behavior, in §3 table form or paragraph form per `rule-writing-format.md`.
 - Assign `IX-XXX` IDs sequentially and uniquely; every rule references its applicable page and its `FEA-XXX`.
 - Status: use `draft`, `needs_user_input`, or `conditional_review` — **never `confirmed`**.
 
@@ -82,7 +82,7 @@ Present: the IX rule list grouped by layer (entry/identity, core operation, feed
 ## Example: Sufficient Input → Sufficient Output
 
 **Input**: confirmed pages for "场地预约" FEA-001 (场地列表页, 详情页, 填写页, 结果页) with actions and next states from page-design.
-**Output**: §3.3 IX rules — e.g., IX-001 场地卡片点击→进入详情页; IX-002 提交按钮 loading→成功跳结果页/失败驻留表单+错误提示; IX-003 未登录点击预约→跳登录页、登录后回跳; IX-004 名额满的场地置灰不可点; each with trigger→response, applicable page, source, and no BR/VL leakage.
+**Output**: §3 IX rules — e.g., IX-001 场地卡片点击→进入详情页; IX-002 提交按钮 loading→成功跳结果页/失败驻留表单+错误提示; IX-003 未登录点击预约→跳登录页、登录后回跳; IX-004 名额满的场地置灰不可点; each with trigger→response, applicable page, source, and no BR/VL leakage.
 
 ## Example: Sparse Input → Degraded Output
 
@@ -95,7 +95,7 @@ Present: the IX rule list grouped by layer (entry/identity, core operation, feed
 |---|---|---|
 | `references/anti-patterns.md` | AI 常见反模式（写规则时对照规避） | Generate 时对照 |
 | `references/audit-checklist.md` | Audit 自审清单 | Audit 前 |
-| `references/output-contract.md` | §3.3 产出结构与 ID 契约 | Draft 前 |
+| `references/output-contract.md` | §3 产出结构与 ID 契约 | Draft 前 |
 | `references/question-patterns.md` | Clarify 提问模板（8 类句式） | Clarify 提问时 |
 | `references/reviewer-checklist.md` | 人工评审清单（Human Gate 用） | Human Gate 前 |
 | `references/rule-writing-format.md` | 交互规则书写格式（段落式，必读） | 写任何规则前 |

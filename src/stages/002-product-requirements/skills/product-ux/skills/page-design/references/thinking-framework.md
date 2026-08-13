@@ -78,4 +78,4 @@ Degradation triggers（任一即触发）:
 
 ## 表达层技法（可选加载）
 
-当 P0 流程 ≥ 3 页、涉及状态分支、或需要多方评审时，加载 `references/prototype-techniques.md`（吸收自 interactive-demo-factory / flow2demo），把页面骨架转成可点击 HTML 原型。**文本规则（§4.1 表格）是权威，原型是 UX 的落地产物，不替代文本；忠于输入，不发明页面与状态。**
+当 P0 流程 ≥ 3 页、涉及状态分支、或需要多方评审时，加载 `references/prototype-techniques.md`（吸收自 interactive-demo-factory / flow2demo），把页面骨架转成可点击 HTML 原型。**文本规则（§2.1 表格）是权威，原型是 UX 的落地产物，不替代文本；忠于输入，不发明页面与状态。**

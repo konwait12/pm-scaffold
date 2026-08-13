@@ -1,6 +1,6 @@
 # Source Handling · page-design
 
-本子 Skill 消费的是**已确认的上游产物**而非原始材料。因此"来源"指：上游 `ux-flow` 流程（§3.1/§3.2）、父产物 `product-ux` §2 功能清单、`user-journey-and-stories` 故事，以及更早的 `SRC-*` 原始来源。
+本子 Skill 消费的是**已确认的上游产物**而非原始材料。因此"来源"指：上游 `functional-flow`（function-description）功能流程（§2.1 主流程 / §2.2 分支流程 / §2.3 异常流程）、`feature-list`（function-description）功能清单、`user-journey-and-stories` 故事，以及更早的 `SRC-*` 原始来源。
 
 ## Upstream Register
 
@@ -8,10 +8,10 @@
 
 ```text
 page_id            # PG-XXX，本子 Skill 生成的页面行 ID
-flow_step          # 来自 ux-flow §3.1/§3.2 的步骤（页面挂在哪个步骤上）
-feature_id         # FEA-XXX，来自父产物 §2
+flow_step          # 来自 functional-flow（function-description）功能流程的步骤（页面挂在哪个步骤上）
+feature_id         # FEA-XXX，来自 function-description 的 feature-list
 story_id           # ST-XXX，页面追溯的故事
-upstream_version   # ux-flow / 上游产物的 confirmed 版本
+upstream_version   # functional-flow / 上游产物的 confirmed 版本
 source_ids         # 透传上游故事引用的原始 SRC-*
 ```
 
@@ -34,7 +34,7 @@ source_ids         # 透传上游故事引用的原始 SRC-*
 - 标 `CONFLICT-XXX` 并停止：若该冲突改变 P0 页面清单或主路径，交给产品负责人裁决。
 - **绝不静默选择更方便的方案。**
 
-上游产物的版本关系：`ux-flow` 为 `confirmed` 才有权作为页面输入；`superseded` 版本的流程不采用，除非确认的变更记录明确沿用。
+上游产物的版本关系：`functional-flow` 功能流程为 `confirmed` 才有权作为页面输入；`superseded` 版本的流程不采用，除非确认的变更记录明确沿用。
 
 ## Research Boundary
 
