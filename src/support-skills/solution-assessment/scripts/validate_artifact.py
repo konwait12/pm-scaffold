@@ -9,6 +9,9 @@ from pathlib import Path
 FEASIBILITY_HEADINGS = ["市场空间", "技术可行性", "投入产出", "风险评估", "结论"]
 COMPARISON_HEADINGS = ["候选方案", "方案对比矩阵", "AI 推荐", "人工决策"]
 PENDING = ("待确认",)
+SOURCE_SECTIONS = ["投入产出", "风险评估", "候选方案", "方案对比矩阵", "AI 推荐"]
+SRC_ID_RE = re.compile(r"SRC-\d+")
+KNOWLEDGE_STATE_RE = re.compile(r"\b(?:FACT|DECISION|AI_INFERENCE|UNKNOWN)\b")
 
 
 def _norm(h: str) -> str:
@@ -31,6 +34,14 @@ def validate(path: Path) -> dict:
         warnings.append("No clear recommendation found; assessment should conclude with 做/不做/有条件做")
     if any(p in text for p in PENDING):
         warnings.append("Assessment still has 待确认 placeholders")
+    # Source Fidelity (SKILL.md Audit): cost/risk/solution content must cite
+    # an SRC-ID or carry an explicit knowledge-state label.
+    if any(h in headings for h in SOURCE_SECTIONS) \
+            and not SRC_ID_RE.search(text) and not KNOWLEDGE_STATE_RE.search(text):
+        warnings.append(
+            "No SRC-ID or knowledge-state label (FACT/DECISION/AI_INFERENCE/UNKNOWN) "
+            "found: cost/risk figures must be traceable (Source Fidelity)"
+        )
     return {"ok": not errors, "errors": errors, "warnings": warnings}
 
 

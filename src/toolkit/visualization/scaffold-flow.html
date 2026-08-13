@@ -3,10 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=1280">
-<title>PM Scaffold · 产品 AI 脚手架 · 总执行流程 v0.1.0</title>
+<title>PM Scaffold · 产品 AI 脚手架 · 总执行流程 v0.2.0</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-html,body{background:#F7F6F5;font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Microsoft YaHei","Noto Sans CJK SC","WenQuanYi Micro Hei",sans-serif;color:#0A0A0A;line-height:1.55}
+html,body{background:#F7F6F5;font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Microsoft YaHei","Noto Sans CJK SC",sans-serif;color:#0A0A0A;line-height:1.6}
 .wrap{max-width:1280px;margin:0 auto;padding:32px 28px 80px}
 header{margin-bottom:24px}
 h1{font-size:28px;font-weight:700;letter-spacing:.3px}
@@ -22,17 +22,79 @@ section h2{font-size:20px;margin-bottom:4px;display:flex;align-items:center;gap:
 section h2 .badge{font-size:10px;background:#654ACB;color:#fff;padding:2px 8px;border-radius:5px;letter-spacing:.5px}
 section .desc{font-size:13px;color:#666;margin-bottom:18px}
 
-svg{display:block;max-width:100%;height:auto}
-svg text{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Microsoft YaHei","Noto Sans CJK SC","WenQuanYi Micro Hei",sans-serif}
+/* ===== flow box diagram (CSS) ===== */
+.flow{display:flex;align-items:stretch;gap:0;flex-wrap:nowrap}
+.fnode{background:#FAFAFA;border:1.5px solid #DAD7F0;border-radius:12px;padding:14px 16px;flex:1;min-width:0}
+.fnode b{display:block;font-size:14px;color:#3A2E8F;margin-bottom:6px}
+.fnode .items{font-size:12px;color:#444;line-height:1.75}
+.fnode .meta{font-size:11px;color:#999;margin-top:8px;border-top:1px dashed #E5E5E5;padding-top:6px}
+.farrow{display:flex;align-items:center;padding:0 10px;color:#654ACB;font-weight:700;font-size:16px;flex:0 0 auto}
+.farrow.v{flex-direction:column;justify-content:center}
+.gate{background:#FEF9EC;border-color:#E8C87A}
+.gate b{color:#92580A}
+.human{background:#F0FBF5;border-color:#9AD9B4}
+.human b{color:#0F8A4A}
+.branch{background:#F6F4FF;border-color:#C9C2EE}
+.loop{background:#FDF0F0;border-color:#E5A8A8}
+.loop b{color:#A23B3B}
 
-/* KPI grid */
+/* ===== cycle step strip ===== */
+.cycle{display:flex;gap:6px;flex-wrap:wrap}
+.cstep{flex:1;min-width:110px;background:#FAFAFA;border:1px solid #E5E5E5;border-radius:10px;padding:10px 12px;position:relative}
+.cstep .n{font-size:10px;font-weight:700;color:#654ACB;letter-spacing:.5px}
+.cstep .t{font-size:13px;font-weight:600;margin:2px 0 4px}
+.cstep .d{font-size:11px;color:#666;line-height:1.5}
+.cstep:after{content:"→";position:absolute;right:-10px;top:50%;transform:translateY(-50%);color:#654ACB;font-weight:700;z-index:1}
+.cstep:last-child:after{content:""}
+
+/* ===== knowledge states ===== */
+.ks-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:8px}
+.ks{border-radius:10px;padding:10px 12px;font-size:11px;text-align:center;font-weight:600;border:1px solid}
+.ks .cn{font-size:12px;font-weight:700;display:block}
+.ks .ce{display:block;font-size:10px;font-weight:400;color:#666;margin-top:2px}
+.ks.fact{background:#E6F9EE;border-color:#9AD9B4;color:#0F8A4A}
+.ks.dec{background:#EEEFFF;border-color:#C9C2EE;color:#3A2E8F}
+.ks.asm{background:#FEF3C7;border-color:#E8C87A;color:#92580A}
+.ks.ai{background:#FFF1E8;border-color:#F0B98F;color:#A8542A}
+.ks.unk{background:#F3F4F6;border-color:#D5D8DC;color:#555}
+.ks.con{background:#FDF0F0;border-color:#E5A8A8;color:#A23B3B}
+
+/* ===== state machine ===== */
+.sm{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.snode{padding:8px 14px;border-radius:8px;font-size:12px;font-weight:600;border:1px solid}
+.snode.draft{background:#F3F4F6;border-color:#D5D8DC;color:#555}
+.snode.ready{background:#EEEFFF;border-color:#C9C2EE;color:#3A2E8F}
+.snode.confirmed{background:#E6F9EE;border-color:#9AD9B4;color:#0F8A4A}
+.snode.super{background:#FDF0F0;border-color:#E5A8A8;color:#A23B3B}
+.snode.need{background:#FEF3C7;border-color:#E8C87A;color:#92580A}
+.sm .sarrow{color:#888;font-size:14px;font-weight:700}
+
+/* ===== gate matrix ===== */
+table{width:100%;border-collapse:collapse;font-size:12.5px}
+th{background:#FAFAFA;text-align:left;padding:8px 10px;border-bottom:2px solid #E5E5E5;font-size:12px;color:#555}
+td{padding:8px 10px;border-bottom:1px solid #F0F0F0;vertical-align:top}
+td code,th code{font-family:"SF Mono",Menlo,monospace;font-size:11.5px;background:#F3F4F6;padding:1px 5px;border-radius:4px}
+.ok{color:#0F8A4A;font-weight:700}
+.warn{color:#92580A;font-weight:700}
+
+/* ===== branch trigger matrix ===== */
+.branch-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.bcard{border:1px solid #E5E5E5;border-radius:10px;padding:12px 14px;background:#FAFAFA}
+.bcard b{color:#3A2E8F;font-size:13px}
+.bcard .trig{font-size:11.5px;color:#A23B3B;margin-top:3px}
+.bcard .out{font-size:11px;color:#888;margin-top:4px}
+
+/* ===== command chain ===== */
+.cmdline{background:#0F1020;border-radius:10px;padding:14px 16px;font-family:"SF Mono",Menlo,monospace;font-size:12px;color:#D8DAEE;line-height:1.9;overflow-x:auto}
+.cmdline .c{color:#8F9BB3}
+.cmdline .h{color:#7EE0A3}
+
 .kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:8px}
 .kpi{padding:14px 16px;border:1px solid #E5E5E5;border-radius:10px;background:#FAFAFA}
-.kpi .n{font-size:24px;font-weight:700;color:#654ACB;font-family:"JetBrains Mono","SF Mono",Menlo,monospace}
-.kpi .l{font-size:11px;color:#888;margin-top:4px;text-transform:uppercase;letter-spacing:.6px}
-
-/* Footer */
+.kpi .n{font-size:24px;font-weight:700;color:#654ACB;font-family:"SF Mono",Menlo,monospace}
+.kpi .l{font-size:11px;color:#888;margin-top:4px;letter-spacing:.5px}
 footer{margin-top:24px;text-align:center;color:#888;font-size:11px;padding-top:16px;border-top:1px solid #E5E5E5}
+@media (max-width:1100px){.flow{flex-direction:column}.farrow{transform:rotate(90deg);padding:6px 0}.ks-grid{grid-template-columns:repeat(3,1fr)}.branch-grid{grid-template-columns:1fr}.kpi-grid{grid-template-columns:repeat(2,1fr)}}
 </style>
 </head>
 <body>
@@ -40,594 +102,176 @@ footer{margin-top:24px;text-align:center;color:#888;font-size:11px;padding-top:1
 
 <header>
   <h1>PM Scaffold · 产品 AI 脚手架 · 总执行流程</h1>
-  <div class="sub">从原始材料到 confirmed PRD 的完整链路 · 3 阶段 · 5 主 Skill · 8 子 Skill · 7 共享机制 · 5 道 Human Gate · v0.1.0</div>
+  <div class="sub">从原始需求材料到人工确认 prd.md 的完整闭环 · 3 阶段 · 20 Skill（5 主 + 8 子 + 7 分支）· Loop 引擎 · v0.2.0</div>
   <div class="tags">
-    <span class="tag green">● 43/43 测试绿</span>
+    <span class="tag green">● 58/58 测试绿</span>
     <span class="tag">3 阶段</span>
     <span class="tag">5 主 Skill</span>
     <span class="tag">8 子 Skill</span>
-    <span class="tag">7 共享模块</span>
-    <span class="tag">3 支持 Skill</span>
-    <span class="tag amber">v0.1.0 治理强化中</span>
+    <span class="tag">7 分支 Skill</span>
+    <span class="tag">9 共享模块</span>
+    <span class="tag">17 思考透镜</span>
+    <span class="tag amber">Loop 工程已闭环</span>
   </div>
 </header>
 
-<!-- ============== 图 1 · 总体架构 ============== -->
+<!-- ============ 1 · 总体架构 ============ -->
 <section>
-  <h2>1. 总体架构 <span class="badge">v0.1.0</span></h2>
-  <div class="desc">从原始材料到 confirmed PRD 的分层结构。横向为阶段主线，纵向为支撑层与支持层。</div>
-  <svg viewBox="0 0 1220 580" xmlns="http://www.w3.org/2000/svg">
-    <defs>
-      <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
-        <path d="M 0 0 L 10 5 L 0 10 z" fill="#0A0A0A"/>
-      </marker>
-      <marker id="arrR" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
-        <path d="M 0 0 L 10 5 L 0 10 z" fill="#654ACB"/>
-      </marker>
-      <marker id="arrD" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-        <path d="M 0 0 L 10 5 L 0 10 z" fill="#9CA3AF"/>
-      </marker>
-    </defs>
-
-    <!-- 输入层 -->
-    <rect x="40" y="30" width="1140" height="60" rx="10" fill="#F4F0FF" stroke="#654ACB" stroke-width="1.5"/>
-    <text x="60" y="55" font-size="15" font-weight="700" fill="#654ACB">📥 原始材料入仓</text>
-    <text x="60" y="76" font-size="12" fill="#333">邮件 · 会议纪要 · 文档 · PPT · 截图 → 全部放入 REQ-XXX/00-input/ （project-init 一键建 REQ 骨架）</text>
-
-    <!-- intake-routing -->
-    <rect x="40" y="105" width="1140" height="50" rx="10" fill="#FFFFFF" stroke="#0A0A0A" stroke-width="1"/>
-    <text x="60" y="128" font-size="14" font-weight="600">🚦 intake-routing 判定</text>
-    <text x="200" y="128" font-size="12" fill="#555">L0 一句话 → L1 邮件 → L2 完整材料 → L3 决策链 → L4 跨部门冲突</text>
-    <text x="200" y="146" font-size="11" fill="#888">L0-L1 阻断回流补料；L2-L4 推进</text>
-
-    <!-- 三个阶段 -->
-    <!-- Stage 1 -->
-    <rect x="40" y="180" width="370" height="280" rx="14" fill="#FAFAFA" stroke="#0A0A0A" stroke-width="1"/>
-    <rect x="40" y="180" width="370" height="34" rx="14" fill="#34D399"/>
-    <text x="60" y="203" font-size="14" font-weight="700" fill="#0A0A0A">Stage 1 · 业务需求</text>
-    <text x="220" y="203" font-size="11" fill="#0A0A0A">2 主 Skill</text>
-    <text x="60" y="236" font-size="13" font-weight="600">📋 project-background-goal</text>
-    <text x="60" y="256" font-size="11" fill="#555">§G 目标  §DEC 决策  §ASM 假设  §UNK 未知</text>
-    <text x="60" y="272" font-size="11" fill="#888">产物：background-goal.md（v0.1 已落地 · 已过闸门）</text>
-    <text x="60" y="306" font-size="13" font-weight="600">👥 user-journey-and-stories</text>
-    <text x="60" y="326" font-size="11" fill="#555">§ST 用户故事  §Journey 旅程图</text>
-    <text x="60" y="342" font-size="11" fill="#888">产物：journey-and-stories.md（v0.1 已落地）</text>
-    <rect x="60" y="380" width="330" height="64" rx="8" fill="#FFEBEB" stroke="#F87171" stroke-width="1"/>
-    <text x="76" y="402" font-size="12" font-weight="700" fill="#B91C1C">🛡 Human Gate #1 + #2</text>
-    <text x="76" y="420" font-size="10.5" fill="#7F1D1D">六态硬门禁：FACT · DECISION · ASSUMPTION</text>
-    <text x="76" y="436" font-size="10.5" fill="#7F1D1D">AI_INFERENCE · UNKNOWN · CONFLICT</text>
-
-    <!-- Stage 2 -->
-    <rect x="425" y="180" width="370" height="280" rx="14" fill="#FAFAFA" stroke="#0A0A0A" stroke-width="1"/>
-    <rect x="425" y="180" width="370" height="34" rx="14" fill="#5B8BFF"/>
-    <text x="445" y="203" font-size="14" font-weight="700" fill="#FFFFFF">Stage 2 · 产品需求</text>
-    <text x="605" y="203" font-size="11" fill="#FFFFFF">2 主 + 8 子 Skill</text>
-    <text x="445" y="236" font-size="13" font-weight="600">🎨 product-ux（3 子）</text>
-    <text x="445" y="256" font-size="11" fill="#555">ux-flow → page-design → interaction-rules</text>
-    <text x="445" y="272" font-size="11" fill="#888">产物：product-ux.md（§IX §Page §UX）</text>
-    <text x="445" y="306" font-size="13" font-weight="600">📐 function-description（5 子）</text>
-    <text x="445" y="326" font-size="11" fill="#555">BR → VL → State → Exception → AC</text>
-    <text x="445" y="342" font-size="11" fill="#888">产物：function-description.md（五章节）</text>
-    <rect x="445" y="380" width="330" height="64" rx="8" fill="#FFEBEB" stroke="#F87171" stroke-width="1"/>
-    <text x="461" y="402" font-size="12" font-weight="700" fill="#B91C1C">🛡 Human Gate #3 + #4</text>
-    <text x="461" y="420" font-size="10.5" fill="#7F1D1D">RTM 追溯：G → ST → FEA → FUN → AC → BR</text>
-    <text x="461" y="436" font-size="10.5" fill="#7F1D1D">NFR-10/11/12/15/16/17 六维度校验</text>
-
-    <!-- Stage 3 -->
-    <rect x="810" y="180" width="370" height="280" rx="14" fill="#FAFAFA" stroke="#0A0A0A" stroke-width="1"/>
-    <rect x="810" y="180" width="370" height="34" rx="14" fill="#A78BFA"/>
-    <text x="830" y="203" font-size="14" font-weight="700" fill="#FFFFFF">Stage 3 · PRD 输出</text>
-    <text x="990" y="203" font-size="11" fill="#FFFFFF">1 主 + 1 支持</text>
-    <rect x="830" y="226" width="330" height="60" rx="10" fill="#654ACB" stroke="#654ACB" stroke-width="1"/>
-    <text x="846" y="248" font-size="13" font-weight="700" fill="#FFFFFF">📄 prd-assembly ⭐ 核心节点</text>
-    <text x="846" y="266" font-size="11" fill="#FFFFFF">汇总 5 主 Skill 产物 → 唯一 prd.md</text>
-    <text x="846" y="280" font-size="11" fill="#FFFFFF">含正向 + 反向 RTM 追溯链</text>
-    <text x="830" y="306" font-size="13" font-weight="600">📤 prd-publish（支持）</text>
-    <text x="830" y="326" font-size="11" fill="#555">授权审阅人 + 版本号 + 生效时间</text>
-    <text x="830" y="342" font-size="11" fill="#888">sha256 留档（防未授权修改）</text>
-    <rect x="830" y="380" width="330" height="64" rx="8" fill="#FFEBEB" stroke="#F87171" stroke-width="1"/>
-    <text x="846" y="402" font-size="12" font-weight="700" fill="#B91C1C">🛡 Human Gate #5</text>
-    <text x="846" y="420" font-size="10.5" fill="#7F1D1D">封口：confirmed 后变更走 change-mgmt</text>
-    <text x="846" y="436" font-size="10.5" fill="#7F1D1D">决策记录 DEC-XXX 入库</text>
-
-    <!-- 主线箭头 -->
-    <line x1="410" y1="320" x2="425" y2="320" stroke="#0A0A0A" stroke-width="2" marker-end="url(#arr)"/>
-    <line x1="795" y1="320" x2="810" y2="320" stroke="#654ACB" stroke-width="2" marker-end="url(#arrR)"/>
-    <line x1="225" y1="90" x2="225" y2="180" stroke="#9CA3AF" stroke-width="1.5" marker-end="url(#arrD)"/>
-    <line x1="610" y1="155" x2="610" y2="180" stroke="#9CA3AF" stroke-width="1.5" marker-end="url(#arrD)"/>
-    <line x1="995" y1="155" x2="995" y2="180" stroke="#9CA3AF" stroke-width="1.5" marker-end="url(#arrD)"/>
-
-    <!-- 共享 + 支持层 -->
-    <rect x="40" y="485" width="800" height="80" rx="12" fill="#FEF3C7" stroke="#F59E0B" stroke-width="1" stroke-dasharray="6,3"/>
-    <text x="60" y="510" font-size="14" font-weight="700" fill="#92580A">🔧 共享机制（7 模块 · src/shared/）</text>
-    <text x="60" y="530" font-size="11" fill="#333">audit · human-gate · clarify · change-mgmt · traceability · decision-log · project-init</text>
-    <text x="60" y="550" font-size="10.5" fill="#666">所有 Stage 通过"虚线复用"调用 · 不独立构成业务阶段</text>
-
-    <rect x="855" y="485" width="325" height="80" rx="12" fill="#E6F9EE" stroke="#1DC981" stroke-width="1" stroke-dasharray="6,3"/>
-    <text x="875" y="510" font-size="14" font-weight="700" fill="#0F8A4A">🛠 支持 Skill（3 · 按需）</text>
-    <text x="875" y="530" font-size="11" fill="#333">🔍 competitive-research · ⚖️ solution-assessment</text>
-    <text x="875" y="550" font-size="11" fill="#333">📤 prd-publish（已纳入 Stage 3）</text>
-  </svg>
+  <h2>1. 总体架构 <span class="badge">主线 + 两层服务</span></h2>
+  <div class="desc">横向是唯一主干（3 阶段 × 5 主 Work Item，每项必经 Human Gate）；纵向两层按需服务：共享机制服务所有阶段，7 个分支 Skill 按触发条件运行。</div>
+  <div class="flow">
+    <div class="fnode"><b>① 输入层</b>
+      <div class="items">原始材料登记<br>SRC-001…（邮件/纪要/PPT/图片）<br>authorized-reviewers.json<br>L0-L4 成熟度判定</div>
+      <div class="meta"><code>pipeline.py init</code> 建骨架<br><code>entry</code> 判定入口</div>
+    </div>
+    <div class="farrow">→</div>
+    <div class="fnode"><b>001 业务需求</b>
+      <div class="items">project-background-goal<br>→ user-journey-and-stories</div>
+      <div class="meta">产物：背景目标基线<br>+ 旅程故事 + 范围基线</div>
+    </div>
+    <div class="farrow">→</div>
+    <div class="fnode"><b>002 产品需求</b>
+      <div class="items">product-ux<br>（ux-flow / page-design / interaction-rules）<br>function-description<br>（business-rules / validation-rules / state-machine / exception-handling / acceptance-criteria）</div>
+      <div class="meta">产物：功能清单、UX 流程、页面、IX 规则、FUN/BR/VL/EX/AC</div>
+    </div>
+    <div class="farrow">→</div>
+    <div class="fnode"><b>003 PRD 输出</b>
+      <div class="items">prd-assembly 汇总<br>→ prd.md（最终交付）<br>→ prd-publish 发布</div>
+      <div class="meta">只聚合、不发明新需求</div>
+    </div>
+  </div>
+  <div class="flow" style="margin-top:12px">
+    <div class="fnode branch" style="flex:0 0 30%"><b>分支层（7 分支 Skill · 触发才跑）</b>
+      <div class="items">competitive-research · solution-assessment · prd-publish · project-scope · requirement-restate · tracking-plan · issue-record</div>
+    </div>
+    <div class="farrow">↕</div>
+    <div class="fnode" style="flex:1"><b>共享层（9 模块）</b>
+      <div class="items">audit · human-gate · clarify · intake-routing · change-management · traceability · brainstorming · decision-log · project-init</div>
+    </div>
+  </div>
 </section>
 
-<!-- ============== 图 2 · 端到端执行流（含驳回回流）============== -->
+<!-- ============ 2 · 8 步执行循环 ============ -->
 <section>
-  <h2>2. 端到端执行流 <span class="badge">REQUEST → PRD</span></h2>
-  <div class="desc">每个需求从 REQ-XXX 目录创建开始，依次跑 5 主 Skill，每步过 Human Gate，最终产出 confirmed PRD。驳回回流走虚线。</div>
-  <svg viewBox="0 0 1220 640" xmlns="http://www.w3.org/2000/svg">
-    <defs>
-      <marker id="arr2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
-        <path d="M 0 0 L 10 5 L 0 10 z" fill="#0A0A0A"/>
-      </marker>
-      <marker id="arrRed" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
-        <path d="M 0 0 L 10 5 L 0 10 z" fill="#DC2626"/>
-      </marker>
-      <marker id="arrGreen" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
-        <path d="M 0 0 L 10 5 L 0 10 z" fill="#16A34A"/>
-      </marker>
-    </defs>
-
-    <!-- 入口 -->
-    <rect x="40" y="40" width="180" height="50" rx="10" fill="#F4F0FF" stroke="#654ACB" stroke-width="1.5"/>
-    <text x="130" y="62" font-size="12" font-weight="700" text-anchor="middle" fill="#654ACB">📂 project-init</text>
-    <text x="130" y="80" font-size="10" text-anchor="middle" fill="#555">创建 REQ-XXX 骨架</text>
-
-    <rect x="40" y="110" width="180" height="50" rx="10" fill="#FFFFFF" stroke="#0A0A0A" stroke-width="1"/>
-    <text x="130" y="132" font-size="12" font-weight="700" text-anchor="middle">📥 原始材料入仓</text>
-    <text x="130" y="150" font-size="10" text-anchor="middle" fill="#555">00-input/ 邮件+纪要+PPT</text>
-
-    <!-- 判定菱形 -->
-    <polygon points="130,200 220,240 130,280 40,240" fill="#FFFFFF" stroke="#0A0A0A" stroke-width="1.5"/>
-    <text x="130" y="236" font-size="11" font-weight="700" text-anchor="middle">材料充分？</text>
-    <text x="130" y="252" font-size="9" text-anchor="middle" fill="#888">L0-L1 阻断</text>
-
-    <!-- 5 主 Skill 节点 -->
-    <g>
-      <rect x="290" y="80" width="240" height="60" rx="10" fill="#FFFFFF" stroke="#0A0A0A" stroke-width="1"/>
-      <text x="410" y="104" font-size="13" font-weight="700" text-anchor="middle">📋 ① project-background-goal</text>
-      <text x="410" y="122" font-size="10.5" text-anchor="middle" fill="#555">§G 目标 + §DEC 决策 + 六态标注</text>
-    </g>
-
-    <g>
-      <rect x="290" y="160" width="240" height="60" rx="10" fill="#FFFFFF" stroke="#0A0A0A" stroke-width="1"/>
-      <text x="410" y="184" font-size="13" font-weight="700" text-anchor="middle">👥 ② user-journey-and-stories</text>
-      <text x="410" y="202" font-size="10.5" text-anchor="middle" fill="#555">§ST 用户故事 + §Journey 旅程图</text>
-    </g>
-
-    <g>
-      <rect x="290" y="240" width="240" height="60" rx="10" fill="#FFFFFF" stroke="#0A0A0A" stroke-width="1"/>
-      <text x="410" y="264" font-size="13" font-weight="700" text-anchor="middle">🎨 ③ product-ux（3 子）</text>
-      <text x="410" y="282" font-size="10.5" text-anchor="middle" fill="#555">ux-flow → page-design → interaction</text>
-    </g>
-
-    <g>
-      <rect x="290" y="320" width="240" height="60" rx="10" fill="#FFFFFF" stroke="#0A0A0A" stroke-width="1"/>
-      <text x="410" y="344" font-size="13" font-weight="700" text-anchor="middle">📐 ④ function-description（5 子）</text>
-      <text x="410" y="362" font-size="10.5" text-anchor="middle" fill="#555">BR → VL → State → Exception → AC</text>
-    </g>
-
-    <g>
-      <rect x="290" y="400" width="240" height="60" rx="10" fill="#654ACB" stroke="#654ACB" stroke-width="1"/>
-      <text x="410" y="424" font-size="13" font-weight="700" text-anchor="middle" fill="#FFFFFF">📄 ⑤ prd-assembly ⭐ 核心</text>
-      <text x="410" y="442" font-size="10.5" text-anchor="middle" fill="#FFFFFF">汇总 → 唯一 prd.md（含 RTM）</text>
-    </g>
-
-    <!-- 5 道 Human Gate 菱形 -->
-    <g>
-      <polygon points="610,110 670,140 610,170 550,140" fill="#FFEBEB" stroke="#DC2626" stroke-width="1.5"/>
-      <text x="610" y="138" font-size="10" font-weight="700" text-anchor="middle" fill="#B91C1C">HG #1</text>
-      <text x="610" y="150" font-size="8" text-anchor="middle" fill="#7F1D1D">六态</text>
-    </g>
-    <g>
-      <polygon points="610,190 670,220 610,250 550,220" fill="#FFEBEB" stroke="#DC2626" stroke-width="1.5"/>
-      <text x="610" y="218" font-size="10" font-weight="700" text-anchor="middle" fill="#B91C1C">HG #2</text>
-      <text x="610" y="230" font-size="8" text-anchor="middle" fill="#7F1D1D">六态</text>
-    </g>
-    <g>
-      <polygon points="610,270 670,300 610,330 550,300" fill="#FFEBEB" stroke="#DC2626" stroke-width="1.5"/>
-      <text x="610" y="298" font-size="10" font-weight="700" text-anchor="middle" fill="#B91C1C">HG #3</text>
-      <text x="610" y="310" font-size="8" text-anchor="middle" fill="#7F1D1D">UX</text>
-    </g>
-    <g>
-      <polygon points="610,350 670,380 610,410 550,380" fill="#FFEBEB" stroke="#DC2626" stroke-width="1.5"/>
-      <text x="610" y="378" font-size="10" font-weight="700" text-anchor="middle" fill="#B91C1C">HG #4</text>
-      <text x="610" y="390" font-size="8" text-anchor="middle" fill="#7F1D1D">NFR</text>
-    </g>
-    <g>
-      <polygon points="610,430 670,460 610,490 550,460" fill="#FFEBEB" stroke="#DC2626" stroke-width="1.5"/>
-      <text x="610" y="458" font-size="10" font-weight="700" text-anchor="middle" fill="#B91C1C">HG #5</text>
-      <text x="610" y="470" font-size="8" text-anchor="middle" fill="#7F1D1D">封口</text>
-    </g>
-
-    <!-- 决定标签 -->
-    <g>
-      <rect x="720" y="120" width="100" height="40" rx="8" fill="#E6F9EE" stroke="#16A34A" stroke-width="1.5"/>
-      <text x="770" y="138" font-size="11" font-weight="700" text-anchor="middle" fill="#0F8A4A">✓ 通过</text>
-      <text x="770" y="152" font-size="9" text-anchor="middle" fill="#0F8A4A">人工确认</text>
-    </g>
-    <g>
-      <rect x="720" y="200" width="100" height="40" rx="8" fill="#E6F9EE" stroke="#16A34A" stroke-width="1.5"/>
-      <text x="770" y="218" font-size="11" font-weight="700" text-anchor="middle" fill="#0F8A4A">✓ 通过</text>
-      <text x="770" y="232" font-size="9" text-anchor="middle" fill="#0F8A4A">人工确认</text>
-    </g>
-    <g>
-      <rect x="720" y="280" width="100" height="40" rx="8" fill="#E6F9EE" stroke="#16A34A" stroke-width="1.5"/>
-      <text x="770" y="298" font-size="11" font-weight="700" text-anchor="middle" fill="#0F8A4A">✓ 通过</text>
-      <text x="770" y="312" font-size="9" text-anchor="middle" fill="#0F8A4A">人工确认</text>
-    </g>
-    <g>
-      <rect x="720" y="360" width="100" height="40" rx="8" fill="#E6F9EE" stroke="#16A34A" stroke-width="1.5"/>
-      <text x="770" y="378" font-size="11" font-weight="700" text-anchor="middle" fill="#0F8A4A">✓ 通过</text>
-      <text x="770" y="392" font-size="9" text-anchor="middle" fill="#0F8A4A">人工确认</text>
-    </g>
-    <g>
-      <rect x="720" y="440" width="100" height="40" rx="8" fill="#E6F9EE" stroke="#16A34A" stroke-width="1.5"/>
-      <text x="770" y="458" font-size="11" font-weight="700" text-anchor="middle" fill="#0F8A4A">✓ 通过</text>
-      <text x="770" y="472" font-size="9" text-anchor="middle" fill="#0F8A4A">人工确认</text>
-    </g>
-
-    <!-- 驳回回流（虚线红） -->
-    <g stroke="#DC2626" stroke-width="1.5" stroke-dasharray="5,3" fill="none">
-      <path d="M 670 250 Q 700 250 700 200" marker-end="url(#arrRed)"/>
-      <path d="M 670 330 Q 700 330 700 280" marker-end="url(#arrRed)"/>
-      <path d="M 670 410 Q 700 410 700 360" marker-end="url(#arrRed)"/>
-      <path d="M 670 490 Q 700 490 700 440" marker-end="url(#arrRed)"/>
-    </g>
-    <g font-size="9" fill="#B91C1C" text-anchor="middle">
-      <text x="700" y="225">驳回</text>
-      <text x="700" y="305">驳回</text>
-      <text x="700" y="385">驳回</text>
-      <text x="700" y="465">驳回</text>
-    </g>
-
-    <!-- 推进箭头（主线） -->
-    <g stroke="#0A0A0A" stroke-width="1.5" fill="none">
-      <path d="M 220 240 L 290 110" marker-end="url(#arr2)"/>
-      <path d="M 530 110 L 550 140" marker-end="url(#arr2)"/>
-      <path d="M 670 140 L 720 140" marker-end="url(#arr2)"/>
-      <path d="M 820 140 Q 870 140 870 190 L 290 190" stroke-dasharray="0" marker-end="url(#arr2)"/>
-      <path d="M 530 190 L 550 220" marker-end="url(#arr2)"/>
-      <path d="M 670 220 L 720 220" marker-end="url(#arr2)"/>
-      <path d="M 820 220 Q 870 220 870 270 L 290 270" marker-end="url(#arr2)"/>
-      <path d="M 530 270 L 550 300" marker-end="url(#arr2)"/>
-      <path d="M 670 300 L 720 300" marker-end="url(#arr2)"/>
-      <path d="M 820 300 Q 870 300 870 350 L 290 350" marker-end="url(#arr2)"/>
-      <path d="M 530 350 L 550 380" marker-end="url(#arr2)"/>
-      <path d="M 670 380 L 720 380" marker-end="url(#arr2)"/>
-      <path d="M 820 380 Q 870 380 870 430 L 290 430" marker-end="url(#arr2)"/>
-      <path d="M 530 430 L 550 460" marker-end="url(#arr2)"/>
-      <path d="M 670 460 L 720 460" marker-end="url(#arr2)"/>
-    </g>
-
-    <!-- 步骤编号 -->
-    <g font-size="11" fill="#654ACB" font-weight="700" text-anchor="middle">
-      <text x="265" y="115">→</text>
-      <text x="265" y="195">→</text>
-      <text x="265" y="275">→</text>
-      <text x="265" y="355">→</text>
-      <text x="265" y="435">→</text>
-    </g>
-
-    <!-- 输出 -->
-    <rect x="870" y="490" width="320" height="60" rx="10" fill="#1DC981" stroke="#0F8A4A" stroke-width="2"/>
-    <text x="1030" y="514" font-size="14" font-weight="700" text-anchor="middle" fill="#FFFFFF">✅ 正式发布</text>
-    <text x="1030" y="534" font-size="10.5" text-anchor="middle" fill="#FFFFFF">confirmed PRD + sha256 + 授权记录</text>
-    <line x1="820" y1="460" x2="870" y2="510" stroke="#0A0A0A" stroke-width="1.5" marker-end="url(#arr2)"/>
-
-    <!-- 关键说明 -->
-    <rect x="40" y="340" width="180" height="240" rx="10" fill="#F9FAFB" stroke="#E5E5E5" stroke-width="1"/>
-    <text x="55" y="362" font-size="12" font-weight="700" fill="#0A0A0A">关键分支说明</text>
-    <text x="55" y="385" font-size="10.5" fill="#555">▸ L0-L1 材料不足：</text>
-    <text x="55" y="400" font-size="10" fill="#888">  阻断回流补料</text>
-    <text x="55" y="420" font-size="10.5" fill="#555">▸ 闸门驳回：</text>
-    <text x="55" y="435" font-size="10" fill="#888">  回到最早受影响步骤</text>
-    <text x="55" y="455" font-size="10.5" fill="#555">▸ confirmed 后：</text>
-    <text x="55" y="470" font-size="10" fill="#888">  变更走 change-mgmt</text>
-    <text x="55" y="490" font-size="10.5" fill="#555">▸ AI 不得自批准</text>
-    <text x="55" y="505" font-size="10" fill="#888">  任何 status 切换</text>
-    <text x="55" y="525" font-size="10.5" fill="#555">▸ 6 态硬门禁</text>
-    <text x="55" y="540" font-size="10" fill="#888">  ASSUMPTION ≤ 30%</text>
-  </svg>
+  <h2>2. 每个 Work Item 的 8 步执行循环 <span class="badge">无一可跳过</span></h2>
+  <div class="desc">机器只能把产物推到 ready_for_human_review；<code>confirmed</code> 只能由真实人工评审产生。任何产物不得绕过人工确认进入下游。</div>
+  <div class="cycle">
+    <div class="cstep"><span class="n">1</span><div class="t">Preflight</div><div class="d">来源盘点、成熟度 L0-L4、无源即停</div></div>
+    <div class="cstep"><span class="n">2</span><div class="t">Intake</div><div class="d">逐句提取、SRC- 登记、六态初标</div></div>
+    <div class="cstep"><span class="n">3</span><div class="t">Think</div><div class="d">thinking-core §1 六透镜必用</div></div>
+    <div class="cstep"><span class="n">4</span><div class="t">Clarify</div><div class="d">≤5 问/轮，按影响排序，可 needs_user_input</div></div>
+    <div class="cstep"><span class="n">5</span><div class="t">Generate</div><div class="d">按模板产出，状态只到 ready/needs</div></div>
+    <div class="cstep"><span class="n">6</span><div class="t">Audit</div><div class="d">跑 validate_artifact.py，修全部 error</div></div>
+    <div class="cstep human"><span class="n">7</span><div class="t">Human Gate</div><div class="d">真实评审人 + 授权清单 + SHA-256</div></div>
+    <div class="cstep"><span class="n">8</span><div class="t">Commit / Reflow</div><div class="d">确认入基线；变更则回流最早受影响项</div></div>
+  </div>
+  <div class="desc" style="margin-top:16px;margin-bottom:8px">产物状态机（状态由谁写死，谁就拥有真相）：</div>
+  <div class="sm">
+    <span class="snode draft">draft</span><span class="sarrow">→</span>
+    <span class="snode need">needs_user_input / conditional_review</span><span class="sarrow">→</span>
+    <span class="snode ready">ready_for_human_review（机器上限）</span><span class="sarrow">→</span>
+    <span class="snode confirmed">confirmed（仅 review --decision approve）</span><span class="sarrow">⇢</span>
+    <span class="snode super">superseded（上游变更级联失效）</span>
+  </div>
 </section>
 
-<!-- ============== 图 3 · 5 主 + 8 子 Skill 链路 ============== -->
+<!-- ============ 3 · 六态知识标注 ============ -->
 <section>
-  <h2>3. Skill 调用图 <span class="badge">5 主 + 8 子</span></h2>
-  <div class="desc">5 主 Skill 的内部结构。function-description 5 子串行；product-ux 3 子串行；其余主 Skill 为原子。</div>
-  <svg viewBox="0 0 1220 480" xmlns="http://www.w3.org/2000/svg">
-    <defs>
-      <marker id="arr3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
-        <path d="M 0 0 L 10 5 L 0 10 z" fill="#0A0A0A"/>
-      </marker>
-    </defs>
-
-    <!-- 顶部 5 主 Skill -->
-    <g>
-      <rect x="40" y="40" width="220" height="64" rx="10" fill="#F4F0FF" stroke="#654ACB" stroke-width="1.5"/>
-      <text x="150" y="65" font-size="13" font-weight="700" text-anchor="middle" fill="#654ACB">① project-background-goal</text>
-      <text x="150" y="84" font-size="10" text-anchor="middle" fill="#555">原子 · 5 章节</text>
-      <text x="150" y="98" font-size="9" text-anchor="middle" fill="#888">§G §DEC §ASM §UNK §CFL</text>
-    </g>
-
-    <g>
-      <rect x="280" y="40" width="220" height="64" rx="10" fill="#F4F0FF" stroke="#654ACB" stroke-width="1.5"/>
-      <text x="390" y="65" font-size="13" font-weight="700" text-anchor="middle" fill="#654ACB">② user-journey-and-stories</text>
-      <text x="390" y="84" font-size="10" text-anchor="middle" fill="#555">原子 · 3 章节</text>
-      <text x="390" y="98" font-size="9" text-anchor="middle" fill="#888">§ST §Journey §角色</text>
-    </g>
-
-    <g>
-      <rect x="520" y="40" width="220" height="64" rx="10" fill="#E6F4FF" stroke="#5B8BFF" stroke-width="1.5"/>
-      <text x="630" y="65" font-size="13" font-weight="700" text-anchor="middle" fill="#1E40AF">③ product-ux</text>
-      <text x="630" y="84" font-size="10" text-anchor="middle" fill="#555">3 子 Skill 串行</text>
-      <text x="630" y="98" font-size="9" text-anchor="middle" fill="#888">§IX §Page §UX</text>
-    </g>
-
-    <g>
-      <rect x="760" y="40" width="220" height="64" rx="10" fill="#FFF4E6" stroke="#F59E0B" stroke-width="1.5"/>
-      <text x="870" y="65" font-size="13" font-weight="700" text-anchor="middle" fill="#92580A">④ function-description</text>
-      <text x="870" y="84" font-size="10" text-anchor="middle" fill="#555">5 子 Skill 串行</text>
-      <text x="870" y="98" font-size="9" text-anchor="middle" fill="#888">§BR §VL §State §EX §AC</text>
-    </g>
-
-    <g>
-      <rect x="1000" y="40" width="180" height="64" rx="10" fill="#654ACB" stroke="#654ACB" stroke-width="1.5"/>
-      <text x="1090" y="65" font-size="13" font-weight="700" text-anchor="middle" fill="#FFFFFF">⑤ prd-assembly ⭐</text>
-      <text x="1090" y="84" font-size="10" text-anchor="middle" fill="#FFFFFF">原子 · 汇总</text>
-      <text x="1090" y="98" font-size="9" text-anchor="middle" fill="#FFFFFF">RTM 正向+反向</text>
-    </g>
-
-    <!-- 串行箭头 -->
-    <line x1="260" y1="72" x2="280" y2="72" stroke="#0A0A0A" stroke-width="2" marker-end="url(#arr3)"/>
-    <line x1="500" y1="72" x2="520" y2="72" stroke="#0A0A0A" stroke-width="2" marker-end="url(#arr3)"/>
-    <line x1="740" y1="72" x2="760" y2="72" stroke="#0A0A0A" stroke-width="2" marker-end="url(#arr3)"/>
-    <line x1="980" y1="72" x2="1000" y2="72" stroke="#0A0A0A" stroke-width="2" marker-end="url(#arr3)"/>
-
-    <!-- product-ux 3 子 -->
-    <g>
-      <rect x="520" y="150" width="220" height="44" rx="8" fill="#FFFFFF" stroke="#5B8BFF" stroke-width="1"/>
-      <text x="630" y="170" font-size="12" font-weight="600" text-anchor="middle">3.1 ux-flow</text>
-      <text x="630" y="186" font-size="9.5" text-anchor="middle" fill="#888">入口/页面/状态/主支线</text>
-    </g>
-    <g>
-      <rect x="520" y="200" width="220" height="44" rx="8" fill="#FFFFFF" stroke="#5B8BFF" stroke-width="1"/>
-      <text x="630" y="220" font-size="12" font-weight="600" text-anchor="middle">3.2 page-design</text>
-      <text x="630" y="236" font-size="9.5" text-anchor="middle" fill="#888">字段/组件/响应式/异常态</text>
-    </g>
-    <g>
-      <rect x="520" y="250" width="220" height="44" rx="8" fill="#FFFFFF" stroke="#5B8BFF" stroke-width="1"/>
-      <text x="630" y="270" font-size="12" font-weight="600" text-anchor="middle">3.3 interaction-rules</text>
-      <text x="630" y="286" font-size="9.5" text-anchor="middle" fill="#888">操作/反馈/权限/可逆性</text>
-    </g>
-    <line x1="630" y1="104" x2="630" y2="150" stroke="#5B8BFF" stroke-width="1.5" marker-end="url(#arr3)"/>
-    <line x1="630" y1="194" x2="630" y2="200" stroke="#5B8BFF" stroke-width="1.5" marker-end="url(#arr3)"/>
-    <line x1="630" y1="244" x2="630" y2="250" stroke="#5B8BFF" stroke-width="1.5" marker-end="url(#arr3)"/>
-
-    <!-- function-description 5 子 -->
-    <g>
-      <rect x="760" y="150" width="220" height="36" rx="8" fill="#FFFFFF" stroke="#F59E0B" stroke-width="1"/>
-      <text x="870" y="166" font-size="11.5" font-weight="600" text-anchor="middle">4.1 business-rules（业务规则）</text>
-      <text x="870" y="180" font-size="9" text-anchor="middle" fill="#888">条件/触发/联动/边界</text>
-    </g>
-    <g>
-      <rect x="760" y="194" width="220" height="36" rx="8" fill="#FFFFFF" stroke="#F59E0B" stroke-width="1"/>
-      <text x="870" y="210" font-size="11.5" font-weight="600" text-anchor="middle">4.2 validation-rules（校验规则）</text>
-      <text x="870" y="224" font-size="9" text-anchor="middle" fill="#888">格式/范围/必填/重复</text>
-    </g>
-    <g>
-      <rect x="760" y="238" width="220" height="36" rx="8" fill="#FFFFFF" stroke="#F59E0B" stroke-width="1"/>
-      <text x="870" y="254" font-size="11.5" font-weight="600" text-anchor="middle">4.3 state-machine（状态机）</text>
-      <text x="870" y="268" font-size="9" text-anchor="middle" fill="#888">初始/中间/终态/迁移</text>
-    </g>
-    <g>
-      <rect x="760" y="282" width="220" height="36" rx="8" fill="#FFFFFF" stroke="#F59E0B" stroke-width="1"/>
-      <text x="870" y="298" font-size="11.5" font-weight="600" text-anchor="middle">4.4 exception-handling（异常处理）</text>
-      <text x="870" y="312" font-size="9" text-anchor="middle" fill="#888">失败/重试/回滚/降级</text>
-    </g>
-    <g>
-      <rect x="760" y="326" width="220" height="36" rx="8" fill="#FFFFFF" stroke="#F59E0B" stroke-width="1"/>
-      <text x="870" y="342" font-size="11.5" font-weight="600" text-anchor="middle">4.5 acceptance-criteria（验收依据）</text>
-      <text x="870" y="356" font-size="9" text-anchor="middle" fill="#888">Gherkin / Given-When-Then</text>
-    </g>
-    <line x1="870" y1="104" x2="870" y2="150" stroke="#F59E0B" stroke-width="1.5" marker-end="url(#arr3)"/>
-    <line x1="870" y1="186" x2="870" y2="194" stroke="#F59E0B" stroke-width="1.5" marker-end="url(#arr3)"/>
-    <line x1="870" y1="230" x2="870" y2="238" stroke="#F59E0B" stroke-width="1.5" marker-end="url(#arr3)"/>
-    <line x1="870" y1="274" x2="870" y2="282" stroke="#F59E0B" stroke-width="1.5" marker-end="url(#arr3)"/>
-    <line x1="870" y1="318" x2="870" y2="326" stroke="#F59E0B" stroke-width="1.5" marker-end="url(#arr3)"/>
-
-    <!-- 横向 5 通道 -->
-    <text x="20" y="170" font-size="10" font-weight="600" fill="#5B8BFF" transform="rotate(-90 20 170)">product-ux 3 子</text>
-    <text x="20" y="240" font-size="10" font-weight="600" fill="#F59E0B" transform="rotate(-90 20 240)">function-description 5 子</text>
-
-    <!-- 底部 7 共享模块 -->
-    <rect x="40" y="400" width="1140" height="64" rx="10" fill="#FEF3C7" stroke="#F59E0B" stroke-width="1" stroke-dasharray="5,3"/>
-    <text x="60" y="422" font-size="13" font-weight="700" fill="#92580A">🔧 7 共享模块（横向复用）</text>
-    <text x="60" y="442" font-size="10.5" fill="#333">audit（审查闸门） · human-gate（人工确认） · clarify（澄清循环） · change-mgmt（变更回流） · traceability（追溯） · decision-log（决议记录） · project-init（REQ 初始化）</text>
-    <text x="60" y="458" font-size="10" fill="#666">所有 5 主 Skill 通过虚线复用 · 不独立构成业务阶段</text>
-  </svg>
+  <h2>3. 六态知识标注 <span class="badge">证据与不确定性必须可见</span></h2>
+  <div class="desc">每条声明必须标注知识状态；AI 的推断永远冒充不了事实，冲突不会被折叠成虚假一致。<code>ready_for_human_review</code> 强制六态全覆盖且 ASSUMPTION ≤ 30%。</div>
+  <div class="ks-grid">
+    <div class="ks fact"><span class="cn">FACT</span><span class="ce">来源明确的事实（追 SRC-）</span></div>
+    <div class="ks dec"><span class="cn">DECISION</span><span class="ce">人类明确决定（含决策人）</span></div>
+    <div class="ks asm"><span class="cn">ASSUMPTION</span><span class="ce">暂定假设（≤30% 硬顶）</span></div>
+    <div class="ks ai"><span class="cn">AI_INFERENCE</span><span class="ce">AI 推断，未经确认</span></div>
+    <div class="ks unk"><span class="cn">UNKNOWN</span><span class="ce">缺失信息（链问题 ID）</span></div>
+    <div class="ks con"><span class="cn">CONFLICT</span><span class="ce">来源矛盾（需裁决）</span></div>
+  </div>
 </section>
 
-<!-- ============== 图 4 · Human Gate 状态机 ============== -->
+<!-- ============ 4 · 命令链与 Loop 闭环 ============ -->
 <section>
-  <h2>4. Human Gate 状态机 <span class="badge">5 道强制闸门</span></h2>
-  <div class="desc">AI 不得自批准。每一道闸门都有：评审清单 → 授权记录 → 驳回回流 → 修改追溯。confirmed 后任何变更必须走 change-mgmt。</div>
-  <svg viewBox="0 0 1220 360" xmlns="http://www.w3.org/2000/svg">
-    <defs>
-      <marker id="arr4" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
-        <path d="M 0 0 L 10 5 L 0 10 z" fill="#0A0A0A"/>
-      </marker>
-      <marker id="arr4r" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
-        <path d="M 0 0 L 10 5 L 0 10 z" fill="#DC2626"/>
-      </marker>
-      <marker id="arr4g" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
-        <path d="M 0 0 L 10 5 L 0 10 z" fill="#16A34A"/>
-      </marker>
-    </defs>
+  <h2>4. Loop 引擎：命令链与闭环机制 <span class="badge">v0.2.0</span></h2>
+  <div class="desc">一条命令链驱动整个需求生命周期；四道机器闸门 + 一道人工闸门 + 两条回流通道构成闭环。</div>
+  <div class="cmdline">
+<span class="c"># 1 建骨架（从注册表生成目录 + 授权清单骨架）</span><br>
+python3 src/scripts/pipeline.py <span class="h">init</span> REQ-001-my-feature<br>
+<span class="c"># 2 查状态（active / next / 越级检测 / 单活跃项约束）</span><br>
+python3 src/scripts/pipeline.py requirements/REQ-001-my-feature <span class="h">status</span><br>
+<span class="c"># 3 成熟度判定（L0-L4 + 推荐入口 + 分支信号）</span><br>
+python3 src/scripts/pipeline.py requirements/REQ-001-my-feature <span class="h">entry</span><br>
+<span class="c"># 4 机器闸门（DoR 上游确认 + DoD 校验器/六态/自审 + property + 双向追溯）</span><br>
+python3 src/scripts/pipeline.py requirements/REQ-001-my-feature <span class="h">gate</span> --work-item project-background-goal<br>
+<span class="c"># 5 人工确认（真实人名 + 授权清单匹配 + 角色匹配 + SHA-256 ReviewRecord）</span><br>
+python3 src/scripts/pipeline.py requirements/REQ-001-my-feature <span class="h">review</span> --work-item project-background-goal \<br>
+&nbsp;&nbsp;--decision approve --reviewer "评审人姓名" --reviewer-id "飞书ID" --reviewer-role "business_owner"<br>
+<span class="c"># 6 变更回流（dry-run 预览 → --apply 级联失效下游 + 写 ChangeRecord）</span><br>
+python3 src/scripts/pipeline.py requirements/REQ-001-my-feature <span class="h">reflow</span> --work-item project-background-goal [--apply]<br>
+<span class="c"># 7 全量自检</span><br>
+bash run_tests.sh && python3 src/scripts/consistency_check.py
+  </div>
 
-    <!-- 节点 -->
-    <g>
-      <ellipse cx="100" cy="180" rx="60" ry="32" fill="#F4F0FF" stroke="#654ACB" stroke-width="1.5"/>
-      <text x="100" y="178" font-size="12" font-weight="700" text-anchor="middle" fill="#654ACB">草稿 draft</text>
-      <text x="100" y="194" font-size="9.5" text-anchor="middle" fill="#888">AI 起草中</text>
-    </g>
-    <g>
-      <rect x="220" y="148" width="140" height="64" rx="10" fill="#FFEBEB" stroke="#DC2626" stroke-width="1.5"/>
-      <text x="290" y="170" font-size="12" font-weight="700" text-anchor="middle" fill="#B91C1C">待评审</text>
-      <text x="290" y="186" font-size="11" text-anchor="middle">needs_user_input</text>
-      <text x="290" y="202" font-size="9.5" text-anchor="middle" fill="#888">AI 提交闸门</text>
-    </g>
-    <g>
-      <polygon points="510,180 590,140 670,180 590,220" fill="#FFFFFF" stroke="#0A0A0A" stroke-width="1.5"/>
-      <text x="590" y="178" font-size="12" font-weight="700" text-anchor="middle">评审决议？</text>
-      <text x="590" y="194" font-size="9" text-anchor="middle" fill="#888">reviewer 决定</text>
-    </g>
-    <g>
-      <rect x="730" y="120" width="140" height="64" rx="10" fill="#E6F9EE" stroke="#16A34A" stroke-width="1.5"/>
-      <text x="800" y="142" font-size="12" font-weight="700" text-anchor="middle" fill="#0F8A4A">✓ 通过</text>
-      <text x="800" y="160" font-size="11" text-anchor="middle">ready_for_human</text>
-      <text x="800" y="176" font-size="9.5" text-anchor="middle" fill="#888">六态全 + ≤30% ASM</text>
-    </g>
-    <g>
-      <rect x="730" y="220" width="140" height="64" rx="10" fill="#FFFFFF" stroke="#DC2626" stroke-width="1.5" stroke-dasharray="5,3"/>
-      <text x="800" y="242" font-size="12" font-weight="700" text-anchor="middle" fill="#B91C1C">✗ 驳回</text>
-      <text x="800" y="260" font-size="11" text-anchor="middle">列出问题</text>
-      <text x="800" y="276" font-size="9.5" text-anchor="middle" fill="#888">回到最早步骤</text>
-    </g>
-    <g>
-      <rect x="920" y="60" width="180" height="64" rx="10" fill="#654ACB" stroke="#654ACB" stroke-width="1.5"/>
-      <text x="1010" y="82" font-size="12" font-weight="700" text-anchor="middle" fill="#FFFFFF">✅ confirmed</text>
-      <text x="1010" y="100" font-size="11" text-anchor="middle" fill="#FFFFFF">写 confirmed_at</text>
-      <text x="1010" y="116" font-size="9" text-anchor="middle" fill="#FFFFFF">授权人 + 时间戳</text>
-    </g>
-    <g>
-      <rect x="920" y="280" width="180" height="64" rx="10" fill="#FFFFFF" stroke="#0A0A0A" stroke-width="1"/>
-      <text x="1010" y="302" font-size="12" font-weight="700" text-anchor="middle">change-mgmt</text>
-      <text x="1010" y="320" font-size="10" text-anchor="middle">DEC-XXX 决议</text>
-      <text x="1010" y="334" font-size="9.5" text-anchor="middle" fill="#888">修改走选择回流</text>
-    </g>
-
-    <!-- 箭头 -->
-    <line x1="160" y1="180" x2="220" y2="180" stroke="#0A0A0A" stroke-width="1.5" marker-end="url(#arr4)"/>
-    <line x1="360" y1="180" x2="510" y2="180" stroke="#0A0A0A" stroke-width="1.5" marker-end="url(#arr4)"/>
-    <line x1="670" y1="180" x2="730" y2="152" stroke="#16A34A" stroke-width="1.5" marker-end="url(#arr4g)"/>
-    <line x1="670" y1="180" x2="730" y2="252" stroke="#DC2626" stroke-width="1.5" marker-end="url(#arr4r)"/>
-    <line x1="800" y1="120" x2="920" y2="92" stroke="#16A34A" stroke-width="2" marker-end="url(#arr4g)"/>
-    <line x1="800" y1="252" x2="100" y2="212" stroke="#DC2626" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#arr4r)"/>
-    <line x1="1010" y1="124" x2="1010" y2="280" stroke="#0A0A0A" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#arr4)"/>
-
-    <!-- 标签 -->
-    <text x="190" y="170" font-size="9" fill="#555" text-anchor="middle">提交</text>
-    <text x="435" y="170" font-size="9" fill="#555" text-anchor="middle">进入闸门</text>
-    <text x="710" y="166" font-size="9.5" fill="#16A34A" text-anchor="middle" font-weight="600">通过</text>
-    <text x="710" y="208" font-size="9.5" fill="#DC2626" text-anchor="middle" font-weight="600">驳回</text>
-    <text x="900" y="80" font-size="9" fill="#16A34A" text-anchor="middle" font-weight="600">确认</text>
-    <text x="1030" y="200" font-size="9" fill="#888" text-anchor="start" transform="rotate(90 1030 200)">变更</text>
-  </svg>
+  <div class="flow" style="margin-top:16px">
+    <div class="fnode loop"><b>闭环 A · 级联失效（变更）</b>
+      <div class="items">上游 confirmed 被改<br>→ reflow --apply 把下游翻为 superseded<br>→ ChangeRecord 留痕<br>→ next_work_item 回归最早受影响项<br>→ 重新走 8 步循环</div>
+    </div>
+    <div class="farrow">‖</div>
+    <div class="fnode loop"><b>闭环 B · 双向追溯（防断链）</b>
+      <div class="items">正向：G→ST→FEA→FUN→AC/BR 每行共现<br>反向：上游 ID 必须被下游消费<br>（无下游引用的孤儿目标报警）</div>
+    </div>
+    <div class="farrow">‖</div>
+    <div class="fnode loop"><b>闭环 C · 防篡改</b>
+      <div class="items">review 时写 SHA-256<br>→ branch_validator 比对当前哈希与 ReviewRecord<br>→ prd-publish 发布前 SHA-256 复核</div>
+    </div>
+  </div>
 </section>
 
-<!-- ============== 图 5 · 产物演化 ============== -->
+<!-- ============ 5 · 机器闸门矩阵 ============ -->
 <section>
-  <h2>5. 产物目录演化 <span class="badge">REQ-XXX 生命周期</span></h2>
-  <div class="desc">单个需求从原始材料到 confirmed PRD 的目录演化。所有产物按 frontmatter 10 字段统一规范。</div>
-  <svg viewBox="0 0 1220 360" xmlns="http://www.w3.org/2000/svg">
-    <defs>
-      <marker id="arr5" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
-        <path d="M 0 0 L 10 5 L 0 10 z" fill="#0A0A0A"/>
-      </marker>
-    </defs>
-
-    <!-- 5 个目录状态 -->
-    <g>
-      <rect x="40" y="60" width="220" height="240" rx="10" fill="#FAFAFA" stroke="#0A0A0A" stroke-width="1"/>
-      <text x="150" y="84" font-size="13" font-weight="700" text-anchor="middle">📂 00-input/</text>
-      <text x="60" y="108" font-size="10.5" fill="#555">邮件 · 会议纪要 · 文档</text>
-      <text x="60" y="124" font-size="10.5" fill="#555">PPT · 截图 · 竞品资料</text>
-      <text x="60" y="148" font-size="10" fill="#888">状态：raw</text>
-      <text x="60" y="164" font-size="10" fill="#888">所有者：业务方</text>
-      <text x="60" y="188" font-size="10" font-weight="600" fill="#654ACB">↓ project-init</text>
-      <text x="60" y="210" font-size="9.5" fill="#888">L0-L1 触发补料</text>
-      <text x="60" y="226" font-size="9.5" fill="#888">L2-L4 推进</text>
-    </g>
-
-    <g>
-      <rect x="290" y="60" width="220" height="240" rx="10" fill="#FAFAFA" stroke="#34D399" stroke-width="1"/>
-      <text x="400" y="84" font-size="13" font-weight="700" text-anchor="middle">📂 001-business-requirements/</text>
-      <text x="310" y="108" font-size="10.5" fill="#555">├── 01-background-goal/</text>
-      <text x="330" y="124" font-size="10" fill="#888">└── background-goal.md</text>
-      <text x="310" y="146" font-size="10.5" fill="#555">└── 02-journey-and-stories/</text>
-      <text x="330" y="162" font-size="10" fill="#888">└── journey-and-stories.md</text>
-      <text x="310" y="186" font-size="10" fill="#888">状态：ready_for_human_review</text>
-      <text x="310" y="202" font-size="10" fill="#888">闸门：HG #1 + #2</text>
-      <text x="310" y="226" font-size="10" font-weight="600" fill="#34D399">✓ HG 通过</text>
-    </g>
-
-    <g>
-      <rect x="540" y="60" width="220" height="240" rx="10" fill="#FAFAFA" stroke="#5B8BFF" stroke-width="1"/>
-      <text x="650" y="84" font-size="13" font-weight="700" text-anchor="middle">📂 002-product-requirements/</text>
-      <text x="560" y="108" font-size="10.5" fill="#555">├── 01-product-ux/</text>
-      <text x="580" y="124" font-size="10" fill="#888">└── product-ux.md</text>
-      <text x="560" y="146" font-size="10.5" fill="#555">└── 02-function-description/</text>
-      <text x="580" y="162" font-size="10" fill="#888">└── function-description.md</text>
-      <text x="560" y="186" font-size="10" fill="#888">状态：ready_for_human_review</text>
-      <text x="560" y="202" font-size="10" fill="#888">闸门：HG #3 + #4</text>
-      <text x="560" y="226" font-size="10" font-weight="600" fill="#5B8BFF">✓ HG 通过</text>
-    </g>
-
-    <g>
-      <rect x="790" y="60" width="200" height="240" rx="10" fill="#FAFAFA" stroke="#A78BFA" stroke-width="1"/>
-      <text x="890" y="84" font-size="13" font-weight="700" text-anchor="middle">📂 003-prd-output/</text>
-      <text x="810" y="108" font-size="10.5" fill="#555">└── 01-prd-assembly/</text>
-      <text x="830" y="124" font-size="10" fill="#888">└── prd.md ⭐</text>
-      <text x="810" y="146" font-size="10.5" fill="#555">└── RTM 追溯表</text>
-      <text x="810" y="168" font-size="10" fill="#888">闸门：HG #5</text>
-      <text x="810" y="192" font-size="10" font-weight="600" fill="#A78BFA">✓ 封口</text>
-      <text x="810" y="216" font-size="10" font-weight="700" fill="#654ACB">→ prd-publish</text>
-    </g>
-
-    <g>
-      <rect x="1020" y="60" width="160" height="240" rx="10" fill="#E6F9EE" stroke="#16A34A" stroke-width="2"/>
-      <text x="1100" y="84" font-size="13" font-weight="700" text-anchor="middle" fill="#0F8A4A">📤 正式发布</text>
-      <text x="1100" y="110" font-size="10" text-anchor="middle">authorized-</text>
-      <text x="1100" y="124" font-size="10" text-anchor="middle">reviewers.json</text>
-      <text x="1100" y="148" font-size="10" text-anchor="middle">human-gate-</text>
-      <text x="1100" y="162" font-size="10" text-anchor="middle">record/</text>
-      <text x="1100" y="186" font-size="10" text-anchor="middle">prd-publish-</text>
-      <text x="1100" y="200" font-size="10" text-anchor="middle">record.md</text>
-      <text x="1100" y="214" font-size="9" text-anchor="middle" fill="#888">sha256 留档</text>
-      <text x="1100" y="246" font-size="11" font-weight="700" text-anchor="middle" fill="#0F8A4A">✅ confirmed</text>
-    </g>
-
-    <!-- 推进箭头 -->
-    <line x1="260" y1="180" x2="290" y2="180" stroke="#0A0A0A" stroke-width="1.5" marker-end="url(#arr5)"/>
-    <line x1="510" y1="180" x2="540" y2="180" stroke="#0A0A0A" stroke-width="1.5" marker-end="url(#arr5)"/>
-    <line x1="760" y1="180" x2="790" y2="180" stroke="#0A0A0A" stroke-width="1.5" marker-end="url(#arr5)"/>
-    <line x1="990" y1="180" x2="1020" y2="180" stroke="#16A34A" stroke-width="2" marker-end="url(#arr5)"/>
-
-    <!-- 底部说明 -->
-    <rect x="40" y="316" width="1140" height="36" rx="8" fill="#F4F0FF" stroke="#654ACB" stroke-width="1"/>
-    <text x="60" y="338" font-size="11" fill="#654ACB" font-weight="600">产物 frontmatter 10 字段（v0.1 统一规范）：</text>
-    <text x="290" y="338" font-size="10.5" fill="#333">artifact_id · version · status · owner · business_fact_owner · goal_decision_owner · reviewer · created_at · updated_at · confirmed_at</text>
-  </svg>
+  <h2>5. 机器闸门矩阵 <span class="badge">gate 一次跑全</span></h2>
+  <div class="desc">gate 阶段串联五类检查；任何 blocking 项不通过，review 拒绝批准（waiver_required 项需显式 <code>--waive CODE=reason</code>）。</div>
+  <table>
+    <tr><th>检查</th><th>负责脚本</th><th>检查什么</th><th>失败后果</th></tr>
+    <tr><td><code>DoR</code></td><td><code>dor_check.py</code></td><td>所有 predecessor 必须 confirmed；单活跃项；不越级</td><td class="warn">阻断下游启动</td></tr>
+    <tr><td><code>结构校验</code></td><td><code>validate_artifact.py</code> ×20</td><td>frontmatter / 必需章节 / ID 前缀 / 语义红线</td><td class="warn">blocking error 阻断</td></tr>
+    <tr><td><code>六态覆盖</code></td><td><code>dor_check.py</code></td><td>ready_for_human_review 必须覆盖六态且 ASSUMPTION ≤ 30%</td><td class="warn">阻断送审</td></tr>
+    <tr><td><code>自审证据</code></td><td><code>dor_check.py</code></td><td>产物含 Constitution Compliance / 自审 / Audit 痕迹</td><td class="warn">阻断送审</td></tr>
+    <tr><td><code>逻辑完备</code></td><td><code>property_check.py</code></td><td>function-description 专属：状态机穷尽 / 异常恢复 / VL↔AC 配对 / 规则密度</td><td class="warn">阻断送审</td></tr>
+    <tr><td><code>双向追溯</code></td><td><code>traceability_check.py</code></td><td>prd-assembly 专属：G→ST→FEA→FUN→AC/BR 正向 + 反向孤儿检查</td><td class="warn">阻断送审</td></tr>
+    <tr><td><code>记录与哈希</code></td><td><code>branch_validator.py</code></td><td>confirmed 产物必须有真实评审人 + ReviewRecord + SHA-256 一致</td><td class="warn">阻断下游</td></tr>
+    <tr><td><code>文档一致性</code></td><td><code>consistency_check.py</code></td><td>registry ↔ skill 路径 ↔ references ↔ requirements/ 内容</td><td class="ok">CI 前置门</td></tr>
+  </table>
 </section>
 
-<!-- ============== KPI 卡片 ============== -->
+<!-- ============ 6 · 分支 Skill 触发矩阵 ============ -->
 <section>
-  <h2>6. v0.1 工程化数字</h2>
-  <div class="desc">截至 2026-08-12 的实际快照（来源：git 状态 + 测试基线）。</div>
+  <h2>6. 分支 Skill 触发矩阵 <span class="badge">7 个 · 触发才跑</span></h2>
+  <div class="desc">分支 skill 不占主干；进入前按 Inquiry Contract 询问。prd-publish 的触发（PRD confirmed）可由 <code>entry</code> 命令机器检测并提示。</div>
+  <div class="branch-grid">
+    <div class="bcard"><b>competitive-research · 竞品调研</b><div class="trig">触发：方案方向不清或功能设计缺乏参考</div><div class="out">产出：竞品分析（3-5 家）→ 99-review/support/</div></div>
+    <div class="bcard"><b>solution-assessment · 方案评估</b><div class="trig">触发：方案取舍影响范围/成本/风险</div><div class="out">产出：可行性报告 + 多方案对比（DEC-XXX 决策记录）</div></div>
+    <div class="bcard"><b>prd-publish · PRD 发布</b><div class="trig">触发：prd-assembly confirmed（机器可检测 ✓）</div><div class="out">产出：发布记录（SHA-256 复核后才可发布）</div></div>
+    <div class="bcard"><b>project-scope · 范围基线</b><div class="trig">触发：项目边界不清或范围蔓延风险</div><div class="out">产出：In/Out/Deferred/Conditional 四类（S-NNN）</div></div>
+    <div class="bcard"><b>requirement-restate · 需求复述</b><div class="trig">触发：干系人语言歧义或多来源术语不一致</div><div class="out">产出：复述清单（RR-NNN，原文 verbatim）</div></div>
+    <div class="bcard"><b>tracking-plan · 埋点计划</b><div class="trig">触发：功能需要数据埋点或追踪计划</div><div class="out">产出：事件表（EV-NNN，链 FUN- + G-）+ PII 登记</div></div>
+    <div class="bcard"><b>issue-record · 问题清单</b><div class="trig">触发：任何阶段需求不明确/冲突/风险</div><div class="out">产出：六类问题清单（BLK/RSK/DEC/INF/CLS/OUT）</div></div>
+  </div>
+</section>
+
+<!-- ============ 7 · 测试与质量基线 ============ -->
+<section>
+  <h2>7. 测试与质量基线 <span class="badge">56/56</span></h2>
+  <div class="desc">run_tests.sh 由注册表驱动：5 主 + 8 子 + 7 分支的校验器全量语法检查与 fixture 验证；<b>violation 负例反向断言</b>——故意违规样本必须被校验器拒绝，否则 FAIL。</div>
   <div class="kpi-grid">
-    <div class="kpi"><div class="n">43 / 43</div><div class="l">测试全绿</div></div>
-    <div class="kpi"><div class="n">5 + 8 + 3</div><div class="l">主+子+支持 Skill</div></div>
-    <div class="kpi"><div class="n">9 / 9</div><div class="l">validate_artifact.py 校验脚本</div></div>
-    <div class="kpi"><div class="n">7</div><div class="l">共享机制模块</div></div>
-    <div class="kpi"><div class="n">5</div><div class="l">Human Gate 闸门</div></div>
-    <div class="kpi"><div class="n">11</div><div class="l">产物模板（11 模板）</div></div>
-    <div class="kpi"><div class="n">10</div><div class="l">frontmatter 必填字段</div></div>
-    <div class="kpi"><div class="n">6 态 ≤ 30%</div><div class="l">dor_check 硬门禁</div></div>
+    <div class="kpi"><div class="n">58/58</div><div class="l">回归检查（含 4 负例反向断言）</div></div>
+    <div class="kpi"><div class="n">20</div><div class="l">Skill（5 主 + 8 子 + 7 分支）</div></div>
+    <div class="kpi"><div class="n">20</div><div class="l">手写 validate_artifact.py</div></div>
+    <div class="kpi"><div class="n">0</div><div class="l">一致性错误（consistency_check）</div></div>
   </div>
 </section>
 
 <footer>
-  PM Scaffold · v0.1.0 · 2026-08-12 · 由 whiteboard skill + 自写 SVG 渲染（纯静态，可直接发微信/邮件）
+  PM Scaffold · v0.2.0 · 本图与 src/framework/workflow-registry.json 同源——registry 是唯一机器真相，本图仅作人类可读视图。测试数与 Skill 数以 <code>bash run_tests.sh</code> 与 registry 实测为准。
 </footer>
 
 </div>

@@ -141,7 +141,7 @@ PRD 输出（`prd-assembly`）是下游。
 - 单元/集成测试（workflow_runtime / cross_skill_integration / 5 主 skill 校验器）
 - 需求目录状态 / 记录 / RTM 校验
 
-**当前结果**：56/56 PASS
+**当前结果**：58/58 PASS
 
 ### 5.2 发布
 
