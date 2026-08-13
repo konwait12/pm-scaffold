@@ -16,7 +16,7 @@ AI 写需求最大的风险不是写得慢，而是：**推断冒充事实、没
 - **双向可追溯**：目标 → 故事 → 功能 → 规则/验收，正反两个方向都能回溯；每条验收都链回它验证的业务目标。
 - **变更闭环（Loop）**：上游变更自动级联失效下游并回流重跑，不让失效产物流入下游。
 - **多源输入**：邮件、会议纪要、PPT、图片统一登记为 `SRC-*` 来源，逐条可溯源。
-- **20 个同等丰富的 Skill**：5 主 + 8 子 + 7 分支，每个都有标准章节执行协议 + 7 类知识库 + 机器校验器。
+- **21 个同等丰富的 Skill**：5 主 + 8 子 + 8 分支，每个都有标准章节执行协议 + 7 类知识库 + 机器校验器。
 
 ---
 
@@ -57,7 +57,7 @@ flowchart LR
     SH[9 共享机制<br/>审计/澄清/变更/闸门/追溯] -.服务.-> S1
     SH -.服务.-> S2
     SH -.服务.-> S3
-    BR[7 分支 skill<br/>竞品/方案/发布/范围/复述/埋点/澄清] -.按需触发.-> S1
+    BR[8 分支 skill<br/>发散/竞品/方案/发布/范围/复述/埋点/澄清] -.按需触发.-> S1
     BR -.按需触发.-> S2
 ```
 
@@ -65,13 +65,13 @@ flowchart LR
 
 ---
 
-## Skill 全景（5 主 + 8 子 + 7 分支）
+## Skill 全景（5 主 + 8 子 + 8 分支）
 
 | 层 | Skill |
 |---|---|
 | 主（5） | `project-background-goal` · `user-journey-and-stories` · `product-ux` · `function-description` · `prd-assembly` |
 | 子（8） | `ux-flow` · `page-design` · `interaction-rules` · `business-rules` · `validation-rules` · `state-machine` · `exception-handling` · `acceptance-criteria` |
-| 分支（7） | `competitive-research` · `solution-assessment` · `prd-publish` · `project-scope` · `requirement-restate` · `tracking-plan` · `issue-record` |
+| 分支（8） | `brainstorming` · `competitive-research` · `solution-assessment` · `prd-publish` · `project-scope` · `requirement-restate` · `tracking-plan` · `issue-record` |
 
 每个 skill 拥有统一的完整结构：`SKILL.md`（标准章节结构）+ `references/`（7 类）+ `agents/openai.yaml` + `validate_artifact.py` + 示例 + 回归测试。
 
@@ -83,7 +83,7 @@ flowchart LR
 src/framework/       宪法、契约、17 思考透镜、workflow-registry.json（唯一真相源）
 src/stages/          3 阶段 × 5 主 skill + 8 子 skill
 src/shared/          9 共享机制（审计/澄清/变更/闸门/追溯等）
-src/support-skills/  3 支持 skill（+4 分支 skill 散见 stages/shared）
+src/support-skills/  4 支持 skill（+4 分支 skill 散见 stages/shared，共 8）
 src/scripts/         pipeline / orchestrator / 校验器
 src/templates/       26 个产物模板 + resolver
 src/toolkit/         工具指南（Figma / Mermaid / lark-cli）

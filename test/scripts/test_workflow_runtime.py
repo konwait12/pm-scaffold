@@ -68,7 +68,7 @@ class WorkflowRuntimeTest(unittest.TestCase):
             self.assertTrue(capability["output_section"])
 
     def test_support_skills_have_single_authoritative_location(self) -> None:
-        expected = {"competitive-research", "solution-assessment", "prd-publish"}
+        expected = {"competitive-research", "solution-assessment", "prd-publish", "brainstorming"}
         support_root = ROOT / "src/support-skills"
         self.assertEqual({path.name for path in support_root.iterdir() if path.is_dir()}, expected)
         for name in expected:

@@ -99,7 +99,7 @@ footer{margin-top:24px;text-align:center;color:#888;font-size:11px;padding-top:1
   <div class="tags">
     <span class="tag green">● 58/58 测试绿</span>
     <span class="tag">3 阶段</span>
-    <span class="tag">20 Skill（5 主 + 8 子 + 7 分支）</span>
+    <span class="tag">21 Skill（5 主 + 8 子 + 8 分支）</span>
     <span class="tag">9 共享模块</span>
     <span class="tag amber">Loop 闭环：级联失效 / 双向追溯 / 防篡改</span>
   </div>
@@ -164,14 +164,25 @@ footer{margin-top:24px;text-align:center;color:#888;font-size:11px;padding-top:1
   <text x="610" y="305" text-anchor="middle" font-size="12.5" font-weight="700" fill="#92580A">entry 成熟度判定</text>
   <text x="610" y="323" text-anchor="middle" font-size="10.5" fill="#92580A">L0 仅想法 / L1-L4 有材料？</text>
 
-  <!-- L0 branch -->
+  <!-- L0 branch: brainstorming（已注册为第 8 分支 skill） -->
   <line x1="480" y1="310" x2="368" y2="310" stroke="#C9C2EE" stroke-width="1.5" stroke-dasharray="5 4" marker-end="url(#ar-purple)"/>
-  <rect x="130" y="285" width="236" height="50" rx="8" fill="#F6F4FF" stroke="#C9C2EE" stroke-width="1.5" stroke-dasharray="5 4"/>
-  <text x="248" y="306" text-anchor="middle" font-size="12" font-weight="700" fill="#3A2E8F">brainstorming（发散收敛）</text>
-  <text x="248" y="322" text-anchor="middle" font-size="10" fill="#666">分支 Skill · 发散出候选再回到输入</text>
+  <rect x="130" y="268" width="236" height="84" rx="8" fill="#F6F4FF" stroke="#C9C2EE" stroke-width="1.5" stroke-dasharray="5 4"/>
+  <text x="248" y="288" text-anchor="middle" font-size="12" font-weight="700" fill="#3A2E8F">brainstorming（发散收敛）</text>
+  <text x="248" y="304" text-anchor="middle" font-size="10" fill="#555">候选发散 → 人工处置：</text>
+  <text x="248" y="318" text-anchor="middle" font-size="10" fill="#555">include / exclude / defer / research</text>
+  <text x="248" y="332" text-anchor="middle" font-size="10" fill="#555">仅 include 候选进入 bg 输入包</text>
   <text x="424" y="300" font-size="10.5" fill="#654ACB">否（L0）</text>
-  <path d="M248 285 C248 250 610 250 610 189" fill="none" stroke="#A23B3B" stroke-width="1.4" stroke-dasharray="6 4" marker-end="url(#ar-red)"/>
-  <text x="330" y="252" font-size="10" fill="#A23B3B">补充想法后重新登记</text>
+  <text x="370" y="226" font-size="10" fill="#A23B3B">发散后重新登记</text>
+  <path d="M248 268 C248 240 610 240 610 189" fill="none" stroke="#A23B3B" stroke-width="1.4" stroke-dasharray="6 4" marker-end="url(#ar-red)"/>
+
+  <!-- L1-L4 branch: requirement-restate（多源/歧义时触发） -->
+  <line x1="740" y1="310" x2="890" y2="310" stroke="#C9C2EE" stroke-width="1.5" stroke-dasharray="5 4" marker-end="url(#ar-purple)"/>
+  <rect x="892" y="268" width="268" height="84" rx="8" fill="#F6F4FF" stroke="#C9C2EE" stroke-width="1.5" stroke-dasharray="5 4"/>
+  <text x="1026" y="288" text-anchor="middle" font-size="12" font-weight="700" fill="#3A2E8F">requirement-restate（需求复述）</text>
+  <text x="1026" y="304" text-anchor="middle" font-size="10" fill="#555">触发：≥2 SRC 多源 / 材料含歧义待确认</text>
+  <text x="1026" y="318" text-anchor="middle" font-size="10" fill="#555">CONFLICT → ISS（CLS 类）</text>
+  <text x="1026" y="332" text-anchor="middle" font-size="10" fill="#555">UNKNOWN → Q-XXX（INF 类）</text>
+  <text x="816" y="300" font-size="10.5" fill="#654ACB">信号触发</text>
 
   <!-- entry yes -->
   <line x1="610" y1="380" x2="610" y2="424" stroke="#555" stroke-width="1.5" marker-end="url(#ar)"/>
@@ -229,8 +240,9 @@ footer{margin-top:24px;text-align:center;color:#888;font-size:11px;padding-top:1
   <!-- gate decision -->
   <line x1="610" y1="982" x2="610" y2="1018" stroke="#555" stroke-width="1.5" marker-end="url(#ar)"/>
   <polygon points="610,980 748,1048 610,1116 472,1048" fill="#FEF9EC" stroke="#C98A1B" stroke-width="1.8"/>
-  <text x="610" y="1043" text-anchor="middle" font-size="12" font-weight="700" fill="#92580A">gate 机器闸门</text>
-  <text x="610" y="1060" text-anchor="middle" font-size="10" fill="#92580A">DoR + DoD + 六态 + 自审 通过？</text>
+  <text x="610" y="1038" text-anchor="middle" font-size="12" font-weight="700" fill="#92580A">gate 机器闸门</text>
+  <text x="610" y="1054" text-anchor="middle" font-size="9.5" fill="#92580A">DoR(SRC≥1) + DoD + 六态 + 自审</text>
+  <text x="610" y="1069" text-anchor="middle" font-size="9.5" fill="#92580A">+ B3 阶段收口（issue-record 行 + 待确认引用）？</text>
   <g>
     <rect x="352" y="1032" width="118" height="36" rx="6" fill="#F3F4F6" stroke="#D5D8DC"/>
     <text x="411" y="1047" text-anchor="middle" font-size="10.5" fill="#555" font-family="monospace">gate</text>
@@ -398,14 +410,18 @@ footer{margin-top:24px;text-align:center;color:#888;font-size:11px;padding-top:1
     <tr><td><code>双向追溯</code></td><td><code>traceability_check.py</code></td><td>prd-assembly（PRD汇总）专属：G→ST→FEA→FUN→AC/BR 正向 + 反向孤儿检查</td><td class="warn">阻断送审</td></tr>
     <tr><td><code>记录与哈希</code></td><td><code>branch_validator.py</code></td><td>confirmed 产物必须有真实评审人 + ReviewRecord + SHA-256 一致</td><td class="warn">阻断下游</td></tr>
     <tr><td><code>文档一致性</code></td><td><code>consistency_check.py</code></td><td>registry ↔ skill 路径 ↔ references ↔ requirements/ 内容</td><td class="ok">CI 前置门</td></tr>
+    <tr><td><code>入口材料 DoR</code></td><td><code>dor_check.py</code></td><td>project-background-goal 送审前 00-input 至少 1 个 SRC 材料（无源即停机器版）</td><td class="warn">阻断 bg 启动</td></tr>
+    <tr><td><code>B3 阶段收口</code></td><td><code>dor_check.py</code></td><td>送审前 issue-record 必须存在且 §13 收口表含本 work item 行（空阶段=审计证据）；每个「待确认」必须带 Q-/ISS-/DEC-/SRC- 引用</td><td class="warn">阻断送审</td></tr>
   </table>
+  <div class="desc" style="margin-top:14px;margin-bottom:0">信号层（status 可见，不自动执行动作）：<b>B1 熔断</b>（同一 work item 连续 3 轮 changes → 重新评估方向）· <b>B3 老化</b>（open 问题 7 天 flag / 14 天 escalate）· <b>范围冻结</b>（product-ux confirmed 后上游再评审 → 提示走 change-mgmt）。</div>
 </section>
 
 <!-- ============ 5 · 分支矩阵 ============ -->
 <section>
-  <h2>5. 分支 Skill 触发矩阵 <span class="badge">7 个 · 触发才跑</span></h2>
+  <h2>5. 分支 Skill 触发矩阵 <span class="badge">8 个 · 触发才跑</span></h2>
   <div class="desc">分支 skill 不占主干；进入前按 Inquiry Contract 询问。prd-publish（PRD发布）的触发（PRD confirmed）可由 <code>entry</code> 机器检测并提示。</div>
   <div class="branch-grid">
+    <div class="bcard"><b>brainstorming（发散收敛）</b><div class="trig">触发：L0 仅想法或材料稀疏（entry 机器信号）</div><div class="out">产出：候选清单（SCN-XXX）+ 人工处置（include/exclude/defer/research），include 项进入 bg 输入包</div></div>
     <div class="bcard"><b>competitive-research（竞品调研）</b><div class="trig">触发：方案方向不清或功能设计缺乏参考</div><div class="out">产出：竞品分析（3-5 家）→ 99-review/support/</div></div>
     <div class="bcard"><b>solution-assessment（方案评估）</b><div class="trig">触发：方案取舍影响范围/成本/风险</div><div class="out">产出：可行性报告 + 多方案对比（DEC-XXX 决策记录）</div></div>
     <div class="bcard"><b>prd-publish（PRD 发布）</b><div class="trig">触发：prd-assembly（PRD汇总）confirmed（机器可检测 ✓）</div><div class="out">产出：发布记录（SHA-256 复核后才可发布）</div></div>
@@ -414,6 +430,74 @@ footer{margin-top:24px;text-align:center;color:#888;font-size:11px;padding-top:1
     <div class="bcard"><b>tracking-plan（埋点计划）</b><div class="trig">触发：功能需要数据埋点或追踪计划</div><div class="out">产出：事件表（EV-NNN，链 FUN- + G-）+ PII 登记</div></div>
     <div class="bcard"><b>issue-record（问题清单）</b><div class="trig">触发：任何阶段需求不明确/冲突/风险</div><div class="out">产出：六类问题清单（BLK/RSK/DEC/INF/CLS/OUT）</div></div>
   </div>
+</section>
+
+
+<!-- ============ 7 · 文件完整架构 ============ -->
+<section>
+  <h2>7. 文件完整架构 <span class="badge">21 Skill · 9 共享模块 · 11 脚本</span></h2>
+  <div class="desc">每个目录/文件一句话职责。★ = 唯一真相源 / 核心引擎。每个 skill 内部统一为：<code>SKILL.md</code>（10 节）+ <code>references/</code>（7 类）+ <code>agents/openai.yaml</code> + <code>scripts/validate_artifact.py</code> + <code>README.md</code>。</div>
+  <pre style="font-family:&#39;SF Mono&#39;,Menlo,monospace;font-size:11.5px;line-height:1.75;background:#F8F8FA;border:1px solid #E5E5E5;border-radius:10px;padding:18px 20px;overflow-x:auto;color:#333">
+PM Scaffold · 文件完整架构
+│
+├─ README.md                    开源门面：定位 / 快速开始 / 工作流
+├─ AGENTS.md                    AI 唯一入口：启动顺序 / 硬红线 / 命令
+├─ CHANGELOG.md                 版本变更（Keep a Changelog）
+├─ LICENSE · CONTRIBUTING.md    MIT + 贡献规范
+├─ run_tests.sh · .ps1          全量回归（注册表驱动 + violation 负例反向断言）
+├─ docs/
+│  └─ ARCHITECTURE.md           架构说明（对外门面）
+├─ env_config/requirements.txt  依赖清单（stdlib-only，Python 3.10+）
+├─ skills/pm-scaffold/SKILL.md  打包清单（对外安装入口）
+├─ src/
+│  ├─ framework/                治理层（Agent 先读这里）
+│  │  ├─ workflow-registry.json  ★ 唯一机器真相源（schema v5：5 主 + 8 子 + 8 分支）
+│  │  ├─ constitution.md         6 条硬宪法
+│  │  ├─ contracts.md            六态知识标注 + 确认不变式（SHA-256）
+│  │  ├─ workflow.md             8 步循环 + Entry And Exit
+│  │  ├─ governance.md           治理 + Inquiry Contract + 入口探索序列 + B3 收口
+│  │  └─ thinking-core.md        17 思考透镜（§1 六透镜必用）
+│  ├─ scripts/                  机器循环引擎
+│  │  ├─ pipeline.py            ★ 命令链：init / status / entry / gate / review / reflow(--apply)
+│  │  │                         entry 内容六信号 L0-L4 · 分支信号 · entry_blocked
+│  │  ├─ orchestrator.py        状态机 + 信号层（B1 熔断 / B3 老化 / 范围冻结）
+│  │  ├─ dor_check.py           DoR/DoD + 六态覆盖 + 入口材料(SRC≥1) + B3 收口硬门禁
+│  │  ├─ workflow_registry.py   注册表访问器（accept v3/4/5）
+│  │  ├─ consistency_check.py   跨文档一致性 + requirements/ 盲区检查
+│  │  ├─ traceability_check.py  双向追溯（正向共现 + 反向孤儿）
+│  │  ├─ property_check.py      逻辑完备（状态机/异常/VL↔AC/规则密度，fd 专属）
+│  │  ├─ branch_validator.py    评审记录真实性 + SHA-256 比对
+│  │  └─ migrate_layout_v2.py   一次性迁移工具（--apply 需 --confirm 防护）
+│  ├─ stages/                   3 阶段 × 5 主 + 8 子 + 3 分支
+│  │  ├─ 001-business-requirements/
+│  │  │  ├─ skills/project-background-goal/    主① 项目背景与目标
+│  │  │  ├─ skills/user-journey-and-stories/   主② 用户旅程与故事
+│  │  │  ├─ skills/project-scope/              分支 · 范围基线
+│  │  │  └─ skills/requirement-restate/        分支 · 需求复述
+│  │  ├─ 002-product-requirements/
+│  │  │  ├─ skills/product-ux/                 主③ 产品 UX
+│  │  │  │  └─ skills/{ux-flow, page-design, interaction-rules}/   3 子
+│  │  │  ├─ skills/function-description/       主④ 功能描述
+│  │  │  │  └─ skills/{business-rules, validation-rules, state-machine,
+│  │  │  │            exception-handling, acceptance-criteria}/      5 子
+│  │  │  └─ skills/tracking-plan/              分支 · 埋点计划
+│  │  └─ 003-prd-output/skills/prd-assembly/   主⑤ PRD 汇总（只聚合不发明）
+│  ├─ support-skills/           4 支持 skill（按需触发，resume→bg）
+│  │  ├─ brainstorming/         发散收敛（L0 触发 · 候选四值处置）
+│  │  ├─ competitive-research/  竞品调研
+│  │  ├─ solution-assessment/   方案评估
+│  │  └─ prd-publish/           PRD 发布（SHA-256 复核）
+│  ├─ shared/                   9 共享机制（横向复用，不占主干）
+│  │  ├─ audit/ human-gate/ clarify/（含 issue-record skill + 收口表）
+│  │  ├─ change-management/ traceability/ decision-log/
+│  │  └─ brainstorming/ intake-routing/ project-init/
+│  ├─ templates/                26 产物模板 + resolver.py（优先级栈）
+│  └─ toolkit/                  外部工具指南（lark-cli / Figma / Mermaid）
+│     └─ visualization/         流程图 HTML（本文件所在）
+└─ test/
+   ├─ scripts/                  集成/运行时测试（workflow_runtime / cross_skill / tamper）
+   └─ skills/&lt;skill-id&gt;/      每 skill：fixtures（正例 + violation 负例）+ test_validate_artifact.py
+  </pre>
 </section>
 
 <!-- ============ 6 · 质量基线 ============ -->

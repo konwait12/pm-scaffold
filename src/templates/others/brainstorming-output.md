@@ -2,9 +2,11 @@
 # 头脑风暴输出
 
 ## 原始输入
-`待填写`（一句话描述原始输入）
+`待填写`（一句话描述原始输入；L0 触发时注明触发路径与证据边界）
 
 ## 发散结果
+
+（按 12 维度发散：lifecycle / roles / normal-alternate-exception-failure-timeout / permission / data condition / handoff / dependency / cancellation / retry / rollback / change-recovery；聚类去重后进入候选清单）
 
 ### 可能的业务目标 (Goals)
 | ID | 目标描述 | 置信度 (1-5) | 依据 | 采纳？ |
@@ -34,15 +36,27 @@
 |---|---|---|---|
 | `待填写` | `待填写` | `待填写` | ☐ |
 
-## 人工收敛结果
+## 候选清单（全部 AI_INFERENCE）
+| Candidate ID | 发散维度 | Candidate | Evidence | Impact | 知识状态 |
+|---|---|---|---|---|---|
+| SCN-001 | `待填写` | `待填写` | `待填写` | `待填写` | AI_INFERENCE |
 
-**选定目标**: `待填写`
-**选定角色**: `待填写`
-**选定生命周期**: `待填写`
-**选定约束**: `待填写`
+> 聚类去重后每条候选一个 SCN-XXX；未处置前一律 `AI_INFERENCE`，不得当事实。
+
+## 人工处置表
+| Candidate ID | Role-Lifecycle | Candidate | Evidence | Impact | Human Disposition | Reason | Write-back Target |
+|---|---|---|---|---|---|---|---|
+| SCN-001 | `待填写` | `待填写` | `待填写` | `待填写` | include / exclude / defer / research | `待填写` | `待填写` |
+
+> 处置四值：`include` 纳入正式产物（必须填 Write-back Target）；`exclude` 排除（给原因）；`defer` 暂缓（给触发条件）；`research` 待调研（登记 issue-record / QuestionRecord 跟进）。Disposition 仅人工填写。
+
+## Include 项写回（写回 `project-background-goal` 输入包）
+| SCN-ID | 写回内容 | 写回目标章节 |
+|---|---|---|
+| SCN-001 | `待填写` | `待填写`（如：输入包 §生命周期线索 / §角色候选 / §约束候选） |
 
 ## 收敛后输入包（交付 `project-background-goal`）
-`待填写`（将以上选定内容综合为 ≥ 50 字的充分输入，供 `project-background-goal` 使用）
+`待填写`（仅综合 include 项，≥ 50 字的充分输入，供 `project-background-goal` 使用）
 
 ---
-*所有发散内容均为 AI_INFERENCE，仅在人工确认后方可进入 `project-background-goal`*
+*所有发散内容均为 AI_INFERENCE，仅 include 候选经人工确认后进入 `project-background-goal` 输入包；本记录状态止步于 `ready_for_human_review`，永不产 `confirmed`*

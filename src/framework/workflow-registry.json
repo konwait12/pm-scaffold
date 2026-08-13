@@ -405,6 +405,18 @@
       "output_location": "99-review/support/",
       "resume_work_item": null,
       "responsible_role": "business_owner"
+    },
+    {
+      "id": "brainstorming",
+      "name": "需求发散收敛",
+      "skill_path": "src/support-skills/brainstorming",
+      "trigger": "L0 仅想法或材料稀疏",
+      "applicable_stages": [
+        "001-business-requirements"
+      ],
+      "output_location": "99-review/support/",
+      "resume_work_item": "project-background-goal",
+      "responsible_role": "business_owner"
     }
   ],
   "issue_policy": {

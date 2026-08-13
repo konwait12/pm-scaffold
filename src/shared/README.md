@@ -27,10 +27,11 @@
 | `page-design` | product-ux | §Page | `stages/002-product-requirements/skills/product-ux/skills/page-design/README.md` |
 | `interaction-rules` | product-ux | §IX | `stages/002-product-requirements/skills/product-ux/skills/interaction-rules/README.md` |
 
-## 分支 Skill 索引（7 个 · registry `support_capabilities`）
+## 分支 Skill 索引（8 个 · registry `support_capabilities`）
 
 | Skill | 用途 | 触发条件 | 位置 |
 |---|---|---|---|
+| `brainstorming` | 需求发散收敛 | L0 仅想法/材料稀疏 | `support-skills/brainstorming/` |
 | `competitive-research` | 竞品分析 | 方向不清/缺参考 | `support-skills/competitive-research/` |
 | `solution-assessment` | 可行性与多方案对比 | 方案取舍影响范围/成本/风险 | `support-skills/solution-assessment/` |
 | `prd-publish` | PRD 发布记录 | PRD confirmed | `support-skills/prd-publish/` |
