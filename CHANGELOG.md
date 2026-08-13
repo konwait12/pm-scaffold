@@ -7,6 +7,36 @@ All notable changes to PM Scaffold · 产品 AI 脚手架 are documented here. T
 ### Added
 - (next release) — placeholder
 
+## [0.3.0] - 2026-08-13
+
+### Changed · 产物清单对齐老版 + 一产物一 Skill
+- 正式产物 10 → 5：一个主 work item 一个产物（journey 3 产物、product-ux 4 产物折叠为单产物 + 内部章节）
+- **功能 / UX 严格分离**：功能清单（feature-list）与功能流程（functional-flow，原 ux-flow 误归 UX）移出 product-ux → function-description；product-ux 纯 UX（page-design + interaction-rules 2 子）；function-description 7 子
+- 子 skill 8 → 9；skill 总数 21 → 19（5 主 + 9 子 + 4 分支产物 + 1 能力）
+- 分支 skill 收编：brainstorming 并入「需求重举能力」、prd-publish 降级为发布复核动作（SHA-256 在 branch_validator）、project-scope 并入 journey 范围基线、solution-assessment 改名 feasibility-analysis（多方案降为章节）
+- 补「字段规则说明」并入 validation-rules（字段定义表）
+- registry schema v5 → v6
+
+### Changed · PRD 结构瘦身（校验章节移出正文）
+- prd.md 13 → 9 节：7 正文（背景/旅程/UX/分功能/按需/事实决定/验收）+ 需求追溯矩阵附录 + 自审记录附录
+- 移出正文（由机器在 gate 产出、进 99-review 评审记录）：上游产物清单、正向/反向追溯检查、不一致报告
+
+### Added · 入口探索阶段 + 一闸门两分支机器化
+- entry 内容六信号 L0-L4 判定 + entry_blocked（L0/L1 材料不足）+ 分支信号
+- bg DoR 硬检查「00-input ≥1 SRC」（无源即停机器版）
+- B3 每阶段强制收口：dor_check stage_closeup（issue-record §13 收口表 + 待确认引用）+ 13 个 SKILL.md Clarify/Audit 接线
+- B1 熔断（连续 3 轮 changes）/ B3 老化（7/14 天）/ 范围冻结信号（orchestrator loop_signals）
+- 六态行内标注检测（FACT：…/。DECISION：… 自然写法不再误拦）
+- 负例测试机制：violation fixture 反向断言（必须被校验器拒绝）
+
+### Added · 驾驶舱（项目门面 + 教程）
+- 单文件自包含驾驶舱 HTML：程序流程图（每线带条件）、命令全集、Skill/产物/脚本/共享机制/模板说明书、全景节点图（31 节点可展开收起）、文件完整架构
+- 左侧导航（锚点 + 滚动高亮）+ 新手教程弹窗（10 章人机协作手册，目录跳转）
+- AGENTS.md §0 首次接触协议：AI 见新人先开驾驶舱
+
+### Added · 外部 skill 技法吸收
+- pm-phase-4.5-prototype → page-design 原型两步流程；prd/prd-writer → prd-assembly 结构参考（只聚合边界）；requirements-gathering → bg 采集技法；user-journeys → journey 体验验证；doc-coauthoring → B1 修改循环；image2html → 参考图还原；webapp-testing → 原型自测
+
 ## [0.2.0] - 2026-08-13
 
 ### Changed · 入口收敛
