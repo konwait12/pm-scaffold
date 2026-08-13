@@ -39,7 +39,10 @@ def build_status(req_dir: Path) -> dict:
     blockers = []
     workflow_valid = True
     for item in items:
-        if statuses[item["id"]] in ("confirmed", "superseded", "legacy_unverified"):
+        # confirmed/legacy_unverified are done-for-now; `superseded` means the
+        # artifact was invalidated by an upstream reflow and must be re-validated,
+        # so it IS the next work item (its downstream remains DoR-blocked until then).
+        if statuses[item["id"]] in ("confirmed", "legacy_unverified"):
             continue
         next_item = item["id"]
         for predecessor in item["predecessors"]:
