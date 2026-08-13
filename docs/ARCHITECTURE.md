@@ -178,6 +178,4 @@ PRD 输出（`prd-assembly`）是下游。
 - 详细计划：`docs/00-plan/01-三阶段主流程与工作事项.md`
 - 共享机制：`docs/00-plan/02-共享机制与产物契约.md`
 - 迁移验证：`docs/00-plan/03-实施迁移与验证计划.md`
-- 立即可执行优化计划：`docs/immediate-actionable-optimization-plan.md`
-- 整改与竞品评估：`docs/_archive/remediation-and-competitive-assessment/`（已生成）
 - 变更日志：`CHANGELOG.md`

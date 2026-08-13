@@ -10,7 +10,7 @@ All notable changes to Project_001 产品 AI 脚手架 are documented here. The 
 ## [0.2.0] - 2026-08-13
 
 ### Changed · 入口收敛
-- 四份入口（README/AGENTS/CLAUDE/AI）收敛为唯一 `AGENTS.md`（中文运行时入口），`CLAUDE.md` 软链指向它，删除 `AI.md`，`README.md` 重写为开源门面（spec-kit 对比 + 快速开始 + 架构图）
+- 四份入口（README/AGENTS/CLAUDE/AI）收敛为唯一 `AGENTS.md`（中文运行时入口），删除 `AI.md` 与 `CLAUDE.md`（CLAUDE.md 加入 .gitignore，防止个人 Agent 配置误入仓库），`README.md` 重写为开源门面（快速开始 + 架构图 + 能力说明）
 
 ### Added · Loop 引擎（机器闭环）
 - `pipeline.py init <REQ-NNN-topic>` 从注册表生成需求骨架（目录 + authorized-reviewers.json + source-register + README）

@@ -12,6 +12,10 @@ __pycache__/
 .vscode/
 .workbuddy/
 
+# Per-agent entry files are personal — the canonical entry is AGENTS.md
+CLAUDE.md
+.cursorrules
+
 # Large assets (use CDN or install separately)
 assets/_shared/js/
 assets/_shared/fonts/
