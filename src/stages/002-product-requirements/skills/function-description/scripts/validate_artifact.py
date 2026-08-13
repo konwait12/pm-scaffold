@@ -13,8 +13,8 @@ REQUIRED_FRONTMATTER = {
 }
 
 REQUIRED_HEADINGS = [
-    "预检输入充分度判定", "功能规格概览", "分功能详述",
-    "权限矩阵", "字段规则", "埋点需求",
+    "预检输入充分度判定", "功能清单", "功能流程", "业务规则",
+    "校验规则与字段定义", "状态变化", "异常与失败处理", "验收依据",
     "事实与决定", "假设、AI 推断、未知与冲突", "待确认问题",
     "来源追溯", "下游输入摘要", "Constitution Compliance", "版本变更摘要",
 ]
@@ -64,6 +64,9 @@ def validate(path: Path) -> dict[str, object]:
     missing_h = [h for h in REQUIRED_HEADINGS if _norm(h) not in headings]
     if missing_h:
         errors.append(f"Missing required headings: {', '.join(missing_h)}")
+
+    if "FEA-" not in text:
+        errors.append("No FEA-* feature identifier found; at least one feature (功能清单) is required")
 
     if "FUN-" not in text:
         errors.append("No FUN-* function identifier found; at least one function is required")

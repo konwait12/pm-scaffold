@@ -1,7 +1,7 @@
 # PM Scaffold · 产品 AI 脚手架 · 架构文档
 
 > **版本**：v0.1 · 2026-08-12
-> **范围**：3 阶段 × 5 主 Skill × 8 子 Skill × 9 共享模块 × 4 分支 + 1 能力 的整体架构说明
+> **范围**：3 阶段 × 5 主 Skill × 9 子 Skill × 9 共享模块 × 4 分支 + 1 能力 的整体架构说明
 > **目的**：帮助新成员快速理解项目结构与数据流；为外部协作者提供架构门面
 
 ---
@@ -21,8 +21,8 @@ flowchart TB
     end
 
     subgraph S2["Stage 2 · 产品需求"]
-        B1["product-ux<br/>ux-flow + page-design + interaction-rules"]
-        B2["function-description<br/>business-rules + validation-rules + state-machine + exception-handling + acceptance-criteria"]
+        B1["product-ux<br/>page-design + interaction-rules"]
+        B2["function-description<br/>feature-list + functional-flow + business-rules + validation-rules + state-machine + exception-handling + acceptance-criteria"]
     end
 
     subgraph S3["Stage 3 · PRD 输出"]
@@ -68,7 +68,7 @@ flowchart TB
 产品需求分析（`product-ux` + `function-description`）是中游；
 PRD 输出（`prd-assembly`）是下游。
 
-**有意收敛**：不把"功能清单"或"UX 流程图"作为独立主干，它们是 UX 步骤的内部表达。
+**有意收敛**：不把"功能清单"或"功能流程"作为独立主干；它们是 `function-description` 的子 skill 章节（feature-list / functional-flow），`product-ux` 只承载页面设计与交互规则。
 
 ### 2.2 Constitution 治理层
 
@@ -87,7 +87,7 @@ PRD 输出（`prd-assembly`）是下游。
 
 ### 2.5 共享机制复用
 
-8 个 sub-skill 与 9 个 shared 模块是**横向复用**机制，不独立构成业务阶段。`business-rules` 等被 `function-description` 顺序调用，输出 §BR / §VL / §State / §Exception / §AC 五个章节。
+9 个 sub-skill 与 9 个 shared 模块是**横向复用**机制，不独立构成业务阶段。`feature-list` 等被 `function-description` 顺序调用，输出 §功能清单 / §功能流程 / §BR / §VL / §State / §Exception / §AC 七个章节；`page-design` / `interaction-rules` 挂在 `product-ux`。
 
 ---
 
@@ -98,8 +98,8 @@ PRD 输出（`prd-assembly`）是下游。
   → intake-routing 判定 L0-L4
   → project-background-goal (背景+目标)
   → user-journey-and-stories (旅程+故事)
-  → product-ux (UX 流程+页面+交互)
-  → function-description (BR/VL/State/Exception/AC 五章节)
+  → product-ux (页面设计+交互规则)
+  → function-description (FEA/FLOW/BR/VL/State/Exception/AC 七章节)
   → prd-assembly (汇总 → prd.md)
   → 发布复核（SHA-256）
 ```
@@ -119,7 +119,7 @@ PRD 输出（`prd-assembly`）是下游。
 | 框架规则 | `src/framework/constitution.md` / `contracts.md` / `governance.md` / `thinking-core.md` |
 | 工作流注册 | `src/framework/workflow-registry.json` |
 | 5 主 Skill | `src/stages/{001,002,003}-*/skills/*/` |
-| 8 子 Skill | `src/stages/002-product-requirements/skills/{function-description,product-ux}/skills/*/` |
+| 9 子 Skill | `src/stages/002-product-requirements/skills/{function-description,product-ux}/skills/*/` |
 | 4 分支产物 + 1 能力 | `src/support-skills/*/`（竞品/可行性）+ `src/stages/*/skills/{requirement-restate,tracking-plan}/` + `src/shared/clarify/skills/issue-record/` |
 | 9 共享模块 | `src/shared/{audit,human-gate,clarify,...}/` |
 | 26 产物模板 | `src/templates/stage-{1,2,3}-*/` + `src/templates/{support,others,records}/` |
@@ -136,7 +136,7 @@ PRD 输出（`prd-assembly`）是下游。
 `run_tests.sh` 跑 8 类检查：
 - 跨文档一致性（`consistency_check.py`）
 - 5 个主 Skill 产物校验
-- 8 个子 Skill 产物校验
+- 9 个子 Skill 产物校验
 - 5 个分支/能力 Skill 校验器（注册表驱动：4 产物 + 1 能力）
 - 单元/集成测试（workflow_runtime / cross_skill_integration / 5 主 skill 校验器）
 - 需求目录状态 / 记录 / RTM 校验
@@ -165,7 +165,7 @@ PRD 输出（`prd-assembly`）是下游。
 
 ### 6.2 外部 Agent 接入
 
-每个 Skill 都有 `agents/openai.yaml` 元数据（5 主 + 8 子 + 4 分支 + 1 能力 = 18 份），描述：
+每个 Skill 都有 `agents/openai.yaml` 元数据（5 主 + 9 子 + 4 分支 + 1 能力 = 19 份），描述：
 - `display_name` · `short_description`
 - `default_prompt` · `trigger_examples` · `should_not_trigger_examples`
 

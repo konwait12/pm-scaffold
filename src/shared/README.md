@@ -14,18 +14,19 @@
 | `project-init/` | 项目初始化 | 一键创建 REQ-DIR 骨架 |
 | `traceability/` | 追溯验证 | 跨产物 G→ST→FEA→FUN→AC→BR 追溯链 |
 
-## 八大子 Skill 索引
+## 九大子 Skill 索引
 
 | Sub-Skill | 父 Skill | 章节 | README |
 |---|---|---|---|
+| `feature-list` | function-description | §功能清单 | `stages/002-product-requirements/skills/function-description/skills/feature-list/README.md` |
+| `functional-flow` | function-description | §功能流程 | `stages/002-product-requirements/skills/function-description/skills/functional-flow/README.md` |
 | `business-rules` | function-description | §BR | `stages/002-product-requirements/skills/function-description/skills/business-rules/README.md` |
 | `validation-rules` | function-description | §VL | `stages/002-product-requirements/skills/function-description/skills/validation-rules/README.md` |
 | `state-machine` | function-description | §State | `stages/002-product-requirements/skills/function-description/skills/state-machine/README.md` |
 | `exception-handling` | function-description | §Exception | `stages/002-product-requirements/skills/function-description/skills/exception-handling/README.md` |
 | `acceptance-criteria` | function-description | §AC | `stages/002-product-requirements/skills/function-description/skills/acceptance-criteria/README.md` |
-| `ux-flow` | product-ux | §UX Flow | `stages/002-product-requirements/skills/product-ux/skills/ux-flow/README.md` |
-| `page-design` | product-ux | §Page | `stages/002-product-requirements/skills/product-ux/skills/page-design/README.md` |
-| `interaction-rules` | product-ux | §IX | `stages/002-product-requirements/skills/product-ux/skills/interaction-rules/README.md` |
+| `page-design` | product-ux | §页面设计 | `stages/002-product-requirements/skills/product-ux/skills/page-design/README.md` |
+| `interaction-rules` | product-ux | §交互规则 | `stages/002-product-requirements/skills/product-ux/skills/interaction-rules/README.md` |
 
 ## 分支 Skill 索引（4 产物 + 1 能力 · registry `support_capabilities`）
 

@@ -20,7 +20,7 @@
 
 当人类用户第一次接触本项目（问「这是什么 / 怎么用 / 从哪开始」）时，按顺序：
 
-1. **先打开驾驶舱给他们看**：`open src/toolkit/visualization/scaffold-flow.html`（浏览器打开）——里面是项目流程图、18 Skill 说明书、命令全集、文件架构。
+1. **先打开驾驶舱给他们看**：`open src/toolkit/visualization/scaffold-flow.html`（浏览器打开）——里面是项目流程图、19 Skill 说明书、命令全集、文件架构。
 2. **引导点左侧「📖 新手教程 · 从这里开始」**——那是给人类看的协作手册（用什么 Agent、怎么下指令、从零到 PRD 的完整剧本）。这是硬核项目、没有外部生态，这个 HTML 是唯一的入门门面。
 3. **本文件是你的工作合同，不要直接甩给用户读**——用户需要的是「怎么用」，不是「你的规则」。等用户看完教程、按他们的指令开始协作后，你按本文件 §2-§8 执行。
 
@@ -122,14 +122,14 @@ python3 src/scripts/consistency_check.py
 
 ---
 
-## 7. Skill 全景（5 主 + 8 子 + 4 分支 + 1 能力 = 18）
+## 7. Skill 全景（5 主 + 9 子 + 4 分支 + 1 能力 = 19）
 
 **主 skill（5，主干必做，永不询问）**
 `project-background-goal` → `user-journey-and-stories` → `product-ux` → `function-description` → `prd-assembly`
 
-**子 skill（8，挂到父 skill 的产物章节）**
-`product-ux` 内：`ux-flow` / `page-design` / `interaction-rules`
-`function-description` 内：`business-rules` / `validation-rules` / `state-machine` / `exception-handling` / `acceptance-criteria`
+**子 skill（9，挂到父 skill 的产物章节）**
+`product-ux` 内：`page-design` / `interaction-rules`
+`function-description` 内：`feature-list` / `functional-flow` / `business-rules` / `validation-rules` / `state-machine` / `exception-handling` / `acceptance-criteria`
 
 **分支/条件 skill（4 产物 + 1 能力，触发才跑）**
 `competitive-research`（竞品调研）、`feasibility-analysis`（可行性分析）、`tracking-plan`（埋点计划）、`issue-record`（问题清单）——另 `requirement-restate`（需求重举能力：复述+发散，过程记录）
@@ -151,7 +151,7 @@ python3 src/scripts/consistency_check.py
 
 ```text
 src/framework/       宪法、契约、思考核心、注册表（先读这里）
-src/stages/          3 阶段 × 5 主 skill + 8 子 skill
+src/stages/          3 阶段 × 5 主 skill + 9 子 skill
 src/shared/          9 个共享机制（审计/澄清/变更/闸门/追溯等）
 src/support-skills/  4 支持 skill；+4 分支 skill 在 stages/shared（共 8）
 src/scripts/         pipeline / orchestrator / 校验器

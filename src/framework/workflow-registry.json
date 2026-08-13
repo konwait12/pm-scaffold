@@ -147,58 +147,65 @@
   ],
   "internal_capabilities": [
     {
-      "id": "ux-flow",
-      "parent_work_item": "product-ux",
-      "order": 1,
-      "skill_path": "src/stages/002-product-requirements/skills/product-ux/skills/ux-flow",
-      "output_section": "UX 流程与交互规则"
-    },
-    {
       "id": "page-design",
       "parent_work_item": "product-ux",
-      "order": 2,
+      "order": 1,
       "skill_path": "src/stages/002-product-requirements/skills/product-ux/skills/page-design",
       "output_section": "页面与原型"
     },
     {
       "id": "interaction-rules",
       "parent_work_item": "product-ux",
-      "order": 3,
+      "order": 2,
       "skill_path": "src/stages/002-product-requirements/skills/product-ux/skills/interaction-rules",
-      "output_section": "UX 流程与交互规则"
+      "output_section": "交互规则"
+    },
+    {
+      "id": "feature-list",
+      "parent_work_item": "function-description",
+      "order": 1,
+      "skill_path": "src/stages/002-product-requirements/skills/function-description/skills/feature-list",
+      "output_section": "功能清单"
+    },
+    {
+      "id": "functional-flow",
+      "parent_work_item": "function-description",
+      "order": 2,
+      "skill_path": "src/stages/002-product-requirements/skills/function-description/skills/functional-flow",
+      "output_section": "功能流程"
     },
     {
       "id": "business-rules",
       "parent_work_item": "function-description",
-      "order": 1,
+      "order": 3,
       "skill_path": "src/stages/002-product-requirements/skills/function-description/skills/business-rules",
       "output_section": "业务规则"
     },
     {
       "id": "validation-rules",
       "parent_work_item": "function-description",
-      "order": 2,
+      "order": 4,
       "skill_path": "src/stages/002-product-requirements/skills/function-description/skills/validation-rules",
-      "output_section": "系统校验"
+      "output_section": "校验规则与字段定义"
     },
     {
       "id": "state-machine",
       "parent_work_item": "function-description",
-      "order": 3,
+      "order": 5,
       "skill_path": "src/stages/002-product-requirements/skills/function-description/skills/state-machine",
       "output_section": "状态变化"
     },
     {
       "id": "exception-handling",
       "parent_work_item": "function-description",
-      "order": 4,
+      "order": 6,
       "skill_path": "src/stages/002-product-requirements/skills/function-description/skills/exception-handling",
       "output_section": "异常与失败处理"
     },
     {
       "id": "acceptance-criteria",
       "parent_work_item": "function-description",
-      "order": 5,
+      "order": 7,
       "skill_path": "src/stages/002-product-requirements/skills/function-description/skills/acceptance-criteria",
       "output_section": "验收依据"
     }
@@ -224,20 +231,20 @@
     },
     {
       "id": "product-ux",
-      "name": "产品 UX（功能清单/UX 流程/交互规则/页面设计）",
+      "name": "产品 UX（页面设计 + 交互规则）",
       "producer": "product-ux",
       "artifact_file": "002-product-requirements/01-product-ux/product-ux.md",
-      "prd_destination": "模块与功能清单、UX/功能流程、交互规则、页面骨架",
+      "prd_destination": "页面骨架、交互规则、UX 体验",
       "depends_on": [
         "journey-and-stories"
       ]
     },
     {
       "id": "function-specifications",
-      "name": "功能描述与规则集",
+      "name": "功能描述与规则集（功能清单/流程/FUN/BR/VL/State/Exception/AC/字段）",
       "producer": "function-description",
       "artifact_file": "002-product-requirements/02-function-description/function-description.md",
-      "prd_destination": "FUN 功能描述 + BR/VL/State/Exception/AC/字段规则",
+      "prd_destination": "功能清单 FEA、功能流程、FUN 功能描述 + BR/VL/State/Exception/AC/字段规则",
       "depends_on": [
         "product-ux"
       ]

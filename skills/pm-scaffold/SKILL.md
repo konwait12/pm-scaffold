@@ -34,7 +34,7 @@ bash run_tests.sh
 ## What It Does
 
 - **5 Work Items** across 3 stages: business requirements → product requirements → PRD output
-- **8 sub-skills** for detailed UX (page-design, interaction-rules, ux-flow) and function (business-rules, validation-rules, state-machine, exception-handling, acceptance-criteria) specification
+- **9 sub-skills**: UX (page-design, interaction-rules) and function (feature-list, functional-flow, business-rules, validation-rules, state-machine, exception-handling, acceptance-criteria)
 - **7 branch skills**: competitive research, solution assessment, PRD publish, project scope, requirement restate, tracking plan, issue record
 - **17-lens thinking framework** shared across all skills
 - **Non-bypassable human gates**: only `pipeline.py review --decision approve` with a real human reviewer can confirm artifacts

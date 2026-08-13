@@ -16,12 +16,8 @@ Produce the single final `prd.md` by organizing confirmed upstream content, vali
 **Inputs**: All four upstream work items confirmed (project-background-goal, user-journey-and-stories, product-ux, function-description).
 
 **Outputs**:
-- `prd.md` (standard, or `--variant executive|technical`)
-- Traceability matrix (G→ST→FEA→FUN→AC/BR)
-- Forward trace check (§8)
-- Reverse trace check (§9)
-- Inconsistency report (§10)
-- Review taxonomy findings (§10, using labels from `src/shared/audit/review-taxonomy.md`)
+- `prd.md` (standard, or `--variant executive|technical`)：7 正文节 + 需求追溯矩阵（附录）+ 自审记录（附录）
+- 正向/反向追溯检查、不一致报告、Review taxonomy 结论 → 进 `99-review/` 评审记录，**不写进 prd.md 正文**（由机器在 gate 时产出）
 
 Load `references/thinking-framework.md` (→ `thinking-core.md` §1 mandatory + §2 check + §3 pre-mortem) before assembly. Load `src/shared/audit/review-taxonomy.md` before audit. If upstream `product-ux` produced a clickable prototype, load `references/prototype-embedding.md` (§4 分功能详述 may embed iframe slices + version switcher; optional, text rules remain authoritative).
 
@@ -49,7 +45,8 @@ Load without changing knowledge state: source IDs, goals (G1-G5), roles, lifecyc
 
 ### 5. Generate
 Fill template (resolved by `src/templates/resolver.py prd.md` or `--variant`).
-Sections: upstream register → background → journey/stories → UX/scope/flow/IX → functions/BR/VL/AC → architecture → NFR → trace matrix (§7) → forward check (§8) → reverse check (§9) → inconsistency report (§10) → facts/decisions → constitution compliance → version history.
+正文 7 节：项目背景与目标 → 业务角色/旅程/故事 → UX → 分功能描述 → 按需章节 → 事实与决定 → 验收依据；附录 2 节：需求追溯矩阵、自审记录（Constitution Compliance）。
+正向/反向追溯检查与不一致报告**不写进正文**——它们在 Audit 阶段由机器产出、进 99-review 评审记录。
 
 ### 6. Audit (apply review taxonomy)
 Run in order:
@@ -65,6 +62,7 @@ Run in order:
    - Scan for [Overreach]: out-of-scope implementation details
    - Scan for [Unowned]: unassigned responsibilities
    - For each finding → verdict: APPROVED / CONDITIONS / REVISION
+   - **Findings go to 99-review 评审记录，不写进 prd.md 正文**
 5. Adversarial review (thinking-core §1.3): "Can I construct a scenario where this PRD leads to the wrong product?"
 6. **B3 收口**：确认 issue-record 的 §13 阶段收口表已更新本 work item 行（问题数 / 收口日期 / 状态；空阶段也落行）。
 
@@ -105,7 +103,7 @@ From `src/shared/audit/review-taxonomy.md`:
 | ❌ Don't | ✅ Do |
 |---|---|
 | Add a "nice to have" feature during assembly | Route the idea back to project-background-goal |
-| Fix inconsistent terminology silently | Flag as [Redundancy] or [Contradiction] in §10 |
+| Fix inconsistent terminology silently | Flag as [Redundancy] or [Contradiction] in 评审记录 |
 | Skip trace because "it's obvious" | Run traceability_check.py — it finds non-obvious orphans |
 | Approve with unresolved CRITICAL [Gap] | Block with REVISION verdict |
 | Generate PRD without running traceability_check | Always run the explicit edge audit |

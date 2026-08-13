@@ -13,8 +13,7 @@ REQUIRED_FRONTMATTER = {
 }
 
 REQUIRED_HEADINGS = [
-    "预检输入充分度判定", "项目范围（引用上游）", "功能结构",
-    "UX 流程与交互规则", "页面与原型",
+    "预检输入充分度判定", "范围引用", "页面设计", "交互规则",
     "事实与决定", "假设、AI 推断、未知与冲突", "待确认问题",
     "来源追溯", "下游输入摘要", "Constitution Compliance", "版本变更摘要",
 ]
@@ -65,9 +64,6 @@ def validate(path: Path) -> dict[str, object]:
     if missing_h:
         errors.append(f"Missing required headings: {', '.join(missing_h)}")
 
-    if "FEA-" not in text:
-        errors.append("No FEA-* feature identifier found; at least one feature is required")
-
     if re.search(r"\b(?:BR|VL|AC)-\d+\b", text):
         errors.append("Business rules (BR/VL/AC) belong to function-description, not product-ux. IX interaction rules are OK here.")
 
@@ -89,30 +85,21 @@ def validate(path: Path) -> dict[str, object]:
 
     # Semantic red flags
     if status == "ready_for_human_review":
-        # Flag 1: scope baseline has no included items
-        scope_section = re.search(r"^##\s+\d+\.\s*功能结构\s*$(.*?)(?=^##\s+|\Z)", text, re.MULTILINE | re.DOTALL)
-        if scope_section:
-            fea_rows = re.findall(r"FEA-\d+", scope_section.group(1))
-            if len(fea_rows) == 0:
-                warnings.append("Semantic: status is ready_for_human_review but §2 功能结构 has no FEA-* entries")
+        # Flag 1: page skeleton coverage — every confirmed page should have a skeleton row.
+        page_section = re.search(r"^##\s+\d+\.\s*页面与原型\s*$(.*?)(?=^##\s+|\Z)", text, re.MULTILINE | re.DOTALL)
+        if page_section:
+            page_rows = re.findall(r"^\|", page_section.group(1), re.MULTILINE)
+            if len(page_rows) <= 1:
+                warnings.append("Semantic: status is ready_for_human_review but §页面设计 has no page/step skeleton rows")
 
-        # Flag 2: detailed interaction/business rules must stay downstream
-        fea_count = len(re.findall(r"FEA-\d+", text))
-
-        # Flag 2b: interaction rule density (completeness guard).
-        # Each P0 feature should have a UX flow and interaction rules describing it.
-        # A UX artifact with FEA list but no IX rules is incomplete.
+        # Flag 2: interaction rule density (completeness guard).
+        # A UX artifact with pages but no IX rules is incomplete.
         ix_count = len(re.findall(r"IX-\d+", text))
-        p0 = len(re.findall(r"FEA-\d+.*P0", text))
-        if p0 >= 1 and ix_count < 3:
+        if ix_count < 3:
             warnings.append(
-                f"Semantic: {p0} P0 features but only {ix_count} interaction rules (IX-*); "
+                f"Semantic: only {ix_count} interaction rules (IX-*) found; "
                 f"UX is under-specified — likely not covering upstream interaction rules"
             )
-
-        # Flag 3: feature list has no priority distribution
-        if p0 == 0:
-            warnings.append("Semantic: no P0 feature found; verify priority assignment")
 
     # Clarifications check
     cl = re.search(r"^##\s+Clarifications\s*$(.*?)(?=^##\s+|\Z)", text, re.MULTILINE | re.DOTALL)

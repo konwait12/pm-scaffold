@@ -29,21 +29,14 @@ This PRD is a living source of truth — not a static document. When consuming t
    - AI_INFERENCE = AI-generated, NOT human-confirmed (treat as suggestion)
    - UNKNOWN = explicitly marked gap (ask before acting)
    - CONFLICT = known contradiction (resolve before implementing)
-3. The traceability matrix (§7) is authoritative — every acceptance criterion traces to a story, which traces to a goal. Do not implement anything without traceability.
+3. The traceability matrix (§需求追溯矩阵) is authoritative — every acceptance criterion traces to a story, which traces to a goal. Do not implement anything without traceability.
 4. If you need to change this PRD, create a change proposal (see src/shared/change-management/proposal-template.md) — do not edit confirmed content directly.
-5. Version history is in §13. Always check you're reading the latest version.
+5. Version history is in the frontmatter (version / updated_at) and CHANGELOG.md. Always check you're reading the latest version.
 -->
 
 # PRD（产品需求文档）
 
-## 0. 上游产物清单
-
-| 步骤 | Artifact ID | 版本 | 状态 | 确认时间 |
-|---|---|---|---|---|
-| 1. 项目背景与目标 | `待确认` | `待确认` | confirmed | `待确认` |
-| 2. 用户旅程与用户故事 | `待确认` | `待确认` | confirmed | `待确认` |
-| 3. 产品 UX | `待确认` | `待确认` | confirmed | `待确认` |
-| 4. 功能描述 | `待确认` | `待确认` | confirmed | `待确认` |
+> 上游：本 PRD 基于 REQ-XXX 的 4 个已确认上游产物（版本与评审记录见 99-review/ 与 frontmatter `upstream_artifact_ids`）。
 
 ## 1. 项目背景与目标
 
@@ -73,11 +66,11 @@ This PRD is a living source of truth — not a static document. When consuming t
 
 ### 5.1 字段规则
 
-（从 `function-description` §4 引用，如无内容标注"本期不适用"）
+（从 `function-description` 的字段定义表引用，如无内容标注"本期不适用"）
 
 ### 5.2 埋点需求
 
-（从 `function-description` §5 引用，如无内容标注"本期不适用"）
+（从 `tracking-plan` 分支产物引用，如无内容标注"本期不适用"）
 
 ### 5.3 依赖与约束
 
@@ -85,43 +78,29 @@ This PRD is a living source of truth — not a static document. When consuming t
 
 ### 5.4 未决问题与风险
 
-（汇总各工作事项 中的 UNKNOWN 项和开放风险）
+（汇总各工作事项 中的 UNKNOWN 项和开放风险，引用 issue-record）
 
-## 6. 需求追溯矩阵
+## 6. 事实与决定
+
+（汇总各工作事项 的关键事实与人类决定）
+
+`待确认`
+
+## 7. 验收依据
+
+（汇总各工作事项 的验收标准，作为研发/测试的验收基线）
+
+`待确认`
+
+## 需求追溯矩阵
 
 | 目标 (G) | 故事 (ST) | 功能 (FEA) | 功能详述 (FUN) | 验收标准 (AC) | 业务规则 (BR) |
 |---|---|---|---|---|---|
 | `待确认` | `待确认` | `待确认` | `待确认` | `待确认` | `待确认` |
 
-## 7. 正向追溯检查
+## 自审记录（Constitution Compliance）
 
-| 检查项 | 结果 | 差距说明 |
-|---|---|---|
-| 所有 G-X → ≥ 1 ST-XXX | 待确认 | |
-| 所有 P0 ST → ≥ 1 FEA-XXX | 待确认 | |
-| 所有 P0 FEA → ≥ 1 FUN-XXX | 待确认 | |
-| 所有 P0 FUN → ≥ 1 AC-XXX | 待确认 | |
-
-## 8. 反向追溯检查
-
-| 检查项 | 结果 | 说明 |
-|---|---|---|
-| 所有 AC-XXX → FUN-XXX | 待确认 | |
-| 所有 FUN-XXX → FEA-XXX | 待确认 | |
-| 所有 FEA-XXX → ST-XXX | 待确认 | |
-| 无孤儿元素 | 待确认 | |
-
-## 9. 不一致报告
-
-| 类型 | 元素 | 问题 | 建议处理 |
-|---|---|---|---|
-| 待确认 | 待确认 | 待确认 | 待确认 |
-
-## 10. 事实与决定
-
-（汇总各工作事项 的关键事实与决定）
-
-## 11. Constitution Compliance
+> 评审用附录：AI 的自审证明，非 PRD 正文。正向/反向追溯检查与不一致报告由机器在 gate 时产出、进 99-review 评审记录，不写进 PRD。
 
 | 原则 | 状态 | 证据 / 备注 |
 |---|---|---|
@@ -129,15 +108,3 @@ This PRD is a living source of truth — not a static document. When consuming t
 | ② AI 不替业务决定 | 待确认 | |
 | ③ 来源可追溯 | 待确认 | |
 | ④ 冲突显式保留并关闭 | 待确认 | |
-
-## 12. 验收依据与变更记录
-
-### 12.1 关键验收基准
-
-（汇总各工作事项 的验收标准）
-
-### 12.2 版本变更摘要
-
-| 版本 | 变更原因 | 主要变化 | 人工确认状态 |
-|---|---|---|---|
-| v1.0 | 初始正式 PRD | 汇总 前四个工作事项 全部已确认内容 | 待确认 |

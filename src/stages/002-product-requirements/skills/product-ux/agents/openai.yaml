@@ -1,20 +1,18 @@
 interface:
   display_name: "产品 UX (Product UX)"
-  short_description: "引用已确认范围并定义功能清单、UX 流程、页面、状态和交互规则 / Reference confirmed scope and define features, UX flows, pages, states, and interaction rules."
+  short_description: "从已确认旅程/故事定义页面骨架与页面层交互规则 / Define page skeletons and page-level interaction rules from confirmed journey and stories. Feature lists and functional flows belong to function-description."
   default_prompt: |
     Use the product-ux Skill for the first work item in the product-requirements
-    stage. Define WHAT the product contains and how users move through it.
-    Define page-level interaction rules (IX) after pages and states are stable.
-    Route business, validation, permission, recovery, and acceptance rules to
-    function-description.
+    stage. Define page skeletons (WHERE content lives) and page-level interaction
+    rules (IX, HOW users interact). Do not produce feature lists or functional
+    flows — those belong to function-description. Route business, validation,
+    permission, recovery, and acceptance rules to function-description.
 
 trigger_examples:
-  - "基于确认的用户故事，设计产品范围、功能清单和 UX 流程"
-  - "定义功能清单和系统模块边界"
-  - "画出主流程 UX 流程与交互规则"
-  - "描述页面、步骤、状态和页面层交互规则"
-  - "Build product scope, feature list, UX flows, pages, and states from confirmed stories"
-  - "Define the feature list from the confirmed scope baseline"
+  - "基于确认的用户故事，设计页面骨架和页面层交互规则"
+  - "定义页面、步骤、状态和页面层交互规则"
+  - "Describe page skeletons and interaction rules from confirmed stories"
+  - "Build page skeletons and IX rules from the confirmed journey"
 
 should_not_trigger_examples:
   - "写业务规则和字段校验 → routes to function-description"

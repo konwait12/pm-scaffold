@@ -18,7 +18,7 @@ import sys
 from pathlib import Path
 
 # ── Per-sub-skill configuration (edit these) ──────────────
-SECTION_NAME = "页面与原型"        # the parent artifact section this sub-skill fills
+SECTION_NAME = "页面设计"        # the parent artifact section this sub-skill fills
 ID_PATTERN = r"FEA-\d+"               # e.g. r"\bIX-\d+\b"
 # ─────────────────────────────────────────────────────────
 

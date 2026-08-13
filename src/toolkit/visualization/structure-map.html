@@ -44,10 +44,10 @@ h1{font-size:24px;color:var(--ink)}
 <body>
 
 <h1>🏗️ PRD 脚手架 · 完整结构图 v4.1</h1>
-<p class="sub">3 Stage × 5 主 Skill（含 8 子 Skill）× 4 分支产物 Skill + 1 能力 × 9 共享机制 · 35/0 tests</p>
+<p class="sub">3 Stage × 5 主 Skill（含 9 子 Skill）× 4 分支产物 Skill + 1 能力 × 9 共享机制 · 35/0 tests</p>
 
 <div class="stats">
-  <div class="stat"><div class="n">18</div><div class="l">SKILL.md</div></div>
+  <div class="stat"><div class="n">19</div><div class="l">SKILL.md</div></div>
   <div class="stat"><div class="n">22</div><div class="l">模板</div></div>
   <div class="stat"><div class="n">9</div><div class="l">共享机制</div></div>
   <div class="stat"><div class="n">35/0</div><div class="l">测试</div></div>
@@ -79,35 +79,36 @@ h1{font-size:24px;color:var(--ink)}
   <div class="grid g2">
     <div class="skill">
       <div class="name">product-ux <span class="badge complete">完整</span></div>
-      <div class="role">WI 1 · 产品设计三层（Scope→Structural→Framework）· 编排 3 子 Skill</div>
+      <div class="role">WI 1 · 产品设计（页面设计 + 交互规则）· 编排 2 子 Skill</div>
       <div class="files"><b>7 references</b> · validate_artifact.py</div>
       <div style="margin-top:8px">
         <div class="skill sub">
-          <div class="name">功能结构（Scope）</div>
-          <div class="role">§2 有哪些功能，先行总纲，约束后续</div>
-        </div>
-        <div class="skill sub">
-          <div class="name">ux-flow <span class="badge complete">完整</span></div>
-          <div class="role">§3 UX 流程与交互规则（Structural · 主流程+分支）</div>
+          <div class="name">page-design <span class="badge complete">完整</span></div>
+          <div class="role">§2 页面设计与原型（Framework · 页面骨架 + 原型载体）</div>
           <div class="files">SKILL + validator + audit-checklist + thinking-framework</div>
         </div>
         <div class="skill sub">
           <div class="name">interaction-rules <span class="badge complete">完整</span></div>
-          <div class="role">§3.3 IX-XXX 交互规则（Structural · 页面层）</div>
-          <div class="files">SKILL + validator + audit-checklist + thinking-framework</div>
-        </div>
-        <div class="skill sub">
-          <div class="name">page-design <span class="badge complete">完整</span></div>
-          <div class="role">§4 页面与原型（Framework · 页面骨架 + 原型载体）</div>
+          <div class="role">§3 IX-XXX 交互规则（Structural · 页面层）</div>
           <div class="files">SKILL + validator + audit-checklist + thinking-framework</div>
         </div>
       </div>
     </div>
     <div class="skill">
       <div class="name">function-description <span class="badge complete">完整</span></div>
-      <div class="role">WI 2 · 编排 5 子 Skill</div>
+      <div class="role">WI 2 · 编排 7 子 Skill</div>
       <div class="files"><b>8 references</b>（含NFR）· validate_artifact.py</div>
       <div style="margin-top:8px">
+        <div class="skill sub">
+          <div class="name">feature-list <span class="badge complete">完整</span></div>
+          <div class="role">FEA-XXX 功能清单（功能总账 · P0/P1）</div>
+          <div class="files">SKILL.md + output-contract</div>
+        </div>
+        <div class="skill sub">
+          <div class="name">functional-flow <span class="badge complete">完整</span></div>
+          <div class="role">功能流程（主流程/分支/异常）</div>
+          <div class="files">SKILL.md + output-contract</div>
+        </div>
         <div class="skill sub">
           <div class="name">business-rules <span class="badge complete">完整</span></div>
           <div class="role">BR-XXX 业务规则（领域层）</div>
@@ -208,7 +209,7 @@ graph LR
         A["project-background-goal"] --> B["user-journey-and-stories"]
     end
     subgraph S2["Stage 2 产品需求"]
-        C["product-ux<br/>ux-flow → page-design → interaction-rules"] --> D["function-description<br/>business-rules → validation-rules → state-machine → exception-handling → acceptance-criteria"]
+        C["product-ux<br/>page-design → interaction-rules"] --> D["function-description<br/>feature-list → functional-flow → business-rules → validation-rules → state-machine → exception-handling → acceptance-criteria"]
     end
     subgraph S3["Stage 3 PRD"]
         E["prd-assembly"]

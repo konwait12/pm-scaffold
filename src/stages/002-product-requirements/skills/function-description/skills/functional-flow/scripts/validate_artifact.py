@@ -18,14 +18,14 @@ import sys
 from pathlib import Path
 
 # ── Per-sub-skill configuration (edit these) ──────────────
-SECTION_NAME = "UX 流程与交互规则"        # e.g. "交互规则"（子 Skill 输出父产物章节）
-ID_PATTERN = r"FEA-\d+"           # e.g. r"\bIX-\d+\b"
+SECTION_NAME = "功能流程"        # 子 Skill 输出父产物（function-description.md）章节
+ID_PATTERN = r"FEA-\d+"         # 功能流程引用功能清单 FEA-XXX
 # ─────────────────────────────────────────────────────────
 
 
 def _norm(h: str) -> str:
-    # Strip leading numbering ("3. ") and trailing （…）suffix so headings
-    # like "## 3. UX 流程与交互规则（Structural 层）" match SECTION_NAME.
+    # Strip leading numbering ("2. ") and trailing （…）suffix so headings
+    # like "## 2. 功能流程（Structural 层）" match SECTION_NAME.
     return re.sub(r"\s*（[^）]*）\s*$", "", re.sub(r"^\d+\.\s*", "", h).strip()).strip()
 
 

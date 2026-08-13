@@ -7,23 +7,25 @@ description: Specify domain-level business rules, validation, permissions, state
 
 ## Purpose And Boundary
 
-Define HOW every in-scope feature behaves — at a level business can understand, development can implement, and testing can verify. This Skill owns domain rules (BR, VL, state, exceptions, AC). Interaction rules (IX) are owned by product-ux/interaction-rules — **reference them, do not redefine them**.
+Define HOW every in-scope feature behaves — at a level business can understand, development can implement, and testing can verify. This Skill owns the feature inventory (FEA), functional flow, and domain rules (BR, VL, state, exceptions, AC). Interaction rules (IX) are owned by product-ux/interaction-rules — **reference them, do not redefine them**.
 
 **Do not**: redesign UX, add untraceable features, write test cases, architecture, database schemas, or API contracts.
 
 ## Sub-Skills (execution order)
 
 Each produces a section of the function-description artifact:
-1. `business-rules` → §BR table (domain constraints, calculations, policies)
-2. `validation-rules` → §VL table (field-level + cross-field checks, error messages)
-3. `state-machine` → §State transitions (states × events → target states)
-4. `exception-handling` → §Exception/recovery (failure modes + user-visible recovery)
-5. `acceptance-criteria` → §AC table (Given/When/Then + quantified thresholds)
+1. `feature-list` → §功能清单 (FEA table: confirmed in-scope feature inventory)
+2. `functional-flow` → §功能流程 (per-FUN main/alternate/exception/failure paths)
+3. `business-rules` → §业务规则 (BR table: domain constraints, calculations, policies)
+4. `validation-rules` → §校验规则与字段定义 (VL table: field-level + cross-field checks, error messages + field definitions)
+5. `state-machine` → §状态变化 (STATE table: states × events → target states)
+6. `exception-handling` → §异常处理 (EX table: failure modes + user-visible recovery)
+7. `acceptance-criteria` → §验收依据 (AC table: Given/When/Then + quantified thresholds)
 
 ## Inputs And Outputs
 
-**Input**: confirmed `product-ux` (FEA, IX, pages) + confirmed business upstream (ST, scope baseline).
-**Output**: per-function specifications (`FUN-XXX`) with BR, VL, state, exceptions, AC. Field rules and analytics are conditional.
+**Input**: 上游功能清单 FEA（`feature-list` 子 skill 产出）+ confirmed `product-ux` (IX, pages) + confirmed business upstream (ST, scope baseline).
+**Output**: 一个 `function-description.md`，由 7 个子 skill 依次产出 7 个章节：§功能清单 / §功能流程 / §业务规则 / §校验规则与字段定义 / §状态变化 / §异常处理 / §验收依据。字段规则和埋点章节按需出现。
 
 Load `references/thinking-framework.md` (→ `thinking-core.md` §1 mandatory + §2 check lenses) before analysis. Load `references/ears-syntax.md` before writing BR/VL rules (EARS 句式标准).
 
@@ -58,12 +60,14 @@ Trigger `feasibility-analysis` (support skill) when material feasibility or mult
 - 遇到「待确认 / 冲突 / 信息缺口」信号：主动询问是否登记 issue-record（问题清单，见 `src/shared/clarify/skills/issue-record`）；送审前 dor_check 会硬检查收口与引用。
 
 ### 5. Generate
-Fill template (resolved by `src/templates/resolver.py function-description.md`).
-- BR: domain constraints, calculations, state policies — one rule per row, linked to source BRD
-- VL: field-level checks with exact error message text
-- State: all states × all events → target states (check completeness)
-- Exception: trigger → system behavior → user sees → recovery → associated BR
-- AC: Given/When/Then + quantified threshold (≤3s, >95%, etc.) + linked to G-X goal
+Fill template (resolved by `src/templates/resolver.py function-description.md`). Each of the 7 sub-skills produces its corresponding section:
+- `feature-list` → §功能清单 (FEA-*)
+- `functional-flow` → §功能流程 (per-FUN flow)
+- `business-rules` → §业务规则 (BR-*: domain constraints, calculations, state policies — one rule per row, linked to source BRD)
+- `validation-rules` → §校验规则与字段定义 (VL-*: field-level checks with exact error message text + field definitions)
+- `state-machine` → §状态变化 (STATE-*: all states × all events → target states, check completeness)
+- `exception-handling` → §异常处理 (EX-*: trigger → system behavior → user sees → recovery → associated BR)
+- `acceptance-criteria` → §验收依据 (AC-*: Given/When/Then + quantified threshold (≤3s, >95%, etc.) + linked to G-X goal)
 
 Rule density guard: each FUN must have ≥3 BR+VL+AC (validator will warn if under-specified).
 

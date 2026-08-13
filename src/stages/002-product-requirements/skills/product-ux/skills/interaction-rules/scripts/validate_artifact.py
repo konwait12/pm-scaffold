@@ -17,7 +17,7 @@ import sys
 from pathlib import Path
 
 # ── Per-sub-skill configuration (edit these) ──────────────
-SECTION_NAME = "UX 流程与交互规则"          # e.g. "交互规则"（子 Skill 输出父产物章节）
+SECTION_NAME = "交互规则"          # e.g. "交互规则"（子 Skill 输出父产物章节）
 ID_PATTERN = r"IX-\d+"            # e.g. r"\bIX-\d+\b"
 # ─────────────────────────────────────────────────────────
 

@@ -60,8 +60,8 @@ class WorkflowRuntimeTest(unittest.TestCase):
         registry = workflow_registry.load_registry()
         parents = {item["id"] for item in registry["work_items"]}
         capabilities = registry["internal_capabilities"]
-        self.assertEqual(len(capabilities), 8)
-        self.assertEqual(len({capability["id"] for capability in capabilities}), 8)
+        self.assertEqual(len(capabilities), 9)
+        self.assertEqual(len({capability["id"] for capability in capabilities}), 9)
         for capability in capabilities:
             self.assertIn(capability["parent_work_item"], parents)
             self.assertTrue((ROOT / capability["skill_path"] / "SKILL.md").is_file())

@@ -18,7 +18,7 @@ import sys
 from pathlib import Path
 
 # ── Per-sub-skill configuration (edit these) ──────────────
-SECTION_NAME = "分功能详述"          # e.g. "交互规则"（子 Skill 输出父产物章节）
+SECTION_NAME = "异常与失败处理"          # e.g. "交互规则"（子 Skill 输出父产物章节）
 ID_PATTERN = r"\bEX-\d+\b"        # e.g. r"\bIX-\d+\b"
 # ─────────────────────────────────────────────────────────
 
