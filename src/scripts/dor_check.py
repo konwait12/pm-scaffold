@@ -28,7 +28,9 @@ KNOWLEDGE_STATES = ("FACT", "DECISION", "ASSUMPTION", "AI_INFERENCE", "UNKNOWN",
 # a labelled prefix (e.g. "AI_INFERENCE: ...").  The cell match wins for
 # artifacts that use the canonical evidence table form.
 KS_CELL_RE = re.compile(r"\|\s*(" + "|".join(KNOWLEDGE_STATES) + r")\s*\|")
-KS_PREFIX_RE = re.compile(r"^\s*\*?\*?(" + "|".join(KNOWLEDGE_STATES) + r")\*\*?[:：]", re.MULTILINE)
+# 行首 / 空白 / 中文标点之后的标注都算，如「现状 FACT：人工回执」「。DECISION：走线上」
+# 「**FACT**：」加粗形式兼容；要求冒号紧跟标签，避免把正文里碰巧出现的单词误计。
+KS_PREFIX_RE = re.compile(r"(?:^|[\s。；;，,、！？!?])\*?\*?(" + "|".join(KNOWLEDGE_STATES) + r")\*?\*?[:：]", re.MULTILINE)
 KS_MAX_ASSUMPTION_RATIO = 0.30  # hard ceiling: 假设不能超过总条目的 30%
 
 
