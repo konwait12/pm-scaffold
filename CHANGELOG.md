@@ -7,6 +7,37 @@ All notable changes to PM Scaffold · 产品 AI 脚手架 are documented here. T
 ### Added
 - (next release) — placeholder
 
+## [0.3.1] - 2026-08-13
+
+### Fixed · 运行时崩溃
+- orchestrator.py 恰好 1 个 active work item 时 `active_sorted` 未定义抛 UnboundLocalError（正常流程每次只激活一个，核心路径崩溃）
+
+### Fixed · 校验器与模板一致性（功能/UX 分离收尾）
+- prd.md §3 标题「UX：功能范围、功能流程与关键状态」→「UX：页面设计与交互规则」（模板+校验器+output-contract+fixtures）
+- prd-assembly 删除对已移出正文章节（上游产物清单/不一致报告）的检查（此前每次送审误报「不一致报告缺失」）
+- prd-assembly D5.2 上游完整性检查改读 frontmatter `upstream_artifact_ids`（不依赖已删章节）
+- function-description 删除错误要求 IX 交互规则的检查（IX 归 product-ux，出现才警告越界）
+- product-ux/page-design 校验器死代码「页面与原型」→「页面设计」；registry `output_section` 同步
+- tracking-plan `SECTION_NAME`「埋点需求」→「埋点需求分析」（对齐模板与 fixture）
+
+### Fixed · 逻辑 bug
+- property_check 状态机检查全文误匹配 + 6 列表只取 3 列 → 章节限定 + 正确列（63 states → 真实 3 states）；VL↔AC 配对改按「所属 FUN」关联
+- find_artifact 的 v0 快照排除 `startswith("v0.")` 匹配不到 `xxx-v0.1.md` → `re.search(r"v0\.\d+")`
+
+### Removed · 死代码与孤儿文件
+- pipeline.py waiver 死代码（读错路径永不生效）+ `--variant`/`--preset`/`--waive` 死参数
+- 7 个孤儿模板：field-rules / functional-structure / analytics-requirements / prd-executive / prd-technical / publish-record / analytics.md（埋点已由 tracking-plan 分支 skill 取代）
+- `src/shared/brainstorming/` 残留目录（发散收敛能力已并入 requirement-restate 模式二）
+- 3 个 bg 测试残留 fixture（历史测试结果记录，非有效产物）
+- `.gitignore` 新增 `.backup*/`
+
+### Changed
+- 12 处文档过时引用修正：feature-list 的 ux-flow、DIAGRAMS/TOOLKIT/LOCAL_DIAGRAM_TOOLS 的功能结构树/UX 流程图、readme-skeleton 的 product-ux 描述、interaction-rules-output 的「UX 流程」标题等
+
+### Tests
+- 新增 orchestrator 单活跃项回归测试（test_orchestrator_single_active_item_does_not_crash）
+- 53/53 PASS（删 3 个残留 fixture 后 56→53）
+
 ## [0.3.0] - 2026-08-13
 
 ### Changed · 产物清单对齐老版 + 一产物一 Skill
