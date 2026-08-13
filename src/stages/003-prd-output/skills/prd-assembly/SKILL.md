@@ -117,6 +117,7 @@ From `src/shared/audit/review-taxonomy.md`:
 | `references/anti-patterns.md` | AI 常见反模式（写产物时对照规避） | Generate 时对照 |
 | `references/audit-checklist.md` | Audit 自审清单 | Audit 前 |
 | `references/output-contract.md` | 产物结构与 ID 契约 | Draft 前 |
+| `references/prd-structure-reference.md` | PRD 结构参考（章节组织方法论 + 三个 variant 裁剪策略） | Generate 前 |
 | `references/prototype-embedding.md` | PRD 原型嵌入技法（上游有原型时用） | 上游有原型时 |
 | `references/question-patterns.md` | Clarify 提问模板（8 类句式） | Clarify 提问时 |
 | `references/reviewer-checklist.md` | 人工评审清单（Human Gate 用） | Human Gate 前 |

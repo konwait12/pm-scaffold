@@ -96,7 +96,7 @@ Present: the page inventory, per-page entry/precondition/action/next-state, page
 | `references/anti-patterns.md` | AI 常见反模式（写页面时对照规避） | Generate 时对照 |
 | `references/audit-checklist.md` | Audit 自审清单 | Audit 前 |
 | `references/output-contract.md` | §4 产出结构与 ID 契约 | Draft 前 |
-| `references/prototype-techniques.md` | 可点击原型技法（≥3 页或多方评审时用） | 需原型时（可选） |
+| `references/prototype-techniques.md` | 可点击原型技法：先出页面清单经人工确认，再生成单文件 HTML；覆盖主流程与全部分支场景（≥3 页或多方评审时用） | 需原型时（可选） |
 | `references/question-patterns.md` | Clarify 提问模板（8 类句式） | Clarify 提问时 |
 | `references/reviewer-checklist.md` | 人工评审清单（Human Gate 用） | Human Gate 前 |
 | `references/source-handling.md` | 上游追溯规则（FEA-/ST-/SRC- 引用） | Intake/追溯时 |

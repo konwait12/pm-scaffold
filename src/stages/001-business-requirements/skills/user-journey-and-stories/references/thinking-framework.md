@@ -96,3 +96,16 @@ When the upstream background has fewer than 2 confirmed roles or unclear lifecyc
 3. Derive only the stories that are directly supported.
 4. Flag all gaps explicitly in §7 and §8.
 5. Set `needs_user_input` for any blocking gap.
+
+
+## Lens 8: 旅程体验验证技法（Journey Experience Validation）
+
+Specs 测功能，Journeys 测体验——旅程在拆成 story 卡之前，先对关键旅程做三重体验验证：
+
+1. **Persona 快照（Persona Snapshot）**：每个关键旅程先写该角色进入旅程时的心智快照——是谁、带什么目标/情绪/前置状态（首次/回访/管理员、已登录/购物车有货/弱网）。同一旅程在不同前置状态下体验完全不同，快照决定后续步骤与成功标准是否成立。
+2. **情感曲线（Emotion Curve）**：沿旅程步骤标注情绪高/低点（沮丧、困惑、惊喜、满足）。高点 = 体验峰值要保住；低点 = 摩擦点必须给出缓解（骨架屏、进度提示、明确下一步）。只列步骤不标情绪的旅程等于没验证。
+3. **错误恢复路径验证（Error Recovery Validation）**：对每一步追问「用户会在这里出错吗？出错后如何回到正轨？」。关键旅程至少写 1-2 个错误场景：触发原因 / 用户看到什么 / 恢复路径 / 如何验证恢复有效。只画 happy path 的旅程是反模式。
+
+产出标注：persona 快照与情绪解读是体验推断，标 **AI_INFERENCE**；错误恢复路径若出自背景材料为 FACT，出自推断为 AI_INFERENCE，均不得写成 confirmed。验证结果随 journey 产物交 Human Gate 人工确认。
+
+**Anti-pattern**: 把旅程写成 specs 列表（步骤 + 系统响应），缺前置状态、缺情绪标注、缺错误恢复路径。
