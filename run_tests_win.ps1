@@ -9,6 +9,13 @@ function Run-Check($Label, $Command) {
     else { Write-Host "FAIL $Label"; $script:Fail++ }
 }
 
+function Run-NegativeCheck($Label, $Command) {
+    # Inverted check: *violation* fixtures must be REJECTED by the validator.
+    Invoke-Expression $Command | Out-Null
+    if ($LASTEXITCODE -eq 0) { Write-Host "FAIL negative/$Label (validator did not reject violation)"; $script:Fail++ }
+    else { Write-Host "PASS negative/$Label"; $script:Pass++ }
+}
+
 # ---- Phase 0: cross-document consistency (must pass before anything else) ----
 Run-Check "consistency/registry-vs-docs" "python3 `"$Root\src\scripts\consistency_check.py`""
 
@@ -19,7 +26,10 @@ foreach ($Item in $Registry.work_items) {
     $Validator = "$Root\$($Item.skill_path)\scripts\validate_artifact.py"
     $Fixtures = "$Root\test\skills\$($Item.id)\fixtures"
     foreach ($Fixture in Get-ChildItem "$Fixtures\*.md" -ErrorAction SilentlyContinue) {
-        if ($Fixture.Name -like "*violation*") { continue }
+        if ($Fixture.Name -like "*violation*") {
+            Run-NegativeCheck "$($Item.id)/$($Fixture.Name)" "python3 `"$Validator`" `"$($Fixture.FullName)`" --json"
+            continue
+        }
         Run-Check "$($Item.id)/$($Fixture.Name)" "python3 `"$Validator`" `"$($Fixture.FullName)`" --json"
     }
 }
@@ -34,7 +44,10 @@ foreach ($Cap in $Registry.support_capabilities) {
     }
     $Fixtures = "$Root\test\skills\$($Cap.id)\fixtures"
     foreach ($Fixture in Get-ChildItem "$Fixtures\*.md" -ErrorAction SilentlyContinue) {
-        if ($Fixture.Name -like "*violation*") { continue }
+        if ($Fixture.Name -like "*violation*") {
+            Run-NegativeCheck "branch-skill/$($Cap.id)/$($Fixture.Name)" "python3 `"$Validator`" `"$($Fixture.FullName)`" --json"
+            continue
+        }
         Run-Check "branch-skill/$($Cap.id)/$($Fixture.Name)" "python3 `"$Validator`" `"$($Fixture.FullName)`" --json"
     }
 }

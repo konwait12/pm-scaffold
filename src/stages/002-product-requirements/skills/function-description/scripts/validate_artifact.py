@@ -131,7 +131,7 @@ def validate(path: Path) -> dict[str, object]:
                 if re.search(r"given.*when.*then|前提.*当.*那么|条件.*动作.*结果", ac_text, re.IGNORECASE | re.DOTALL):
                     pass
                 else:
-                    warnings.append(f"Semantic (D4.4): AC-{ac_match[0]} lacks Given/When/Then format; ISO 29148 requires 二值可测 AC")
+                    errors.append(f"Semantic (D4.4): AC-{ac_match[0]} lacks Given/When/Then format; ISO 29148 requires 二值可测 AC")
                     break  # 一次性报一个，避免堆叠
 
     # Clarifications

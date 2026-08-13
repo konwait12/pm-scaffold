@@ -147,7 +147,9 @@ def validate(path: Path) -> dict[str, object]:
             "Artifact is unusually short; verify that source coverage is sufficient"
         )
 
-    warnings.extend(check_semantic_red_flags(text, metadata))
+    sem_errors, sem_warnings = check_semantic_red_flags(text, metadata)
+    errors.extend(sem_errors)
+    warnings.extend(sem_warnings)
 
     issues = []
     for e in errors:
@@ -163,8 +165,13 @@ def validate(path: Path) -> dict[str, object]:
     return {"ok": not errors, "errors": errors, "warnings": warnings, "issues": issues}
 
 
-def check_semantic_red_flags(text: str, metadata: dict[str, str]) -> list[str]:
-    """Soft semantic checks that catch common AI mistakes the structural validator misses."""
+def check_semantic_red_flags(text: str, metadata: dict[str, str]) -> tuple[list[str], list[str]]:
+    """Semantic checks that catch common AI mistakes the structural validator misses.
+
+    Blocking errors (must fix): goal-less baseline shipped for review.
+    Soft warnings (document in audit notes): everything else.
+    """
+    errors: list[str] = []
     warnings: list[str] = []
     status = metadata.get("status")
 
@@ -178,7 +185,7 @@ def check_semantic_red_flags(text: str, metadata: dict[str, str]) -> list[str]:
         goal_section = goal_match.group(1).strip()
         cleaned = re.sub(r"待确认|UNKNOWN|TBD", "", goal_section).strip()
         if len(cleaned) < 20:
-            warnings.append(
+            errors.append(
                 "Semantic: status is ready_for_human_review but 目标、未来期望与成功判断 section is empty; "
                 "AI cannot ship a goal-less baseline"
             )
@@ -226,7 +233,7 @@ def check_semantic_red_flags(text: str, metadata: dict[str, str]) -> list[str]:
                 "confirm with the goal decision owner that this is intentional"
             )
 
-    return warnings
+    return errors, warnings
 
 
 def check_clarifications(text: str, status: str | None, warnings: list[str]) -> None:

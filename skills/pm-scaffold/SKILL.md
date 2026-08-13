@@ -40,7 +40,7 @@ bash run_tests.sh
 - **Non-bypassable human gates**: only `pipeline.py review --decision approve` with a real human reviewer can confirm artifacts
 - **SHA-256 binding**: confirmed artifacts are cryptographically bound to their reviewer
 - **Full traceability**: G→ST→FEA→FUN→AC/BR forward and reverse traceability
-- **52+ regression tests** with fixture-based validation
+- **56+ regression tests** with fixture-based validation
 
 ## Agent Entry Point
 
@@ -60,7 +60,7 @@ New AI agents: read `AGENTS.md` first for startup order, hard rules, and quick-s
 ## Validation
 
 ```bash
-bash run_tests.sh                              # Full regression (52+ tests)
+bash run_tests.sh                              # Full regression (56+ tests)
 python3 src/scripts/consistency_check.py       # Cross-document drift check
 python3 src/scripts/property_check.py <fd.md>  # Rule completeness properties
 ```

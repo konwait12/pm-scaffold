@@ -36,21 +36,21 @@ def test_missing_contract_fails():
         Path(tmp).unlink()
 
 
-def test_violation_fixture_emits_warning():
-    """Violation fixture should pass structural but emit D4.4/D4.8 warning."""
+def test_violation_fixture_rejected():
+    """Violation fixture must be rejected with the D4.4 Given/When/Then error."""
     fixture = Path(__file__).resolve().parent / "fixtures/fd-violation-no-given-when-then.md"
     if not fixture.exists():
-        print("⚠️  test_violation_fixture_emits_warning: fixture missing, skipped")
+        print("⚠️  test_violation_fixture_rejected: fixture missing, skipped")
         return
     result = validate_module.validate(fixture)
-    assert result["ok"], f"Violation fixture must structurally pass: {result.get('errors')}"
-    has_d44 = any("D4.4" in w for w in result["warnings"])
-    assert has_d44, f"Should emit D4.4 warning; got: {result['warnings']}"
-    print("✅ test_violation_fixture_emits_warning")
+    assert not result["ok"], "Violation fixture must be rejected"
+    has_d44 = any("D4.4" in e for e in result["errors"])
+    assert has_d44, f"Should emit D4.4 error; got: {result['errors']}"
+    print("✅ test_violation_fixture_rejected")
 
 
 if __name__ == "__main__":
     test_template_passes()
     test_missing_contract_fails()
-    test_violation_fixture_emits_warning()
+    test_violation_fixture_rejected()
     print("\n3 tests passed.")

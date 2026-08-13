@@ -14,6 +14,16 @@ run() {
   fi
 }
 
+negative() {
+  # Inverted check: *violation* fixtures must be REJECTED by the validator.
+  local label="$1"; shift
+  if "$@" >/dev/null 2>&1; then
+    printf 'FAIL negative/%s (validator did not reject violation)\n' "$label"; FAIL=$((FAIL + 1))
+  else
+    printf 'PASS negative/%s\n' "$label"; PASS=$((PASS + 1))
+  fi
+}
+
 # ---- Phase 0: cross-document consistency (must pass before anything else) ----
 run "consistency/registry-vs-docs" python3 "$ROOT/src/scripts/consistency_check.py"
 
@@ -26,7 +36,9 @@ while IFS=$'\t' read -r skill path; do
   for fixture in "$fixtures"/*.md; do
     [ -f "$fixture" ] || continue
     case "$(basename "$fixture")" in
-      *violation*) continue ;;
+      *violation*)
+        negative "$skill/$(basename "$fixture")" python3 "$validator" "$fixture" --json
+        continue ;;
     esac
     run "$skill/$(basename "$fixture")" python3 "$validator" "$fixture" --json
   done
@@ -66,12 +78,14 @@ for dir in "$ROOT"/src/stages/002-product-requirements/skills/product-ux/skills/
   skill=$(basename "$dir")
   validator="$dir/scripts/validate_artifact.py"
   fixtures="$ROOT/test/skills/$skill/fixtures"
-  [ -f "$validator" ] || continue
-  [ -d "$fixtures" ] || continue
+  [ -f "$validator" ] || { printf 'FAIL missing sub-validator %s\n' "$skill"; FAIL=$((FAIL + 1)); continue; }
+  [ -d "$fixtures" ] || { printf 'FAIL missing fixtures %s\n' "$skill"; FAIL=$((FAIL + 1)); continue; }
   for fixture in "$fixtures"/*.md; do
     [ -f "$fixture" ] || continue
     case "$(basename "$fixture")" in
-      *violation*) continue ;;
+      *violation*)
+        negative "sub-skill/$skill/$(basename "$fixture")" python3 "$validator" "$fixture" --json
+        continue ;;
     esac
     run "sub-skill/$skill/$(basename "$fixture")" python3 "$validator" "$fixture" --json
   done
@@ -81,12 +95,14 @@ done
 while IFS=$'\t' read -r skill path; do
   validator="$ROOT/$path/scripts/validate_artifact.py"
   fixtures="$ROOT/test/skills/$skill/fixtures"
-  [ -f "$validator" ] || continue
-  [ -d "$fixtures" ] || continue
+  [ -f "$validator" ] || { printf 'FAIL missing branch validator %s\n' "$skill"; FAIL=$((FAIL + 1)); continue; }
+  [ -d "$fixtures" ] || { printf 'FAIL missing fixtures %s\n' "$skill"; FAIL=$((FAIL + 1)); continue; }
   for fixture in "$fixtures"/*.md; do
     [ -f "$fixture" ] || continue
     case "$(basename "$fixture")" in
-      *violation*) continue ;;
+      *violation*)
+        negative "branch-skill/$skill/$(basename "$fixture")" python3 "$validator" "$fixture" --json
+        continue ;;
     esac
     run "branch-skill/$skill/$(basename "$fixture")" python3 "$validator" "$fixture" --json
   done
