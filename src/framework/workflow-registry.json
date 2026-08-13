@@ -1,0 +1,433 @@
+{
+  "schema_version": 5,
+  "stages": [
+    {
+      "id": "001-business-requirements",
+      "name": "业务需求阶段",
+      "path": "src/stages/001-business-requirements",
+      "work_items": [
+        "project-background-goal",
+        "user-journey-and-stories"
+      ]
+    },
+    {
+      "id": "002-product-requirements",
+      "name": "产品需求阶段",
+      "path": "src/stages/002-product-requirements",
+      "work_items": [
+        "product-ux",
+        "function-description"
+      ]
+    },
+    {
+      "id": "003-prd-output",
+      "name": "PRD 汇总阶段",
+      "path": "src/stages/003-prd-output",
+      "work_items": [
+        "prd-assembly"
+      ]
+    }
+  ],
+  "work_items": [
+    {
+      "id": "project-background-goal",
+      "name": "项目背景与目标",
+      "order": 1,
+      "stage": "001-business-requirements",
+      "skill_path": "src/stages/001-business-requirements/skills/project-background-goal",
+      "artifact_dir": "001-business-requirements/01-background-goal",
+      "artifact_file": "background-goal.md",
+      "artifact_prefix": "BG-",
+      "required_outputs": [
+        "project-background-goals"
+      ],
+      "predecessors": [],
+      "legacy_wave": 1,
+      "legacy_artifact_dir": "01_background-goal",
+      "reviewer_roles": [
+        "business_owner",
+        "product_owner"
+      ],
+      "human_gate": true
+    },
+    {
+      "id": "user-journey-and-stories",
+      "name": "用户旅程与用户故事",
+      "order": 2,
+      "stage": "001-business-requirements",
+      "skill_path": "src/stages/001-business-requirements/skills/user-journey-and-stories",
+      "artifact_dir": "001-business-requirements/02-user-journey-stories",
+      "artifact_file": "journey-and-stories.md",
+      "artifact_prefix": "JS-",
+      "required_outputs": [
+        "user-journey-map",
+        "user-story-set",
+        "scope-baseline"
+      ],
+      "predecessors": [
+        "project-background-goal"
+      ],
+      "legacy_wave": 2,
+      "legacy_artifact_dir": "02_journey-stories",
+      "reviewer_roles": [
+        "business_owner",
+        "product_owner"
+      ],
+      "human_gate": true
+    },
+    {
+      "id": "product-ux",
+      "name": "产品 UX",
+      "order": 3,
+      "stage": "002-product-requirements",
+      "skill_path": "src/stages/002-product-requirements/skills/product-ux",
+      "artifact_dir": "002-product-requirements/01-product-ux",
+      "artifact_file": "product-ux.md",
+      "artifact_prefix": "UX-",
+      "required_outputs": [
+        "feature-list",
+        "ux-functional-flow",
+        "interaction-rules",
+        "page-design"
+      ],
+      "predecessors": [
+        "user-journey-and-stories"
+      ],
+      "legacy_wave": 3,
+      "legacy_artifact_dir": "03_ux",
+      "reviewer_roles": [
+        "product_owner"
+      ],
+      "human_gate": true
+    },
+    {
+      "id": "function-description",
+      "name": "功能描述",
+      "order": 4,
+      "stage": "002-product-requirements",
+      "skill_path": "src/stages/002-product-requirements/skills/function-description",
+      "artifact_dir": "002-product-requirements/02-function-description",
+      "artifact_file": "function-description.md",
+      "artifact_prefix": "FD-",
+      "required_outputs": [
+        "function-specifications"
+      ],
+      "predecessors": [
+        "product-ux"
+      ],
+      "legacy_wave": 4,
+      "legacy_artifact_dir": "04_function",
+      "reviewer_roles": [
+        "product_owner",
+        "business_owner"
+      ],
+      "human_gate": true
+    },
+    {
+      "id": "prd-assembly",
+      "name": "PRD 汇总",
+      "order": 5,
+      "stage": "003-prd-output",
+      "skill_path": "src/stages/003-prd-output/skills/prd-assembly",
+      "artifact_dir": "003-prd-output",
+      "artifact_file": "prd.md",
+      "artifact_prefix": "PRD-",
+      "required_outputs": [
+        "final-prd"
+      ],
+      "predecessors": [
+        "project-background-goal",
+        "user-journey-and-stories",
+        "product-ux",
+        "function-description"
+      ],
+      "legacy_wave": 5,
+      "legacy_artifact_dir": "05_prd",
+      "reviewer_roles": [
+        "product_owner",
+        "business_owner"
+      ],
+      "human_gate": true
+    }
+  ],
+  "internal_capabilities": [
+    {
+      "id": "ux-flow",
+      "parent_work_item": "product-ux",
+      "order": 1,
+      "skill_path": "src/stages/002-product-requirements/skills/product-ux/skills/ux-flow",
+      "output_section": "UX 流程与交互规则"
+    },
+    {
+      "id": "page-design",
+      "parent_work_item": "product-ux",
+      "order": 2,
+      "skill_path": "src/stages/002-product-requirements/skills/product-ux/skills/page-design",
+      "output_section": "页面与原型"
+    },
+    {
+      "id": "interaction-rules",
+      "parent_work_item": "product-ux",
+      "order": 3,
+      "skill_path": "src/stages/002-product-requirements/skills/product-ux/skills/interaction-rules",
+      "output_section": "UX 流程与交互规则"
+    },
+    {
+      "id": "business-rules",
+      "parent_work_item": "function-description",
+      "order": 1,
+      "skill_path": "src/stages/002-product-requirements/skills/function-description/skills/business-rules",
+      "output_section": "业务规则"
+    },
+    {
+      "id": "validation-rules",
+      "parent_work_item": "function-description",
+      "order": 2,
+      "skill_path": "src/stages/002-product-requirements/skills/function-description/skills/validation-rules",
+      "output_section": "系统校验"
+    },
+    {
+      "id": "state-machine",
+      "parent_work_item": "function-description",
+      "order": 3,
+      "skill_path": "src/stages/002-product-requirements/skills/function-description/skills/state-machine",
+      "output_section": "状态变化"
+    },
+    {
+      "id": "exception-handling",
+      "parent_work_item": "function-description",
+      "order": 4,
+      "skill_path": "src/stages/002-product-requirements/skills/function-description/skills/exception-handling",
+      "output_section": "异常与失败处理"
+    },
+    {
+      "id": "acceptance-criteria",
+      "parent_work_item": "function-description",
+      "order": 5,
+      "skill_path": "src/stages/002-product-requirements/skills/function-description/skills/acceptance-criteria",
+      "output_section": "验收依据"
+    }
+  ],
+  "artifact_types": [
+    {
+      "id": "project-background-goals",
+      "name": "项目背景与目标基线",
+      "producer": "project-background-goal",
+      "artifact_file": "001-business-requirements/01-background-goal/background-goal.md",
+      "prd_destination": "项目背景、现状、问题、目标、角色、约束与范围依据",
+      "depends_on": []
+    },
+    {
+      "id": "user-journey-map",
+      "name": "用户旅程地图",
+      "producer": "user-journey-and-stories",
+      "artifact_file": "001-business-requirements/02-user-journey-stories/journey-and-stories.md",
+      "prd_destination": "角色、业务生命周期、场景路径与角色交接",
+      "depends_on": [
+        "project-background-goals"
+      ]
+    },
+    {
+      "id": "user-story-set",
+      "name": "用户故事集",
+      "producer": "user-journey-and-stories",
+      "artifact_file": "001-business-requirements/02-user-journey-stories/journey-and-stories.md",
+      "prd_destination": "用户故事、业务价值与旅程覆盖关系",
+      "depends_on": [
+        "user-journey-map"
+      ]
+    },
+    {
+      "id": "scope-baseline",
+      "name": "项目范围基线（业务决策）",
+      "producer": "user-journey-and-stories",
+      "artifact_file": "001-business-requirements/02-user-journey-stories/journey-and-stories.md",
+      "prd_destination": "Stage 1 §10 范围基线 → Stage 2 引用",
+      "depends_on": [
+        "project-background-goals",
+        "user-story-set"
+      ]
+    },
+    {
+      "id": "feature-list",
+      "name": "功能清单",
+      "producer": "product-ux",
+      "artifact_file": "002-product-requirements/01-product-ux/product-ux.md",
+      "prd_destination": "模块与功能清单、故事到功能映射",
+      "depends_on": [
+        "scope-baseline",
+        "user-story-set"
+      ]
+    },
+    {
+      "id": "ux-functional-flow",
+      "name": "UX/功能流程",
+      "producer": "product-ux",
+      "artifact_file": "002-product-requirements/01-product-ux/product-ux.md",
+      "prd_destination": "入口、页面/步骤、状态、主支流程与跨系统交接",
+      "depends_on": [
+        "feature-list",
+        "user-journey-map"
+      ]
+    },
+    {
+      "id": "page-design",
+      "name": "页面与原型",
+      "producer": "product-ux",
+      "artifact_file": "002-product-requirements/01-product-ux/product-ux.md",
+      "prd_destination": "页面骨架（§4）",
+      "depends_on": [
+        "ux-functional-flow"
+      ]
+    },
+    {
+      "id": "interaction-rules",
+      "name": "交互规则 IX（Structural）",
+      "producer": "product-ux",
+      "artifact_file": "002-product-requirements/01-product-ux/product-ux.md",
+      "prd_destination": "交互规则 IX-XXX（§3.3 Structural 层）",
+      "depends_on": [
+        "page-design"
+      ]
+    },
+    {
+      "id": "function-specifications",
+      "name": "功能描述与规则集",
+      "producer": "function-description",
+      "artifact_file": "002-product-requirements/02-function-description/function-description.md",
+      "prd_destination": "FUN 功能描述，引用已确认 IX，并补充 BR、VL、权限、状态、异常恢复与 AC",
+      "depends_on": [
+        "feature-list",
+        "ux-functional-flow",
+        "interaction-rules"
+      ]
+    },
+    {
+      "id": "final-prd",
+      "name": "最终 PRD",
+      "producer": "prd-assembly",
+      "artifact_file": "003-prd-output/prd.md",
+      "prd_destination": "最终唯一产品交付 prd.md",
+      "depends_on": [
+        "project-background-goals",
+        "user-journey-map",
+        "user-story-set",
+        "scope-baseline",
+        "feature-list",
+        "ux-functional-flow",
+        "function-specifications",
+        "page-design",
+        "interaction-rules"
+      ]
+    }
+  ],
+  "support_capabilities": [
+    {
+      "id": "competitive-research",
+      "skill_path": "src/support-skills/competitive-research",
+      "trigger": "方案方向不清或功能设计缺乏参考",
+      "applicable_stages": [
+        "001-business-requirements",
+        "002-product-requirements"
+      ],
+      "output_location": "99-review/support/",
+      "resume_work_item": null,
+      "responsible_role": "business_owner"
+    },
+    {
+      "id": "solution-assessment",
+      "skill_path": "src/support-skills/solution-assessment",
+      "trigger": "已有产品级方案且可行性或多方案取舍影响范围/成本/风险",
+      "applicable_stages": [
+        "002-product-requirements"
+      ],
+      "output_location": "99-review/support/",
+      "resume_work_item": null,
+      "responsible_role": "business_owner"
+    },
+    {
+      "id": "prd-publish",
+      "skill_path": "src/support-skills/prd-publish",
+      "trigger": "PRD confirmed",
+      "applicable_stages": [
+        "003-prd-output"
+      ],
+      "output_location": "99-review/support/",
+      "resume_work_item": null,
+      "responsible_role": "business_owner"
+    },
+    {
+      "id": "project-scope",
+      "name": "项目范围基线",
+      "skill_path": "src/stages/001-business-requirements/skills/project-scope",
+      "trigger": "项目边界不清或范围蔓延风险",
+      "applicable_stages": [
+        "001-business-requirements"
+      ],
+      "output_location": "99-review/support/",
+      "resume_work_item": null,
+      "responsible_role": "business_owner"
+    },
+    {
+      "id": "requirement-restate",
+      "name": "需求复述确认",
+      "skill_path": "src/stages/001-business-requirements/skills/requirement-restate",
+      "trigger": "干系人语言歧义或多来源术语不一致",
+      "applicable_stages": [
+        "001-business-requirements"
+      ],
+      "output_location": "99-review/support/",
+      "resume_work_item": null,
+      "responsible_role": "business_owner"
+    },
+    {
+      "id": "tracking-plan",
+      "name": "埋点与追踪计划",
+      "skill_path": "src/stages/002-product-requirements/skills/tracking-plan",
+      "trigger": "功能需要数据埋点或追踪计划",
+      "applicable_stages": [
+        "002-product-requirements"
+      ],
+      "output_location": "99-review/support/",
+      "resume_work_item": null,
+      "responsible_role": "business_owner"
+    },
+    {
+      "id": "issue-record",
+      "name": "跨阶段问题清单",
+      "skill_path": "src/shared/clarify/skills/issue-record",
+      "trigger": "任何阶段需求不明确、冲突或存在风险",
+      "applicable_stages": [
+        "001-business-requirements",
+        "002-product-requirements",
+        "003-prd-output"
+      ],
+      "output_location": "99-review/support/",
+      "resume_work_item": null,
+      "responsible_role": "business_owner"
+    }
+  ],
+  "issue_policy": {
+    "levels": {
+      "blocking": {
+        "default": true,
+        "waivable": false,
+        "description": "必须修复，不能审批"
+      },
+      "waiver_required": {
+        "default": false,
+        "waivable": true,
+        "description": "可由有权 reviewer 显式接受"
+      },
+      "advisory": {
+        "default": false,
+        "waivable": false,
+        "description": "展示但不阻断"
+      }
+    }
+  },
+  "dependency_policy": {
+    "cascade_invalidation": true,
+    "description": "上游 Work Item 变为 superseded 或 legacy_unverified 时，下游 confirmed 一并失效"
+  }
+}

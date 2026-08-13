@@ -1,0 +1,194 @@
+"""
+Validate the stable structure of a requirement-restate Markdown artifact.
+
+The artifact is the "shared understanding" checkpoint, NOT a PRD deliverable.
+Its outputs feed into issue-record (CONFLICT → ISS, UNKNOWN → Q).
+
+Section headings match REQUIRED_HEADINGS exactly.
+"""
+from __future__ import annotations
+
+import argparse
+import json
+import re
+import sys
+from pathlib import Path
+
+
+REQUIRED_FRONTMATTER = {
+    "artifact_id",
+    "version",
+    "status",
+    "owner",
+    "stakeholder",
+    "stakeholder_delegate",
+    "reviewer",
+    "created_at",
+    "updated_at",
+    "confirmed_at",
+}
+
+REQUIRED_HEADINGS = [
+    "项目元数据",
+    "来源清单",
+    "重述需求清单",
+    "冲突清单",
+    "未知清单",
+    "stakeholder 自查反馈位",
+    "来源追溯",
+    "待确认问题",
+    "Constitution Compliance",
+    "版本变更摘要",
+]
+
+PENDING_PLACEHOLDERS = ("待确认",)
+
+VALID_STATUSES = {
+    "draft",
+    "needs_user_input",
+    "conditional_review",
+    "ready_for_human_review",
+    "confirmed",
+    "superseded",
+}
+
+
+def _normalize_heading(heading: str) -> str:
+    return re.sub(r"\s*（[^）]*）\s*$", "", re.sub(r"^\d+\.\s*", "", heading).strip()).strip()
+
+
+def parse_frontmatter(text: str) -> dict[str, str]:
+    text = re.sub(r"^<!--.*?-->\s*", "", text, flags=re.DOTALL)
+    match = re.search(r"^---\s*\n(.*?)\n---\s*\n", text, re.MULTILINE | re.DOTALL)
+    if not match:
+        return {}
+    result: dict[str, str] = {}
+    for line in match.group(1).splitlines():
+        if ":" not in line or line.lstrip().startswith("#"):
+            continue
+        key, value = line.split(":", 1)
+        result[key.strip()] = value.strip().strip('"\'')
+    return result
+
+
+def _extract_section(text: str, heading_pattern: str) -> str:
+    match = re.search(heading_pattern, text, re.MULTILINE | re.DOTALL)
+    return match.group(1) if match else ""
+
+
+def _collect_rows(body: str, id_prefix: str) -> list[list[str]]:
+    rows: list[list[str]] = []
+    for line in body.splitlines():
+        if not line.lstrip().startswith("|"):
+            continue
+        if id_prefix not in line:
+            continue
+        if set(line.strip()) <= set("|-: "):
+            continue
+        cells = [c.strip() for c in line.strip().strip("|").split("|")]
+        rows.append(cells)
+    return rows
+
+
+def validate(path: Path) -> dict[str, object]:
+    errors: list[str] = []
+    warnings: list[str] = []
+
+    if not path.is_file():
+        return {"ok": False, "errors": [f"File not found: {path}"], "warnings": []}
+
+    text = path.read_text(encoding="utf-8")
+    metadata = parse_frontmatter(text)
+
+    missing_metadata = sorted(REQUIRED_FRONTMATTER - metadata.keys())
+    if missing_metadata:
+        errors.append(f"Missing frontmatter fields: {', '.join(missing_metadata)}")
+
+    status = metadata.get("status")
+    if status and status not in VALID_STATUSES:
+        errors.append(
+            f"Invalid status '{status}'. Valid: {', '.join(sorted(VALID_STATUSES))}"
+        )
+
+    artifact_headings = [
+        _normalize_heading(match.group(1))
+        for match in re.finditer(r"^##\s+(.+?)\s*$", text, re.MULTILINE)
+    ]
+
+    missing_headings = [
+        h for h in REQUIRED_HEADINGS
+        if _normalize_heading(h) not in artifact_headings
+    ]
+    if missing_headings:
+        errors.append(f"Missing required headings: {', '.join(missing_headings)}")
+
+    if "SRC-" not in text:
+        errors.append("No SRC-* source traceability identifier found")
+
+    # RR-NNN rows must have non-placeholder restated + original_phrase
+    body = _extract_section(
+        text, r"^##\s+\d+\.\s*重述需求清单.*?$(.*?)(?=^##\s+|\Z)"
+    )
+    rr_rows = _collect_rows(body, "RR-")
+    if status == "ready_for_human_review" and not rr_rows:
+        warnings.append(
+            "Advisory: 重述需求清单 is empty at ready_for_human_review. "
+            "Confirm the ask is genuinely empty."
+        )
+    for cells in rr_rows:
+        # columns: ID | restated | original_phrase | source | ks | stakeholder | confidence | solution_leak
+        if len(cells) >= 3:
+            if any(p in cells[1] for p in PENDING_PLACEHOLDERS) or any(
+                p in cells[2] for p in PENDING_PLACEHOLDERS
+            ):
+                warnings.append(
+                    f"Advisory: {cells[0]} has placeholder restated or original_phrase"
+                )
+
+    # Conflict list rows must have at least 2 source references
+    body = _extract_section(text, r"^##\s+\d+\.\s*冲突清单.*?$(.*?)(?=^##\s+|\Z)")
+    for cells in _collect_rows(body, "CON-"):
+        if len(cells) >= 4:
+            if any(p in cells[1] for p in PENDING_PLACEHOLDERS):
+                warnings.append(
+                    f"Advisory: {cells[0]} conflict description still placeholder"
+                )
+
+    if status == "confirmed":
+        unresolved = [
+            k for k in ("stakeholder", "reviewer", "confirmed_at")
+            if metadata.get(k, "") in {"", *PENDING_PLACEHOLDERS}
+        ]
+        if unresolved:
+            errors.append(
+                "Confirmed artifact has unresolved confirmation fields: "
+                + ", ".join(unresolved)
+            )
+
+    issues = []
+    for e in errors:
+        issues.append({"code": "RR-STRUCT", "severity": "blocking", "message": e, "waivable": False})
+    for w in warnings:
+        issues.append({"code": "RR-SEMANTIC", "severity": "advisory", "message": w, "waivable": False})
+    return {"ok": not errors, "errors": errors, "warnings": warnings, "issues": issues}
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("artifact", type=Path)
+    parser.add_argument("--json", action="store_true", dest="as_json")
+    args = parser.parse_args()
+    result = validate(args.artifact)
+    if args.as_json:
+        print(json.dumps(result, ensure_ascii=False, indent=2))
+    else:
+        print("PASS" if result["ok"] else "FAIL")
+        for error in result["errors"]:
+            print(f"ERROR: {error}")
+        for warning in result["warnings"]:
+            print(f"WARNING: {warning}")
+    return 0 if result["ok"] else 1
+
+
+if __name__ == "__main__":
+    sys.exit(main())

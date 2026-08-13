@@ -1,0 +1,169 @@
+#!/usr/bin/env python3
+"""Validate the structure of a function-description Markdown artifact."""
+
+from __future__ import annotations
+
+import argparse, json, re, sys
+from pathlib import Path
+
+REQUIRED_FRONTMATTER = {
+    "artifact_id", "version", "status", "owner",
+    "business_fact_owner", "goal_decision_owner", "reviewer",
+    "created_at", "updated_at", "confirmed_at", "upstream_artifact_id",
+}
+
+REQUIRED_HEADINGS = [
+    "预检输入充分度判定", "功能规格概览", "分功能详述",
+    "权限矩阵", "字段规则", "埋点需求",
+    "事实与决定", "假设、AI 推断、未知与冲突", "待确认问题",
+    "来源追溯", "下游输入摘要", "Constitution Compliance", "版本变更摘要",
+]
+
+PENDING = ("待确认",)
+VALID_STATUSES = {"draft", "needs_user_input", "conditional_review", "ready_for_human_review", "confirmed", "superseded", "legacy_unverified", "simulated"}
+
+
+def _norm(h: str) -> str:
+    # Strip leading numbering and trailing parenthetical suffixes like （按需）.
+    h = re.sub(r"^\d+\.\s*", "", h).strip()
+    h = re.sub(r"\s*（[^）]*）\s*$", "", h).strip()
+    return h
+
+
+def parse_frontmatter(text: str) -> dict[str, str]:
+    text = re.sub(r"^<!--.*?-->\s*", "", text, flags=re.DOTALL)
+    m = re.match(r"\A---\s*\n(.*?)\n---\s*\n", text, re.DOTALL)
+    if not m:
+        return {}
+    result: dict[str, str] = {}
+    for line in m.group(1).splitlines():
+        if ":" not in line or line.lstrip().startswith("#"):
+            continue
+        k, v = line.split(":", 1)
+        result[k.strip()] = v.strip().strip('"\'')
+    return result
+
+
+def validate(path: Path) -> dict[str, object]:
+    errors, warnings = [], []
+    if not path.is_file():
+        return {"ok": False, "errors": [f"File not found: {path}"], "warnings": []}
+
+    text = path.read_text(encoding="utf-8")
+    meta = parse_frontmatter(text)
+    status = meta.get("status")
+
+    missing = sorted(REQUIRED_FRONTMATTER - meta.keys())
+    if missing:
+        errors.append(f"Missing frontmatter fields: {', '.join(missing)}")
+
+    if status and status not in VALID_STATUSES:
+        errors.append(f"Invalid status '{status}'")
+
+    headings = [_norm(m.group(1)) for m in re.finditer(r"^##\s+(.+?)\s*$", text, re.MULTILINE)]
+    missing_h = [h for h in REQUIRED_HEADINGS if _norm(h) not in headings]
+    if missing_h:
+        errors.append(f"Missing required headings: {', '.join(missing_h)}")
+
+    if "FUN-" not in text:
+        errors.append("No FUN-* function identifier found; at least one function is required")
+
+    if "BR-" not in text:
+        errors.append("No BR-* business rule identifier found; at least one business rule is required")
+
+    if status == "confirmed":
+        unresolved = [k for k in ("business_fact_owner", "goal_decision_owner", "reviewer", "confirmed_at")
+                      if meta.get(k, "") in {"", *PENDING}]
+        if unresolved:
+            errors.append("Confirmed artifact has unresolved confirmation fields: " + ", ".join(unresolved))
+
+    if status in {"ready_for_human_review", "confirmed"}:
+        upstream = meta.get("upstream_artifact_id", "")
+        if not upstream or upstream in PENDING:
+            errors.append("Missing upstream_artifact_id; function-description requires confirmed product-ux")
+
+    if any(p in text for p in PENDING) and status == "confirmed":
+        body = re.sub(r"^##\s+\d+\.\s*[^\n]*$", "", text, flags=re.MULTILINE)
+        if any(p in body for p in PENDING):
+            warnings.append("Confirmed artifact still contains 待确认 markers in body")
+
+    # Semantic red flags
+    if status == "ready_for_human_review":
+        # Flag 1: fun_count vs br_count
+        fun_count = len(re.findall(r"FUN-\d+", text))
+        br_count = len(re.findall(r"BR-\d+", text))
+        ac_count = len(re.findall(r"AC-\d+", text))
+        vl_count = len(re.findall(r"VL-\d+", text))
+        if fun_count >= 1 and br_count == 0:
+            warnings.append(f"Semantic: {fun_count} functions defined but no business rules (BR-*); functions are underspecified")
+        if fun_count >= 1 and ac_count == 0:
+            warnings.append(f"Semantic: {fun_count} functions defined but no acceptance criteria (AC-*); functions are unverifiable")
+
+        # Flag 1b: rule density per function (completeness guard).
+        # Each detailed P0 function must carry enough rules to be implementable —
+        # a thin spec (e.g. 1 BR) that merely names a function without covering
+        # upstream business rules fails this check. Threshold: ≥ 3 rules per FUN.
+        rule_total = br_count + vl_count + ac_count
+        if fun_count >= 1 and rule_total / fun_count < 3:
+            warnings.append(
+                f"Semantic: {fun_count} functions with only {rule_total} rules "
+                f"({br_count} BR + {vl_count} VL + {ac_count} AC, avg {rule_total/fun_count:.1f}/FUN); "
+                f"functions are under-specified — likely not fully covering upstream business rules"
+            )
+
+        # Flag 2: P0 features must have exception handling
+        p0_count = len(re.findall(r"FUN-\d+.*P0", text))
+        exc_count = len(re.findall(r"异常与失败处理", text))
+        if p0_count >= 2 and exc_count < p0_count:
+            warnings.append(f"Semantic: {p0_count} P0 functions but only {exc_count} exception handling sections; verify completeness")
+
+        # Flag 3: interaction and business rules are both required but must stay separated.
+        ix_count = len(re.findall(r"IX-\d+", text))
+        if fun_count >= 1 and ix_count == 0:
+            warnings.append("Semantic: functions exist but no interaction rules (IX-*) describe user action and system response")
+
+        # Flag 4 (D4.4): AC-XXX must use Given/When/Then format
+        # 检测两种写法：1) 表格行 `| AC-XXX | ... |`；2) 段落内 `**AC-XXX**`
+        ac_in_text = re.findall(r"\*\*AC-\d+\*\*", text)
+        if ac_in_text:
+            for ac_match in re.findall(r"\*\*AC-(\d+)\*\*[：:]\s*([^\n]+)", text):
+                ac_text = ac_match[1].lower()
+                if re.search(r"given.*when.*then|前提.*当.*那么|条件.*动作.*结果", ac_text, re.IGNORECASE | re.DOTALL):
+                    pass
+                else:
+                    warnings.append(f"Semantic (D4.4): AC-{ac_match[0]} lacks Given/When/Then format; ISO 29148 requires 二值可测 AC")
+                    break  # 一次性报一个，避免堆叠
+
+    # Clarifications
+    cl = re.search(r"^##\s+Clarifications\s*$(.*?)(?=^##\s+|\Z)", text, re.MULTILINE | re.DOTALL)
+    if cl:
+        rows = [l for l in cl.group(1).splitlines() if l.lstrip().startswith("|") and "---" not in l and "session_id" not in l and "待补充" not in l]
+        if len(rows) > 5:
+            warnings.append(f"Clarifications: {len(rows)} sessions exceeds 5-session cap")
+        if status == "ready_for_human_review":
+            unfilled = [i for i, l in enumerate(rows, 1) if "待补充" in l or "TBD" in l]
+            if unfilled:
+                warnings.append(f"Clarifications: session rows {unfilled} unfilled")
+
+    return {"ok": not errors, "errors": errors, "warnings": warnings}
+
+
+def main() -> int:
+    p = argparse.ArgumentParser(description=__doc__)
+    p.add_argument("artifact", type=Path)
+    p.add_argument("--json", action="store_true", dest="j")
+    a = p.parse_args()
+    r = validate(a.artifact)
+    if a.j:
+        print(json.dumps(r, ensure_ascii=False, indent=2))
+    else:
+        print("PASS" if r["ok"] else "FAIL")
+        for e in r["errors"]:
+            print(f"ERROR: {e}")
+        for w in r["warnings"]:
+            print(f"WARNING: {w}")
+    return 0 if r["ok"] else 1
+
+
+if __name__ == "__main__":
+    sys.exit(main())

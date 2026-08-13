@@ -1,0 +1,29 @@
+interface:
+  display_name: "项目范围 (Project Scope)"
+  short_description: "独立定义项目 In-Scope / Out-of-Scope / Deferred / Conditional 边界 / Define explicit project boundary as standalone artifact."
+  default_prompt: |
+    Use the project-scope Skill to lock the project boundary.
+    Classify every candidate item as In, Out, Deferred, or Conditional with
+    a source or decision and a verifiable acceptance criterion.
+    Never set the artifact status to `confirmed`; only an authorized human
+    (goal decision owner or business sponsor) may do that.
+
+# Agent-facing trigger examples (used by OpenAI / Anthropic Agent runtimes
+# during routing).
+trigger_examples:
+  - |
+    Use this Skill when the user asks for a scope document, project boundary,
+    "what we are / are not doing", or needs to lock In/Out/Deferred/Conditional
+    lists before downstream work.
+  - |
+    Use this Skill when scope creep is a risk, when multiple teams may overlap,
+    or when a formal scope commitment is required before contract or budget
+    approval.
+
+should_not_trigger_examples:
+  - |
+    Do NOT use this Skill to write user stories, define journeys, draft UX,
+    or build the full PRD. Those have their own Skills.
+  - |
+    Do NOT use this Skill when the boundary is trivially clear; a one-line
+    scope statement is enough and does not need this artifact.

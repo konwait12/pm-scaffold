@@ -1,0 +1,181 @@
+#!/usr/bin/env python3
+"""Report stage/work-item status and the next valid action.
+
+`--dry-run` is a preview mode: instead of running the pipeline, it prints
+the ordered list of work items the next valid action will touch (the
+work item to run, its predecessors it will gate on, and the artifact
+file paths it will read/write).  No file is modified.  This is the
+Human-Gate-friendly companion to the live status report — it lets the
+PM/AI see what an approval *would do* before committing.
+"""
+
+from __future__ import annotations
+
+import argparse
+import json
+import sys
+from pathlib import Path
+
+from workflow_registry import artifact_status, find_artifact, load_registry, read_frontmatter, work_items
+
+
+# Statuses that count as "active" (in progress, awaiting human, etc.)
+ACTIVE_STATUSES = {"needs_user_input", "conditional_review", "ready_for_human_review"}
+
+
+def build_status(req_dir: Path) -> dict:
+    items = work_items()
+    statuses = {item["id"]: artifact_status(req_dir, item) for item in items}
+
+    # Single-active-item check: at most one active work item may exist.
+    active_items = [i for i in items if statuses[i["id"]] in ACTIVE_STATUSES]
+    invalid_active = []
+    if len(active_items) > 1:
+        # Keep the earliest-order active item; later ones are invalid.
+        active_sorted = sorted(active_items, key=lambda i: i["order"])
+        invalid_active = [i["id"] for i in active_sorted[1:]]
+
+    next_item = None
+    blockers = []
+    workflow_valid = True
+    for item in items:
+        if statuses[item["id"]] in ("confirmed", "superseded", "legacy_unverified"):
+            continue
+        next_item = item["id"]
+        for predecessor in item["predecessors"]:
+            p_status = statuses.get(predecessor, "not_created")
+            if p_status != "confirmed":
+                blockers.append(f"{predecessor} is {p_status}")
+                workflow_valid = False
+        break
+
+    # Downstream ready-for-review is invalid if it skipped predecessors.
+    for item in items:
+        if statuses[item["id"]] in ACTIVE_STATUSES:
+            for predecessor in item["predecessors"]:
+                if statuses.get(predecessor) != "confirmed":
+                    workflow_valid = False
+                    if item["id"] not in invalid_active:
+                        invalid_active.append(item["id"])
+                    break
+
+    return {
+        "requirement": req_dir.name,
+        "schema_version": load_registry()["schema_version"],
+        "work_items": statuses,
+        "active_work_item": active_sorted[0]["id"] if active_items else None,
+        "invalid_active_items": invalid_active,
+        "workflow_valid": workflow_valid and not invalid_active,
+        "next_work_item": next_item,
+        "blocked": bool(blockers),
+        "blockers": blockers,
+        "complete": next_item is None and not invalid_active,
+    }
+
+
+def build_dry_run(req_dir: Path) -> dict:
+    """Plan-only: enumerate the work item the pipeline would advance next,
+    the predecessors it will check, and the artifact files it would read
+    or write.  Nothing on disk is touched.
+    """
+    registry = load_registry()
+    items_by_id = {item["id"]: item for item in registry["work_items"]}
+    status_result = build_status(req_dir)
+    next_id = status_result["next_work_item"]
+    plan = {
+        "requirement": req_dir.name,
+        "schema_version": registry["schema_version"],
+        "mode": "dry-run",
+        "next_work_item": next_id,
+        "would_modify_files": [],
+        "would_check_predecessors": [],
+        "blocked": status_result["blocked"],
+        "blockers": status_result["blockers"],
+        "complete": status_result["complete"],
+        "note": "dry-run: no files were modified",
+    }
+    if not next_id:
+        return plan
+    target = items_by_id[next_id]
+    # Predecessors the next work item depends on (will be checked, not written)
+    plan["would_check_predecessors"] = [
+        {"id": pid, "status": status_result["work_items"].get(pid, "not_created")}
+        for pid in target["predecessors"]
+    ]
+    # Artifact file the next work item will read/write
+    artifact = find_artifact(req_dir, target)
+    if artifact:
+        plan["would_modify_files"].append({
+            "path": str(artifact.relative_to(req_dir)),
+            "purpose": "validate + transition status",
+        })
+    # Also surface any artifact path the work item *would* create if missing
+    if artifact is None:
+        # Convention: <req_dir>/<stage>/<work-item>/<artifact-base>.md
+        stage_id = target["stage"]
+        work_id = target["id"]
+        candidate = req_dir / stage_id / work_id / f"{work_id}.md"
+        plan["would_modify_files"].append({
+            "path": str(candidate.relative_to(req_dir)),
+            "purpose": "create new artifact (does not exist yet)",
+        })
+    return plan
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("req_dir", type=Path)
+    parser.add_argument("--json", action="store_true")
+    parser.add_argument("--dry-run", action="store_true",
+                        help="Preview the next action without modifying any file.")
+    args = parser.parse_args()
+    if not args.req_dir.is_dir():
+        print(f"ERROR: {args.req_dir} is not a directory", file=sys.stderr)
+        return 1
+    if args.dry_run:
+        plan = build_dry_run(args.req_dir)
+        if args.json:
+            print(json.dumps(plan, ensure_ascii=False, indent=2))
+        else:
+            print(f"[DRY-RUN] Requirement: {plan['requirement']}")
+            print(f"[DRY-RUN] Schema: {plan['schema_version']}")
+            if plan["complete"]:
+                print("[DRY-RUN] Pipeline is complete. Next: publish confirmed PRD.")
+            elif plan["blocked"]:
+                print(f"[DRY-RUN] Blocked at {plan['next_work_item']}: {', '.join(plan['blockers'])}")
+            else:
+                print(f"[DRY-RUN] Next work item: {plan['next_work_item']}")
+                if plan["would_check_predecessors"]:
+                    print("[DRY-RUN] Will check predecessors:")
+                    for p in plan["would_check_predecessors"]:
+                        print(f"  - {p['id']}: {p['status']}")
+                if plan["would_modify_files"]:
+                    print("[DRY-RUN] Will read/write files:")
+                    for f in plan["would_modify_files"]:
+                        print(f"  - {f['path']}  ({f['purpose']})")
+                else:
+                    print("[DRY-RUN] No artifact files to modify at this step.")
+            print(f"[DRY-RUN] {plan['note']}.")
+        return 0
+    result = build_status(args.req_dir)
+    if args.json:
+        print(json.dumps(result, ensure_ascii=False, indent=2))
+    else:
+        print(f"Requirement: {result['requirement']}")
+        registry = load_registry()
+        by_id = {item["id"]: item for item in registry["work_items"]}
+        for stage in registry["stages"]:
+            print(f"\n{stage['id']} {stage['name']}")
+            for item_id in stage["work_items"]:
+                print(f"  {item_id}: {result['work_items'][item_id]}")
+        if result["complete"]:
+            print("\nNext: publish confirmed PRD")
+        elif result["blocked"]:
+            print(f"\nBlocked at {result['next_work_item']}: {', '.join(result['blockers'])}")
+        else:
+            print(f"\nNext: {result['next_work_item']}")
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

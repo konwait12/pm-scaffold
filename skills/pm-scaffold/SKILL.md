@@ -1,0 +1,72 @@
+---
+name: pm-scaffold
+description: PRD-only product manager AI scaffold. Convert raw requirements (BRDs, meeting notes, emails, PPTs) into structured, human-confirmed Chinese PRDs through a 3-stage registry-driven pipeline.
+version: 4.0.0
+author: Project_001
+tags: [pm, prd, requirements, product-management, spec-driven]
+---
+
+# PM Scaffold · 产品 AI 脚手架
+
+Convert raw requirement sources into a single, human-confirmed, traceable Chinese `prd.md` through a 5-step pipeline with cryptographic confirmation invariants.
+
+## Quick Start
+
+```bash
+# 1. Initialize a new requirement
+python3 src/scripts/pipeline.py init REQ-005-my-feature
+
+# 2. Add your source materials to requirements/REQ-005-my-feature/00-input/
+
+# 3. Check status
+python3 src/scripts/pipeline.py requirements/REQ-005-my-feature status
+
+# 4. Work through each stage (AI follows SKILL.md for each Work Item)
+#    Stage 1: project-background-goal → user-journey-and-stories
+#    Stage 2: product-ux → function-description
+#    Stage 3: prd-assembly
+
+# 5. Run validators before human review
+python3 src/scripts/pipeline.py requirements/REQ-005-my-feature gate --work-item project-background-goal
+bash run_tests.sh
+```
+
+## What It Does
+
+- **5 Work Items** across 3 stages: business requirements → product requirements → PRD output
+- **8 sub-skills** for detailed UX (page-design, interaction-rules, ux-flow) and function (business-rules, validation-rules, state-machine, exception-handling, acceptance-criteria) specification
+- **3 support skills**: competitive research, solution assessment, PRD publish
+- **17-lens thinking framework** shared across all skills
+- **Non-bypassable human gates**: only `pipeline.py review --decision approve` with a real human reviewer can confirm artifacts
+- **SHA-256 binding**: confirmed artifacts are cryptographically bound to their reviewer
+- **Full traceability**: G→ST→FEA→FUN→AC/BR forward and reverse traceability
+- **44+ regression tests** with fixture-based validation
+
+## Agent Entry Point
+
+New AI agents: read `CLAUDE.md` first for startup order, hard rules, and quick-start workflow.
+
+## Key Files
+
+| File | Purpose |
+|---|---|
+| `CLAUDE.md` | AI agent runtime entry (startup order, hard rules) |
+| `README.md` | Human-facing project overview |
+| `src/framework/workflow-registry.json` | Single source of truth for all stages, skills, artifacts |
+| `src/framework/thinking-core.md` | 17 shared thinking lenses |
+| `src/framework/constitution.md` | 6 hard constitutional rules |
+| `src/shared/audit/review-taxonomy.md` | 7-label PRD review classification |
+
+## Validation
+
+```bash
+bash run_tests.sh                              # Full regression (44+ tests)
+python3 src/scripts/consistency_check.py       # Cross-document drift check
+python3 src/scripts/property_check.py <fd.md>  # Rule completeness properties
+```
+
+## Requirements
+
+- Python 3.11+
+- Git (for version control of artifacts)
+- lark-cli (optional, for Feishu document integration)

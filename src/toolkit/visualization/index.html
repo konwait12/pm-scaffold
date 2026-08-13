@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>产品AI脚手架 · 画图</title>
+<script src="../../../assets/_shared/js/mermaid.min.js"></script>
+<style>
+:root{--bg:#f4f6fb;--surface:#fff;--ink:#17233d;--accent:#2f6bff;--r:12px;
+/* Knowledge state palette (matches src/framework/thinking-core.md §1.5/§1.6) */
+--ks-fact:#2f6bff;        /* FACT — 已确凿证据 */
+--ks-decision:#16a34a;    /* DECISION — 人工或会议决议 */
+--ks-assumption:#f59e0b;  /* ASSUMPTION — 假设 */
+--ks-ai:#a855f7;          /* AI_INFERENCE — AI 推断 */
+--ks-unknown:#6b7280;     /* UNKNOWN — 未知 */
+--ks-conflict:#dc2626;    /* CONFLICT — 冲突 */
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;background:var(--bg);min-height:100vh;display:flex}
+.sidebar{width:300px;background:var(--surface);border-right:1px solid #e0e0e0;padding:16px;overflow-y:auto;flex-shrink:0}
+.sidebar h2{font-size:16px;margin-bottom:8px;color:var(--accent)}
+.sidebar button{display:block;width:100%;padding:8px 12px;margin:4px 0;border:1px solid #d0d0d0;border-radius:6px;background:var(--surface);cursor:pointer;text-align:left;font-size:13px}
+.sidebar button:hover{background:#eef;border-color:var(--accent)}
+.sidebar .section{margin-top:12px;font-size:11px;color:#999;font-weight:700;text-transform:uppercase}
+.main{flex:1;display:flex;flex-direction:column;padding:16px;gap:12px}
+#editor{flex:1;min-height:300px;font:13px 'JetBrains Mono','Menlo',monospace;padding:16px;border:1px solid #d0d0d0;border-radius:var(--r);resize:vertical;background:var(--surface)}
+.toolbar{display:flex;gap:8px;flex-wrap:wrap}
+.toolbar button{padding:8px 16px;border-radius:6px;border:1px solid #d0d0d0;background:var(--surface);cursor:pointer;font-size:13px}
+.toolbar button.primary{background:var(--accent);color:#fff;border-color:var(--accent)}
+#preview{min-height:200px;padding:20px;background:var(--surface);border:1px solid #d0d0d0;border-radius:var(--r);overflow-x:auto}
+#preview svg{max-width:100%;height:auto}
+.msg{color:#dc2626;font-size:13px;padding:8px;display:none}
+.msg.show{display:block}
+.legend{margin-top:8px;padding:8px;border:1px solid #eee;border-radius:8px;background:#fafbff}
+.legend-row{font-size:12px;color:var(--ink);display:flex;align-items:center;gap:8px;padding:3px 0}
+.dot{width:12px;height:12px;border-radius:50%;display:inline-block;flex-shrink:0;border:1px solid rgba(0,0,0,.1)}
+</style>
+</head>
+<body>
+
+<div class="sidebar">
+  <h2>PRD 模板</h2>
+  <div class="section">Stage 1 · 业务需求</div>
+  <button onclick="load('journey')">📋 用户旅程图</button>
+  <button onclick="load('journey-swim')">🏊 泳道旅程图</button>
+  <div class="section">Stage 2 · 产品需求</div>
+  <button onclick="load('ux-flow')">📐 UX 流程图</button>
+  <button onclick="load('architecture')">🏗️ 系统架构图</button>
+  <button onclick="load('state')">🔄 状态转换图</button>
+  <button onclick="load('sequence')">📡 时序图</button>
+  <div class="section">Stage 3 · PRD 输出</div>
+  <button onclick="load('gantt')">📅 甘特图</button>
+  <button onclick="load('rtm')">🔗 RTM 追溯链</button>
+  <div class="section">通用</div>
+  <button onclick="load('er')">🗄️ ER 图</button>
+  <button onclick="load('knowledge-state')">🧠 知识状态流（6 态）</button>
+  <div class="section" style="margin-top:16px">六态图例</div>
+  <div class="legend">
+    <div class="legend-row"><span class="dot" style="background:var(--ks-fact)"></span>FACT 事实</div>
+    <div class="legend-row"><span class="dot" style="background:var(--ks-decision)"></span>DECISION 决议</div>
+    <div class="legend-row"><span class="dot" style="background:var(--ks-assumption)"></span>ASSUMPTION 假设</div>
+    <div class="legend-row"><span class="dot" style="background:var(--ks-ai)"></span>AI_INFERENCE 推断</div>
+    <div class="legend-row"><span class="dot" style="background:var(--ks-unknown)"></span>UNKNOWN 未知</div>
+    <div class="legend-row"><span class="dot" style="background:var(--ks-conflict)"></span>CONFLICT 冲突</div>
+  </div>
+  <div class="section" style="margin-top:16px">导出</div>
+  <button onclick="download('svg')" style="border-color:var(--accent)">💾 下载 SVG</button>
+</div>
+
+<div class="main">
+  <div class="toolbar">
+    <button class="primary" onclick="render()">🔄 渲染 (Ctrl+Enter)</button>
+    <button onclick="download('svg')">💾 SVG</button>
+    <span style="flex:1"></span>
+    <span style="font-size:12px;color:#999;line-height:32px">产品AI脚手架 · Mermaid 实时渲染 · 零依赖</span>
+  </div>
+  <textarea id="editor" placeholder="在此输入 Mermaid 代码，或从左侧选择模板...">graph TD
+    A[用户下单] --> B[订单系统接收]
+    B --> C{库存校验?}
+    C -->|有库存| D[创建订单]
+    C -->|无库存| E[通知用户缺货]
+    D --> F[支付处理]
+    F --> G{支付成功?}
+    G -->|成功| H[发货通知]
+    G -->|失败| I[订单取消]
+    H --> J[物流跟踪]
+    J --> K[用户签收]</textarea>
+  <div class="msg" id="msg"></div>
+  <div id="preview"></div>
+</div>
+
+<script>
+mermaid.initialize({startOnLoad:false,theme:'default',securityLevel:'loose',
+  themeVariables:{
+    primaryColor:getComputedStyle(document.documentElement).getPropertyValue('--ks-fact').trim(),
+    primaryTextColor:'#fff',primaryBorderColor:'#1d4ed8',
+    lineColor:'#94a3b8',tertiaryColor:'#fafbff'
+  }
+});
+
+const TPL={
+  journey:`graph LR
+    subgraph S1["1.内容创建"]
+        R1["编辑:撰写+保存"]
+    end
+    subgraph S2["2.内容审核"]
+        R2["审核员:校对+标注"]
+    end
+    subgraph S3["3.内容发布"]
+        R3["编辑:定时发布"]
+    end
+    subgraph S4["4.读者阅读"]
+        R4["读者:浏览+互动"]
+    end
+    subgraph S5["5.数据采集"]
+        R5["系统:埋点+统计"]
+    end
+    subgraph S6["6.效果分析"]
+        R6["编辑:看板复盘"]
+    end
+    R1-->R2-->R3-->R4-->R5-->R6`,
+
+  'ux-flow':`graph TD
+    A["入口页面"]-->B{"判断条件?"}
+    B-->|"条件A"|C["分支A处理"]
+    B-->|"条件B"|D["分支B处理"]
+    C-->E["结束状态"]
+    D-->E`,
+
+  architecture:`graph TD
+    subgraph L1["前端层"]
+      Web["Web App"]
+    end
+    subgraph L2["网关层"]
+      GW["API Gateway"]
+    end
+    subgraph L3["服务层"]
+      SVC1["服务A"]
+      SVC2["服务B"]
+    end
+    subgraph L4["数据层"]
+      DB[("数据库")]
+    end
+    Web-->GW-->SVC1
+    GW-->SVC2
+    SVC1-->DB
+    SVC2-->DB`,
+
+  state:`stateDiagram-v2
+    [*]-->待处理
+    待处理-->处理中:接单
+    处理中-->已完成:提交
+    处理中-->已取消:超时
+    已完成-->[*]
+    已取消-->[*]`,
+
+  sequence:`sequenceDiagram
+    participant U as 用户
+    participant S as 系统
+    U->>S:提交请求
+    S->>S:校验数据
+    S-->>U:返回结果
+    S->>S:更新状态`,
+
+  gantt:`gantt
+    title 项目排期
+    dateFormat YYYY-MM-DD
+    section 阶段一
+    需求分析:a1,2026-01-01,7d
+    section 阶段二
+    设计开发:a2,after a1,14d
+    section 阶段三
+    测试上线:a3,after a2,7d`,
+
+  rtm:`graph LR
+    G1["G1:内容统一管理"]-->ST002["ST-002"]
+    G2["G2:审核提效"]-->ST003["ST-003"]
+    G3["G3:阅读转化"]-->ST002
+    G4["G4:发布周期"]-->ST001["ST-001"]
+    G5["G5:效果可视化"]-->ST005["ST-005"]
+    ST001-->FEA001["FEA-001"]
+    ST002-->FEA002["FEA-002"]
+    ST003-->FEA003["FEA-003"]
+    ST005-->FEA004["FEA-004"]`,
+
+  er:`erDiagram
+    CUSTOMER||--o{ORDER:places
+    ORDER||--|{LINE_ITEM:contains
+    CUSTOMER{string name int age}
+    ORDER{int id date created_at}`,
+
+  'knowledge-state':`flowchart LR
+    classDef fact fill:#2f6bff,color:#fff,stroke:#1d4ed8
+    classDef decision fill:#16a34a,color:#fff,stroke:#15803d
+    classDef assumption fill:#f59e0b,color:#fff,stroke:#b45309
+    classDef ai fill:#a855f7,color:#fff,stroke:#7e22ce
+    classDef unknown fill:#6b7280,color:#fff,stroke:#4b5563
+    classDef conflict fill:#dc2626,color:#fff,stroke:#991b1b
+
+    F1["FACT:用户量 ~50万"]:::fact
+    F2["FACT:核心场景=下单"]:::fact
+    D1["DECISION:不做移动端"]:::decision
+    A1["ASSUMPTION:客单价 80 元"]:::assumption
+    I1["AI_INFERENCE:用户更愿扫码下单"]:::ai
+    U1["UNKNOWN:跨境税费规则"]:::unknown
+    C1["CONFLICT:是否做分销"]:::conflict
+    F1 --> D1
+    F2 --> A1
+    A1 -.待验证.-> I1
+    U1 -.待澄清.-> C1
+    D1 --> R["ready_for_human_review"]
+    I1 --> R
+    C1 --> R`,
+};
+
+async function render(){
+  const code=document.getElementById('editor').value;
+  const p=document.getElementById('preview');
+  const m=document.getElementById('msg');
+  m.classList.remove('show');p.innerHTML='';
+  if(!code.trim())return;
+  try{
+    const id='mermaid-'+Date.now();
+    const {svg}=await mermaid.render(id,code);
+    p.innerHTML=svg;
+  }catch(e){
+    m.textContent='❌ '+e.message;
+    m.classList.add('show');
+  }
+}
+
+function load(name){
+  if(TPL[name])document.getElementById('editor').value=TPL[name];
+  render();
+}
+
+function download(fmt){
+  const svg=document.querySelector('#preview svg');
+  if(!svg)return alert('请先渲染图');
+  if(fmt==='svg'){
+    const b=new Blob([svg.outerHTML],{type:'image/svg+xml'});
+    const a=document.createElement('a');a.href=URL.createObjectURL(b);
+    a.download='diagram.svg';a.click();
+  }
+}
+
+document.getElementById('editor').addEventListener('keydown',function(e){
+  if(e.ctrlKey&&e.key==='Enter'){e.preventDefault();render();}
+});
+
+render();
+</script>
+</body>
+</html>

@@ -1,0 +1,23 @@
+interface:
+  display_name: "PRD 发布 (PRD Publish)"
+  short_description: "将 confirmed PRD 写入正式发布记录，包含授权审阅人、版本号、生效时间。支持 Skill。"
+  default_prompt: |
+    Use the prd-publish support-skill to record a confirmed PRD into the
+    official publish log. Capture artifact ID, version, status, authorized
+    reviewers, and effective time. Never mark a PRD as published without
+    explicit human confirmation in the publish record.
+
+trigger_examples:
+  - |
+    Use this skill when the user asks to publish, release, or version a
+    confirmed PRD.
+  - |
+    Use this skill when the user asks to record the authorized reviewers
+    and effective time of a PRD.
+
+should_not_trigger_examples:
+  - |
+    Do NOT use this skill for draft or unconfirmed PRDs.
+  - |
+    Do NOT use this skill for downstream implementation tracking (route to
+    engineering systems, not the PRD scaffold).
