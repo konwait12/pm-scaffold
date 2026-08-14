@@ -26,10 +26,10 @@ upstream_artifact_id: FD-INVITE-001
 
 | EV ID | event_name | event_type | FUN | IX | BR | trigger_condition | upload_timing | platform | metric | goal | priority |
 |---|---|---|---|---|---|---|---|---|---|---|---|
-| EV-001 | invite_view | page_view | FUN-001 | IX-101 | — | 客户打开邀请函 H5 页面时触发 | realtime | web | funnel_step | G-1 | must_track |
-| EV-002 | rsvp_submit | submit | FUN-001 | IX-102 | — | 客户提交参加/不参加选择时触发 | realtime | web | conversion | G-1 | must_track |
-| EV-003 | checkin_scan | success | FUN-002 | IX-201 | BR-101 | 现场签到扫码成功时触发 | realtime | miniprogram | counter | G-2 | must_track |
-| EV-004 | report_view | page_view | FUN-003 | IX-301 | — | 业务方打开到场分析报告时触发 | realtime | web | counter | G-3 | nice_to_track |
+| EV-001 | invite_view | page_view | FUN-001 | IX-101 | — | 客户打开邀请函 H5 页面时触发 | realtime | web | funnel_step | G1 | must_track |
+| EV-002 | rsvp_submit | submit | FUN-001 | IX-102 | — | 客户提交参加/不参加选择时触发 | realtime | web | conversion | G1 | must_track |
+| EV-003 | checkin_scan | success | FUN-002 | IX-201 | BR-101 | 现场签到扫码成功时触发 | realtime | miniprogram | counter | G2 | must_track |
+| EV-004 | report_view | page_view | FUN-003 | IX-301 | — | 业务方打开到场分析报告时触发 | realtime | web | counter | G3 | nice_to_track |
 
 ### 3. 事件属性字典
 
@@ -53,10 +53,10 @@ upstream_artifact_id: FD-INVITE-001
 
 | event_name | 关联目标 | 指标类型 | 指标说明 |
 |---|---|---|---|
-| invite_view | G-1 | funnel_step | 邀约触达漏斗第一步 |
-| rsvp_submit | G-1 | conversion | RSVP 回收率 = 提交数 / 发送数 |
-| checkin_scan | G-2 | counter | 到场人数与到场率 |
-| report_view | G-3 | counter | 报告查看次数 |
+| invite_view | G1 | funnel_step | 邀约触达漏斗第一步 |
+| rsvp_submit | G1 | conversion | RSVP 回收率 = 提交数 / 发送数 |
+| checkin_scan | G2 | counter | 到场人数与到场率 |
+| report_view | G3 | counter | 报告查看次数 |
 
 ### 6. PII 与数据保留
 

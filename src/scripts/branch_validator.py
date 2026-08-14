@@ -16,6 +16,14 @@ from workflow_registry import (
     work_items,
 )
 
+import hash_anchor
+
+
+def _reviewed_at(record: Path) -> str:
+    """Return the reviewed_at timestamp of a review record ('' if missing)."""
+    m = re.search(r"(?m)^\s*-\s*reviewed_at:\s*(.+)$", record.read_text(encoding="utf-8"))
+    return m.group(1).strip() if m else ""
+
 
 def validate_records(req_dir: Path) -> dict:
     issues = []
@@ -39,24 +47,82 @@ def validate_records(req_dir: Path) -> dict:
                 if not matching_records:
                     issues.append({"severity": "CRITICAL", "file": expected, "message": "confirmed artifact has no matching ReviewRecord"})
                 else:
+                    # B7 fix: glob order is not guaranteed to be time-sorted; the
+                    # newest record must be selected by reviewed_at, not [-1].
+                    matching_records.sort(key=lambda r: _reviewed_at(r))
                     current_hash = artifact_content_hash(artifact.read_text(encoding="utf-8"))
                     newest = matching_records[-1].read_text(encoding="utf-8")
                     recorded_hash = re.search(r"artifact_content_sha256:\s*([0-9a-f]{64})", newest)
                     if recorded_hash and recorded_hash.group(1) != current_hash:
                         issues.append({"severity": "CRITICAL", "file": expected, "message": "confirmed artifact content differs from its ReviewRecord hash"})
+                    # B13 fix: external anchor check. The chain hash on its own
+                    # is closed-loop (artifact + ReviewRecord can be swapped in
+                    # lockstep). The .hash-anchor.jsonl file under 99-review
+                    # provides an external append-only anchor; if BOTH the
+                    # artifact and the ReviewRecord were rewritten together
+                    # AND the anchor was rewritten too, the anchor's internal
+                    # hash chain breaks (or the row goes missing entirely).
+                    anchor_chain = hash_anchor.verify_anchor_chain(req_dir)
+                    if not anchor_chain["ok"]:
+                        for chain_issue in anchor_chain["issues"]:
+                            issues.append({"severity": "CRITICAL", "file": expected, "message": chain_issue})
+                        continue
+                    if anchor_chain["missing"]:
+                        # Backward-compat: legacy requirements never recorded
+                        # anchors — skip the per-artifact check rather than
+                        # regress all 8 existing cases.
+                        continue
+                    anchor_check = hash_anchor.verify_artifact_anchored(
+                        req_dir, expected, current_hash, reviewer,
+                    )
+                    if anchor_check["missing_anchor"]:
+                        issues.append({"severity": "CRITICAL", "file": expected,
+                                       "message": "confirmed artifact not anchored to .hash-anchor.jsonl"})
+                    else:
+                        # report every mismatched row's individual problems
+                        for mismatch in anchor_check["mismatches"]:
+                            if not mismatch["sha256_match"]:
+                                issues.append({"severity": "CRITICAL", "file": expected,
+                                               "message": "anchor sha256 mismatch"})
+                            if not mismatch["reviewer_match"]:
+                                issues.append({"severity": "CRITICAL", "file": expected,
+                                               "message": "anchor reviewer mismatch with ReviewRecord"})
 
     for record in review_records:
         text = record.read_text(encoding="utf-8")
         for required in ["work_item:", "decision:", "reviewer:", "reviewed_at:"]:
             if required not in text:
                 issues.append({"severity": "HIGH", "file": str(record.relative_to(req_dir)), "message": f"review record missing {required}"})
+        # B13 fix: immutable self-fingerprint of the ReviewRecord. record_sha256
+        # covers the whole record body except the record_sha256 line itself, so
+        # editing any field (e.g. artifact_content_sha256 to match a rewritten
+        # artifact) breaks the fingerprint even when the artifact + record hash
+        # pair is kept internally consistent.
+        has_created = bool(re.search(r"(?m)^\s*-\s*record_created_at:", text))
+        has_sha = bool(re.search(r"(?m)^\s*-\s*record_sha256:", text))
+        if not has_created or not has_sha:
+            # Backward-compat: legacy ReviewRecords predate the immutable-anchor
+            # fields. Missing fields are a non-blocking HIGH notice (blocking=False),
+            # so already-confirmed cases never FAIL merely for lacking the new
+            # fields; only a present-but-mismatched record_sha256 is CRITICAL.
+            missing = [name for name, present in (("record_created_at", has_created), ("record_sha256", has_sha)) if not present]
+            issues.append({"severity": "HIGH", "blocking": False,
+                           "file": str(record.relative_to(req_dir)),
+                           "message": f"review record missing immutable anchor ({' / '.join(missing)})"})
+        if has_sha:
+            declared = re.search(r"(?m)^\s*-\s*record_sha256:\s*(\S+)\s*$", text)
+            computed = hash_anchor.record_body_sha256(text)
+            if not declared or declared.group(1) != computed:
+                issues.append({"severity": "CRITICAL", "file": str(record.relative_to(req_dir)),
+                               "message": "review record content differs from its record_sha256"})
 
     for record in list(req_dir.glob("**/*change*.md")) + list(req_dir.glob("**/*reflow*.md")):
         text = record.read_text(encoding="utf-8")
         if not re.search(r"downstream|下游|影响", text, re.IGNORECASE):
             issues.append({"severity": "HIGH", "file": str(record.relative_to(req_dir)), "message": "change/reflow record missing downstream impact"})
 
-    blocking = [issue for issue in issues if issue["severity"] in {"CRITICAL", "HIGH"}]
+    blocking = [issue for issue in issues
+                if issue["severity"] in {"CRITICAL", "HIGH"} and issue.get("blocking", True)]
     return {"ok": not blocking, "issues": issues}
 
 

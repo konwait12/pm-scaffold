@@ -8,7 +8,7 @@
   "properties": {
     "template_package_id": {
       "type": "string",
-      "description": "模板包唯一标识，如 rsvp-activity-v1",
+      "description": "模板包唯一标识，如 scenario-template-v1",
       "pattern": "^[a-z0-9-]+$"
     },
     "name": {
@@ -27,7 +27,7 @@
     },
     "scenario": {
       "type": "string",
-      "description": "具体业务场景，如 spring-rsvp-campaign、content-publish-flow"
+      "description": "具体业务场景，如 scenario-name、content-publish-flow"
     },
     "status": {
       "type": "string",

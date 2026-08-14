@@ -1,5 +1,19 @@
 #!/usr/bin/env python3
-"""Migrate REQ-DIR folders from the flat Wave layout to the v2 stage layout."""
+"""Migrate REQ-DIR folders from the flat Wave layout to the v2 stage layout.
+
+Note on the v1 -> v2 simulated marking
+--------------------------------------
+Artifacts produced under the v1 (flat Wave) layout were generated before the
+v2 review/validation pipeline was in place. They therefore MUST be marked as
+``simulation: true`` / ``status: simulated`` when migrated so that downstream
+validators and orchestrators do not mistake them for artifacts that have
+already cleared the v2 review process.
+
+The marking is opt-in: it only runs when ``--apply --confirm --mark-simulated``
+are all passed. By default the migration does NOT simulate, so callers that
+intend to re-validate the migrated artifacts end-to-end (or that already have
+real review records) keep their status untouched.
+"""
 
 from __future__ import annotations
 
@@ -62,8 +76,16 @@ def rewrite_paths(req_dir: Path) -> int:
 
 
 def mark_simulated(req_dir: Path) -> int:
-    if not req_dir.name.startswith("REQ-002-"):
-        return 0
+    """Rewrite ``status: confirmed`` -> ``status: simulated`` and inject
+    ``simulation: true`` next to ``artifact_id:`` for every markdown file
+    under ``req_dir``.
+
+    The rewrite logic is identical to the original v2 migration; the only
+    behavioural change is that this now applies to *every* REQ directory
+    (no hard-coded REQ-002 prefix). Whether the marking actually runs is
+    controlled by the ``mark_simulated`` flag passed to
+    :func:`apply_migration`.
+    """
     changed = 0
     for path in req_dir.rglob("*.md"):
         text = path.read_text(encoding="utf-8")
@@ -77,7 +99,7 @@ def mark_simulated(req_dir: Path) -> int:
     return changed
 
 
-def apply_migration(req_dir: Path, plan: dict) -> dict:
+def apply_migration(req_dir: Path, plan: dict, mark_simulated: bool = False) -> dict:
     if plan["conflicts"]:
         raise RuntimeError(f"migration conflicts: {plan['conflicts']}")
     before = file_manifest(req_dir)
@@ -86,7 +108,13 @@ def apply_migration(req_dir: Path, plan: dict) -> dict:
         target.parent.mkdir(parents=True, exist_ok=True)
         shutil.move(str(source), str(target))
     rewritten = rewrite_paths(req_dir)
-    simulated = mark_simulated(req_dir)
+    # The ``mark_simulated`` parameter shadows the module-level
+    # ``mark_simulated`` function inside this scope. Capture the parameter as
+    # ``mark_simulated_arg`` and reach the rewrite function through the
+    # module globals to avoid the shadowing entirely.
+    mark_simulated_arg = mark_simulated
+    rewrite_fn = globals()["mark_simulated"]
+    simulated = rewrite_fn(req_dir) if mark_simulated_arg else 0
     after = file_manifest(req_dir)
     review_dir = req_dir / "99-review"
     review_dir.mkdir(parents=True, exist_ok=True)
@@ -95,6 +123,7 @@ def apply_migration(req_dir: Path, plan: dict) -> dict:
         "applied_at": datetime.now(timezone.utc).replace(microsecond=0).isoformat(),
         "rewritten_markdown_files": rewritten,
         "simulated_files": simulated,
+        "mark_simulated_applied": bool(mark_simulated_arg),
         "before_hashes": before,
         "after_hashes": after,
     }
@@ -113,6 +142,9 @@ def main() -> int:
     parser.add_argument("--apply", action="store_true", help="Actually move/rewrite requirement files")
     parser.add_argument("--confirm", action="store_true",
                         help="Required with --apply: acknowledge that files will be moved and rewritten")
+    parser.add_argument("--mark-simulated", action="store_true", default=False,
+                        help="Mark migrated artifacts as simulated. Only effective together with "
+                             "--apply --confirm; without it the migration never simulates.")
     args = parser.parse_args()
     if args.apply and not args.confirm:
         print("ERROR: --apply moves directories and rewrites .md content in place.", file=sys.stderr)
@@ -126,7 +158,7 @@ def main() -> int:
             return 1
         plan = plan_migration(req_dir)
         if args.apply:
-            plan = apply_migration(req_dir, plan)
+            plan = apply_migration(req_dir, plan, mark_simulated=args.mark_simulated)
         results.append(plan)
     print(json.dumps({"mode": "apply" if args.apply else "dry-run", "results": results}, ensure_ascii=False, indent=2))
     return 1 if any(result["conflicts"] for result in results) else 0

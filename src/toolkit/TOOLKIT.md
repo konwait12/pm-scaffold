@@ -219,7 +219,7 @@
 |---|---|---|---|
 | validate_artifact.py × 5 | Script | ✅ 已内置 | 每个工作事项的结构与语义校验 |
 | branch_validator.py | Script | ✅ 已内置 | 人工评审、变更与回流记录校验（文件名为兼容保留） |
-| run_tests.sh | Script | ✅ 已内置 | 全量回归测试 |
+| run_tests_mac.sh | Script | ✅ 已内置 | 全量回归测试 |
 | webapp-testing Skill | Skill | ✅ 已内置 | 浏览器自动化测试原型 |
 | impeccable Skill | Skill | ✅ 已内置 | UI 审查、UX 检查 |
 | mermaid-to-pdf (验证渲染) | CLI | 🔌 可安装 | 确保 Mermaid 图正确渲染 |
@@ -232,7 +232,7 @@
 
 | 工具 | 类型 | 状态 | 说明 |
 |---|---|---|---|
-| run_tests.sh | Script | ✅ 已内置 | 一键全量回归 |
+| run_tests_mac.sh | Script | ✅ 已内置 | 一键全量回归 |
 | lark-cli 文档同步 | Script | 🔮 规划中 | PRD confirmed→自动同步飞书 |
 | 日报/周报生成 | Skill | 🔮 规划中 | 基于 Obsidian 日志自动生成 |
 | CronCreate | Built-in | ✅ 已内置 | 定时任务（如每日检查 QuestionRecord 老化） |

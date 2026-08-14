@@ -47,7 +47,9 @@ Every Skill must trigger a structured inquiry when ANY of these conditions occur
 | Class | Definition | PRD Treatment |
 |---|---|---|
 | **Main Trunk**（5 work_items） | `project-background-goal` / `user-journey-and-stories` / `product-ux` / `function-description` / `prd-assembly` itself | **Required, no inquiry.** Trunk content goes into the corresponding fixed PRD section without asking. |
-| **Branch / Optional**（everything else） | sub-skills of function-description, shared mechanisms (clarify, change-management, decision-log, intake-routing, project-init, human-gate, audit, traceability), optional support skills (competitive-research, feasibility-analysis, tracking-plan, issue-record, requirement-restate 能力, ...) | **Inquiry required.** Every branch entry triggers the inquiry template. Default behavior per artifact (see table below). |
+| **Branch / Optional**（everything else） | sub-skills of function-description, shared mechanisms (clarify, change-management, decision-log, intake-routing, project-init, human-gate, audit, traceability), optional support skills (competitive-research, feasibility-analysis, tracking-plan, requirement-restate 能力, ...) | **Inquiry required.** Every branch entry triggers the inquiry template. Default behavior per artifact (see table below). |
+
+> 例外：`issue-record`（跨阶段问题清单）虽由 shared clarify 机制产出，但已从「可选分支」提升为**每个案例必备的稳定产物**（见下文「Issue Record — 每个案例必备的稳定产物」），不再走 inquiry 可选流程。
 
 The main trunk is **non-negotiable** because the PRD cannot exist without background, journey, UX, functions, and assembly. Branches are **configurable** because each requirement genuinely has different scope, depth, and visibility needs.
 
@@ -67,7 +69,7 @@ The main trunk is **non-negotiable** because the PRD cannot exist without backgr
 | `acceptance-criteria` | Sub of §4 | **Aggregate into §4** | Inquiry at sub-skill entry | User can split or omit AC detail |
 | `tracking-plan` | Sub of §4 (optional) | Optional (§5.2 埋点) | Inquiry at sub-skill entry + prd-assembly §5 | Verbatim event table in §5.2 if user accepts |
 | `requirement-restate` | Branch (001) | Default NOT in PRD | Inquiry at Skill entry | User can attach RR-XXX provenance to §0 |
-| `issue-record` | Branch (shared) | Default NOT in PRD | Inquiry at Skill entry + prd-assembly §9 | User can expose risk summary in §9 / §10 if visibility is needed |
+| **`issue-record`** | **每个案例必备**（非可选） | Default NOT in PRD | 无（强制产出，无需询问） | User can expose risk summary in §9 / §10 if visibility is needed |
 | `competitive-research` | Branch (support) | Optional (supporting evidence) | Inquiry at Skill entry | User can attach comparison table to §0 or as appendix |
 | `feasibility-analysis` | Branch (support) | Optional (supporting evidence) | Inquiry at Skill entry | User can attach trade-off analysis to §0 or as appendix |
 | `clarify` cycle | Branch (shared) | Internal; not a PRD artifact | (n/a) | Its results feed issue-record or upstream artifacts |
@@ -78,6 +80,15 @@ The main trunk is **non-negotiable** because the PRD cannot exist without backgr
 | `human-gate` | Branch (shared) | Governance; not a PRD artifact | (n/a) | Each Trunk / Branch needs a review record before `confirmed` |
 | `audit` | Branch (shared) | Triggers §10 inconsistency report | (n/a) | Findings in §10 |
 | `traceability` | Branch (shared) | Required for §7 / §8 / §9 | (n/a) | — |
+
+### Issue Record — 每个案例必备的稳定产物（非可选分支）
+
+`issue-record`（跨阶段问题清单）是**与业务方沟通、澄清需求**的正式载体，从「可选分支产物」提升为**每个案例必备的稳定产物**：
+
+- **每个案例必须产出** `99-review/support/issue-record.md`，无论问题多少（空清单也是审计证据）。它不是「有需求不明确才登记」的可选清单，而是贯穿全流程、持续更新的正式沟通载体。
+- **格式必须符合** `src/shared/clarify/skills/issue-record/assets/issue-record-template.md` 模板：frontmatter（`artifact_id` / `version` / `status` / `owner` / `goal_decision_owner` / `business_sponsor` / `reviewer` / `created_at` / `updated_at` / `confirmed_at`）+ §1-§13（项目元数据 / 总览 / Blocker（BLK）/ Risk（RSK）/ Decision-in-waiting（DEC）/ Information gap（INF）/ Clarification（CLS）/ Out-of-band（OUT）/ Closed Issues / 来源追溯 / 待确认问题 / Constitution Compliance / 版本变更摘要）。
+- **pipeline gate 强制校验**：`machine_gate()` 检查 `99-review/support/issue-record.md` 是否存在，存在则运行 `src/shared/clarify/skills/issue-record/scripts/validate_artifact.py <path> --json`；**缺失或 `ok=False` 均 gate 失败（error）**，校验结果并入返回 dict 的 `issue_record` 字段。
+- **AI 在跑测时实时生成/更新**：任何阶段登记问题（BLK/RSK/DEC/INF/CLS/OUT）时，AI 同步写入 issue-record；送审前由 gate 自动校验，确保与业务方沟通的载体始终完整、可审计。
 
 ### Why This Is Global
 
@@ -96,7 +107,7 @@ PRD-only scope and "no fixed PRD template" are both constitutional principles. T
 
 每个 work item 产物在 `ready_for_human_review` 送审前（dor_check 硬门禁）：
 
-1. `99-review/support/issue-record.md` 必须存在，且 §13 阶段收口表含本 work item 行——**空阶段也必须落行（问题数=0），这是审计证据**。
+1. `99-review/support/issue-record.md` 必须存在且通过 `src/shared/clarify/skills/issue-record/scripts/validate_artifact.py` 结构校验（frontmatter + §1-§13，模板见 `assets/issue-record-template.md`），且 §13 阶段收口表含本 work item 行——**空阶段也必须落行（问题数=0），这是审计证据**。pipeline gate（`machine_gate`）会强制校验，缺失或校验失败即 gate 失败。
 2. 产物正文每个「待确认」标记必须带同一行的 Q-/ISS-/DEC-/SRC- 引用。
 
 伴随信号（不自动执行动作）：B1 连续 3 轮 changes 熔断提示；B3 open 问题 7 天 flag / 14 天 escalate；范围冻结（product-ux confirmed 后上游再评审 → 提示走 change-mgmt）。

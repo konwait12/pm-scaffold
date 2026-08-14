@@ -133,7 +133,7 @@ PRD 输出（`prd-assembly`）是下游。
 
 ### 5.1 测试
 
-`run_tests.sh` 跑 8 类检查：
+`run_tests_mac.sh` 跑 8 类检查：
 - 跨文档一致性（`consistency_check.py`）
 - 5 个主 Skill 产物校验
 - 9 个子 Skill 产物校验
@@ -178,4 +178,5 @@ PRD 输出（`prd-assembly`）是下游。
 - 运行规则：`src/framework/workflow.md`
 - 阶段边界：各 `src/stages/*/STAGE.md`
 - Skill 行为：各 `skills/*/SKILL.md`
+- 产物模板可选章节：`docs/template-optional-sections.md`（术语表 / 涉及团队及职责总结，按需章节说明）
 - 变更日志：`CHANGELOG.md`

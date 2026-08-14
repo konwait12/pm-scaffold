@@ -17,18 +17,170 @@ sys.path.insert(0, str(SCRIPTS))
 
 import migrate_layout_v2
 import orchestrator
+import pipeline
 import traceability_check
 import workflow_registry
 
 
-class WorkflowRuntimeTest(unittest.TestCase):
-    def write_reviewer_registry(self, req: Path) -> None:
-        path = req / "00-input/authorized-reviewers.json"
-        path.parent.mkdir(parents=True, exist_ok=True)
-        path.write_text(json.dumps({"reviewers": [{
-            "id": "USR-001", "name": "Real Reviewer", "roles": ["business_owner"]
-        }]}), encoding="utf-8")
+def write_reviewer_registry(req: Path) -> None:
+    path = req / "00-input/authorized-reviewers.json"
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps({"reviewers": [{
+        "id": "USR-001", "name": "Real Reviewer", "roles": ["business_owner"]
+    }]}), encoding="utf-8")
 
+
+def write_valid_issue_record(req: Path) -> None:
+    """Write a structurally complete issue-record (frontmatter + §1-§13).
+
+    Must pass `src/shared/clarify/skills/issue-record/scripts/validate_artifact.py`
+    AND contain the `project-background-goal` closeout row (B3 stage closeup).
+    """
+    support = req / "99-review" / "support"
+    support.mkdir(parents=True, exist_ok=True)
+    (support / "issue-record.md").write_text(
+        "\n".join([
+            "---",
+            "artifact_id: IR-TEST-001",
+            "version: v0.1",
+            "status: draft",
+            "owner: 产品经理（测试）",
+            "goal_decision_owner: 业务方负责人（测试）",
+            "business_sponsor: 业务方（测试）",
+            "reviewer: 业务方负责人（测试）",
+            "created_at: 2026-08-13",
+            "updated_at: 2026-08-13",
+            "confirmed_at: （授权人工 review 后填写）",
+            "---",
+            "",
+            "# 问题清单（Issue Record · 跨阶段共享）",
+            "",
+            "## 1. 项目元数据",
+            "",
+            "- 项目 ID：REQ-TEST",
+            "- 项目名称：测试需求",
+            "",
+            "## 2. 总览（按类别与状态计数）",
+            "",
+            "| 类别 | open | in_progress | blocked | accepted | resolved | escalated |",
+            "|---|---|---|---|---|---|---|",
+            "| Blocker（BLK） | 0 | 0 | 0 | 0 | 0 | 0 |",
+            "| Risk（RSK） | 0 | 0 | 0 | 0 | 0 | 0 |",
+            "| Decision（DEC） | 0 | 0 | 0 | 0 | 0 | 0 |",
+            "| Information（INF） | 0 | 0 | 0 | 0 | 0 | 0 |",
+            "| Clarification（CLS） | 0 | 0 | 0 | 0 | 0 | 0 |",
+            "| Out-of-band（OUT） | 0 | 0 | 0 | 0 | 0 | 0 |",
+            "",
+            "## 3. Blocker（BLK）",
+            "",
+            "| ID | 标题 | 描述 | 状态 | Owner | 知识状态 | 来源 | 目标关闭 | 备注 |",
+            "|---|---|---|---|---|---|---|---|---|",
+            "（无）",
+            "",
+            "## 4. Risk（RSK）",
+            "",
+            "| ID | 标题 | 描述 | 状态 | Owner | 知识状态 | 来源 | 缓解措施 | 备注 |",
+            "|---|---|---|---|---|---|---|---|---|",
+            "（无）",
+            "",
+            "## 5. Decision-in-waiting（DEC）",
+            "",
+            "| ID | 标题 | 描述 | 状态 | Owner | 知识状态 | 来源 | 目标关闭 | 备注 |",
+            "|---|---|---|---|---|---|---|---|---|",
+            "（无）",
+            "",
+            "## 6. Information gap（INF）",
+            "",
+            "| ID | 标题 | 描述 | 状态 | Owner | 知识状态 | 来源 | 备注 |",
+            "|---|---|---|---|---|---|---|---|",
+            "（无）",
+            "",
+            "## 7. Clarification（CLS）",
+            "",
+            "| ID | 标题 | 描述 | 状态 | Owner | 知识状态 | 来源 | 备注 |",
+            "|---|---|---|---|---|---|---|---|",
+            "（无）",
+            "",
+            "## 8. Out-of-band（OUT）",
+            "",
+            "| ID | 标题 | 描述 | 状态 | Owner | 知识状态 | 来源 | 路由至 | 备注 |",
+            "|---|---|---|---|---|---|---|---|---|",
+            "（无）",
+            "",
+            "## 9. Closed Issues",
+            "",
+            "### 9.1 Accepted（决策者接受的风险 / 不再行动）",
+            "",
+            "| ID | 标题 | 接受者 | 接受日期 | 接受条件 | 备注 |",
+            "|---|---|---|---|---|---|",
+            "（无）",
+            "",
+            "### 9.2 Resolved（已解决）",
+            "",
+            "| ID | 标题 | 解决方案 | 关闭日期 | 引用变更 | 备注 |",
+            "|---|---|---|---|---|---|",
+            "（无）",
+            "",
+            "### 9.3 Escalated（已升级）",
+            "",
+            "| ID | 标题 | 升级至 | 升级日期 | 新 Owner | 备注 |",
+            "|---|---|---|---|---|---|",
+            "（无）",
+            "",
+            "## 10. 来源追溯",
+            "",
+            "| SRC-ID | 来源 | 关键陈述 | 知识状态 |",
+            "|---|---|---|---|",
+            "| SRC-001 | 测试材料 | 测试需求来源 | FACT |",
+            "",
+            "## 11. 待确认问题",
+            "",
+            "- Q-001: （无）",
+            "",
+            "## 12. Constitution Compliance",
+            "",
+            "- 规则先行：✅ 已对齐",
+            "- 六态标注：✅ 已对齐",
+            "- 模板符合性：✅ 已对齐",
+            "- 反模式自检：✅ 已通过",
+            "- 跨阶段对齐：✅ 已对齐",
+            "- AI 主动询问：✅ 已对齐",
+            "",
+            "## 13. 阶段收口表（每个 work item 送审前必填 · 空阶段=审计证据）",
+            "",
+            "| 阶段 | Work Item | 问题数 | 收口日期 | 状态 |",
+            "|---|---|---|---|---|",
+            "| 001-business-requirements | project-background-goal | 0 | 2026-08-13 | closed |",
+            "",
+            "## 版本变更摘要",
+            "",
+            "- v0.1: 初稿",
+            "",
+        ]),
+        encoding="utf-8",
+    )
+
+
+def build_gate_req(temp: Path) -> Path:
+    """Build a minimal REQ dir whose project-background-goal artifact passes
+    DoR/DoD, branch_validator, and traceability — isolating the issue-record
+    gate in machine_gate() tests."""
+    req = temp / "REQ-GATE"
+    target = req / "001-business-requirements/01-background-goal/background-goal.md"
+    target.parent.mkdir(parents=True)
+    write_reviewer_registry(req)
+    (req / "00-input").mkdir(parents=True, exist_ok=True)
+    (req / "00-input/SRC-001.md").write_text(
+        "# 需求来源（测试）\n业务方代表A 提出的测试需求。\n", encoding="utf-8",
+    )
+    fixture = ROOT / "test/skills/project-background-goal/fixtures/hire-website-confirmed.md"
+    text = fixture.read_text(encoding="utf-8")
+    text = re.sub(r"(?m)^status:\s*\S+", "status: ready_for_human_review", text, count=1)
+    target.write_text(text, encoding="utf-8")
+    return req
+
+
+class WorkflowRuntimeTest(unittest.TestCase):
     def test_registry_paths_and_order(self) -> None:
         items = workflow_registry.work_items()
         self.assertEqual([item["order"] for item in items if item["order"] <= 5], [1, 2, 3, 4, 5])  # main 5 work items
@@ -160,7 +312,7 @@ class WorkflowRuntimeTest(unittest.TestCase):
             req = Path(temp)
             target = req / "001-business-requirements/01-background-goal/background-goal.md"
             target.parent.mkdir(parents=True)
-            self.write_reviewer_registry(req)
+            write_reviewer_registry(req)
             target.write_text("---\nartifact_id: BG-T-001\nstatus: draft\n---\n", encoding="utf-8")
             command = [
                 sys.executable, str(SCRIPTS / "pipeline.py"), str(req), "review",
@@ -182,8 +334,38 @@ class WorkflowRuntimeTest(unittest.TestCase):
             req = Path(temp)
             target = req / "001-business-requirements/01-background-goal/background-goal.md"
             target.parent.mkdir(parents=True)
-            self.write_reviewer_registry(req)
+            write_reviewer_registry(req)
             target.write_text("---\nartifact_id: BG-T-002\nstatus: ready_for_human_review\n---\n", encoding="utf-8")
+            result = subprocess.run([
+                sys.executable, str(SCRIPTS / "pipeline.py"), str(req), "review",
+                "--work-item", "project-background-goal", "--decision", "changes",
+                "--reviewer", "Real Reviewer", "--comments", "目标仍不清楚",
+                "--reason", "目标仍不清楚，打回修改",
+                "--reviewer-id", "USR-001", "--reviewer-role", "business_owner",
+            ], capture_output=True, text=True, check=False)
+            self.assertNotEqual(result.returncode, 0)
+            self.assertIn("status: draft", target.read_text(encoding="utf-8"))
+            self.assertEqual(len(list((req / "99-review").glob("review-*.md"))), 1)
+            # B12: reverse transition (ready_for_human_review → draft) must leave
+            # an audited change record with from_status/to_status/reason/changed_*.
+            change_records = list((req / "99-review").glob("change-*.md"))
+            self.assertEqual(len(change_records), 1)
+            change_text = change_records[0].read_text(encoding="utf-8")
+            self.assertIn("from_status: ready_for_human_review", change_text)
+            self.assertIn("to_status: draft", change_text)
+            self.assertIn("reason: 目标仍不清楚，打回修改", change_text)
+            self.assertIn("changed_at:", change_text)
+            self.assertIn("changed_by: Real Reviewer", change_text)
+
+    def test_human_changes_without_reason_is_rejected(self) -> None:
+        # B12: `--decision changes` without a non-empty --reason must refuse to
+        # execute (no silent confirmed → draft revert), leaving status untouched.
+        with tempfile.TemporaryDirectory() as temp:
+            req = Path(temp)
+            target = req / "001-business-requirements/01-background-goal/background-goal.md"
+            target.parent.mkdir(parents=True)
+            write_reviewer_registry(req)
+            target.write_text("---\nartifact_id: BG-T-003\nstatus: confirmed\n---\n", encoding="utf-8")
             result = subprocess.run([
                 sys.executable, str(SCRIPTS / "pipeline.py"), str(req), "review",
                 "--work-item", "project-background-goal", "--decision", "changes",
@@ -191,27 +373,23 @@ class WorkflowRuntimeTest(unittest.TestCase):
                 "--reviewer-id", "USR-001", "--reviewer-role", "business_owner",
             ], capture_output=True, text=True, check=False)
             self.assertNotEqual(result.returncode, 0)
-            self.assertIn("status: draft", target.read_text(encoding="utf-8"))
-            self.assertEqual(len(list((req / "99-review").glob("review-*.md"))), 1)
+            self.assertIn("--reason", result.stderr)
+            self.assertIn("status: confirmed", target.read_text(encoding="utf-8"))
+            self.assertEqual(list((req / "99-review").glob("change-*.md")), [])
+            self.assertEqual(list((req / "99-review").glob("review-*.md")), [])
 
     def test_authorized_approval_records_identity_and_artifact_binding(self) -> None:
         with tempfile.TemporaryDirectory() as temp:
             req = Path(temp)
             target = req / "001-business-requirements/01-background-goal/background-goal.md"
             target.parent.mkdir(parents=True)
-            self.write_reviewer_registry(req)
+            write_reviewer_registry(req)
             # entry_material DoR: bg approval requires >= 1 registered source
             (req / "00-input").mkdir(parents=True, exist_ok=True)
             (req / "00-input/SRC-001.md").write_text("# 需求来源（测试）\n业务方代表A 提出的邀约转化率优化需求。\n", encoding="utf-8")
-            # B3 每阶段强制收口：issue-record 必须存在且含 bg 收口行
-            support = req / "99-review" / "support"
-            support.mkdir(parents=True, exist_ok=True)
-            (support / "issue-record.md").write_text(
-                "# Issue Record（测试）\n\n## 13. 阶段收口表\n\n"
-                "| 阶段 | Work Item | 问题数 | 收口日期 | 状态 |\n|---|---|---|---|---|\n"
-                "| 001-business-requirements | project-background-goal | 0 | 2026-08-13 | closed |\n",
-                encoding="utf-8",
-            )
+            # B3 每阶段强制收口：issue-record 必须存在且含 bg 收口行，
+            # 且结构必须通过 issue-record 校验器（pipeline gate 强制）。
+            write_valid_issue_record(req)
             fixture = ROOT / "test/skills/project-background-goal/fixtures/hire-website-confirmed.md"
             text = fixture.read_text(encoding="utf-8")
             text = re.sub(r"(?m)^status:\s*\S+", "status: ready_for_human_review", text, count=1)

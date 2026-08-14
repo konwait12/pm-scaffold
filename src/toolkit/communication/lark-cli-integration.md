@@ -7,7 +7,7 @@
 ### 1. PRD 同步到飞书云空间
 ```bash
 # 方式A：Markdown 直接创建飞书文档
-lark-cli markdown +create --file ./prd.md --title "REQ-001 PRD"
+lark-cli markdown +create --file ./prd.md --title "REQ-NNN PRD"
 
 # 方式B：导入为 Docx（支持 Mermaid 画板渲染）
 lark-cli drive +import --type docx --file ./prd.md
@@ -56,7 +56,7 @@ lark-cli base +record-create --app-token BaseToken --table-id TableID
 lark-cli calendar +list --start-time "2026-08-11" --end-time "2026-08-18"
 
 # 创建任务
-lark-cli task +create --summary "评审 REQ-001 PRD" --due-date "2026-08-15"
+lark-cli task +create --summary "评审 REQ-NNN PRD" --due-date "2026-08-15"
 ```
 
 ## 踩坑提醒（来自全局复利日志）

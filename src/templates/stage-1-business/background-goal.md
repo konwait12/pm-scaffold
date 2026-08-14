@@ -11,6 +11,10 @@ The artifact must include all sections 1–15 below, in order, with the
 Constitution Compliance section placed between downstream handoff and
 版本变更摘要. Required frontmatter is the same 10-field block used
 by validate_artifact.py.
+
+Optional sections (可选章节，校验器不要求，按需启用；材料不含对应内容时整节删除):
+  - ## 术语表（按需）            — 仅当输入材料（如 BRD）含「名词解释 / 术语表」时启用
+  - ## 涉及团队及职责总结（按需）  — 仅当输入材料含团队 / 职责信息时启用
 -->
 ---
 artifact_id: BG-001
@@ -34,6 +38,15 @@ confirmed_at: 待确认
 
 | 维度 | L0（仅想法） | L1（单条稀疏来源） | L2（业务方案已存在） | L3（需求细节明确） | L4（上游已确认） |
 |---|---|---|---|---|---|
+
+## 术语表（按需）
+<!-- Optional Glossary Section — 仅当输入材料（如 BRD）含「名词解释 / 术语表」时启用本节；否则整节删除，校验器不要求。 -->
+
+仅当 BRD 等输入材料含「名词解释 / 术语表」时启用本节：逐条摘录材料中的术语 / 缩略词定义，不自造、不改写；每条标注来源 SRC 编号。
+
+| 术语 / 缩略词 | 说明 | 来源 |
+|---|---|---|
+| 待补充 | 待补充 | SRC-001 |
 
 ## 1. 需求来源与触发
 <!-- Requirement Source And Trigger -->
@@ -66,6 +79,15 @@ confirmed_at: 待确认
 <!-- User Roles And Stakeholders -->
 
 只识别与背景和目标有关的角色、责任和影响；详细旅程留给下一步。
+
+## 涉及团队及职责总结（按需）
+<!-- Optional Team & Responsibility Summary — 仅当输入材料含团队 / 职责信息时启用本节；否则整节删除，校验器不要求。 -->
+
+仅当输入材料含团队 / 职责信息时启用本节：从材料与角色关系中提取各团队 / 角色的职责边界与关联环节，不推断材料未提及的团队；每条标注来源 SRC 编号。
+
+| 团队 / 角色 | 职责 | 关联环节 | 来源 |
+|---|---|---|---|
+| 待补充 | 待补充 | 待补充 | SRC-001 |
 
 ## 7. 时间、约束与依赖
 <!-- Timing, Constraints And Dependencies -->

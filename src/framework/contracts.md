@@ -15,7 +15,7 @@
 - `SourceRecord`: id, location, type, provider, captured_at, scope.
 - `QuestionRecord`: id, question, initial_judgment, evidence, options, impact, owner, reflow_target.
 - `DecisionRecord`: id, decision, alternatives, decider, rationale, decided_at, impact_scope.
-- `ReviewRecord`: work_item, artifact_version, artifact_content_sha256, decision, reviewer, reviewer_id, reviewer_role, reviewed_at, comments.
+- `ReviewRecord`: work_item, artifact_version, artifact_content_sha256, decision, reviewer, reviewer_id, reviewer_role, reviewed_at, record_created_at, record_sha256, comments.
 - `ChangeRecord`: change_type, target, reason, source, downstream_impact.
 - `TraceabilityLink`: source_id, target_id, relation, evidence_location.
 

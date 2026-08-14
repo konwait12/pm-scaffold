@@ -114,7 +114,7 @@ python3 src/scripts/pipeline.py requirements/REQ-005-topic-name reflow --work-it
 python3 src/scripts/pipeline.py requirements/REQ-005-topic-name reflow --work-item project-background-goal --apply
 
 # 7. 全量自检
-bash run_tests.sh
+bash run_tests_mac.sh
 python3 src/scripts/consistency_check.py
 ```
 

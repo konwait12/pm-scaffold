@@ -12,6 +12,10 @@ Checks:
    a known role token (business_owner / product_owner / tech_owner / designer / qa).
 5. requirements/ content: REQ-* dirs must be structurally valid; surfaces when no
    real (non-simulated) requirement product exists yet.
+6. (E1) Template ↔ validator contract: `_frontmatter-schema.md`'s
+   `upstream_artifact_ids` example must match the regex the prd-assembly validator
+   actually accepts `(BG|JS|UX|FD)-\d+(?:-\d+)?`, so the template and the validator
+   cannot silently drift apart again (single- vs double-hyphen convention).
 
 Exit code 0 = consistent, 1 = inconsistencies found (non-interactive must fail).
 """
@@ -191,6 +195,49 @@ def check_reference_integrity(registry: dict, errors: list[str], warnings: list[
                 warnings.append(f"{cap['id']}: references/{ref_file.name} not cited in SKILL.md / thinking-framework.md")
 
 
+def check_upstream_artifact_ids_contract(errors: list[str], warnings: list[str]) -> None:
+    """E1: `_frontmatter-schema.md` 的 upstream_artifact_ids 示例必须与 prd-assembly
+    校验器实际接受的正则 (BG|JS|UX|FD)-\\d+(?:-\\d+)? 一致。
+
+    背景：模板示例曾写单连字符（BG-XXX），而校验器曾要求双连字符，导致 gate 失败；
+    现校验器已兼容单连字符。此检查作为自动化护栏，防止模板与校验器约定再次漂移。
+    """
+    schema = PROJECT / "src/templates/_frontmatter-schema.md"
+    validator = PROJECT / "src/stages/003-prd-output/skills/prd-assembly/scripts/validate_artifact.py"
+    if not schema.is_file():
+        errors.append("E1: _frontmatter-schema.md 缺失")
+        return
+    if not validator.is_file():
+        errors.append("E1: prd-assembly validate_artifact.py 缺失")
+        return
+
+    text = schema.read_text(encoding="utf-8")
+    m = re.search(r'upstream_artifact_ids:\s*\[([^\]]*)\]', text)
+    if not m:
+        warnings.append("E1: _frontmatter-schema.md 中未找到 upstream_artifact_ids 示例")
+        return
+    example_ids = re.findall(r'"([^"]+)"', m.group(1))
+    if not example_ids:
+        warnings.append("E1: _frontmatter-schema.md 中 upstream_artifact_ids 示例为空")
+        return
+
+    vtext = validator.read_text(encoding="utf-8")
+    vm = re.search(r"\(BG\|JS\|UX\|FD\)-\\d\+\(\?:-\\d\+\)\?", vtext)
+    if not vm:
+        warnings.append("E1: validate_artifact.py 中未找到 upstream_artifact_ids 正则 (BG|JS|UX|FD)-\\d+(?:-\\d+)?")
+        return
+    pattern = re.compile(vm.group(0))
+
+    for aid in example_ids:
+        # 模板示例常用占位符 XXX 表示数字段，替换为 123 后再与校验器正则比对
+        probe = re.sub(r"X+", "123", aid)
+        if not pattern.fullmatch(probe):
+            errors.append(
+                f"E1: _frontmatter-schema.md 示例 '{aid}' 与 prd-assembly 校验器正则 "
+                f"'{vm.group(0)}' 不一致（模板与校验器约定漂移）"
+            )
+
+
 def main() -> int:
     errors: list[str] = []
     warnings: list[str] = []
@@ -207,6 +254,7 @@ def main() -> int:
     check_artifact_types(registry, errors)
     check_reference_integrity(registry, errors, warnings)
     check_requirements_content(warnings)
+    check_upstream_artifact_ids_contract(errors, warnings)
 
     print("== consistency_check ==")
     for w in warnings:

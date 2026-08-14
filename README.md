@@ -4,7 +4,7 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 [![Repo](https://img.shields.io/badge/GitHub-konwait12%2Fpm--scaffold-blue.svg)](https://github.com/konwait12/pm-scaffold)
-[![Tests](https://img.shields.io/badge/tests-61%2F61-green.svg)](run_tests.sh)
+[![Tests](https://img.shields.io/badge/tests-61%2F61-green.svg)](run_tests_mac.sh)
 
 ---
 
@@ -36,21 +36,21 @@ AI 写需求最大的风险不是写得慢，而是：**推断冒充事实、没
 
 ```bash
 # 1. 初始化一个新需求骨架
-python3 src/scripts/pipeline.py init REQ-001-my-feature
+python3 src/scripts/pipeline.py init REQ-NNN-my-feature
 
-# 2. 把原始材料放进 requirements/REQ-001-my-feature/00-input/
+# 2. 把原始材料放进 requirements/REQ-NNN-my-feature/00-input/
 
 # 3. 查看状态（当前激活项 / 下一步 / 信号层）
-python3 src/scripts/pipeline.py requirements/REQ-001-my-feature status
+python3 src/scripts/pipeline.py requirements/REQ-NNN-my-feature status
 
 # 4. 入口判定（L0-L4 成熟度 + 材料是否充足 + 分支建议）
-python3 src/scripts/pipeline.py requirements/REQ-001-my-feature entry
+python3 src/scripts/pipeline.py requirements/REQ-NNN-my-feature entry
 
 # 5. AI 按 SKILL.md 起草 → 跑机器闸门
-python3 src/scripts/pipeline.py requirements/REQ-001-my-feature gate --work-item project-background-goal
+python3 src/scripts/pipeline.py requirements/REQ-NNN-my-feature gate --work-item project-background-goal
 
 # 6. 真实人工确认（只有人能设 confirmed；--reviewer-id 需与 00-input/authorized-reviewers.json 一致）
-python3 src/scripts/pipeline.py requirements/REQ-001-my-feature review \
+python3 src/scripts/pipeline.py requirements/REQ-NNN-my-feature review \
   --work-item project-background-goal --decision approve \
   --reviewer "评审人姓名" --reviewer-id "飞书或组织稳定用户ID" \
   --reviewer-role "business_owner"
@@ -131,7 +131,7 @@ requirements/        你的需求实例（运行时生成，gitignore——每�
 ## 验证
 
 ```bash
-bash run_tests.sh                              # 全量回归（61 项，含负例反向断言）
+bash run_tests_mac.sh                          # 全量回归（61 项，含负例反向断言）
 python3 src/scripts/consistency_check.py       # 跨文档一致性
 python3 src/scripts/pipeline.py <REQ-DIR> status  # 需求状态
 ```

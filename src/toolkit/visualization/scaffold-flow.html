@@ -180,17 +180,20 @@ footer{margin-top:24px;text-align:center;color:#888;font-size:11px;padding-top:1
     <a href="#sec-branches" class="nav-item" data-target="sec-branches"><span class="nav-n">11</span>分支 Skill 触发矩阵</a>
     <a href="#sec-tree" class="nav-item" data-target="sec-tree"><span class="nav-n">12</span>文件完整架构</a>
     <a href="#sec-kpi" class="nav-item" data-target="sec-kpi"><span class="nav-n">13</span>测试与质量基线</a>
+    <a href="#sec-feishu" class="nav-item" data-target="sec-feishu"><span class="nav-n">14</span>飞书集成与结果对比</a>
 </nav>
 <div class="content">
 <header>
   <h1>PM Scaffold · 产品 AI 脚手架 · 项目驾驶舱 · 程序流程总图</h1>
-  <div class="sub">一个需求的完整程序流程：从「新需求输入」到「交付人工确认的 prd.md」——每个判断、每条线、每个回路都有明确条件 · v0.2.0</div>
+  <div class="sub">一个需求的完整程序流程：从「新需求输入」到「交付人工确认的 prd.md」——每个判断、每条线、每个回路都有明确条件 · v0.3.1</div>
   <div class="tags">
-    <span class="tag green">● 61/61 测试绿</span>
+    <span class="tag green">● 75/75 测试绿</span>
     <span class="tag">3 阶段</span>
     <span class="tag">19 Skill（5 主 + 9 子 + 4 分支产物 + 1 能力）</span>
     <span class="tag">9 共享模块</span>
     <span class="tag amber">Loop 闭环：级联失效 / 双向追溯 / 防篡改</span>
+    <span class="tag">飞书闭环：取料 → 生成 → 发布</span>
+    <span class="tag">产物快照对比</span>
   </div>
 </header>
 <section id="sec-flow">
@@ -555,7 +558,7 @@ footer{margin-top:24px;text-align:center;color:#888;font-size:11px;padding-top:1
   <div class="desc" style="margin-top:10px;margin-bottom:0">支持产物（不直接进 PRD）：复述清单 RR-NNN / 发散候选 SCN-XXX（requirement-restate 能力，过程记录）· 埋点事件表 EV-NNN（tracking-plan）· 问题清单 ISS-NNN（issue-record，§13 收口表）· 竞品调研 / 可行性分析记录（99-review/support/）。</div>
 </section>
 <section id="sec-scripts">
-  <h2>8. 脚本说明书 <span class="badge">11 个 · 机器循环引擎</span></h2>
+  <h2>8. 脚本说明书 <span class="badge">14 个 · 机器循环引擎</span></h2>
   <div class="desc">全部 stdlib-only（Python 3.10+），无外部依赖；对不存在的路径全部优雅报错。</div>
   <table><tr><th>脚本</th><th>职责</th><th>关键行为</th></tr>
     <tr><td><code>pipeline.py</code><br><span style="color:#888;font-size:11px">★ 命令链入口</span></td><td colspan="2" style="padding-top:10px">init / status / entry / gate / review / reflow(--apply)。全仓唯一写 confirmed 的路径在 review() approve 分支；reflow 写 superseded + ChangeRecord（DEC-XXX 字段）；entry 做内容六信号判定与分支信号。</td></tr>
@@ -568,6 +571,9 @@ footer{margin-top:24px;text-align:center;color:#888;font-size:11px;padding-top:1
     <tr><td><code>branch_validator.py</code><br><span style="color:#888;font-size:11px">评审记录 + SHA-256</span></td><td colspan="2" style="padding-top:10px">confirmed 产物必须有真实评审人 + 匹配 ReviewRecord + 当前内容哈希与 artifact_content_sha256 一致（防篡改）。</td></tr>
     <tr><td><code>migrate_layout_v2.py</code><br><span style="color:#888;font-size:11px">一次性迁移工具</span></td><td colspan="2" style="padding-top:10px">旧 Wave 布局 → v2 布局；--apply 必须加 --confirm（防误运行），默认 dry-run。</td></tr>
     <tr><td><code>render_diagrams.sh / render_mermaid_local.html</code><br><span style="color:#888;font-size:11px">图表辅助</span></td><td colspan="2" style="padding-top:10px">本地渲染 Mermaid 流程图的辅助工具（CDN mermaid）。</td></tr>
+    <tr><td><code>feishu_fetch.py</code><br><span style="color:#888;font-size:11px">飞书取料 ★ 以飞书为主</span></td><td colspan="2" style="padding-top:10px">lark-cli 读取飞书文档 → HTML 表格转 Markdown（修复文本内 < 字符误判）→ 账号/密码/token 脱敏 → source-register 自动登记。用法：<code>python3 src/scripts/feishu_fetch.py &lt;doc-token&gt; --output &lt;材料.md&gt; --register --src-id SRC-001 --src-title "标题"</code></td></tr>
+    <tr><td><code>prd_publish.py</code><br><span style="color:#888;font-size:11px">飞书发布 ★ 闭环出口</span></td><td colspan="2" style="padding-top:10px">产物经 stdin 调 lark-cli docs +create 发布为飞书文档 → doc-id 写回产物 frontmatter <code>feishu_doc_id</code> → 登记 .test-output/飞书发布日志.md。用法：<code>python3 src/scripts/prd_publish.py &lt;prd.md&gt; [--title ...] [--note ...]</code></td></tr>
+    <tr><td><code>snapshot_cases.py</code><br><span style="color:#888;font-size:11px">产物快照对比 ★ 结果比对机器化</span></td><td colspan="2" style="padding-top:10px">借鉴 deepseek-harness 快照理念：录制各案例产物规模基线（.test-output/产物快照.json），--check 对比状态漂移/规模变化（exit 1 有差异）。用法：<code>--record</code> 录基线 / <code>--check</code> 对比</td></tr>
   </table>
 </section>
 <section id="sec-shared">
@@ -668,7 +674,7 @@ PM Scaffold · 文件完整架构
 ├─ AGENTS.md                    AI 唯一入口：启动顺序 / 硬红线 / 命令
 ├─ CHANGELOG.md                 版本变更（Keep a Changelog）
 ├─ LICENSE · CONTRIBUTING.md    MIT + 贡献规范
-├─ run_tests.sh · .ps1          全量回归（注册表驱动 + violation 负例反向断言）
+├─ run_tests_mac.sh · .ps1      全量回归（注册表驱动 + violation 负例反向断言）
 ├─ docs/
 │  └─ ARCHITECTURE.md           架构说明（对外门面）
 ├─ env_config/requirements.txt  依赖清单（stdlib-only，Python 3.10+）
@@ -722,17 +728,29 @@ PM Scaffold · 文件完整架构
   </pre>
 </section>
 <section id="sec-kpi">
-  <h2>13. 测试与质量基线 <span class="badge">61/61</span></h2>
-  <div class="desc">run_tests.sh 由注册表驱动：5 主 + 9 子 + 4 分支产物 + 1 能力校验器全量语法检查与 fixture 验证；<b>violation 负例反向断言</b>——故意违规样本必须被校验器拒绝，否则 FAIL。</div>
+  <h2>13. 测试与质量基线 <span class="badge">75/75</span></h2>
+  <div class="desc">run_tests_mac.sh 由注册表驱动：5 主 + 9 子 + 4 分支产物 + 1 能力校验器全量语法检查与 fixture 验证；<b>violation 负例反向断言</b>——故意违规样本必须被校验器拒绝，否则 FAIL。</div>
   <div class="kpi-grid">
-    <div class="kpi"><div class="n">61/61</div><div class="l">回归检查（含 4 负例反向断言）</div></div>
+    <div class="kpi"><div class="n">75/75</div><div class="l">回归检查（含负例反向断言 + 3 案例全流程）</div></div>
     <div class="kpi"><div class="n">19</div><div class="l">Skill（5 主 + 9 子 + 4 分支产物 + 1 能力）</div></div>
     <div class="kpi"><div class="n">19</div><div class="l">手写 validate_artifact.py</div></div>
     <div class="kpi"><div class="n">0</div><div class="l">一致性错误（consistency_check）</div></div>
+    <div class="kpi"><div class="n">8</div><div class="l">案例基线快照（snapshot_cases --check 一致）</div></div>
+    <div class="kpi"><div class="n">17</div><div class="l">观察项沉淀（OBS-001~017，2 项已落地）</div></div>
   </div>
 </section>
+<section id="sec-feishu">
+  <h2>14. 飞书集成与结果对比 <span class="badge">以本地 + 飞书为主</span></h2>
+  <div class="desc">闭环：<b>飞书取材料</b>（feishu_fetch.py，脱敏 + source-register 自动登记）→ <b>本地生成产物</b>（pipeline 全流程）→ <b>飞书发布</b>（prd_publish.py，doc-id 回写产物 frontmatter）。结果对比：<b>产物快照</b>（snapshot_cases.py --record/--check）+ 对比报告（.test-output/测试对比报告-*）。</div>
+  <table><tr><th>环节</th><th>脚本</th><th>关键行为</th></tr>
+    <tr><td>材料下载</td><td><code>feishu_fetch.py</code></td><td>lark-cli docs +fetch → 表格/标签清洗 → 密码与 token 脱敏（&lt;REDACTED&gt;）→ source-register.md 自动追加 SRC 行</td></tr>
+    <tr><td>本地生成</td><td><code>pipeline.py</code> 全流程</td><td>BG→JS→UX→FD→PRD 五级产物 + tracking-plan 分支；gate 机器校验</td></tr>
+    <tr><td>飞书发布</td><td><code>prd_publish.py</code></td><td>stdin 传内容创建飞书文档 → frontmatter 写 feishu_doc_id → 发布日志</td></tr>
+    <tr><td>结果比对</td><td><code>snapshot_cases.py</code> / 对比报告</td><td>案例产物规模基线 + diff（📈/📉/🔁）；三方基准对比（DeepSeek 系规范 / 行业标杆）收敛 OBS-010~013</td></tr>
+  </table>
+</section>
 <footer>
-  PM Scaffold · v0.2.0 · 本图与 src/framework/workflow-registry.json 同源——registry 是唯一机器真相，本图仅作人类可读视图。测试数与 Skill 数以 <code>bash run_tests.sh</code> 与 registry 实测为准。
+  PM Scaffold · v0.3.1 · 本图与 src/framework/workflow-registry.json 同源——registry 是唯一机器真相，本图仅作人类可读视图。测试数与 Skill 数以 <code>bash run_tests_mac.sh</code> 与 registry 实测为准。飞书链路以 lark-cli 实测为准。
 </footer>
 </div>
 </div>
@@ -822,7 +840,7 @@ claude          # 在项目目录里启动，它启动时会自动读 AGENTS.md
   <li><b>风险识别</b>：让 Codex 专门找「这个需求里最容易被忽略的三个风险」，多一双眼睛看。</li>
   <li><b>需求澄清与最终把关</b>：正式确认之前，让 Codex 复核「待拍板事项是不是列全了」，防止漏掉关键决策就送审。</li>
 </ul>
-<div class="tut-callout ok"><b>用法示例</b>：Claude Code 写完产物后，你对 Codex 说：<i>「检查 requirements/REQ-001 的产物是否满足 AGENTS.md 的全部硬红线，逐条给结论，不要修改任何文件。」</i></div>
+<div class="tut-callout ok"><b>用法示例</b>：Claude Code 写完产物后，你对 Codex 说：<i>「检查 requirements/REQ-NNN 的产物是否满足 AGENTS.md 的全部硬红线，逐条给结论，不要修改任何文件。」</i></div>
 
 <h4>2.3 Cursor / Copilot：IDE 内看代码、小修改</h4>
 <p>适合在 IDE 里打开产物文件、看某一段内容、改一句话。它们不擅长跑长流程（8 步循环、多轮确认），所以不要把「完整跑一个需求」交给它们——那个活让 Claude Code 干。</p>
@@ -841,7 +859,7 @@ claude          # 在项目目录里启动，它启动时会自动读 AGENTS.md
 "你读过 AGENTS.md 了吗？按里面的启动顺序列出要读的 5 个框架文件，并复述 3 条硬红线。"
 
 # ② 能在终端跑命令？——让它执行
-"跑一下 python3 src/scripts/pipeline.py requirements/REQ-001-xxx status，把输出贴给我。"
+"跑一下 python3 src/scripts/pipeline.py requirements/REQ-NNN-xxx status，把输出贴给我。"
 
 # ③ 有 Python 3.10+？——直接查
 "运行 python3 --version，告诉我版本号。"</pre>
@@ -863,14 +881,14 @@ claude          # 在项目目录里启动，它启动时会自动读 AGENTS.md
 <pre class="tut-code">git clone https://github.com/konwait12/pm-scaffold.git
 cd pm-scaffold
 python3 --version   # 需要 3.10 或更高
-bash run_tests.sh   # 第一次自检：看到 "Result: 61 passed / 0 failed" 就位</pre>
+bash run_tests_mac.sh   # 第一次自检：看到 "Result: 61 passed / 0 failed" 就位</pre>
 <p><b>方式 B：直接让 AI 做</b>（推荐给不想碰命令行的你）</p>
 <pre class="tut-code">"克隆 https://github.com/konwait12/pm-scaffold.git 到本地，
- 跑一遍 run_tests.sh 自检，把结果和项目目录路径告诉我。"</pre>
+ 跑一遍 run_tests_mac.sh 自检，把结果和项目目录路径告诉我。"</pre>
 <p>两种方式殊途同归。唯一要盯的是自检结果：<b>看到「Result: 61 passed / 0 failed」才算真的就位</b>。</p>
 
 <h4>3.3 自检脚本跑不通怎么办</h4>
-<p>先弄明白 run_tests.sh 到底在跑什么（按顺序）：</p>
+<p>先弄明白 run_tests_mac.sh 到底在跑什么（按顺序）：</p>
 <ul>
   <li><b>① 跨文档一致性检查</b>（consistency_check.py）：注册表、技能路径、模板引用互相能不能对上——对不上说明架构「说一套做一套」。</li>
   <li><b>② 19 个 Skill 的校验器检查</b>：每个 skill 的 validate_artifact.py 语法正确 + 正例样本必须通过；<b>故意违规的样本（violation）必须被拒绝</b>——拒绝不了说明校验器形同虚设（负例反向断言）。</li>
@@ -881,15 +899,15 @@ bash run_tests.sh   # 第一次自检：看到 "Result: 61 passed / 0 failed" �
 <ul>
   <li>先看是不是 Python 版本问题（回到 3.1）——最常见的坑；</li>
   <li>再看是不是 clone 不完整——删掉重新 clone 一次；</li>
-  <li>把报错原文发给 AI：「<i>run_tests.sh 报了这个错（贴原文），帮我判断是我的环境问题还是代码问题，怎么修。</i>」注意：官方仓库默认是绿的，如果 61 项里出现 FAIL，多半是你本机环境问题；如果你改过代码，那才考虑是改动引入的问题。</li>
+  <li>把报错原文发给 AI：「<i>run_tests_mac.sh 报了这个错（贴原文），帮我判断是我的环境问题还是代码问题，怎么修。</i>」注意：官方仓库默认是绿的，如果 61 项里出现 FAIL，多半是你本机环境问题；如果你改过代码，那才考虑是改动引入的问题。</li>
 </ul>
-<div class="tut-callout bad"><b>Windows 用户注意</b>：项目同时提供了 <code>run_tests_win.ps1</code>——在 PowerShell 里运行它（<code>.\run_tests_win.ps1</code>），而不是 bash 版本的 run_tests.sh。路径分隔符与命令写法有差异，交给 AI 处理即可，但别用它跑错脚本。</div>
+<div class="tut-callout bad"><b>Windows 用户注意</b>：项目同时提供了 <code>run_tests_win.ps1</code>——在 PowerShell 里运行它（<code>.\run_tests_win.ps1</code>），而不是 bash 版本的 run_tests_mac.sh。路径分隔符与命令写法有差异，交给 AI 处理即可，但别用它跑错脚本。</div>
 
 <h4>3.4 拉下来后目录里有什么（看一眼就好）</h4>
 <ul>
   <li><b>README.md</b>：给人类看的门面文档（快速开始、工作流图）。</li>
   <li><b>AGENTS.md</b>：给 AI 看的唯一入口说明书（下一章的主角）。</li>
-  <li><b>run_tests.sh / run_tests_win.ps1</b>：自检脚本。</li>
+  <li><b>run_tests_mac.sh / run_tests_win.ps1</b>：自检脚本。</li>
   <li><b>src/framework/</b>：治理层——注册表（唯一真相源）、宪法、契约、思考透镜。</li>
   <li><b>src/stages/</b>：3 个阶段 × 5 个主 skill + 9 个子 skill 的实现。</li>
   <li><b>src/scripts/</b>：11 个脚本（命令入口 + 校验器们）。</li>
@@ -963,7 +981,7 @@ bash run_tests.sh   # 第一次自检：看到 "Result: 61 passed / 0 failed" �
 <p>这是全教程最重要的习惯：<b>给 AI 下任何长指令，都把它必须汇报的内容钉死</b>。四件事：</p>
 <table>
   <tr><th>汇报项</th><th>含义</th><th>例子</th></tr>
-  <tr><td><b>① 产物路径</b></td><td>写完的文件在哪，方便你打开看</td><td>requirements/REQ-001/001-business-requirements/01-background-goal/background-goal.md</td></tr>
+  <tr><td><b>① 产物路径</b></td><td>写完的文件在哪，方便你打开看</td><td>requirements/REQ-NNN/001-business-requirements/01-background-goal/background-goal.md</td></tr>
   <tr><td><b>② 校验结果</b></td><td>机器闸门过没过、哪几条没过</td><td>gate：5 项检查 4 过 1 FAIL（六态缺 UNKNOWN）</td></tr>
   <tr><td><b>③ 待拍板事项</b></td><td>哪些事只有你能决定（问题编号）</td><td>Q-001 目标数值待你确认；DEC-001 是否支持线下核销待你拍板</td></tr>
   <tr><td><b>④ 下一步建议</b></td><td>它建议接下来做什么（仅供参考，决定权在你）</td><td>建议：你确认背景目标后，继续用户旅程与故事</td></tr>
@@ -989,11 +1007,11 @@ bash run_tests.sh   # 第一次自检：看到 "Result: 61 passed / 0 failed" �
 <p>每步之间可以间隔很久（等业务方确认），这不影响流程——<code>status</code> 命令会告诉你当前停在哪、下一步是什么。想让 AI 一次「把整个需求做完」？可以，但它每完成一个工作项仍然会停下来等你确认——这不是它偷懒，是硬性流程：上游未确认，下游不启动。</p>
 
 <h3 id="tut-6">6. 一个需求从零到 PRD 的完整剧本</h3>
-<p>以「客户邀约活动系统」为例（编号 REQ-001），把 5 幕拆成「你说 → AI 做 → 你确认」的完整对话。<b>每一幕结尾都有一个「你确认」的节点</b>——那是流程的呼吸点，也是你唯一要说「批准」的地方。</p>
+<p>以「客户邀约活动系统」为例（编号 REQ-NNN），把 5 幕拆成「你说 → AI 做 → 你确认」的完整对话。<b>每一幕结尾都有一个「你确认」的节点</b>——那是流程的呼吸点，也是你唯一要说「批准」的地方。</p>
 
 <h4>第 1 幕 · 开工（初始化 + 材料登记 + 入口判定）</h4>
 <p><b>你说：</b></p>
-<pre class="tut-code">"帮我初始化一个新需求，编号 REQ-001，主题是客户邀约。
+<pre class="tut-code">"帮我初始化一个新需求，编号 REQ-NNN，主题是客户邀约。
  然后把我的材料放进 00-input，跑一下入口判定，告诉我成熟度。"</pre>
 <p><b>AI 做：</b>建好需求骨架目录（含授权清单和来源登记表），把材料登记成 SRC-001、SRC-002…，跑 entry 判定。如果材料只有想法，它会说：<i>「entry 判定结果：L0 仅想法，材料不足。建议先跑需求重举（发散模式）——我把候选列出来，你来处置。」</i></p>
 <p><b>你确认：</b>要么补材料，要么说「<i>好，先发散</i>」——等候选清单出来后，你人工勾选 include（进入需求）/ exclude（排除）/ defer（延后）/ research（待研究）。只有 include 的候选进入背景目标的输入包。</p>
@@ -1060,14 +1078,14 @@ bash run_tests.sh   # 第一次自检：看到 "Result: 61 passed / 0 failed" �
 
 <h4>② 跑确认命令</h4>
 <p>AI 完成一个工作项、gate 全绿后，由你亲自跑（也可以让 AI 把命令拼好贴给你，你来执行）：</p>
-<pre class="tut-code">python3 src/scripts/pipeline.py requirements/REQ-001-my-feature review \
+<pre class="tut-code">python3 src/scripts/pipeline.py requirements/REQ-NNN-my-feature review \
   --work-item project-background-goal --decision approve \
   --reviewer "王小明" --reviewer-id "feishu-uid-8f3a9c21" \
   --reviewer-role "business_owner"</pre>
 <p><b>每个参数什么意思</b>：</p>
 <table>
   <tr><th>参数</th><th>意思</th></tr>
-  <tr><td><code>requirements/REQ-001-…</code></td><td>需求目录路径，定位到你要确认的那个需求</td></tr>
+  <tr><td><code>requirements/REQ-NNN-…</code></td><td>需求目录路径，定位到你要确认的那个需求</td></tr>
   <tr><td><code>--work-item</code></td><td>确认哪个工作项：project-background-goal / user-journey-and-stories / product-ux / function-description / prd-assembly</td></tr>
   <tr><td><code>--decision approve</code></td><td>批准（把状态写成 confirmed）；写 <code>changes</code> 是打回修改，可附评语</td></tr>
   <tr><td><code>--reviewer</code></td><td>你的真实姓名（与 authorized-reviewers.json 完全一致）</td></tr>
@@ -1112,7 +1130,7 @@ ERROR: machine gates must pass before approval
 
 <h4>8.1 开工与入口</h4>
 <pre class="tut-code"># ① 开工：初始化需求
-"帮我初始化新需求 REQ-002-{主题}，把 {材料路径} 登记进 00-input，跑入口判定。"
+"帮我初始化新需求 REQ-NNN-{主题}，把 {材料路径} 登记进 00-input，跑入口判定。"
 
 # ② 材料登记（补材料时）
 "把 {新材料路径} 补登记成 SRC 来源，更新来源登记表。"
@@ -1181,10 +1199,10 @@ ERROR: machine gates must pass before approval
 "prd.md 已确认，执行发布动作：branch_validator 自动做 SHA-256 复核后产出发布记录。"
 
 # ⑳ 自检
-"跑一遍 bash run_tests.sh 全量自检，把结果贴给我。"
+"跑一遍 bash run_tests_mac.sh 全量自检，把结果贴给我。"
 
 # ㉑ 双 Agent 验收（对第二个 Agent 说）
-"检查 requirements/REQ-002 的产物是否满足 AGENTS.md 的全部硬红线，逐条给结论，
+"检查 requirements/REQ-NNN 的产物是否满足 AGENTS.md 的全部硬红线，逐条给结论，
  不要修改任何文件。"</pre>
 
 <h3 id="tut-9">9. 卡住了怎么办（排查顺序）</h3>
@@ -1243,7 +1261,7 @@ ERROR: waiver_required issue 'xxx' needs --waive CODE=&lt;reason&gt;
  ⑦ 有没有硬编码路径 / Skill 名？逐条回答，不要跳过。"</pre>
 
 <h4>9.6 想独立验证 AI 的活</h4>
-<p>用另一个 Agent（比如 Codex）：<i>「检查 requirements/REQ-001 的产物是否满足 AGENTS.md 的红线，逐条给结论，不要修改任何文件。」</i>——两个 Agent 互相制衡，谁都不能自说自话。</p>
+<p>用另一个 Agent（比如 Codex）：<i>「检查 requirements/REQ-NNN 的产物是否满足 AGENTS.md 的红线，逐条给结论，不要修改任何文件。」</i>——两个 Agent 互相制衡，谁都不能自说自话。</p>
 
 <h3 id="tut-10">10. 进阶玩法</h3>
 <p>这一章讲四个「更进一步」的能力：分支产物 skill 与能力、信号层、双 Agent 制衡、技法吸收。</p>

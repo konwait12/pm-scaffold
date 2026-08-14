@@ -89,7 +89,7 @@ All notable changes to PM Scaffold · 产品 AI 脚手架 are documented here. T
 ### Added · Skill 同等丰富化（15 个 skill）
 - 8 子 skill + 3 支持 skill + 4 分支 skill 全部补齐到主 skill 标准：10 节 SKILL.md + 7 类 references + thinking-framework 接线 thinking-core + agents/openai.yaml + README
 - 修复：exception-handling validator ID 正则（EX-）、state-machine 前缀（STATE-）、solution-assessment 模板路径漂移、_norm 中文序号剥离
-- `run_tests.sh` 改为注册表驱动，覆盖全部 7 个分支 skill
+- `run_tests_mac.sh` 改为注册表驱动，覆盖全部 7 个分支 skill
 
 ### Added · 开源准备
 - `LICENSE`（MIT）、`CONTRIBUTING.md`；确认无隐私数据残留

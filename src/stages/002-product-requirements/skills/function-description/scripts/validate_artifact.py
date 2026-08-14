@@ -30,6 +30,41 @@ def _norm(h: str) -> str:
     return h
 
 
+def _section_text(text: str, name: str) -> str | None:
+    """Return the block under the `## N. name` heading (up to the next ## heading)."""
+    headings = list(re.finditer(r"^##\s+(.+?)\s*$", text, re.MULTILINE))
+    for i, m in enumerate(headings):
+        if _norm(m.group(1)) == _norm(name):
+            end = headings[i + 1].start() if i + 1 < len(headings) else len(text)
+            return text[m.start():end]
+    return None
+
+
+def _count_p0_functions(text: str) -> int:
+    """Count unique P0 functions from the 功能清单 table's priority column.
+
+    Table shape: `| FEA-XXX | 功能名 | 描述 | 所属故事 | 优先级 | 知识状态 |`
+    (priority = 5th column, P0/P1/P2). Counting here avoids the old bug where
+    `FUN-(\\d+)[^\\n]*P0` also matched 验收依据 (AC) rows that carry
+    `FUN-XXX ... P0` on the same line, inflating the P0 function count.
+    """
+    section = _section_text(text, "功能清单")
+    if section is None:
+        return 0
+    p0_ids: set[str] = set()
+    for line in section.splitlines():
+        line = line.strip()
+        if not line.startswith("|") or "---" in line:
+            continue
+        cells = [c.strip() for c in line.strip("|").split("|")]
+        if len(cells) < 5:
+            continue
+        m = re.match(r"(?:FEA|FUN)-\d+", cells[0])
+        if m and cells[4] == "P0":
+            p0_ids.add(m.group(0))
+    return len(p0_ids)
+
+
 def parse_frontmatter(text: str) -> dict[str, str]:
     text = re.sub(r"^<!--.*?-->\s*", "", text, flags=re.DOTALL)
     m = re.match(r"\A---\s*\n(.*?)\n---\s*\n", text, re.DOTALL)
@@ -93,10 +128,13 @@ def validate(path: Path) -> dict[str, object]:
     # Semantic red flags
     if status == "ready_for_human_review":
         # Flag 1: fun_count vs br_count
-        fun_count = len(re.findall(r"FUN-\d+", text))
-        br_count = len(re.findall(r"BR-\d+", text))
-        ac_count = len(re.findall(r"AC-\d+", text))
-        vl_count = len(re.findall(r"VL-\d+", text))
+        # Count UNIQUE ids, not raw occurrences: a function referenced in the
+        # 功能清单/流程/BR/VL/AC tables appears many times, so `len(re.findall)`
+        # over-counts and produces misleading "41 functions" style warnings.
+        fun_count = len(set(re.findall(r"FUN-\d+", text)))
+        br_count = len(set(re.findall(r"BR-\d+", text)))
+        ac_count = len(set(re.findall(r"AC-\d+", text)))
+        vl_count = len(set(re.findall(r"VL-\d+", text)))
         if fun_count >= 1 and br_count == 0:
             warnings.append(f"Semantic: {fun_count} functions defined but no business rules (BR-*); functions are underspecified")
         if fun_count >= 1 and ac_count == 0:
@@ -115,8 +153,11 @@ def validate(path: Path) -> dict[str, object]:
             )
 
         # Flag 2: P0 features must have exception handling
-        p0_count = len(re.findall(r"FUN-\d+.*P0", text))
-        exc_count = len(re.findall(r"异常与失败处理", text))
+        # P0 count comes from the 功能清单 table's priority column (NOT from AC
+        # rows where `FUN-XXX ... P0` also appears on the same line); exception
+        # coverage = number of EX-XXX rows (NOT the 异常与失败处理 section-title count).
+        p0_count = _count_p0_functions(text)
+        exc_count = len(set(re.findall(r"EX-\d+", text)))
         if p0_count >= 2 and exc_count < p0_count:
             warnings.append(f"Semantic: {p0_count} P0 functions but only {exc_count} exception handling sections; verify completeness")
 

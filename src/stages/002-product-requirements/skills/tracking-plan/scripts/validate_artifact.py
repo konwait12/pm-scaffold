@@ -1,13 +1,14 @@
 #!/usr/bin/env python3
 """Sub-skill validator · tracking-plan
 
-Each sub-skill produces a section of the parent artifact. This validator
-checks that the tracking-plan section is present in the parent
-function-description artifact and that expected ID prefixes exist.
+tracking-plan is a Branch skill whose output is an independent artifact
+(`99-review/support/tracking-plan.md` under each requirement dir), not a
+section of the parent function-description. This validator checks that the
+§埋点需求分析 section is present and that expected ID prefixes exist.
 
 Copy template from `src/shared/audit/subskill-validator-template.py`.
 
-Run: python3 validate_artifact.py <parent-artifact.md> [--json]
+Run: python3 validate_artifact.py [tracking-plan.md] [--json]
 """
 
 from __future__ import annotations
@@ -22,28 +23,45 @@ from pathlib import Path
 # ── Per-sub-skill configuration (edit these) ──────────────
 SECTION_NAME = "埋点需求分析"        # sub-skill output section in parent artifact
 ID_PATTERN = r"EV-\d+"              # event ID prefix
-REQUIRED_REFS = (r"FUN-\d+", r"G-\d+")  # every event must link to a FUN and a G
-# Path to parent artifact, relative to the sub-skill scripts/ dir.
-# Tracking-plan writes into the §埋点需求分析 section of the parent
-# `function-description.md`. The default points at the template that
-# ships with the repository; callers may override via CLI positional arg
-# or by setting the PM_PARENT_ARTIFACT env var.
+REQUIRED_REFS = (r"FUN-\d+", r"G\d+")  # every event must link to a FUN and a G
 #
-# __file__ = src/stages/002-product-requirements/skills/tracking-plan/scripts/validate_artifact.py
-# parents[0]=scripts, [1]=tracking-plan, [2]=skills, [3]=002-product-requirements,
-# [4]=stages, [5]=src, [6]=<repo root>
-_PROJECT_ROOT = Path(__file__).resolve().parents[6]
-PARENT_ARTIFACT = Path(os.environ.get(
-    "PM_PARENT_ARTIFACT",
-    str(
-        _PROJECT_ROOT
-        / "src"
-        / "templates"
-        / "stage-2-product"
-        / "function-description.md"
-    ),
-))
+# tracking-plan is a Branch skill (see src/framework/workflow-registry.json
+# support_capabilities.tracking-plan): its output is an INDEPENDENT artifact
+# written to `99-review/support/tracking-plan.md` under each requirement dir —
+# NOT a section of the parent function-description. The default target must
+# therefore point at that branch artifact location, not at the
+# function-description template (which has no §埋点需求分析 section and would
+# FAIL by misjudgment). Callers may still override via the CLI positional arg
+# or the PM_PARENT_ARTIFACT env var.
 # ─────────────────────────────────────────────────────────
+
+
+def _default_artifact() -> Path | None:
+    """Resolve the default branch artifact location.
+
+    The validator is typically invoked from the repo root, so we look for
+    `requirements/*/99-review/support/tracking-plan.md` under the current
+    working directory. When several requirements carry a tracking-plan, the
+    most recently modified one is used (the active requirement). Returns None
+    when none is found so main() can report a clear error instead of silently
+    validating the wrong (template) file.
+    """
+    candidates = sorted(
+        Path.cwd().glob("requirements/*/99-review/support/tracking-plan.md"),
+        key=lambda p: p.stat().st_mtime,
+        reverse=True,
+    )
+    return candidates[0] if candidates else None
+
+
+def _resolve_artifact(explicit: Path | None) -> Path | None:
+    """Resolve the artifact to validate: CLI arg > PM_PARENT_ARTIFACT > default."""
+    if explicit is not None:
+        return explicit
+    env = os.environ.get("PM_PARENT_ARTIFACT")
+    if env:
+        return Path(env)
+    return _default_artifact()
 
 
 def _norm(h: str) -> str:
@@ -155,12 +173,21 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
         "artifact", type=Path, nargs="?", default=None,
-        help="Parent artifact path. Defaults to configured path.",
+        help="Branch artifact path (tracking-plan.md). Defaults to the "
+             "resolved branch artifact location under requirements/.",
     )
     parser.add_argument("--json", action="store_true", dest="as_json")
     args = parser.parse_args()
 
-    artifact = args.artifact or PARENT_ARTIFACT
+    artifact = _resolve_artifact(args.artifact)
+    if artifact is None:
+        print(
+            "ERROR: no artifact path given and no "
+            "requirements/*/99-review/support/tracking-plan.md found "
+            "(run from the repo root or pass the artifact path explicitly)",
+            file=sys.stderr,
+        )
+        return 1
     result = validate(artifact)
     if args.as_json:
         print(json.dumps(result, ensure_ascii=False, indent=2))

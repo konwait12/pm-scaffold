@@ -103,8 +103,8 @@ if EXTENSIONS_DIR.exists():
 
 | 测试场景 | 输入 | 期望输出 |
 |---|---|---|
-| 无 extensions 目录 | `req_dir=REQ-001`，`extensions_dir` 不存在 | 返回空列表，resolver 回退核心模板 |
-| 无匹配模板包 | `req_dir` 摘要为"内容平台发布"，extensions 中只有 `rsvp-activity` | 返回空列表 |
-| 精确匹配 | `req_dir` 摘要为"奢侈品春季 RSVP 活动"，extensions 有 `rsvp-activity` | 返回 `["rsvp-activity"]` |
+| 无 extensions 目录 | `req_dir=REQ-NNN`，`extensions_dir` 不存在 | 返回空列表，resolver 回退核心模板 |
+| 无匹配模板包 | `req_dir` 摘要为"内容平台发布"，extensions 中只有 `<domain>-scenario` | 返回空列表 |
+| 精确匹配 | `req_dir` 摘要为"电商下单场景"，extensions 有 `<domain>-scenario` | 返回 `["<domain>-scenario"]` |
 | 多候选 | `req_dir` 摘要同时命中两个域 | 返回 top_k=3 个候选 ID |
 | deprecated 模板包不参与匹配 | extensions 中有 `deprecated` 状态的模板包 | 跳过该模板包 |

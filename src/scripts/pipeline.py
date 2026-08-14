@@ -17,20 +17,33 @@ from workflow_registry import (
     artifact_content_hash,
     branch_capabilities,
     find_artifact,
+    read_frontmatter,
     resolve_work_item,
     work_items,
 )
 
+import hash_anchor
 
-def run_json(script: str, req_dir: Path) -> dict:
+
+def run_script_json(script: Path, target: Path) -> dict:
+    """Run an arbitrary validator script against a target path with `--json`.
+
+    Unlike `run_json` (which resolves scripts under src/scripts/), this helper
+    accepts a full script path so shared validators (e.g. the issue-record
+    validator under src/shared/clarify/...) can be invoked from the gate.
+    """
     result = subprocess.run(
-        [sys.executable, str(Path(__file__).parent / script), str(req_dir), "--json"],
+        [sys.executable, str(script), str(target), "--json"],
         capture_output=True, text=True, check=False,
     )
     try:
         return json.loads(result.stdout)
     except json.JSONDecodeError:
         return {"ok": False, "error": result.stderr.strip() or result.stdout.strip()}
+
+
+def run_json(script: str, req_dir: Path) -> dict:
+    return run_script_json(Path(__file__).parent / script, req_dir)
 
 
 def run_property_check(artifact: Path) -> dict:
@@ -45,6 +58,37 @@ def run_property_check(artifact: Path) -> dict:
 
 
 ACTIVE = {"needs_user_input", "conditional_review", "ready_for_human_review"}
+
+# issue-record: 跨阶段问题清单是「每个案例必备的稳定产物」（非可选分支）。
+# 校验器位于 shared 下（src/shared/clarify/skills/issue-record/），与主干
+# work-item 校验器（src/scripts/ 下）路径不同，需用 run_script_json 单独调用。
+ISSUE_RECORD_VALIDATOR = (
+    Path(__file__).parent.parent
+    / "shared/clarify/skills/issue-record/scripts/validate_artifact.py"
+)
+ISSUE_RECORD_PATH = "99-review/support/issue-record.md"
+
+
+def check_issue_record(req_dir: Path) -> dict:
+    """强制校验每个案例必备的 issue-record 稳定产物。
+
+    1. 99-review/support/issue-record.md 必须存在，缺失即 gate 失败（error）。
+    2. 存在则运行 shared issue-record 校验器（模板 §1-§13 + frontmatter），
+       ok=False 即 gate 失败。
+    3. 校验结果并入返回 dict 的 `issue_record` 字段。
+    """
+    path = req_dir / ISSUE_RECORD_PATH
+    if not path.is_file():
+        return {
+            "ok": False,
+            "path": ISSUE_RECORD_PATH,
+            "error": f"{ISSUE_RECORD_PATH} 不存在（每个案例必备的稳定产物，缺失即 gate 失败）",
+        }
+    result = run_script_json(ISSUE_RECORD_VALIDATOR, path)
+    result["path"] = str(path.relative_to(req_dir))
+    result["ok"] = bool(result.get("ok"))
+    return result
+
 
 # Entry-assessment content signals (src/shared/intake-routing 的 6 信号落地)
 ENTRY_SIGNAL_KEYWORDS = {
@@ -102,7 +146,7 @@ def branch_skill_signals(req_dir: Path, statuses: dict) -> list[dict]:
 def init_requirement(name: str | None) -> int:
     """Create a requirement skeleton from the registry (REQ-NNN-topic-name)."""
     if not name:
-        print("ERROR: init requires a requirement name like REQ-001-my-feature", file=sys.stderr)
+        print("ERROR: init requires a requirement name like REQ-NNN-my-feature", file=sys.stderr)
         return 1
     if not re.fullmatch(r"REQ-\d{3}[A-Za-z0-9_-]*", name):
         print(f"ERROR: invalid requirement name '{name}' (expect REQ-NNN-topic)", file=sys.stderr)
@@ -162,9 +206,12 @@ def machine_gate(req_dir: Path, item: dict) -> dict:
     if item["id"] == "function-description":
         art = find_artifact(req_dir, item)
         prop = run_property_check(art) if art else {"ok": False, "skipped": False, "error": "artifact not found"}
+    # issue-record: 每个案例必备的稳定产物，pipeline gate 强制校验（非可选分支）
+    issue_record = check_issue_record(req_dir)
     ok = (result["dor_pass"] and result["dod_pass"] and bool(cross.get("ok"))
-          and bool(records.get("ok")) and bool(prop.get("ok")))
-    return {"ok": ok, "work_item": result, "cross_trace": cross, "records": records, "property": prop}
+          and bool(records.get("ok")) and bool(prop.get("ok")) and bool(issue_record.get("ok")))
+    return {"ok": ok, "work_item": result, "cross_trace": cross, "records": records,
+            "property": prop, "issue_record": issue_record}
 
 
 def load_authorized_reviewer(req_dir: Path, reviewer_id: str, reviewer: str, reviewer_role: str) -> dict | None:
@@ -182,8 +229,47 @@ def load_authorized_reviewer(req_dir: Path, reviewer_id: str, reviewer: str, rev
     return None
 
 
+def write_change_record(req_dir: Path, item: dict, artifact: Path, from_status: str,
+                        to_status: str, reason: str, changed_by: str,
+                        reviewer_id: str = "", reviewer_role: str = "",
+                        comments: str = "") -> Path:
+    """B12: write an audit trail for a reverse status transition.
+
+    Reverse transitions (`* → draft` / `* → superseded`) must not happen
+    silently. Every such transition writes a `99-review/change-*.md` record
+    carrying `from_status`, `to_status`, `reason`, `changed_at`, `changed_by`.
+    The filename matches `*change*.md` so `branch_validator` audits it too
+    (it requires a downstream-impact signal, which the footer provides).
+    """
+    review_dir = req_dir / "99-review"
+    review_dir.mkdir(parents=True, exist_ok=True)
+    now = datetime.now(timezone.utc).replace(microsecond=0).isoformat()
+    record = review_dir / f"change-{item['id']}-{now[:10]}.md"
+    suffix = 1
+    while record.exists():
+        record = review_dir / f"change-{item['id']}-{now[:10]}-{suffix}.md"
+        suffix += 1
+    record.write_text(
+        "\n".join([
+            f"# Change Record: {item['id']} {from_status} → {to_status}", "",
+            f"- work_item: {item['id']}",
+            f"- artifact: {artifact.relative_to(req_dir)}",
+            f"- from_status: {from_status}",
+            f"- to_status: {to_status}",
+            f"- reason: {reason}",
+            f"- changed_at: {now}",
+            f"- changed_by: {changed_by}",
+            f"- reviewer_id: {reviewer_id}",
+            f"- reviewer_role: {reviewer_role}",
+            f"- comments: {comments or '无'}", "",
+            "> 逆向跃迁已留痕；下游产物需重新校验（影响范围由 branch_validator 审计）。", "",
+        ]), encoding="utf-8",
+    )
+    return record
+
+
 def review(req_dir: Path, item: dict, decision: str, reviewer: str, reviewer_id: str,
-           reviewer_role: str, comments: str) -> int:
+           reviewer_role: str, comments: str, reason: str = "") -> int:
     normalized_reviewer = reviewer.strip().lower()
     if (not normalized_reviewer or normalized_reviewer in {"ai", "待确认", "待评审"}
             or "simulat" in normalized_reviewer or "模拟" in reviewer):
@@ -204,6 +290,13 @@ def review(req_dir: Path, item: dict, decision: str, reviewer: str, reviewer_id:
     if decision == "approve" and current_status != "ready_for_human_review":
         print(f"ERROR: approval requires ready_for_human_review, got {current_status}", file=sys.stderr)
         return 1
+    # B12: reverse transitions (`* → draft`) must be audited. A `changes`
+    # decision silently reverting a confirmed/superseded artifact to draft is
+    # forbidden — it requires a non-empty --reason and writes a change record.
+    if decision == "changes" and not (reason or "").strip():
+        print("ERROR: --decision changes requires a non-empty --reason "
+              "(reverse transition to draft must be audited)", file=sys.stderr)
+        return 1
     gate = machine_gate(req_dir, item)
     if decision == "approve" and not gate["ok"]:
         print(json.dumps(gate, ensure_ascii=False, indent=2))
@@ -221,16 +314,52 @@ def review(req_dir: Path, item: dict, decision: str, reviewer: str, reviewer_id:
     while record.exists():
         record = review_dir / f"review-{item['id']}-{now[:10]}-{suffix}.md"
         suffix += 1
+    # B13 fix: every ReviewRecord carries an immutable self-fingerprint.
+    # record_created_at pins when the record was created; record_sha256 covers
+    # the whole record body except the record_sha256 line itself. Editing any
+    # field of the record (e.g. artifact_content_sha256 to match a rewritten
+    # artifact) changes the body, so the declared record_sha256 no longer
+    # matches and branch_validator flags it as CRITICAL.
+    record_lines = [
+        f"# Review: {item['name']}", "",
+        f"- work_item: {item['id']}", f"- artifact: {artifact.relative_to(req_dir)}",
+        f"- artifact_version: {artifact_version}", f"- artifact_content_sha256: {artifact_hash}",
+        f"- decision: {decision}", f"- reviewer: {reviewer}", f"- reviewer_id: {reviewer_id}",
+        f"- reviewer_role: {reviewer_role}", f"- reviewed_at: {now}",
+        f"- record_created_at: {now}",
+        f"- record_sha256: {hash_anchor.RECORD_SHA256_PLACEHOLDER}",
+        f"- comments: {comments or '无'}", "",
+    ]
+    record_text = "\n".join(record_lines)
+    record_sha256 = hash_anchor.record_body_sha256(record_text)
     record.write_text(
-        "\n".join([
-            f"# Review: {item['name']}", "",
-            f"- work_item: {item['id']}", f"- artifact: {artifact.relative_to(req_dir)}",
-            f"- artifact_version: {artifact_version}", f"- artifact_content_sha256: {artifact_hash}",
-            f"- decision: {decision}", f"- reviewer: {reviewer}", f"- reviewer_id: {reviewer_id}",
-            f"- reviewer_role: {reviewer_role}", f"- reviewed_at: {now}",
-            f"- comments: {comments or '无'}", ""
-        ]), encoding="utf-8",
+        record_text.replace(hash_anchor.RECORD_SHA256_PLACEHOLDER, record_sha256),
+        encoding="utf-8",
     )
+    # B13 fix: record an external append-only hash anchor on approve.
+    # The ReviewRecord is closed-loop (artifact + ReviewRecord can be swapped
+    # together); the anchor chain under 99-review/.hash-anchor.jsonl provides
+    # a tamper-evident external reference. record_anchor is idempotent on
+    # (artifact_id, review_record, sha256) so retries and post-confirm metadata
+    # edits (status/reviewer stamps) do not pile up duplicate rows.
+    artifact_meta_for_anchor = read_frontmatter(artifact)
+    hash_anchor.record_anchor(
+        req_dir,
+        artifact=str(artifact.relative_to(req_dir)),
+        artifact_id=artifact_meta_for_anchor.get("artifact_id") or item["id"],
+        reviewer=reviewer,
+        review_record=str(record.relative_to(req_dir)),
+        sha256=artifact_hash,
+    )
+    # B12: reverse transition audit trail — `changes` (→ draft) must leave a
+    # change record with from_status / to_status / reason / changed_at /
+    # changed_by before the status is actually flipped.
+    if decision == "changes":
+        change_record = write_change_record(
+            req_dir, item, artifact, current_status, "draft",
+            reason, reviewer, reviewer_id, reviewer_role, comments,
+        )
+        print(f"Recorded change: {change_record.relative_to(req_dir)}")
     text = artifact_text
     target_status = "confirmed" if decision == "approve" else "draft"
     text = re.sub(r"(?m)^status:\s*\S+", f"status: {target_status}", text, count=1)
@@ -262,6 +391,7 @@ def main() -> int:
     parser.add_argument("--reviewer-role")
     parser.add_argument("--apply", action="store_true", help="reflow: actually flip downstream to superseded (default is dry-run)")
     parser.add_argument("--comments", default="")
+    parser.add_argument("--reason", default="", help="B12: required for reverse transitions (--decision changes); recorded in the change record")
     parser.add_argument("--json", action="store_true")
     args = parser.parse_args()
     if not args.req_dir.is_dir():
@@ -370,7 +500,14 @@ def main() -> int:
             record.write_text(
                 "\n".join([
                     f"# Change Record: reflow {item['id']}", "",
-                    f"- trigger: {item['id']} changed", f"- applied_at: {now}",
+                    f"- trigger: {item['id']} changed",
+                    # B12: reverse transitions (`* → superseded`) carry the same
+                    # audit fields as `--decision changes` (from/to/reason/changed_*).
+                    f"- from_status: confirmed/ready_for_human_review",
+                    f"- to_status: superseded",
+                    f"- reason: {args.reason or 'reflow triggered by upstream change'}",
+                    f"- changed_at: {now}",
+                    f"- changed_by: reflow (machine-executed, human-initiated)",
                     f"- superseded: {', '.join(results['superseded'])}", "",
                     "- decision_id: 待填写（DEC-NNN，对齐 src/templates/others/decision-record.md）",
                     "- decider: 待填写", "- rationale: 待填写", "",
@@ -384,7 +521,8 @@ def main() -> int:
     if not args.decision or not args.reviewer or not args.reviewer_id or not args.reviewer_role:
         print("ERROR: review requires --decision, --reviewer, --reviewer-id, and --reviewer-role", file=sys.stderr)
         return 1
-    return review(args.req_dir, item, args.decision, args.reviewer, args.reviewer_id, args.reviewer_role, args.comments)
+    return review(args.req_dir, item, args.decision, args.reviewer, args.reviewer_id,
+                  args.reviewer_role, args.comments, args.reason)
 
 
 if __name__ == "__main__":

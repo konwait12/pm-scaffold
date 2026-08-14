@@ -28,7 +28,7 @@ python3 src/scripts/pipeline.py requirements/REQ-005-my-feature status
 
 # 5. Run validators before human review
 python3 src/scripts/pipeline.py requirements/REQ-005-my-feature gate --work-item project-background-goal
-bash run_tests.sh
+bash run_tests_mac.sh
 ```
 
 ## What It Does
@@ -62,7 +62,7 @@ New AI agents: read `AGENTS.md` first for startup order, hard rules, and quick-s
 ## Validation
 
 ```bash
-bash run_tests.sh                              # Full regression (58+ tests)
+bash run_tests_mac.sh                              # Full regression (58+ tests)
 python3 src/scripts/consistency_check.py       # Cross-document drift check
 python3 src/scripts/property_check.py <fd.md>  # Rule completeness properties
 ```

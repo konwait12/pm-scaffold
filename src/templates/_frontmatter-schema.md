@@ -20,7 +20,7 @@ confirmed_at: 2026-08-12
 
 | # | 字段 | 类型 | 必填（confirmed） | 用途 | 示例 |
 |---|---|---|---|---|---|
-| 1 | `artifact_id` | string | ✅ | 全局唯一产物 ID | `BG-RSV-2026S` |
+| 1 | `artifact_id` | string | ✅ | 全局唯一产物 ID | `BG-<example>-v1` |
 | 2 | `version` | semver | ✅ | 语义化版本 | `v0.1` |
 | 3 | `status` | enum | ✅ | 见 §2 状态枚举 | `draft` |
 | 4 | `owner` | string | ✅ | 产物负责人 | `产品经理姓名` |
@@ -70,12 +70,12 @@ confirmed_at: 2026-08-12
 - 紧跟在 HTML 注释（`<!-- -->`）之后
 - 字段顺序按 §1 表格顺序排列
 - 数组字段用 YAML 列表语法：`upstream_artifact_ids: ["BG-XXX", "JS-XXX"]`
-- 字符串字段值建议加双引号：`artifact_id: "BG-RSV-2026S"`
+- 字符串字段值建议加双引号：`artifact_id: "BG-<example>-v1"`
 
 **示例**：
 ```yaml
 ---
-artifact_id: "BG-RSV-2026S"
+artifact_id: "BG-<example>-v1"
 version: "v0.1"
 status: "ready_for_human_review"
 owner: "产品经理姓名"

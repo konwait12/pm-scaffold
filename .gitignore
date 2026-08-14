@@ -38,3 +38,6 @@ venv/
 
 # Runtime output (each user creates their own requirements)
 requirements/
+
+# Test output (测试产物含内部飞书链接，不入公开仓库)
+.test-output/

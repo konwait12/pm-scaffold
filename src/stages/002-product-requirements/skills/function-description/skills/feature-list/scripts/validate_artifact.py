@@ -19,7 +19,7 @@ Two run modes:
                requirements/*/002-product-requirements/02-function-description/
                and validate it.
 
-run_tests.sh always passes a fixture path (mode 1); the pipeline/orchestrator
+run_tests_mac.sh always passes a fixture path (mode 1); the pipeline/orchestrator
 can rely on the default mode (mode 2).
 """
 

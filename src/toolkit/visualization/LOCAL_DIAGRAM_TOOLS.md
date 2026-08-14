@@ -123,7 +123,7 @@ diagramify diff base.mmd modified.mmd
 # src/scripts/render_diagrams.sh
 #!/bin/bash
 # 将指定 .md 文件中所有 Mermaid 块渲染为 SVG
-# 用法: bash render_diagrams.sh requirements/REQ-002-.../001-business-requirements/02-user-journey-stories/journey-and-stories.md
+# 用法: bash render_diagrams.sh requirements/REQ-NNN-<topic>/001-business-requirements/02-user-journey-stories/journey-and-stories.md
 
 INPUT="$1"
 OUTPUT="${INPUT%.md}-rendered.md"

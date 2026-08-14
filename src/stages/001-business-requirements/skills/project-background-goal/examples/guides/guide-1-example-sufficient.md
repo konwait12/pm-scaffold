@@ -1,4 +1,4 @@
-# Example 1 · RSVP Sufficient-Mode Run
+# Example 1 · Sufficient-Mode Run (Generic Scenario)
 
 > Reference candidate artifact demonstrating a full successful run in **Sufficient mode**.
 > Input was a desensitized email + meeting transcript + business-supplementary slide. Status: `ready_for_human_review`.
@@ -7,8 +7,8 @@
 ## Input
 
 - **SRC-001 · Meeting transcript** — 2026-08-08 product team weekly review
-- **SRC-002 · Email from business owner** — "Re: 2026 春季 RSVP 活动 PRD 需求"
-- **SRC-003 · Slide deck** — "RSVP 客群分级与权益" (desensitized)
+- **SRC-002 · Email from business owner** — "Re: 2026 春季电商大促活动 PRD 需求"
+- **SRC-003 · Slide deck** — "客群分级与权益" (desensitized)
 
 ## Run Trace
 
@@ -17,8 +17,8 @@
 | Preflight | T+00:00 | Input sufficiency = **sufficient mode** (3 sources, ≥ 50 chars) |
 | Intake | T+00:01 | 3 SRCs registered; role separation: business fact owner = VP of CRM, goal decision owner = VP of Marketing |
 | Think (7 lenses) | T+00:02 | First Principles isolated "VVIP invitation routing" as the real problem; Adversarial surfaced a conflict between SRC-002 and SRC-003 on VVIP definition |
-| Clarify Session 1 | T+00:03 | Q: "VVIP threshold?" → Answer: ¥500k/year (3-5% of customer base) |
-| Clarify Session 2 | T+00:05 | Q: "Gift redemption rate baseline?" → Answer: 11% (verified from CRM 2025 data) |
+| Clarify Session 1 | T+00:03 | Q: "VVIP threshold?" → Answer: ¥NNNk/year (NNN-NNN% of customer base) |
+| Clarify Session 2 | T+00:05 | Q: "Fulfillment error rate baseline?" → Answer: NNN% (verified from CRM 2025 data) |
 | Clarify Session 3 | T+00:07 | Q: "Post-event follow-up owner?" → Answer: VP of CRM (after PM escalates) |
 | Draft v0.1 | T+00:09 | All 14 sections filled; **no 待确认 left unfilled** (all answered via Sessions) |
 | Self-Audit | T+00:10 | `validate_artifact.py` returns `{"ok": true, "warnings": 1}` (semantic warning on placeholder count is expected and within limits) |

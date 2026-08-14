@@ -7,7 +7,7 @@
 ```bash
 git clone https://github.com/konwait12/pm-scaffold.git
 cd pm-scaffold
-bash run_tests.sh                          # 全量回归（应全绿）
+bash run_tests_mac.sh                      # 全量回归（应全绿）
 python3 src/scripts/consistency_check.py   # 跨文档一致性（应 0 errors）
 ```
 
@@ -23,7 +23,7 @@ python3 src/scripts/consistency_check.py   # 跨文档一致性（应 0 errors�
 ## 提交规范
 
 - 遵循 [Conventional Commits](https://www.conventionalcommits.org/)：`feat:` / `fix:` / `docs:` / `refactor:` / `chore:`。
-- 每条 PR 必须：跑通 `bash run_tests.sh` + `consistency_check.py` 全绿。
+- 每条 PR 必须：跑通 `bash run_tests_mac.sh` + `consistency_check.py` 全绿。
 
 ## 行为守则
 

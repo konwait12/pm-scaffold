@@ -80,7 +80,9 @@ def validate(path: Path) -> dict[str, object]:
         # Note: 上游产物清单 / 不一致报告 已移出 PRD 正文（由机器在 gate 产出、进 99-review）。
 
         # Flag 1b (D5.2): PRD 必须引用 4 个上游产物（BG/JS/UX/FD），从 frontmatter upstream_artifact_ids 校验。
-        upstream_ids = re.findall(r"(BG|JS|UX|FD)-[A-Z0-9]+-\d+", meta.get("upstream_artifact_ids", ""))
+        # 上游产物 frontmatter 的 artifact_id 为单连字符格式（如 BG-001 / JS-001 / UX-001 / FD-001），
+        # 因此这里匹配单连字符 ID；兼容历史遗留的双连字符格式（如 BG-001-1）以免误报。
+        upstream_ids = re.findall(r"(BG|JS|UX|FD)-\d+(?:-\d+)?", meta.get("upstream_artifact_ids", ""))
         missing_prefixes = {"BG", "JS", "UX", "FD"} - set(upstream_ids)
         if missing_prefixes:
             errors.append(f"PRD DoD D5.2 failed: missing upstream artifact IDs for {sorted(missing_prefixes)} (need BG + JS + UX + FD all confirmed)")

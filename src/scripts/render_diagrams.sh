@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # 本地渲染 Markdown 中的 Mermaid 图为 SVG
 # 用法: bash render_diagrams.sh <file.md>
-#        bash render_diagrams.sh requirements/REQ-002-.../99-review/diagrams.md
+#        bash render_diagrams.sh requirements/REQ-NNN-<topic>/99-review/diagrams.md
 set -euo pipefail
 
 INPUT="${1:-}"
