@@ -3,6 +3,14 @@
 > 107K GitHub Stars | MIT License | 手绘风无限画布 | AI 可编程操作
 > MCP Server: `mcp-excalidraw-server` (26 tools) + `@kamiazya/whiteboard-mcp` (协作版)
 
+## 何时用白板（使用原则）
+
+本地白板用于**可视化用户旅程、UX 流程、状态模型或追溯关系**，当评审方要求一块**可编辑画布**时使用。它是**可选的渲染工具**：
+- **不是 Skill**，**不是工作流停点**——用不用它都不阻塞交付流程。
+- 节点标签**绑定产物 ID**（ST-XXX / FEA-XXX / FUN-XXX），保持可追溯。
+- **源 Markdown / 源表格是权威**，白板只是它的可视化呈现。
+- 只有**确认画布渲染正确**后，才导出或同步（到飞书/团队）。
+
 ## 和飞书画板的对比
 
 | 能力 | 飞书画板 | Excalidraw (开源) |
