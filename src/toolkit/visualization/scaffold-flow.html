@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=1280">
-<title>PM Scaffold · 产品 AI 脚手架 · 项目驾驶舱 · 程序流程总图 v0.2.0</title>
+<title>PM Scaffold · 产品 AI 脚手架 · 项目驾驶舱 · 程序流程总图 v0.4.0</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 html,body{background:#F7F6F5;font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Microsoft YaHei","Noto Sans CJK SC",sans-serif;color:#0A0A0A;line-height:1.6}
@@ -165,7 +165,7 @@ footer{margin-top:24px;text-align:center;color:#888;font-size:11px;padding-top:1
 <div class="layout">
 <nav class="sidebar" id="sidebar">
   <div class="side-title">PM Scaffold 驾驶舱</div>
-  <div class="side-sub">v0.2.0 · 19 Skill · 61/61</div>
+  <div class="side-sub">v0.4.0 · 19 Skill · 84/84</div>
   <button class="tut-btn" id="tut-open">📖 新手教程 · 从这里开始</button>
     <a href="#sec-flow" class="nav-item" data-target="sec-flow"><span class="nav-n">01</span>主程序流程图</a>
     <a href="#sec-cmd" class="nav-item" data-target="sec-cmd"><span class="nav-n">02</span>命令全集</a>
@@ -185,7 +185,7 @@ footer{margin-top:24px;text-align:center;color:#888;font-size:11px;padding-top:1
 <div class="content">
 <header>
   <h1>PM Scaffold · 产品 AI 脚手架 · 项目驾驶舱 · 程序流程总图</h1>
-  <div class="sub">一个需求的完整程序流程：从「新需求输入」到「交付人工确认的 prd.md」——每个判断、每条线、每个回路都有明确条件 · v0.3.1</div>
+  <div class="sub">一个需求的完整程序流程：从「新需求输入」到「交付人工确认的 prd.md」——每个判断、每条线、每个回路都有明确条件 · v0.4.0</div>
   <div class="tags">
     <span class="tag green">● 75/75 测试绿</span>
     <span class="tag">3 阶段</span>
@@ -558,7 +558,7 @@ footer{margin-top:24px;text-align:center;color:#888;font-size:11px;padding-top:1
   <div class="desc" style="margin-top:10px;margin-bottom:0">支持产物（不直接进 PRD）：复述清单 RR-NNN / 发散候选 SCN-XXX（requirement-restate 能力，过程记录）· 埋点事件表 EV-NNN（tracking-plan）· 问题清单 ISS-NNN（issue-record，§13 收口表）· 竞品调研 / 可行性分析记录（99-review/support/）。</div>
 </section>
 <section id="sec-scripts">
-  <h2>8. 脚本说明书 <span class="badge">14 个 · 机器循环引擎</span></h2>
+  <h2>8. 脚本说明书 <span class="badge">19 个 · 机器循环引擎 + 基础设施</span></h2>
   <div class="desc">全部 stdlib-only（Python 3.10+），无外部依赖；对不存在的路径全部优雅报错。</div>
   <table><tr><th>脚本</th><th>职责</th><th>关键行为</th></tr>
     <tr><td><code>pipeline.py</code><br><span style="color:#888;font-size:11px">★ 命令链入口</span></td><td colspan="2" style="padding-top:10px">init / status / entry / gate / review / reflow(--apply)。全仓唯一写 confirmed 的路径在 review() approve 分支；reflow 写 superseded + ChangeRecord（DEC-XXX 字段）；entry 做内容六信号判定与分支信号。</td></tr>
@@ -571,6 +571,12 @@ footer{margin-top:24px;text-align:center;color:#888;font-size:11px;padding-top:1
     <tr><td><code>branch_validator.py</code><br><span style="color:#888;font-size:11px">评审记录 + SHA-256</span></td><td colspan="2" style="padding-top:10px">confirmed 产物必须有真实评审人 + 匹配 ReviewRecord + 当前内容哈希与 artifact_content_sha256 一致（防篡改）。</td></tr>
     <tr><td><code>migrate_layout_v2.py</code><br><span style="color:#888;font-size:11px">一次性迁移工具</span></td><td colspan="2" style="padding-top:10px">旧 Wave 布局 → v2 布局；--apply 必须加 --confirm（防误运行），默认 dry-run。</td></tr>
     <tr><td><code>render_diagrams.sh / render_mermaid_local.html</code><br><span style="color:#888;font-size:11px">图表辅助</span></td><td colspan="2" style="padding-top:10px">本地渲染 Mermaid 流程图的辅助工具（CDN mermaid）。</td></tr>
+    <tr><td><code>audit_log.py</code><br><span style="color:#888;font-size:11px">append-only 事件日志 ★ SHA-256 链</span></td><td colspan="2" style="padding-top:10px"><code>.audit/events.jsonl</code> 单一事实来源；prev_hash 链 + event_sha256 自指纹 + payload_sha256 绑定；<code>verify_chain</code> 检测链断/篡改（CRITICAL）；<code>append_event</code> 幂等。</td></tr>
+    <tr><td><code>projection_cache.py</code><br><span style="color:#888;font-size:11px">投影缓存</span></td><td colspan="2" style="padding-top:10px">把审计事件流投影为产物当前状态（AuditEvent → ProjectionCache），供 gate/status 快速读取，避免重复扫描 events.jsonl。</td></tr>
+    <tr><td><code>registry_contract_check.py</code><br><span style="color:#888;font-size:11px">注册表契约关卡 ★ fail-loud</span></td><td colspan="2" style="padding-top:10px">run_tests_mac.sh 首项：schema 干净 + template↔validator 闭包（每个 skill 新增/修改必须通过，否则测试直接 FAIL）。</td></tr>
+    <tr><td><code>validation_errors.py</code><br><span style="color:#888;font-size:11px">统一错误格式 ★ make_issue</span></td><td colspan="2" style="padding-top:10px">所有校验器用 <code>make_issue</code> 输出 8+ 字段统一 issue（severity/blocking/check_id/check_family/location/field_path/message/expectation/actual/repair_hint/source_ref），禁止裸 stack trace。</td></tr>
+    <tr><td><code>hash_anchor.py</code><br><span style="color:#888;font-size:11px">哈希锚点</span></td><td colspan="2" style="padding-top:10px">record_body_sha256：对产物记录体做 SHA-256 自指纹，供 audit_log 绑定记录体（payload_sha256）。</td></tr>
+    <tr><td><code>desensitize_check.py</code><br><span style="color:#888;font-size:11px">脱敏检查</span></td><td colspan="2" style="padding-top:10px">扫描 test/ fixtures 检测未脱敏敏感数据（手机号/身份证/真实邮箱/疑似真名），掩码/泛化形式视为通过，防隐私泄露。</td></tr>
     <tr><td><code>feishu_fetch.py</code><br><span style="color:#888;font-size:11px">飞书取料 ★ 以飞书为主</span></td><td colspan="2" style="padding-top:10px">lark-cli 读取飞书文档 → HTML 表格转 Markdown（修复文本内 < 字符误判）→ 账号/密码/token 脱敏 → source-register 自动登记。用法：<code>python3 src/scripts/feishu_fetch.py &lt;doc-token&gt; --output &lt;材料.md&gt; --register --src-id SRC-001 --src-title "标题"</code></td></tr>
     <tr><td><code>prd_publish.py</code><br><span style="color:#888;font-size:11px">飞书发布 ★ 闭环出口</span></td><td colspan="2" style="padding-top:10px">产物经 stdin 调 lark-cli docs +create 发布为飞书文档 → doc-id 写回产物 frontmatter <code>feishu_doc_id</code> → 登记 .test-output/飞书发布日志.md。用法：<code>python3 src/scripts/prd_publish.py &lt;prd.md&gt; [--title ...] [--note ...]</code></td></tr>
     <tr><td><code>snapshot_cases.py</code><br><span style="color:#888;font-size:11px">产物快照对比 ★ 结果比对机器化</span></td><td colspan="2" style="padding-top:10px">借鉴 deepseek-harness 快照理念：录制各案例产物规模基线（.test-output/产物快照.json），--check 对比状态漂移/规模变化（exit 1 有差异）。用法：<code>--record</code> 录基线 / <code>--check</code> 对比</td></tr>
@@ -665,7 +671,7 @@ footer{margin-top:24px;text-align:center;color:#888;font-size:11px;padding-top:1
 </section>
 
 <section id="sec-tree">
-  <h2>12. 文件完整架构 <span class="badge">19 Skill · 9 共享模块 · 11 脚本</span></h2>
+  <h2>12. 文件完整架构 <span class="badge">19 Skill · 9 共享模块 · 18 脚本</span></h2>
   <div class="desc">每个目录/文件一句话职责。★ = 唯一真相源 / 核心引擎。每个 skill 内部统一为：<code>SKILL.md</code>（10 节）+ <code>references/</code>（7 类）+ <code>agents/openai.yaml</code> + <code>scripts/validate_artifact.py</code> + <code>README.md</code>。</div>
   <pre style="font-family:&#39;SF Mono&#39;,Menlo,monospace;font-size:11.5px;line-height:1.75;background:#F8F8FA;border:1px solid #E5E5E5;border-radius:10px;padding:18px 20px;overflow-x:auto;color:#333">
 PM Scaffold · 文件完整架构
@@ -682,8 +688,8 @@ PM Scaffold · 文件完整架构
 ├─ src/
 │  ├─ framework/                治理层（Agent 先读这里）
 │  │  ├─ workflow-registry.json  ★ 唯一机器真相源（schema v6：5 主 + 9 子 + 4 分支产物 + 1 能力）
-│  │  ├─ constitution.md         6 条硬宪法
-│  │  ├─ contracts.md            六态知识标注 + 确认不变式（SHA-256）
+│  │  ├─ constitution.md         8 条硬宪法（含 v0.4.0 第 7/8 条：事件日志防篡改 + 校验器统一错误格式）
+│  │  ├─ contracts.md            六态知识标注 + 确认不变式 + AuditEvent/ProjectionCache/ValidatorIssue/RegistryContract 扩展契约（v0.4.0）
 │  │  ├─ workflow.md             8 步循环 + Entry And Exit
 │  │  ├─ governance.md           治理 + Inquiry Contract + 入口探索序列 + B3 收口
 │  │  └─ thinking-core.md        17 思考透镜（§1 六透镜必用）
@@ -697,7 +703,16 @@ PM Scaffold · 文件完整架构
 │  │  ├─ traceability_check.py  双向追溯（正向共现 + 反向孤儿）
 │  │  ├─ property_check.py      逻辑完备（状态机/异常/VL↔AC/规则密度，fd 专属）
 │  │  ├─ branch_validator.py    评审记录真实性 + SHA-256 比对
-│  │  └─ migrate_layout_v2.py   一次性迁移工具（--apply 需 --confirm 防护）
+│  │  ├─ migrate_layout_v2.py   一次性迁移工具（--apply 需 --confirm 防护）
+│  │  ├─ audit_log.py           ★ v0.4.0 append-only 事件日志（prev_hash + event_sha256 防篡改）
+│  │  ├─ projection_cache.py    ★ v0.4.0 投影缓存（事件流 → 产物状态）
+│  │  ├─ registry_contract_check.py ★ v0.4.0 契约关卡（run_tests_mac.sh 首项 fail-loud）
+│  │  ├─ validation_errors.py   ★ v0.4.0 统一错误格式（make_issue 8+ 字段）
+│  │  ├─ hash_anchor.py         哈希锚点（payload_sha256）
+│  │  ├─ desensitize_check.py   脱敏检查（fixtures 敏感数据扫描）
+│  │  ├─ feishu_fetch.py        飞书取料（lark-cli → 清洗 → 脱敏 → 登记）
+│  │  ├─ prd_publish.py         飞书发布（doc-id 写回 frontmatter）
+│  │  └─ snapshot_cases.py      产物快照对比（--record / --check）
 │  ├─ stages/                   3 阶段 × 5 主 + 9 子 + 1 分支产物 + 1 能力
 │  │  ├─ 001-business-requirements/
 │  │  │  ├─ skills/project-background-goal/    主① 项目背景与目标
@@ -750,7 +765,7 @@ PM Scaffold · 文件完整架构
   </table>
 </section>
 <footer>
-  PM Scaffold · v0.3.1 · 本图与 src/framework/workflow-registry.json 同源——registry 是唯一机器真相，本图仅作人类可读视图。测试数与 Skill 数以 <code>bash run_tests_mac.sh</code> 与 registry 实测为准。飞书链路以 lark-cli 实测为准。
+  PM Scaffold · v0.4.0 · 本图与 src/framework/workflow-registry.json 同源——registry 是唯一机器真相，本图仅作人类可读视图。测试数与 Skill 数以 <code>bash run_tests_mac.sh</code> 与 registry 实测为准。飞书链路以 lark-cli 实测为准。
 </footer>
 </div>
 </div>
@@ -800,7 +815,7 @@ PM Scaffold · 文件完整架构
 <h4>1.2 它由哪些部分组成</h4>
 <ul>
   <li><b>19 个 Skill（5 主 + 9 子 + 4 分支产物 + 1 能力）</b>：5 个主干 skill 是必做主线——<code>project-background-goal</code>（项目背景与目标）→ <code>user-journey-and-stories</code>（用户旅程与故事）→ <code>product-ux</code>（产品 UX）→ <code>function-description</code>（功能描述）→ <code>prd-assembly</code>（PRD 汇总）。9 个子 skill 挂在两个主干下面细化（product-ux 内：page-design / interaction-rules；function-description 内：feature-list / functional-flow / business-rules / validation-rules / state-machine / exception-handling / acceptance-criteria）。4 个分支产物 skill 按需触发（competitive-research、feasibility-analysis、tracking-plan、issue-record），另 1 个能力：requirement-restate（需求重举 · 复述 + 发散双模式，过程记录不进 PRD）。每个 skill 都自带标准章节执行协议、7 类参考知识库和机器校验器，数量全部来自注册表 workflow-registry.json（唯一真相源）。</li>
-  <li><b>11 个脚本</b>（在 src/scripts/）：pipeline.py（命令入口：init / status / entry / gate / review / reflow）、orchestrator.py（状态机 + 信号层）、dor_check.py（闸门检查）、workflow_registry.py（注册表访问器）、consistency_check.py（跨文档一致性）、traceability_check.py（双向追溯）、property_check.py（逻辑完备）、branch_validator.py（评审记录与哈希校验）、migrate_layout_v2.py（布局迁移）、render_diagrams.sh 与 render_mermaid_local.html（图表辅助）。全部只用 Python 标准库，AI 不需要装任何第三方包。</li>
+  <li><b>18 个脚本</b>（在 src/scripts/）：pipeline.py（命令入口：init / status / entry / gate / review / reflow）、orchestrator.py（状态机 + 信号层）、dor_check.py（闸门检查）、workflow_registry.py（注册表访问器）、consistency_check.py（跨文档一致性）、traceability_check.py（双向追溯）、property_check.py（逻辑完备）、branch_validator.py（评审记录与哈希校验）、migrate_layout_v2.py（布局迁移）、audit_log.py（SHA-256 链事件日志）、projection_cache.py（投影缓存）、registry_contract_check.py（注册表契约关卡）、validation_errors.py（统一错误格式）、hash_anchor.py（哈希锚点）、desensitize_check.py（脱敏检查）、feishu_fetch.py（飞书取料）、prd_publish.py（飞书发布）、snapshot_cases.py（快照对比）。全部只用 Python 标准库，AI 不需要装任何第三方包。</li>
   <li><b>9 个共享机制</b>（在 src/shared/）：audit（审查闸门）、human-gate（人工闸门）、clarify（澄清循环）、change-management（变更回流）、traceability（追溯）、decision-log（决策记录）、brainstorming（需求发散）、intake-routing（入口路由）、project-init（项目初始化）。它们横向服务所有阶段，是脚手架的「公共服务」。</li>
 </ul>
 
@@ -910,7 +925,7 @@ bash run_tests_mac.sh   # 第一次自检：看到 "Result: 61 passed / 0 failed
   <li><b>run_tests_mac.sh / run_tests_win.ps1</b>：自检脚本。</li>
   <li><b>src/framework/</b>：治理层——注册表（唯一真相源）、宪法、契约、思考透镜。</li>
   <li><b>src/stages/</b>：3 个阶段 × 5 个主 skill + 9 个子 skill 的实现。</li>
-  <li><b>src/scripts/</b>：11 个脚本（命令入口 + 校验器们）。</li>
+  <li><b>src/scripts/</b>：18 个脚本（命令入口 + 校验器们 + v0.4.0 基础设施）。</li>
   <li><b>src/shared/</b>：9 个共享机制。</li>
   <li><b>src/support-skills/</b>：2 个支持 skill（竞品调研、可行性分析）。</li>
   <li><b>src/templates/</b>：24 个产物模板。</li>
