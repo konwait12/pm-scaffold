@@ -148,8 +148,9 @@ v0.4.0 起，脚手架引入 Harness 风格的事件溯源基础设施，作为 
 
 ### 5.1 测试
 
-`run_tests_mac.sh` 跑 9 类检查（Phase 0 fail-loud 首项 + 原 8 类）：
+`run_tests_mac.sh` 跑 9 类检查（Phase 0：registry 契约自检 fail-loud 首项 → desensitize 脱敏自检 → consistency 一致性，随后进入原 8 类）：
 - **Phase 0 注册表契约自检**（`registry_contract_check.py`，schema + 模板↔校验器闭环 E3_drift，失败即 abort 后续测试）
+- **Phase 0b-1 脱敏自检**（`desensitize_check.py`，扫描 test/ fixtures，任一疑似未脱敏真实数据即 FAIL）
 - 跨文档一致性（`consistency_check.py`）
 - 5 个主 Skill 产物校验
 - 9 个子 Skill 产物校验
@@ -157,7 +158,7 @@ v0.4.0 起，脚手架引入 Harness 风格的事件溯源基础设施，作为 
 - 单元/集成测试（workflow_runtime / cross_skill_integration / 5 主 skill 校验器 + `test_audit_log.py` 10 个单元测试覆盖幂等/哈希链/自指纹/payload 绑定/单调时间戳）
 - 需求目录状态 / 记录 / RTM 校验
 
-**当前结果**：81/81 PASS（v0.4.0：新增 audit_log 10 个单元测试，property_check 全线迁移 `make_issue` 无回归）
+**当前结果**：85/85 PASS（v0.4.0：新增 audit_log 10 个单元测试，property_check 全线迁移 `make_issue` 无回归）
 
 ### 5.2 发布
 

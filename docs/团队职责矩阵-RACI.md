@@ -79,7 +79,7 @@
 > - 每个内容环节（1-7）的 **A 均为 `product_manager`**（产品经理对需求内容与范围负责），`business_owner` 在「背景目标 / 追踪计划」作为 R（业务事实与埋点需求由业务方提供），在其余环节为 C。
 > - 环节 8「评审」：`reviewer` 为 R（执行评审），`approver` 为 A（批准确认）；当前模型下二者可为同一人。
 > - 环节 9「变更」：`business_owner` 为 R（业务变更的提出方，`proposed_by`），`ai_agent` 为 R（起草提案与影响评估），`reviewer` 为 R（评审提案），`approver` 为 A（批准变更）。
-> - 环节 10「发布」：`product_manager` 为 A（对发布决策负责），`ai_agent` 为 R（执行 `prd-publish`，仅发布已确认 PRD）。
+> - 环节 10「发布」：`product_manager` 为 A（对发布决策负责），`ai_agent` 为 R（执行 `src/scripts/prd_publish.py` 飞书发布脚本，仅发布已确认 PRD）。
 
 ### 3.3 各环节职责说明
 
@@ -94,7 +94,7 @@
 | 7. PRD 组装 | `prd-assembly` | ai_agent 聚合已确认上游产物（不得新增需求），product_manager 对最终 PRD 负责。 |
 | 8. 评审 | `human-gate` / `pipeline.py review` | reviewer 执行评审（命中 authorized-reviewers.json + reviewer_roles），approver 批准确认；ai_agent 只跑机器校验（`--yes`），不参与确认。 |
 | 9. 变更 | `change-management`（CHG-NNN 提案 / reflow） | business_owner 提出业务变更，ai_agent 起草提案与影响评估，reviewer 评审，approver 批准。 |
-| 10. 发布 | `prd-publish` | ai_agent 执行发布（仅已确认 PRD），product_manager 对发布决策负责。 |
+| 10. 发布 | `src/scripts/prd_publish.py`（飞书发布脚本） | ai_agent 执行发布（仅已确认 PRD），product_manager 对发布决策负责。 |
 
 ---
 
@@ -111,7 +111,7 @@
 | 5 | 需求重举（发散 / 复述）候选生成 | `src/stages/001-business-requirements/skills/requirement-restate/` |
 | 6 | 引用并校准能力片段（capability-fragment） | `src/shared/capability-fragments/README.md` |
 | 7 | 执行 `reflow`（机器翻转下游为 `superseded`，语义上代表人工发起的变更） | `src/scripts/pipeline.py`（reflow 动作） |
-| 8 | 执行发布（`prd-publish`，仅发布已确认 PRD） | `src/shared/`（prd-publish） |
+| 8 | 执行发布（`src/scripts/prd_publish.py` 飞书发布脚本，仅发布已确认 PRD） | `src/scripts/prd_publish.py` |
 
 ### 4.2 必须人审什么（AI 不可做）
 

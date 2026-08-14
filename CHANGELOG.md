@@ -29,7 +29,7 @@ All notable changes to PM Scaffold · 产品 AI 脚手架 are documented here. T
 ### Tests
 - 新增 `test/scripts/test_audit_log.py`：10 个单元测试覆盖幂等写入 / 哈希链连续性 / event_sha256 自指纹篡改检测 / payload_sha256 绑定记录体 / 单调 recorded_at / verify_chain 报错路径 / reconstruct_causality 因果重建 / GENESIS prev_hash / 未知 event_type 拒绝 / 跨进程字节级一致。
 - 新增 `test/scripts/test_validation_errors.py`（10 用例：blocking 默认值 / 消息推导 / wrap_unexpected 不泄漏堆栈 / format_issue / aggregate 分组）、`test/scripts/test_projection_cache.py`（5 用例：折叠 / 自动重建闭环 / stale 检测 / review 事件 latest_review_for）、`test/scripts/test_registry_contract_check.py`（12 用例：schema 五类缺陷 / E3_drift / 真实注册表）。
-- 回归测试 79 → 84 通过（新增 3 个测试文件 + REQ-001~008 事件回填后 audit 链校验纳入 branch_validator gate）。
+- 回归测试 79 → 85 通过（新增 3 个测试文件 + REQ-001~008 事件回填后 audit 链校验纳入 branch_validator gate，另加 desensitize fixtures 自检项）。
 
 ## [0.3.1] - 2026-08-13
 

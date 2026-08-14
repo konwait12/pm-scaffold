@@ -31,7 +31,7 @@
 | 顺序 | 文件 | 作用 |
 |---|---|---|
 | 1 | `src/framework/workflow-registry.json` | 阶段 / Skill / 产物的**唯一机器真相源**，一切路径以此为准，不要硬编码 |
-| 2 | `src/framework/constitution.md` | 6 条硬宪法，违反任何一条 = 缺陷 |
+| 2 | `src/framework/constitution.md` | 8 条硬宪法，违反任何一条 = 缺陷 |
 | 3 | `src/framework/workflow.md` | 每个 Work Item 必走的 8 步循环 |
 | 4 | `src/framework/thinking-core.md` | 17 个思考透镜，§1 的 6 个核心透镜每次必用 |
 | 5 | `src/framework/contracts.md` | 知识状态标注 + 确认不变式；含 AuditEvent / ProjectionCache / ValidatorIssue / RegistryContract 等扩展 Shared Records 契约（v0.4.0 Harness 借鉴） |
@@ -154,9 +154,9 @@ python3 src/scripts/consistency_check.py
 src/framework/       宪法、契约、思考核心、注册表（先读这里）
 src/stages/          3 阶段 × 5 主 skill + 9 子 skill
 src/shared/          9 个共享机制（审计/澄清/变更/闸门/追溯等）
-src/support-skills/  4 支持 skill；+4 分支 skill 在 stages/shared（共 8）
+src/support-skills/  5 support capabilities：competitive-research / feasibility-analysis 在此；requirement-restate / tracking-plan 在 stages；issue-record 在 shared/clarify
 src/scripts/         pipeline / orchestrator / dor_check / branch_validator / audit_log / projection_cache / registry_contract_check / validation_errors（后四项为 v0.4.0 Harness 借鉴基础设施）
-src/templates/       24 个产物模板 + resolver
+src/templates/       18 个产物模板 + resolver
 src/toolkit/         工具使用指南（Figma / Mermaid / lark-cli）
 test/                回归测试（fixtures + 单元/集成测试）
 requirements/        需求实例（运行时生成，gitignore）

@@ -16,7 +16,7 @@ python3 src/scripts/consistency_check.py   # 跨文档一致性（应 0 errors�
 ## 目录约定
 
 - `src/framework/workflow-registry.json` 是**唯一机器真相源**——新增/删除 skill 必须先改这里，不要硬编码路径。
-- 每个 skill 必须保持统一丰富度：`SKILL.md`（10 节）+ `references/`（7 类）+ `agents/openai.yaml` + `scripts/validate_artifact.py` + `README.md`。
+- 每个 skill 必须保持统一丰富度：`SKILL.md`（统一执行协议）+ `references/`（7 类知识库）+ `agents/openai.yaml` + `scripts/validate_artifact.py` + `README.md`。
 - 产物模板统一放 `src/templates/`，不要在 skill 内部重复存放。
 - 历史文件不进 VCS（git 历史即归档），不要新增 `_archive/`。
 - 新增/修改 skill 必须通过 `python3 src/scripts/registry_contract_check.py`（schema + 模板↔校验器字段闭环 E3_drift），任何 fail-loud 即不可合并。
@@ -26,7 +26,7 @@ python3 src/scripts/consistency_check.py   # 跨文档一致性（应 0 errors�
 - 遵循 [Conventional Commits](https://www.conventionalcommits.org/)：`feat:` / `fix:` / `docs:` / `refactor:` / `chore:`。
 - 每条 PR 必跑项（按序，前项失败即 abort）：
   1. `python3 src/scripts/registry_contract_check.py`（首项 fail-loud：schema + 模板↔校验器闭环 E3_drift，也是 `run_tests_mac.sh` 第一项）
-  2. `bash run_tests_mac.sh`（全量回归，应 81/81 PASS）
+  2. `bash run_tests_mac.sh`（全量回归，应 85/85 PASS）
   3. `python3 src/scripts/consistency_check.py`（跨文档一致性，应 0 errors）
 
 ## 行为守则

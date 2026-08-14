@@ -27,7 +27,7 @@
 **已 confirmed 产物是不可变基线**：`confirmed` 是唯一正式完成态，其内容与 ReviewRecord 的 `artifact_content_sha256` 绑定。**不可变 ≠ 永不修改**——修改必须走受控变更流程（本文件 §三），而不是直接改文件。
 
 依据：
-- 宪法第 6 条：Human gates cannot be bypassed。
+- 宪法第 6 条：人工关卡不可绕过（Human gates cannot be bypassed）。
 - `src/framework/contracts.md` Confirmation Invariant：Machine checks, simulation, fixtures, and non-interactive flags cannot create or preserve formal confirmation。
 - `src/framework/governance.md` Change Control：Scope freezes after confirmed product UX. A changed confirmed artifact invalidates affected downstream confirmation until rerun。
 

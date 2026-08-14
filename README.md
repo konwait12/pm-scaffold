@@ -30,7 +30,7 @@ AI 写需求最大的风险不是写得慢，而是：**推断冒充事实、没
 - **变更闭环（Loop）**：上游变更自动级联失效下游并回流重跑（`reflow --apply`），不让失效产物流入下游。
 - **B3 每阶段强制收口**：每个工作项送审前，问题清单必须存在且收口表含该工作项行（空阶段也是审计证据），每个「待确认」必须带问题引用。
 - **入口探索阶段**：`entry` 按材料内容判定 L0-L4；L0（仅想法）先发散收敛（候选人工处置），多源/歧义先需求复述——不带着糊涂需求进主干。
-- **19 个同等丰富的 Skill**：5 主 + 9 子 + 4 分支产物 + 1 能力，每个都有 10 节执行协议 + 7 类知识库 + 机器校验器 + 回归测试。
+- **19 个同等丰富的 Skill**：5 主 + 9 子 + 4 分支产物 + 1 能力，每个都有统一的执行协议 + 7 类知识库 + 机器校验器 + 回归测试。
 
 ## 快速开始
 
@@ -94,7 +94,7 @@ flowchart LR
 | 分支产物（4 · 触发才跑） | `competitive-research`（竞品调研）· `feasibility-analysis`（可行性分析）· `tracking-plan`（埋点计划）· `issue-record`（问题清单·B3 收口） |
 | 能力（1 · 过程记录不进 PRD） | `requirement-restate`（需求重举：复述 + 发散收敛双模式） |
 
-每个 skill 拥有统一的完整结构：`SKILL.md`（10 节执行协议）+ `references/`（7 类知识库）+ `agents/openai.yaml`（Agent 路由元数据）+ `validate_artifact.py`（机器校验器）+ 示例 + 回归测试（含 violation 负例反向断言）。
+每个 skill 拥有统一的完整结构：`SKILL.md`（统一执行协议）+ `references/`（7 类知识库）+ `agents/openai.yaml`（Agent 路由元数据）+ `validate_artifact.py`（机器校验器）+ 示例 + 回归测试（含 violation 负例反向断言）。
 
 ## 命令速查
 
@@ -116,7 +116,7 @@ src/stages/          3 阶段 × 5 主 skill + 9 子 skill + requirement-restate
 src/support-skills/  2 支持 skill（competitive-research / feasibility-analysis）
 src/shared/          9 共享机制（审计/澄清/变更/闸门/追溯等）+ issue-record（B3 收口）
 src/scripts/         pipeline / orchestrator / dor_check 等 18 个脚本（含 audit_log / projection_cache / registry_contract_check / validation_errors 四项 Harness 借鉴基础设施）
-src/templates/       24 个产物模板 + resolver（优先级栈）
+src/templates/       18 个产物模板 + resolver（优先级栈）
 src/toolkit/         工具指南 + visualization/（驾驶舱 HTML）
 test/                回归测试（fixtures 正反例 + 单元/集成）
 requirements/        你的需求实例（运行时生成，gitignore——每个用户的需求是自己的）
