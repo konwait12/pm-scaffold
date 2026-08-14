@@ -1,113 +1,113 @@
-# Thinking Framework · prd-assembly
+# 思考框架 · prd-assembly
 
-Lenses for aggregating four confirmed artifacts into a single PRD with traceability verification.
+把 4 个已确认产物聚合为单份 PRD 并做追溯核验的透镜。
 
-This Skill differs from 前四个工作事项: it does NOT generate new content. It aggregates, verifies, and reports.
+本 Skill 与前四个工作事项不同：它**不生成新内容**。它聚合、核验并报告。
 
+## 公共核心（Common Core，必用 MANDATORY）
 
-## Common Core (MANDATORY)
+应用 `src/framework/thinking-core.md` §1 的 **6 个核心透镜**（第一性原理 First Principles、系统思维 Systems Thinking、对抗性审视 Adversarial Review、逆向验证 Reverse Validation、确认偏误防御 Confirmation Bias Defense、知识边界 Knowledge Boundary），以及 §2 中与本 work item 相关的检查层透镜（阶段收口前的 Pre-Mortem、Human Gate 前的 Fresh-Eyes、验收标准前的可测试性 Testability、写作时的结论先行 Conclusion First + 读者视角 Reader Perspective）。只记录会改变候选产物的发现——不要逐字重复核心透镜分析。
 
-Apply the **6 core lenses** from `src/framework/thinking-core.md` §1 (First Principles, Systems Thinking, Adversarial Review, Reverse Validation, Confirmation Bias Defense, Knowledge Boundary) plus the check-layer lenses from §2 relevant to this work item (Pre-Mortem before phase close, Fresh-Eyes before Human Gate, Testability before acceptance criteria, Conclusion First + Reader Perspective when writing). Record only findings that change the candidate — do not repeat core-lens analysis verbatim.
-## Lens 1: Aggregation Integrity
+## 透镜 1：聚合完整性（Aggregation Integrity）
 
-When pulling content from upstream artifacts into the PRD:
+把上游产物的内容拉进 PRD 时：
 
-1. **Copy verbatim**, do not paraphrase. "润色" = unauthorized modification. The confirmed text has been reviewed by a human — you have no authority to change it.
-2. **Preserve all source IDs**. Every SRC-*, ST-*, FEA-*, FUN-*, BR-*, AC-* must remain intact.
-3. **If you find an error** in confirmed content: do NOT fix it silently. Record it in §9 不一致报告 and flag for human attention.
+1. **逐字复制**，不要转述。"润色" = 未经授权的修改。已确认文本经过人工评审——你没有权限改它。
+2. **保留全部来源 ID**。每个 SRC-*、ST-*、FEA-*、FUN-*、BR-*、AC-* 都必须原样保留。
+3. **如果你在已确认内容里发现错误**：不要静默修。在 §9 不一致报告里记录并标记供人工关注。
 
-**Anti-pattern**: "This section from `project-background-goal` was a bit wordy, so I summarized it." — This is a violation of the aggregation contract.
+**反模式**："`project-background-goal` 里这段有点啰嗦，所以我概括了一下。"——这违反了聚合契约。
 
-## Lens 2: Forward Traceability
+## 透镜 2：正向追溯（Forward Traceability）
 
-Walk the chain from goals to acceptance criteria:
+从目标到验收标准走一遍链：
 
 ```
 G-X (background §5) → ST-XXX (journey §3) → FEA-XXX (UX §2.2) → FUN-XXX (function §1) → AC-XXX (function §2) → BR-XXX (function §2)
 ```
 
-For each link, verify:
-1. **G→ST**: Does every confirmed goal have ≥ 1 story that addresses it?
-2. **ST→FEA**: Does every P0 story map to ≥ 1 feature?
-3. **FEA→FUN**: Does every P0 feature map to ≥ 1 function?
-4. **FUN→AC**: Does every P0 function have ≥ 1 acceptance criterion?
-5. **AC→BR**: Does every AC with a business rule reference it?
+对每条链接核验：
+1. **G→ST**：每个已确认目标是否有 ≥ 1 个故事应对它？
+2. **ST→FEA**：每个 P0 故事是否映射到 ≥ 1 个功能？
+3. **FEA→FUN**：每个 P0 功能是否映射到 ≥ 1 个功能描述？
+4. **FUN→AC**：每个 P0 功能是否有 ≥ 1 条验收标准？
+5. **AC→BR**：每条引用业务规则的 AC 是否都引用了它？
 
-Record broken links in §7 正向追溯检查.
+在 §7 正向追溯检查中记录断裂链接。
 
-## Lens 3: Backward Traceability
+## 透镜 3：反向追溯（Backward Traceability）
 
-Walk the chain in reverse:
+反向走一遍链：
 
 ```
 BR-XXX → AC-XXX → FUN-XXX → FEA-XXX → ST-XXX → G-X
 ```
 
-For each element, verify:
-1. **BR→AC**: Does every business rule have a corresponding AC that tests it?
-2. **AC→FUN**: Does every acceptance criterion belong to a function?
-3. **FUN→FEA**: Does every function trace to a feature?
-4. **FEA→ST**: Does every feature trace to ≥ 1 story?
-5. **No orphans**: Are there any elements with no upstream connection?
+对每个元素核验：
+1. **BR→AC**：每条业务规则是否有对应的 AC 测试它？
+2. **AC→FUN**：每条验收标准是否属于某个功能？
+3. **FUN→FEA**：每个功能是否追溯到某个功能清单项？
+4. **FEA→ST**：每个功能清单项是否追溯到 ≥ 1 个故事？
+5. **无孤儿**：有没有任何元素没有上游连接？
 
-Record orphans in §8 反向追溯检查.
+在 §8 反向追溯检查中记录孤儿。
 
-## Lens 4: Cross-Artifact Consistency
+## 透镜 4：跨产物一致性（Cross-Artifact Consistency）
 
-Scan for contradictions across artifacts:
+扫描跨产物矛盾：
 
-| Check | What to Look For |
+| 检查 | 找什么 |
 |---|---|
-| **Role consistency** | Same role name, same description across all 4 artifacts |
-| **Term consistency** | Same term means the same thing everywhere (e.g., "候选人状态" in `user-journey-and-stories` should match "候选人状态管理" in `function-description`) |
-| **Constraint consistency** | Background §7 constraint still respected in `function-description` function descriptions? |
-| **Scope consistency** | Background §8 non-goals → Are any of them accidentally included as features in `product-ux`? |
-| **Priority consistency** | P0 story in `user-journey-and-stories` → P0 feature in `product-ux` → P0 function in `function-description`? No silent priority downgrades? |
+| **角色一致性** | 4 个产物中同一角色名、同一描述 |
+| **术语一致性** | 同一术语处处同义（例如 `user-journey-and-stories` 中的"候选人状态"应与 `function-description` 中的"候选人状态管理"一致） |
+| **约束一致性** | 背景 §7 的约束在 `function-description` 功能描述中仍被尊重？ |
+| **范围一致性** | 背景 §8 的非目标——有没有被意外作为功能纳入 `product-ux`？ |
+| **优先级一致性** | `user-journey-and-stories` 的 P0 故事 → `product-ux` 的 P0 功能 → `function-description` 的 P0 功能？没有静默降级？ |
 
-**Anti-pattern**: Finding a contradiction and fixing it yourself. Record it in §9, let the human decide.
+**反模式**：发现矛盾然后自己修。记录到 §9，让人类决定。
 
-## Lens 5: Gap Detection
+## 透镜 5：缺口检测（Gap Detection）
 
-Identify what SHOULD be present but is missing:
+识别本应存在但缺失的内容：
 
-1. **Uncovered goals**: A G-X with no downstream chain at all.
-2. **Missing functions**: A P0 feature (FEA-XXX) with no function description (FUN-XXX).
-3. **Untested acceptance criteria**: An AC-XXX with no measurable threshold.
-4. **Missing NFR coverage**: A function that obviously needs NFR (e.g., handles personal data) but has no NFR section.
+1. **未覆盖目标**：完全没有下游链的 G-X。
+2. **缺失功能描述**：没有功能描述（FUN-XXX）的 P0 功能清单项（FEA-XXX）。
+3. **未被测试的验收标准**：没有可度量阈值的 AC-XXX。
+4. **缺失 NFR 覆盖**：明显需要 NFR（例如处理个人数据）却没有 NFR 章节的功能。
 
-## Lens 6: RTM Construction
+## 透镜 6：RTM 构建（RTM Construction）
 
-Build the Requirements Traceability Matrix (§6):
+构建需求追溯矩阵（§6）：
 
 | G | ST | FEA | FUN | AC | BR |
 |---|---|---|---|---|---|
 | G1 | ST-001, ST-002 | FEA-001 | FUN-001, FUN-002 | AC-001, AC-002 | BR-001, BR-002 |
 
-Rules:
-- Each row represents one complete trace chain.
-- A single G may span multiple rows (one per downstream branch).
-- Empty cells are allowed for P2 elements, but must be noted.
-- The RTM is built by reading all four artifacts, not by guessing.
+规则：
+- 每行代表一条完整追溯链。
+- 单个 G 可能跨多行（每个下游分支一行）。
+- P2 元素允许空单元格，但必须注明。
+- RTM 通过阅读全部 4 个产物构建，不是靠猜测。
 
-## Lens 7: Completeness Final Review
+## 透镜 7：完整性终审（Completeness Final Review）
 
-Before submitting for human review, ask:
+提交人工评审前，问：
 
-1. Can a new developer read this PRD and understand what to build without asking the PM?
-2. Can a tester read this PRD and write test cases without ambiguity?
-3. Can a business stakeholder read §1-§2 and confirm "yes, this is what we asked for"?
-4. Are there any sections that read like internal AI notes rather than a deliverable document?
+1. 一个新开发者读这份 PRD 能否在不问 PM 的情况下理解要构建什么？
+2. 一个测试者读这份 PRD 能否无歧义地写测试用例？
+3. 一个业务干系人读 §1-§2 能否确认"是的，这就是我们要的"？
+4. 有没有哪些章节读起来像 AI 内部笔记而不是交付文档？
 
-## Lens 8: Pre-Mortem (PRD 交付后失败预演)
+## 透镜 8：Pre-Mortem（PRD 交付后失败预演）
 
-The PRD is the contract handed to development. Before final approval, run a failure rehearsal:
+PRD 是交给开发的契约。最终批准前，做一次失败演练：
 
-1. What is the most likely way this PRD gets misread or misimplemented? (ambiguous term, buried constraint, contradictory rule)
-2. What is the most likely scope creep after this PRD ships? (a near-IN feature the business will request, an assumption stated but not frozen)
-3. What would the first 3 bug reports against this PRD look like? Are they covered by ACs?
-4. What would a reviewer reject this PRD for? (missing acceptance basis, untraceable requirement, unclear ownership)
+1. 这份 PRD 最可能以什么方式被误读或误实现？（歧义术语、埋没的约束、矛盾规则）
+2. 这份 PRD 交付后最可能发生什么范围蔓延？（业务方会要求的近-IN 功能、已声明但未冻结的假设）
+3. 针对这份 PRD 的前 3 个 bug 报告会是什么样？AC 覆盖了吗？
+4. 评审人会因为什么拒绝这份 PRD？（缺失验收依据、不可追溯的需求、不清晰的归属）
 
-Record each failure mode in §9 不一致报告 / risk section with an owner — do not silently fix confirmed content.
+在 §9 不一致报告 / 风险章节中记录每个失败模式并带负责人——不要静默修复已确认内容。
 
 ---
 

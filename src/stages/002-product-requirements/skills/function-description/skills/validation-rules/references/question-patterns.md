@@ -1,21 +1,21 @@
 # Question Patterns · validation-rules
 
-Eight canonical question templates for the one-question-at-a-time Clarify loop. Each entry gives:
+面向一次一问 Clarify 循环的八个规范提问模板。每条包含：
 
-- **When to use** — the trigger condition
-- **Question shape** — the prompt structure
-- **Three examples** — paraphrased real cases (desensitized, generic business scenarios)
-- **Common traps** — typical AI mistakes when asking this kind of question
+- **何时使用** — 触发条件
+- **问题句式** — 提问结构
+- **三个示例** — 改写后的真实案例（脱敏、通用业务场景）
+- **常见陷阱** — 问此类问题时 AI 的典型错误
 
-Use these as reference when generating a new question in a Clarify Session. See `SKILL.md` § Clarify for runtime rules.
+在 Clarify Session 生成新问题时参考使用。运行时规则见 `SKILL.md` § Clarify。
 
 ---
 
 ## 1. 输入面完整性（Input Enumeration）
 
-**When to use**: when a function's input surface is under-enumerated; or when hidden inputs (URL params, overwritable defaults) may be missing; or when read-only/system fields might be wrongly included.
+**何时使用**: 功能输入面枚举不全；或可能有缺失的隐藏输入（URL 参数、可改写的默认值）；或可能错误包含只读/系统字段。
 
-**Question shape**:
+**问题句式**:
 
 ```
 [为什么重要] 输入面不全会导致漏校验或永远不触发的校验。
@@ -23,13 +23,13 @@ Use these as reference when generating a new question in a Clarify Session. See 
 1. 还有没有隐藏输入(URL参数/可被改写的默认值)? 2. 哪些字段是只读/系统生成、不需要校验?
 ```
 
-**Examples**:
+**示例**:
 
 - "注册表单我看到手机号、邮箱、密码三个输入，还有别的吗？比如邀请码、推荐人？"
 - "这个筛选页的参数来自 URL 吗？URL 里传的 category 需要校验吗？"
 - "下单字段里「优惠金额」是系统计算的，应该排除在校验范围外，对吗？"
 
-**Common traps**:
+**常见陷阱**:
 
 - 只列"看得见的表单框"，漏掉隐藏输入
 - 给系统生成字段写校验（永不触发）
@@ -39,9 +39,9 @@ Use these as reference when generating a new question in a Clarify Session. See 
 
 ## 2. 值域来源（Value-Domain Source）
 
-**When to use**: when a value domain has no source; or when the AI is about to invent a format/limit; or when the same field's domain appears differently across sources.
+**何时使用**: 值域没有来源；或 AI 即将发明格式/限制；或同一字段的值域在不同来源中表现不一致。
 
-**Question shape**:
+**问题句式**:
 
 ```
 [为什么重要] 取值口径是业务事实，编错会拒绝合法业务或放行非法数据。
@@ -49,13 +49,13 @@ Use these as reference when generating a new question in a Clarify Session. See 
 该值域来自哪里? 是业务事实、既有码表、安全策略，还是需要补充决定?
 ```
 
-**Examples**:
+**示例**:
 
 - "「密码必须 8 位」我在上游找不到出处。是安全策略规定的，还是我猜的？请给出来源或确认。"
 - "手机号只支持大陆手机号，还是也要支持国际号码（E.164）？"
 - "会员等级取值集合来自哪个码表？是否与现有 CRM 一致？"
 
-**Common traps**:
+**常见陷阱**:
 
 - 编造值域当既定事实（不标 AI_INFERENCE）
 - 不查既有系统/码表
@@ -65,9 +65,9 @@ Use these as reference when generating a new question in a Clarify Session. See 
 
 ## 3. 边界值（Boundary Precision）
 
-**When to use**: when a range/length check lacks open/closed semantics; or when boundary values are ambiguous; or when the equals sign case is undefined.
+**何时使用**: 范围/长度检查缺少开/闭语义；或边界值含糊；或等号边界情况未定义。
 
-**Question shape**:
+**问题句式**:
 
 ```
 [为什么重要] 边界值决定通过/拒绝判据，一个等号就能改变行为。
@@ -75,13 +75,13 @@ Use these as reference when generating a new question in a Clarify Session. See 
 下界/上界分别是什么? 开区间还是闭区间? 边界值(最小/最大/空串/超长/特殊字符)落入合法还是非法?
 ```
 
-**Examples**:
+**示例**:
 
 - "金额范围 0 < x ≤ 100000——恰好 100000 允许，100000.01 拒绝，对吗？"
 - "用户名长度 2-20 位：2 位和 20 位都算合法？超长截断还是拒绝？"
 - "空字符串和全空格算必填失败吗？"
 
-**Common traps**:
+**常见陷阱**:
 
 - ≥ 与 > 混用
 - 只写上限不写下限
@@ -91,22 +91,22 @@ Use these as reference when generating a new question in a Clarify Session. See 
 
 ## 4. 格式规则（Format / Regex）
 
-**When to use**: when a format check lacks an executable expression; or when charset/allowed-characters are undefined; or when the regex would be ambiguous to implement.
+**何时使用**: 格式检查缺少可执行表达式；或字符集/允许字符未定义；或正则实现起来有歧义。
 
-**Question shape**:
+**问题句式**:
 
 ```
 [为什么重要] 格式规则必须可执行，否则开发无法实现、测试无法构造用例。
 请确认 [字段] 的格式规则: 允许的字符集? 分隔/掩码? 是否大小写敏感? 样例正确格式?
 ```
 
-**Examples**:
+**示例**:
 
 - "邮箱格式用简单校验（含 @ 即可）还是 RFC 级校验？"
 - "身份证号校验要不要校验校验位（加权）？还是只查 18 位数字？"
 - "金额最多几位小数？2 位还是 4 位？"
 
-**Common traps**:
+**常见陷阱**:
 
 - 写"校验格式"不写表达式
 - 不定义字符集（允许哪些字符）
@@ -116,22 +116,22 @@ Use these as reference when generating a new question in a Clarify Session. See 
 
 ## 5. 必填与可选（Required / Optional）
 
-**When to use**: when required/optional flags are missing; or when conditional-required is unclear; or when the same field is required in one context and optional in another.
+**何时使用**: 必填/可选标志缺失；或条件必填不清晰；或同一字段在某场景必填、另一场景可选。
 
-**Question shape**:
+**问题句式**:
 
 ```
 [为什么重要] 必填决定数据完整性的第一道门槛。
 请确认 [字段] 是否必填? 是否依赖其他字段(选 A 则必填)? 不同场景(新增/编辑/批量)是否不同?
 ```
 
-**Examples**:
+**示例**:
 
 - "确认密码在注册时必填，在个人中心修改时也要必填吗？"
 - "手机号是注册必填，还是可留空、登录后可补？"
 - "批量导入时必填字段与单条提交是否一致？"
 
-**Common traps**:
+**常见陷阱**:
 
 - 全部字段一律必填
 - 条件必填的依赖字段不声明
@@ -141,9 +141,9 @@ Use these as reference when generating a new question in a Clarify Session. See 
 
 ## 6. 跨字段约束（Cross-Field）
 
-**When to use**: when a field's validity depends on another field or existing data; or when mutual exclusion / composite uniqueness is unstated; or when referential integrity needs confirmation.
+**何时使用**: 字段有效性依赖另一字段或已有数据；或互斥/组合唯一性未说明；或引用完整性需要确认。
 
-**Question shape**:
+**问题句式**:
 
 ```
 [为什么重要] 跨字段约束漏定义，会出现"单查都通过、联查就崩"。
@@ -151,13 +151,13 @@ Use these as reference when generating a new question in a Clarify Session. See 
 A 必填当且仅当 B 被选择? 互斥(不能同时填)? 组合唯一? 引用必须存在于 [码表/上游功能]?
 ```
 
-**Examples**:
+**示例**:
 
 - "选择「公司发票」时「税号」是否必填？个人发票时税号应禁止填写吗？"
 - "同一订单下「手机号 + 场次」组合是否唯一？重复提交要拦截吗？"
 - "「城市」必须在「省份」的码表范围内吗？跨表引用如何校验？"
 
-**Common traps**:
+**常见陷阱**:
 
 - 只做单字段独立校验
 - 自造跨字段规则，与 BR/UX 矛盾
@@ -167,9 +167,9 @@ A 必填当且仅当 B 被选择? 互斥(不能同时填)? 组合唯一? 引用�
 
 ## 7. 错误提示文案（Error Message Copy）
 
-**When to use**: when error-message wording is missing or dev-oriented; or when message copy needs to distinguish failure types; or when the message is not actionable.
+**何时使用**: 错误提示措辞缺失或面向开发；或提示文案需要区分失败类型；或提示不可操作。
 
-**Question shape**:
+**问题句式**:
 
 ```
 [为什么重要] 错误提示是产品体验的一部分，写错会让用户不知如何修正。
@@ -177,13 +177,13 @@ A 必填当且仅当 B 被选择? 互斥(不能同时填)? 组合唯一? 引用�
 需说明哪里错 + 期望值 + 如何改? 是否区分 [必填缺失/格式错误/超出范围/已存在冲突]?
 ```
 
-**Examples**:
+**示例**:
 
 - "「邮箱格式错误」——是否改成「邮箱格式不正确，示例: name@domain.com」？"
 - "已存在冲突（手机号已注册）的提示需要给找回密码入口吗？"
 - "提示语长度控制在 30 字以内，还是允许更长描述？"
 
-**Common traps**:
+**常见陷阱**:
 
 - 用内部错误码/英文当提示
 - 不区分失败类型，一句"输入无效"打发
@@ -193,9 +193,9 @@ A 必填当且仅当 B 被选择? 互斥(不能同时填)? 组合唯一? 引用�
 
 ## 8. 校验冲突与优先级（Conflict / Priority）
 
-**When to use**: when a VL contradicts a BR; or when multiple checks fire simultaneously and the order/priority is unclear; or when over-validation would reject a legitimate value.
+**何时使用**: VL 与 BR 矛盾；或多个检查同时触发而顺序/优先级不清；或过度校验会拒绝合法值。
 
-**Question shape**:
+**问题句式**:
 
 ```
 [为什么重要] 校验冲突会选边错误，优先级不清会让错误提示顺序混乱。
@@ -203,13 +203,13 @@ A 必填当且仅当 B 被选择? 互斥(不能同时填)? 组合唯一? 引用�
 请裁决: 以哪个为准? 多个错误同时存在时提示顺序如何定?
 ```
 
-**Examples**:
+**示例**:
 
 - "VL-002 说手机号必填，但 BR-005 说游客可免手机号下单。以哪个为准？"
 - "手机号格式错 + 密码太短同时存在，先提示哪个？"
 - "金额上限校验会不会误拒业务方的合法大额订单？是否需要豁免通道？"
 
-**Common traps**:
+**常见陷阱**:
 
 - 静默选边不记录 CONFLICT
 - 多个错误同时存在时提示顺序不定义
@@ -217,7 +217,7 @@ A 必填当且仅当 B 被选择? 互斥(不能同时填)? 组合唯一? 引用�
 
 ---
 
-## Cross-cutting tips
+## 跨题通用提示
 
 1. **排序原则**：Clarify 一次只问 1 个，按 Impact × Uncertainty 排序，先问阻断性高的。
 2. **不要问 AI 能查的事实**：公开格式规范、既有码表、行业惯例，让 AI 自己查，不要让业务方回答。

@@ -2,7 +2,7 @@
 """prd_publish.py — 飞书 PRD 发布脚本（项目内置，以飞书为主闭环）
 
 把生成好的 PRD 产物（或任意交付文档）发布为飞书文档，返回 doc-id，
-并登记到产物 frontmatter（feishu_doc_id）与 .test-output/飞书发布日志。
+并登记到产物 frontmatter（feishu_doc_id）与 99-review/飞书发布日志。
 
 闭环：飞书取材料（feishu_fetch.py）→ 本地生成产物 → 飞书发布（本脚本）。
 
@@ -27,7 +27,7 @@ from workflow_registry import read_frontmatter
 
 DEFAULT_FEISHU_DOMAIN = 'ccegroup.feishu.cn'
 DEFAULT_TITLE_TEMPLATE = '[PM Scaffold] {case} {artifact_id} v{version}'
-LOG_PATH = Path('.test-output/飞书发布日志.md')
+LOG_PATH = Path('99-review/飞书发布日志.md')
 
 
 def run_lark(args: list[str], input_text: str | None = None) -> dict:

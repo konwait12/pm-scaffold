@@ -1,5 +1,5 @@
-# Function Description Source Handling
+# 功能描述来源处理（Function Description Source Handling）
 
-Use confirmed scope, features, flows, pages/states, stories, roles and goals. Every function and rule cites an upstream ID or explicit human decision.
+使用已确认的范围、功能、流程、页面/状态、故事、角色与目标。每个功能与规则都引用上游 ID 或显式的人工决策。
 
-UX describes where and through which state a user acts; this Skill specifies the detailed action/response and policy. A new feature returns to `product-ux`. A new business need returns to journey/stories or background. External feasibility evidence remains conditional until the responsible human accepts it.
+UX 描述用户在何处、经由哪个状态行动；本 Skill 指定详细的动作/响应与策略。新功能返回 `product-ux`。新业务需求返回 journey/stories 或 background。外部可行性证据在负责人接受之前保持条件性。

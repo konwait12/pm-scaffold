@@ -1,11 +1,11 @@
-# Product UX Audit Checklist
+# 产品 UX 审计清单（Product UX Audit Checklist）
 
-- [ ] In/out scope, assumptions, dependencies and system ownership are explicit.
-- [ ] Every P0 story maps to at least one feature; every feature maps backward to a story.
-- [ ] Feature names describe user/product capability rather than implementation.
-- [ ] Module boundaries and cross-system handoffs are visible.
-- [ ] P0 flows cover relevant entry, main, alternate, failure, timeout, cancellation and recovery states.
-- [ ] Page/step descriptions identify content, available action and next state without detailed rules.
-- [ ] No `IX`, `BR`, `VL`, `AC`, architecture, API or database design leaked into the artifact.
-- [ ] AI-proposed features remain candidates until selected by the product owner.
-- [ ] The artifact can be used in a product solution review without an AI interpreter.
+- [ ] In/Out 范围、假设、依赖与系统归属显式。
+- [ ] 每个 P0 故事映射到至少一个功能；每个功能向后映射到某个故事。
+- [ ] 功能名描述用户/产品能力，而不是实现。
+- [ ] 模块边界与跨系统交接可见。
+- [ ] P0 流程覆盖相关的入口、主路径、备选、失败、超时、取消与恢复状态。
+- [ ] 页面/步骤描述识别内容、可用操作与下一状态，不写详细规则。
+- [ ] 产物中没有泄出 `IX`、`BR`、`VL`、`AC`、架构、API 或数据库设计。
+- [ ] AI 提议的功能在产品负责人选择之前保持为候选。
+- [ ] 无需 AI 解读器即可用于产品方案评审。

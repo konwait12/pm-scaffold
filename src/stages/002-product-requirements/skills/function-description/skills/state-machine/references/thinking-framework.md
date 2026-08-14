@@ -1,50 +1,50 @@
 # Thinking Framework · state-machine
 
-Use these lenses to improve the candidate. Do not dump the full analysis into the artifact.
+用这些透镜改进候选内容。不要把完整分析粘贴进产物。
 
-## Common Core (MANDATORY)
+## Common Core（必用）
 
-Apply the **6 core lenses** from `src/framework/thinking-core.md` §1 (First Principles, Systems Thinking, Adversarial Review, Reverse Validation, Confirmation Bias Defense, Knowledge Boundary) plus the check-layer lenses from §2 relevant to this work item (Pre-Mortem before phase close, Fresh-Eyes before Human Gate, Testability before acceptance criteria, Conclusion First + Reader Perspective when writing). Record only findings that change the candidate — do not repeat core-lens analysis verbatim.
+应用 `src/framework/thinking-core.md` §1 的 **6 个核心透镜**（第一性原理、系统思考、对抗性审查、逆向验证、确认偏误防御、知识边界认知），以及 §2 中与本 work item 相关的校验层透镜（阶段收口前事前验尸、Human Gate 前空杯视角、验收依据前可测试性、写作时结论先行 + 读者视角）。只记录改变候选内容的发现——不要逐字重复核心透镜分析。
 
-## Domain Lens A: Entity & State Discovery (实体与状态盘点)
+## 领域透镜 A：实体与状态盘点
 
-- What are all the legal states of this entity, and are they pairwise distinguishable?
-- For each P0 FUN-XXX entity, list every state with its entry and exit conditions — do not pick a few from memory.
-- States must be mutually exclusive and distinct (待审核 / 审核中 / 已通过 / 已驳回); a pseudo-state that only differs by an adverb is not a state.
+- 该实体的所有合法状态是什么，是否两两可区分？
+- 对每个 P0 FUN-XXX 实体，列出每个状态及其进入/退出条件——不要凭记忆挑几个。
+- 状态必须互斥且截然不同（待审核 / 审核中 / 已通过 / 已驳回）；只差一个副词的伪状态不是状态。
 
-## Domain Lens B: Trigger & Transition Completeness (触发与转移完备性)
+## 领域透镜 B：触发与转移完备性
 
-- For every current-state × trigger-event combination, is a target state defined?
-- Forbidden transitions (e.g. terminal-state rollback) are stated explicitly as 「不允许」, never left blank.
-- Cover the branches: success, failure, cancel, timeout, retry, duplicate submit, rollback, concurrency — every path business allows has a destination.
+- 对每个 当前状态 × 触发事件 组合，是否都定义了目标状态？
+- 被禁止的转移（如终态回退）显式写为「不允许」，绝不留空。
+- 覆盖各分支：成功、失败、取消、超时、重试、重复提交、回滚、并发——业务允许的每条路径都有目的地。
 
-## Domain Lens C: Condition & Side-Effect Precision (条件与副作用精确性)
+## 领域透镜 C：条件与副作用精确性
 
-- Is every guard condition decidable (expressible as a BR-checkable rule), not 「视情况」「合适时机」?
-- Are side effects named one by one: notification, state linkage, related-entity update, audit, rollback action? If none, write 「无」 explicitly.
+- 每个守卫条件是否可判定（可表达为 BR 可检查的规则），而非「视情况」「合适时机」？
+- 副作用是否逐一点名：通知、状态联动、相关实体更新、审计、回滚动作？若无，显式写「无」。
 
-## Domain Lens D: Boundary Preservation (边界保持)
+## 领域透镜 D：边界保持
 
-| Content characteristic | Owner |
+| 内容特征 | 归属 |
 |---|---|
-| How a state looks in the UI (button grey, badge) | interaction-rules `IX-XXX` |
-| Field storage, table schema, index | implementation — not here |
-| Message queue, idempotency implementation | engineering — not here |
-| Failure, timeout, retry, rollback, recovery narrative | exception-handling |
-| State and state transitions | **this sub-skill** |
+| 状态在 UI 中如何呈现（按钮置灰、角标） | interaction-rules `IX-XXX` |
+| 字段存储、表结构、索引 | 实现——不在此处 |
+| 消息队列、幂等实现 | 工程——不在此处 |
+| 失败、超时、重试、回滚、恢复的叙述 | exception-handling |
+| 状态与状态转移 | **本子 skill** |
 
-Any state-table cell containing 「按钮变灰」「存 int」「用 Redis 记录」 is out of bounds — remove or demote to a one-line side effect.
+状态表中任何含「按钮变灰」「存 int」「用 Redis 记录」的单元格都越界了——删除，或降级为一行副作用。
 
-## Domain Lens E: Traceability & Knowledge State (可追溯性与知识状态)
+## 领域透镜 E：可追溯性与知识状态
 
-- Every transition conclusion carries `FACT` / `DECISION` / `AI_INFERENCE` / `UNKNOWN`; inferred and unknown entries are registered in the 待确认 register, not silently treated as fact in the table.
-- Every transition table row is reverse-traceable to its `FUN-XXX` and source document; state naming is consistent library-wide; terminal semantics agree with cancel/termination semantics.
+- 每条转移结论携带 `FACT` / `DECISION` / `AI_INFERENCE` / `UNKNOWN`；推断与未知条目登记在 待确认 登记表，而非在表中静默当事实。
+- 每条转移表行可反向追溯到其 `FUN-XXX` 与来源文档；状态命名在全局一致；终态语义与取消/终止语义一致。
 
 ---
 
-## Low-Density Degradation Mode
+## 低密度降级模式
 
-When a function's confirmed source mentions states but names none of them, the lenses above cannot do meaningful work. Applying them to insufficient information produces verbose but empty transition tables. Switch to degradation mode:
+当某功能已确认的来源提到状态但一个都没命名时，上述透镜无法产生有意义的工作。把它们套在不足的信息上会产出冗长但空洞的转移表。切换到降级模式：
 
 ```text
 low-density input → skip domain-lens ideation
@@ -56,22 +56,22 @@ low-density input → skip domain-lens ideation
                    → wait for human to fill in, then re-enter Preflight in sufficient mode
 ```
 
-Degradation triggers (any one is enough):
+降级触发条件（任一即触发）:
 
-- the source says "有状态 / 有生命周期" but lists no state names, events, or transitions
-- the confirmed source only describes UI screen changes, not entity lifecycle
-- the BR rules that gate transitions are unconfirmable
+- 来源说"有状态 / 有生命周期"，但没有列出任何状态名、事件或转移
+- 已确认来源只描述 UI 屏幕变化，而非实体生命周期
+- 门控转移的 BR 规则无法确认
 
-This mode is not a failure state. It is the correct response to insufficient information — one clean batch of questions instead of a transition table full of guessed states and invented events.
+本模式不是失败状态。这是对信息不足的正确响应——产出一批干净的问题，而不是一张满是猜测状态和编造事件的转移表。
 
-## Confirmation Bias Defense (state-machine specialization)
+## 确认偏误防御（state-machine 特化）
 
-1. Did I model the happy path the story happened to mention, or did I enumerate all states the business actually has (including cancel/timeout/terminal)?
-2. Am I labeling an inferred transition as `FACT`, or checking whether it is `AI_INFERENCE` first?
-3. If a governing BR would forbid a transition I assumed, did I keep the conflict visible — or quietly allow it?
+1. 我是否只建模了故事恰好提到的主路径，而没有枚举业务实际拥有的所有状态（含取消/超时/终态）？
+2. 我是否把推断的转移标成 `FACT`，还是先检查它是 `AI_INFERENCE`？
+3. 如果门控 BR 会禁止我假设的转移，我是保持冲突可见——还是静默放行？
 
-## Knowledge Boundary (state-machine specialization)
+## 知识边界（state-machine 特化）
 
-1. Did I distinguish "story names the state 待审核" (`FACT`), "I inferred a 审核中 state from the flow" (`AI_INFERENCE`), and "nobody defined cancel semantics" (`UNKNOWN`)?
-2. Did I keep undefined transitions in the 待确认 register instead of inventing target states?
-3. Are knowledge-state tags on each transition row, or buried in prose?
+1. 我是否区分了"故事命名了状态 待审核"（`FACT`）、"我从流程推断出 审核中 状态"（`AI_INFERENCE`）与"没人定义取消语义"（`UNKNOWN`）？
+2. 我是否把未定义的转移保留在 待确认 登记表，而不是发明目标状态？
+3. 知识状态标签是写在每条转移行上，还是埋在叙述里？

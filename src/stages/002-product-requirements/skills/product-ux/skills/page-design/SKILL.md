@@ -1,95 +1,95 @@
 ---
 name: page-design
-description: Define the page skeleton for each step in the confirmed functional flow — entry trigger, preconditions, main content areas, available actions, and next state — without visual design. Sub-skill of product-ux, fills §2 页面设计 (page skeletons) of product-ux.md.
+description: 为已确认功能流程中的每一步定义页面骨架——入口触发、前置条件、主要内容区块、可用操作与下一状态——不含视觉设计。Sub-skill of product-ux，填充 product-ux.md 的 §2 页面设计（页面骨架）。
 ---
 
-# Page Design
+# Page Design · 页面设计
 
-## Purpose And Boundary
+## 目的与边界
 
-Turn every step in the confirmed functional flow into a concrete page/step skeleton: how the user arrives, what must already be true, what content the page carries, what actions the user can take, and where each action leads. The result must be consumable by `interaction-rules` (which adds IX behavior) and by function-description (which adds BR/VL/AC) without re-interpreting.
+把已确认功能流程中的每一步转化为具体的页面/步骤骨架：用户如何到达、进入时哪些条件必须已成立、页面承载什么内容、用户可执行哪些操作、每个操作通向何处。产出必须能让 `interaction-rules`（补充 IX 行为）与 function-description（补充 BR/VL/AC）在不做二次解读的情况下直接消费。
 
-**Do not** specify visual design (colors, fonts, spacing, component styling), write interaction micro-details (animation, hover, scroll, modal appearance), design database models, or define business/validation/permission rules. Page skeleton is a content-and-navigation contract, not a mockup.
+**不得**指定视觉设计（颜色、字体、间距、组件样式）、编写交互微细节（动效、悬停、滚动、弹窗外观）、设计数据库模型，或定义业务/校验/权限规则。页面骨架是内容与导航契约，而非高保真原型（mockup）。
 
-## Inputs And Outputs
+## 输入与输出
 
-Inputs: the confirmed functional flow (§2.1 主流程 / §2.2 分支流程 / §2.3 异常流程) from `functional-flow` (in function-description), the feature list (`FEA-XXX`) from function-description's `feature-list`, and the confirmed stories they trace to. Output: §2 页面设计 of the parent `product-ux.md` (§2.1 页面与步骤描述 table + §2.2 HTML 原型 entry when needed), following `src/templates/stage-2-product/product-ux.md`. Not a standalone artifact.
+输入：来自 `functional-flow`（在 function-description 内）的已确认功能流程（§2.1 主流程 / §2.2 分支流程 / §2.3 异常流程）、来自 function-description 的 `feature-list` 功能清单（`FEA-XXX`），以及它们所追溯的已确认故事。输出：父级 `product-ux.md` 的 §2 页面设计（§2.1 页面与步骤描述 表格 + 需要时的 §2.2 HTML 原型 条目），遵循 `src/templates/stage-2-product/product-ux.md`。非独立产物。
 
-Load `references/thinking-framework.md` (which references `src/framework/thinking-core.md` §1 mandatory lenses) before analysis. Load `references/output-contract.md` before drafting. Load `references/audit-checklist.md` and `references/reviewer-checklist.md` before handoff. Run `scripts/validate_artifact.py <product-ux.md> --json` before review. Load `references/prototype-techniques.md` when the flow has ≥3 pages or needs stakeholder review of look-and-feel.
+分析前加载 `references/thinking-framework.md`（其引用 `src/framework/thinking-core.md` §1 强制透镜）。Draft 前加载 `references/output-contract.md`。交接前加载 `references/audit-checklist.md` 与 `references/reviewer-checklist.md`。Review 前运行 `scripts/validate_artifact.py <product-ux.md> --json`。当流程 ≥3 页或需要利益相关方评审视觉/观感时，加载 `references/prototype-techniques.md`。
 
-## Thinking Prompts (per stage)
+## 思考提示（按阶段）
 
 ### 1. Preflight
-- "Which pages/steps come out of the confirmed functional flow? Which FEA and story does each trace to?"
-- Extract the page inventory from the functional flow's §2.1 主流程 / §2.2 分支流程 / §2.3 异常流程. Any page not present in the flow must be flagged, not silently added.
-- **If the functional flow is missing or unconfirmed**, return a routing receipt and STOP — page skeletons cannot be invented without steps to hang on.
+- "从已确认功能流程中产出哪些页面/步骤？每个页面追溯哪个 FEA 与故事？"
+- 从功能流程的 §2.1 主流程 / §2.2 分支流程 / §2.3 异常流程提取页面清单。任何未出现在流程中的页面必须被标记，不得静默新增。
+- **若功能流程缺失或未确认**，返回 routing receipt 并 STOP——没有步骤可挂接时不能凭空发明页面骨架。
 
 ### 2. Intake
-- "What does each flow step actually imply about content, actions, and next states — not what I think a good page looks like?"
-- Collect verbatim from the flow: step name, entry edge, branch conditions that reach it, exit edges.
-- Classify page facts as `FACT`, `DECISION`, `ASSUMPTION`, `AI_INFERENCE`, `UNKNOWN`, or `CONFLICT` per `src/framework/contracts.md`.
-- A content block or action I add for completeness must be tagged `AI_INFERENCE`.
+- "每个流程步骤对内容、操作与下一状态的真正含义是什么——而不是我认为好页面长什么样？"
+- 逐字从流程中摘取：步骤名、入口边、到达该步骤的分支条件、出口边。
+- 按 `src/framework/contracts.md` 将页面事实归类为 `FACT` / `DECISION` / `ASSUMPTION` / `AI_INFERENCE` / `UNKNOWN` / `CONFLICT`。
+- 为补全而新增的内容区块或操作必须标记 `AI_INFERENCE`。
 
 ### 3. Think (apply thinking-core.md §1 mandatory lenses)
-- **First Principles**: "What must the user see and do here to advance toward the outcome? Which elements are assumed but not required?"
-- **Systems Thinking**: "Does this page's action chain to a data source, another role's task, or an external service?"
-- **Adversarial**: "What happens when a precondition fails? Is there an entry path that bypasses the preconditions I assumed?"
-- **Reverse Validation**: "From the next-state backwards, what content/action must this page provide so the next step can run?"
-- **Confirmation Bias Defense**: "Am I designing the page the requester sketched, or the page the flow actually needs?"
-- **Knowledge Boundary**: "Which page facts are confirmed and which are my structural inference?"
+- **First Principles**: "用户在这里必须看到什么、做什么才能朝结果推进？哪些元素被假设但并非必需？"
+- **Systems Thinking**: "此页面的操作是否链到某个数据源、另一角色的任务或外部服务？"
+- **Adversarial**: "前置条件失败时会发生什么？是否存在绕过我所假设前置条件的入口路径？"
+- **Reverse Validation**: "从下一状态反向推导，本页必须提供什么内容/操作，下一步才能运行？"
+- **Confirmation Bias Defense**: "我是在设计需求方草图的页面，还是流程真正需要的页面？"
+- **Knowledge Boundary**: "哪些页面事实已确认，哪些是我的结构推断？"
 
 ### 4. Clarify
-- Resolve discoverable gaps first (re-check flow branches, story text, role definitions).
-- Batch remaining questions with: AI preliminary judgment, evidence, options, impact, owner, blocking flag.
-- **Stop at `needs_user_input`** when the answer changes a P0 page's entry, preconditions, content, actions, or next state.
-- Limit: ≤5 questions per session. Do not ask about visual styling (out of scope) or rules (downstream).
+- 先尝试自行消解可发现的缺口（复查流程分支、故事原文、角色定义）。
+- 剩余问题批量提交：AI 初步判断、依据、选项、影响、owner、阻断标志。
+- 当答案改变某 P0 页面的入口、前置条件、内容、操作或下一状态时，**停在 `needs_user_input`**。
+- Limit: 每轮 ≤5 个问题。不问视觉样式（超出范围）或规则（下游技能）。
 - 遇到「待确认 / 冲突 / 信息缺口」信号：主动询问是否登记 issue-record（问题清单，见 `src/shared/clarify/skills/issue-record`）；送审前 dor_check 会硬检查收口与引用。
 
 ### 5. Generate
-- One row per page/step in the §2.1 table: 页面/步骤, 所属功能, 入口, 前置条件, 主要内容, 操作, 下一状态.
-- Keep content at the "what is on the page" level; keep actions one-per-row with an explicit next state (including 停留本页 / 退出流程).
-- Status: use `draft`, `needs_user_input`, or `conditional_review` — **never `confirmed`**.
+- §2.1 表格中每个页面/步骤占一行：页面/步骤、所属功能、入口、前置条件、主要内容、操作、下一状态。
+- 内容保持在"页面上有什么"层面；操作一行一条并带有明确的下一状态（含 停留本页 / 退出流程）。
+- Status: 用 `draft`、`needs_user_input` 或 `conditional_review`——**永不 `confirmed`**。
 
 ### 6. Audit
-- **Completeness**: every page from the functional flow has a row; no orphan pages; every page has ≥1 action.
-- **Action-NextState Closure**: every action has an explicit next state; no dangling arrows.
-- **Boundary**: no visual styling, no interaction micro-details, no BR/VL/AC.
-- **Traceability**: each row traces to FEA-XXX and a flow step.
-- Run `scripts/validate_artifact.py <product-ux.md> --json`. Fix all errors. Warnings → document.
+- **Completeness（完整性）**: 功能流程中的每个页面都有对应行；无孤儿页面；每个页面 ≥1 个操作。
+- **Action-NextState Closure（操作-下一状态闭环）**: 每个操作都有明确的下一状态；无悬空箭头。
+- **Boundary（边界）**: 无视觉样式、无交互微细节、无 BR/VL/AC。
+- **Traceability（可追溯性）**: 每行追溯 FEA-XXX 与一个流程步骤。
+- 运行 `scripts/validate_artifact.py <product-ux.md> --json`。修复所有 error；warning 在审计记录中说明。
 - **B3 收口**：确认 issue-record 的 §13 阶段收口表已更新本 work item 行（问题数 / 收口日期 / 状态；空阶段也落行）。
 
 ### 7. Human Gate
-Present: the page inventory, per-page entry/precondition/action/next-state, pages marked `AI_INFERENCE`, and any page that over-reaches into visual design.
-**Product owner confirms page inventory and navigation; business owner confirms preconditions and next states.** Approval creates a ReviewRecord with SHA-256.
+Present: 页面清单、每页的入口/前置/操作/下一状态、所有标 `AI_INFERENCE` 的页面，以及任何越界到视觉设计的页面。
+**产品负责人确认页面清单与导航；业务负责人确认前置条件与下一状态。** 批准产生 ReviewRecord（SHA-256）。
 
 ### 8. Commit / Reflow
-- Only `pipeline.py review --decision approve` may write `confirmed`.
-- On changes: record delta → update affected rows → re-run Audit → return to Human Gate.
-- A changed flow step (from functional-flow) invalidates the pages hanging on it → return to the affected pages, not a downstream patch.
+- 只有 `pipeline.py review --decision approve` 可写入 `confirmed`。
+- 变更时：记录 delta → 更新受影响行 → 重跑 Audit → 返回 Human Gate。
+- 功能流程（来自 functional-flow）中某步骤的改变会使挂在其上的页面失效 → 回到受影响的页面，而非下游打补丁。
 
-## Anti-Patterns
+## 反模式
 
-| ❌ Don't | ✅ Do |
+| ❌ 不要 | ✅ 要 |
 |---|---|
-| Write content as visual layout ("top big button, blue card below") | Describe what information the page presents |
-| List actions without next states | Give every action an explicit next state (success/fail/stay/exit) |
-| Merge multiple actions into one vague sentence | One action per row, each with a defined outcome |
-| Add pages not present in the functional flow | Every page traces to a flow step + FEA-XXX |
-| Only design the happy-path page | Cover normal/alternate/error/timeout/cancel/recovery variants |
-| Sneak in interaction micro-details or rules | Keep skeletons at content-and-navigation level |
-| Split pages by "screen count" without reason | Split by genuine state/step differences |
+| 把内容写成视觉布局（"顶部大按钮、下方蓝色卡片"） | 描述页面呈现哪些信息 |
+| 只列操作、不给下一状态 | 每个操作都给出明确的下一状态（成功/失败/停留/退出） |
+| 把多个操作揉进一句含糊的句子 | 一行一个操作，每个都有确定结果 |
+| 新增功能流程之外的页面 | 每个页面追溯一个流程步骤 + FEA-XXX |
+| 只设计主路径页面 | 覆盖正常/备选/错误/超时/取消/恢复等变体 |
+| 偷塞交互微细节或规则 | 骨架保持在内容与导航层面 |
+| 无理由按"屏幕数"拆页 | 按真实的状态/步骤差异拆分 |
 
-## Example: Sufficient Input → Sufficient Output
+## 示例：充分输入 → 充分输出
 
-**Input**: confirmed functional flow with 4 steps for "场地预约" FEA-001 (列表→详情→填写→结果) plus confirmed stories.
-**Output**: §2.1 table rows — 场地列表页 (入口: 首页导航; 前置: 已登录; 内容: 场地卡片列表+筛选; 操作: 筛选/查看详情/下拉刷新; 下一状态: 详情页/列表刷新), 场地详情页, 填写页, 结果页 — each with explicit entry/precondition/actions/next states and knowledge tags.
+**输入**: "场地预约" FEA-001 的已确认功能流程含 4 步（列表→详情→填写→结果），外加已确认故事。
+**输出**: §2.1 表格行——场地列表页 (入口: 首页导航; 前置: 已登录; 内容: 场地卡片列表+筛选; 操作: 筛选/查看详情/下拉刷新; 下一状态: 详情页/列表刷新)、场地详情页、填写页、结果页——每行都带有明确的入口/前置/操作/下一状态与知识状态标签。
 
-## Example: Sparse Input → Degraded Output
+## 示例：稀疏输入 → 降级输出
 
-**Input**: "给预约流程做个页面吧" with no flow steps confirmed.
-**Output**: Preflight returns L1 (no flow) → Intake notes no page material → Think lists missing (页面清单? 前置条件? 操作与下一状态?) → Clarify generates ≤5 batched questions → stops at `needs_user_input`. No page rows are invented from a blank slate.
+**输入**: "给预约流程做个页面吧"，没有任何已确认的流程步骤。
+**输出**: Preflight 返回 L1（无流程）→ Intake 记录无页面材料 → Think 列出缺失（页面清单? 前置条件? 操作与下一状态?）→ Clarify 批量生成 ≤5 个问题 → 停在 `needs_user_input`。不从空白凭空发明任何页面行。
 
-## Load References
+## 加载参考
 
 | 文件 | 用途 | 何时加载 |
 |---|---|---|
@@ -102,6 +102,6 @@ Present: the page inventory, per-page entry/precondition/action/next-state, page
 | `references/source-handling.md` | 上游追溯规则（FEA-/ST-/SRC- 引用） | Intake/追溯时 |
 | `references/thinking-framework.md` | 思考透镜（Common Core + 页面领域 lens，必读） | 每次任务开始（必读） |
 
-## Completion
+## 完成标准
 
-All pages/steps from the confirmed functional flow have a §2.1 row with entry, preconditions, content, actions, and next state; every page has at least one action and every action has an explicit next state; page inventory matches the flow with no orphan or invented pages; content stays at information-and-navigation level without visual or interaction/rules leakage; prototype (if any) is a communication aid, not a substitute for the table; and an authorized human approves the page skeleton before interaction-rules runs.
+已确认功能流程中的所有页面/步骤在 §2.1 都有对应行，含入口、前置条件、内容、操作与下一状态；每个页面至少有 1 个操作，每个操作都有明确的下一状态；页面清单与流程一致，无孤儿或凭空发明的页面；内容保持在信息与导航层面，无视觉、交互或规则泄漏；原型（如有）是沟通辅助而非表格的替代；在 interaction-rules 启动前，授权人工已批准页面骨架。

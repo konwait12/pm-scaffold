@@ -1,48 +1,48 @@
 # Thinking Framework · validation-rules
 
-Use these lenses to improve the candidate. Do not dump the full analysis into the artifact.
+用这些透镜改进候选内容。不要把完整分析粘贴进产物。
 
-## Common Core (MANDATORY)
+## Common Core（必用）
 
-Apply the **6 core lenses** from `src/framework/thinking-core.md` §1 (First Principles, Systems Thinking, Adversarial Review, Reverse Validation, Confirmation Bias Defense, Knowledge Boundary) plus the check-layer lenses from §2 relevant to this work item (Pre-Mortem before phase close, Fresh-Eyes before Human Gate, Testability before acceptance criteria, Conclusion First + Reader Perspective when writing). Record only findings that change the candidate — do not repeat core-lens analysis verbatim.
+应用 `src/framework/thinking-core.md` §1 的 **6 个核心透镜**（第一性原理、系统思考、对抗性审查、逆向验证、确认偏误防御、知识边界认知），以及 §2 中与本 work item 相关的校验层透镜（阶段收口前事前验尸、Human Gate 前空杯视角、验收依据前可测试性、写作时结论先行 + 读者视角）。只记录改变候选内容的发现——不要逐字重复核心透镜分析。
 
-## Domain Lens A: Input Enumeration (输入完整)
+## 领域透镜 A：输入面枚举（输入完整）
 
-- Have I enumerated the complete user input surface: form fields, search/filter params, uploaded files, query params, batch-pasted data?
-- Are there hidden inputs — URL-state params, defaults the user can overwrite — that also need checks?
-- Am I writing checks on read-only / system-generated fields that can never fail (never-trigger rules)?
+- 我是否枚举了完整的用户输入面：表单字段、搜索/筛选参数、上传文件、查询参数、批量粘贴数据？
+- 是否还有隐藏输入——URL 状态参数、用户可改写的默认值——也需要检查？
+- 我是否在只读/系统生成的字段上写了永远不会失败的检查（永不触发的规则）？
 
-## Domain Lens B: Boundary Precision (边界清晰)
+## 领域透镜 B：边界精确（边界清晰）
 
-For each input field, write both the legal side and the illegal side:
+对每个输入字段，同时写合法侧与非法侧：
 
-- format (regex / mask), range (open/closed intervals and the equals sign), length cap, required / optional, allowed value set
-- boundary values: min, max, empty string, over-length, special chars, Unicode — which side do they fall on?
+- 格式（正则/掩码）、范围（开/闭区间与等号）、长度上限、必填/可选、允许取值集合
+- 边界值：最小、最大、空串、超长、特殊字符、Unicode——它们落在哪一侧？
 
-A check like "校验手机号格式" or "金额不能太大" is **not decidable** — no executable value domain, no pass/fail case. Rewrite it.
+像"校验手机号格式"或"金额不能太大"这样的检查**不可判定**——没有可执行的值域、没有通过/失败用例。重写它。
 
-## Domain Lens C: Cross-Field & Referential Integrity (跨字段)
+## 领域透镜 C：跨字段与引用完整性（跨字段）
 
-- Does a field's validity depend on other fields or existing data: conditional-required (select A → B required), mutual exclusion (A and B cannot both be filled), composite uniqueness, referential integrity (FK/code must exist upstream)?
-- Do the direction and granularity of these dependencies match the referenced `BR-XXX` / UX — or did I invent a cross-field rule that contradicts them?
+- 字段的有效性是否依赖其他字段或已有数据：条件必填（选 A → B 必填）、互斥（A 与 B 不能同时填）、组合唯一、引用完整性（外键/码表必须在上游存在）？
+- 这些依赖的方向与粒度是否与引用的 `BR-XXX` / UX 一致——还是我发明了一条与之矛盾的跨字段规则？
 
-## Domain Lens D: User-Facing Error (用户可读错误)
+## 领域透镜 D：面向用户的错误提示（用户可读错误）
 
-- Does every VL carry a Chinese, natural-language, actionable message — what is wrong, what value is expected, how to fix?
-- Does the message distinguish 必填缺失 / 格式错误 / 超出范围 / 已存在冲突, instead of one blanket "输入无效"?
-- Is the message product copy, not a dev error code or English translation?
+- 每条 VL 是否带中文、自然语言、可操作的提示——哪里错了、期望什么值、如何修改？
+- 提示是否区分 必填缺失 / 格式错误 / 超出范围 / 已存在冲突，而不是一句笼统的"输入无效"？
+- 提示是否是产品文案，而非开发错误码或英文翻译？
 
-## Domain Lens E: Traceability & Knowledge State (可追溯)
+## 领域透镜 E：可追溯性与知识状态（可追溯）
 
-- Does every VL-XXX trace to a confirmed `FUN-XXX` → `FEA-XXX` / `ST-XXX` / `BR-XXX`?
-- Is the value domain a business fact (`FACT`), a decided policy (`DECISION`), my inference (`AI_INFERENCE`), or unknown (`UNKNOWN`)?
-- Are inferred or unknown value domains hung on the 待确认问题 register instead of written as settled facts?
+- 每条 VL-XXX 是否追溯到已确认的 `FUN-XXX` → `FEA-XXX` / `ST-XXX` / `BR-XXX`？
+- 值域是业务事实（`FACT`）、已定的策略（`DECISION`）、我的推断（`AI_INFERENCE`）还是未知（`UNKNOWN`）？
+- 推断或未知的值域是挂在 待确认问题 登记表上，还是写成既成事实？
 
 ---
 
-## Low-Density Degradation Mode
+## 低密度降级模式
 
-When a function's confirmed source contains only a bare field name with no format, length, or rule, the lenses above cannot do meaningful work. Applying them to insufficient information produces verbose but empty checks. Switch to degradation mode:
+当某功能已确认的来源只含一个裸字段名、没有任何格式、长度或规则时，上述透镜无法产生有意义的工作。把它们套在不足的信息上会产出冗长但空洞的检查。切换到降级模式：
 
 ```text
 low-density input → skip domain-lens ideation
@@ -54,22 +54,22 @@ low-density input → skip domain-lens ideation
                    → wait for human to fill in, then re-enter Preflight in sufficient mode
 ```
 
-Degradation triggers (any one is enough):
+降级触发条件（任一即触发）:
 
-- a field is listed with no format, range, length, or required flag anywhere in the confirmed source
-- the only "rule" for an input is a bare field name and a button label
-- the value domain that determines a check is unconfirmable by any source
+- 已确认来源中某字段没有任何格式、范围、长度或必填标志
+- 某输入的唯一"规则"只是一个裸字段名加一个按钮标签
+- 决定检查的值域无法被任何来源确认
 
-This mode is not a failure state. It is the correct response to insufficient information — one clean batch of questions instead of a §系统校验 table full of `待确认` and guessed regexes.
+本模式不是失败状态。这是对信息不足的正确响应——产出一批干净的问题，而不是一张满是 `待确认` 和猜测正则的 §系统校验 表。
 
-## Confirmation Bias Defense (validation-rules specialization)
+## 确认偏误防御（validation-rules 特化）
 
-1. Did I copy the value domains the user happened to mention, or did I ask whether they are the business rule?
-2. Am I labeling an inferred format as `FACT`, or checking whether it is `AI_INFERENCE` first?
-3. If the check would reject a legitimate business value (over-validation), did I flag it or quietly accept the strictness?
+1. 我是照抄了用户恰好提到的值域，还是问了它们是否是业务规则？
+2. 我是否把推断的格式标成 `FACT`，还是先检查它是 `AI_INFERENCE`？
+3. 如果检查会拒绝某个合法业务值（过度校验），我是标记了它，还是静默接受了这种严格？
 
-## Knowledge Boundary (validation-rules specialization)
+## 知识边界（validation-rules 特化）
 
-1. Did I distinguish "UX defines the format as X" (`FACT`), "I inferred a reasonable format" (`AI_INFERENCE`), and "nobody specified the format" (`UNKNOWN`)?
-2. Did I keep unconfirmed error-message wording in the 待确认问题 register instead of inventing final copy?
-3. Are knowledge-state tags on each VL row, or buried in prose?
+1. 我是否区分了"UX 把格式定义为 X"（`FACT`）、"我推断了一个合理格式"（`AI_INFERENCE`）与"没人规定格式"（`UNKNOWN`）？
+2. 我是否把未确认的错误提示措辞保留在 待确认问题 登记表中，而不是发明最终文案？
+3. 知识状态标签是写在每条 VL 行上，还是埋在叙述里？

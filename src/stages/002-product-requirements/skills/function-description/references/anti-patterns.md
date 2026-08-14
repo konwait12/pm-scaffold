@@ -1,9 +1,9 @@
-# Function Description Anti-Patterns
+# 功能描述反模式（Function Description Anti-Patterns）
 
-- Writing only the happy path.
-- Combining UI feedback, validation and business policy in one untyped rule.
-- Restating a page flow without specifying system behavior.
-- Inventing permissions or thresholds to make the document look complete.
-- Using “合理处理”“友好提示” or other unverifiable language.
-- Turning acceptance criteria into implementation-specific test scripts.
-- Adding fields, tracking or NFR sections without a real need.
+- 只写快乐路径。
+- 把 UI 反馈、校验与业务策略混在一条未分类的规则里。
+- 复述页面流程却不指定系统行为。
+- 为了文档看起来完整而发明权限或阈值。
+- 使用"合理处理""友好提示"等不可验证的语言。
+- 把验收标准变成实现特定的测试脚本。
+- 在没有真实需求的情况下添加字段、埋点或 NFR 章节。

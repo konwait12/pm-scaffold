@@ -1,85 +1,85 @@
-# Thinking Framework · Competitive Research
+# 思考框架 · 竞品调研
 
-Use these lenses to improve the candidate. Do not dump the full analysis into the artifact.
+使用以下透镜改进候选产物。不要把完整分析倾倒进产物。
 
 
-## Common Core (MANDATORY)
+## 公共核心（Common Core · 必用）
 
-Apply the **6 core lenses** from `src/framework/thinking-core.md` §1 (First Principles, Systems Thinking, Adversarial Review, Reverse Validation, Confirmation Bias Defense, Knowledge Boundary) plus the check-layer lenses from §2 relevant to this work item (Pre-Mortem before phase close, Fresh-Eyes before Human Gate, Conclusion First + Reader Perspective when writing). Record only findings that change the candidate — do not repeat core-lens analysis verbatim.
+应用 `src/framework/thinking-core.md` §1 的 **6 个核心透镜**（第一性原理、系统思维、对抗性审查、反向验证、确认偏误防御、知识边界），以及 §2 中与本 work item 相关的检查层透镜（阶段收口前的 Pre-Mortem、Human Gate 前的 Fresh-Eyes、写作时的 Conclusion First + Reader Perspective）。只记录会改变候选产物的发现——不要逐字重复核心透镜分析。
 
-## First Principles
+## 第一性原理（First Principles）
 
-- What observable user need does each competitor feature actually serve?
-- Which competitor "best practices" are assumptions disguised as requirements?
-- Would our confirmed goal still make sense if every competitor were removed?
-- Which of our differences are real moats versus accidental gaps?
+- 每个竞品功能实际服务什么可观察的用户需求？
+- 哪些竞品"最佳实践"是伪装成需求的假设？
+- 如果移除所有竞品，我们已确认的目标是否仍然有意义？
+- 我们哪些差异是真正的护城河，哪些只是偶然的空白？
 
-## Positioning Mapping (领域 lens)
+## 定位映射（Positioning Mapping · 领域 lens）
 
-For each competitor, determine:
+对每个竞品确定：
 
-- What market problem do they solve, for whom?
-- Who is their primary user vs secondary user?
-- What is their core value proposition — and the one thing they refuse to do?
-- Where do they sit on the 2 axes that matter to OUR confirmed goals (e.g., 易用性 × 功能深度, 价格 × 定制化)?
+- 他们为谁解决什么市场问题？
+- 谁是他们的主要用户 vs 次要用户？
+- 他们的核心价值主张是什么——以及他们拒绝做的一件事是什么？
+- 在对我们已确认目标重要的 2 个轴上他们处于什么位置（如 易用性 × 功能深度、价格 × 定制化）？
 
-Plot all competitors. Identify the empty quadrant, then ask: is it empty because it is an opportunity, or because it is a trap (no demand / no willingness to pay / high cost)?
+标出所有竞品。识别空白象限，然后问：它是空的是因为机会，还是因为陷阱（无需求 / 无支付意愿 / 成本高）？
 
-## Differentiation Scan (领域 lens)
+## 差异化扫描（Differentiation Scan · 领域 lens）
 
-Compare competitors on the dimensions that matter to OUR confirmed goals, not on generic checklists:
+在我们已确认目标重要的维度上比较竞品，而不是泛泛的功能清单：
 
-- Feature completeness relative to our goal G#
-- User experience quality on the flow we care about
-- Price/cost structure and packaging model
-- Domain specialization
+- 相对我们目标 G# 的功能完整度
+- 我们关心的流程上的用户体验质量
+- 价格/成本结构和打包模式
+- 领域专业化
 
-Identify: what can we NOT easily replicate (moat) vs what gaps can we exploit? A feature competitors all lack is only an opportunity if our goal requires it.
+识别：哪些是我们不容易复制的（护城河）vs 哪些空白我们可以利用？一个所有竞品都缺少的功能，只有当我们的目标需要它时才是机会。
 
-## Pattern Extraction (领域 lens)
+## 模式提取（Pattern Extraction · 领域 lens）
 
-Extract reusable patterns (not copy):
+提取可复用的模式（不是照抄）：
 
-- Interaction patterns that work well and reduce user effort
-- Information architecture choices that clarify the same problem we face
-- Pricing or packaging models that signal value
+- 运作良好、减少用户操作的交互模式
+- 澄清我们面临的同一问题的信息架构选择
+- 传达价值的定价或打包模式
 
-**Anti-pattern**: Listing competitor features without mapping them to our goals. "Competitor X has Y" is data; "Y serves our G2 goal because..." is analysis.
+**反模式**：列出竞品功能却不映射到我们的目标。"竞品 X 有 Y"是数据；"Y 服务我们的 G2 目标，因为……"才是分析。
 
-## Inference Discipline (领域 lens)
+## 推断纪律（Inference Discipline · 领域 lens）
 
-All competitive findings are **AI_INFERENCE** until the business owner confirms applicability. Competitor success in their context does not guarantee success in ours. When a competitor insight is used, record:
+所有竞品发现都是 **AI_INFERENCE**，直到业务负责人确认适用性。竞品在其语境中的成功并不能保证我们在我们的语境中成功。使用竞品洞见时，记录：
 
-- the evidence (SRC-ID) behind it;
-- the context that made it work there;
-- what would have to be true here for it to apply.
+- 其背后的证据（SRC-ID）；
+- 让它在那里奏效的语境；
+- 在我们这里要成立必须具备什么。
 
-**Anti-pattern**: Presenting "Competitor X does Y" as justification for "we should do Y" without mapping to our confirmed business context.
+**反模式**：用"竞品 X 做了 Y"作为"我们应该做 Y"的理由，却不映射到我们已确认的业务语境。
 
-## Systems Thinking
+## 系统思维（Systems Thinking）
 
-Check whether a "we should copy X" conclusion affects upstream/downstream decisions: which segment, journey, or feature decision does it steer? Which other roles' work does it change? Does it create a dependency we cannot afford?
+检查"我们应该照抄 X"的结论是否影响上游/下游决策：它引导哪个细分、旅程或功能决策？它改变哪些其他角色的工作？是否制造了我们无法承担的依赖？
 
-## Adversarial Review
+## 对抗性审查（Adversarial Review）
 
-Try to invalidate the research:
+尝试推翻调研：
 
-- Is the benchmark competitor really comparable, or a category mismatch?
-- Does the evidence come from a single interested source (vendor marketing, a competitor's own blog)?
-- Am I confirming an early hypothesis instead of letting the data speak?
-- Is "differentiation" real or just feature noise users do not care about?
+- 对标竞品真的可比吗，还是品类不匹配？
+- 证据是否来自单一利益方来源（厂商营销、竞品自己的博客）？
+- 我是在确认早期假设，还是让数据说话？
+- "差异化"是真的，还是用户不在乎的功能噪声？
 
-Record only findings that affect the candidate or require confirmation.
+只记录影响候选产物或需要确认的发现。
 
-## Reverse Validation
+## 反向验证（Reverse Validation）
 
-Starting from our intended differentiation, ask what competitors must be failing at and what we must prove. Use the result to reveal missing evidence, unverified assumptions, and open questions.
+从我们想要的差异化出发，问竞品必须在哪些方面做失败、我们必须证明什么。用结果揭示缺失的证据、未经验证的假设和开放问题。
 
 ---
 
-## Low-Density Degradation Mode
+## 低密度降级模式（Low-Density Degradation Mode）
 
-When the input is a single natural-language sentence with no confirmed background, no research goal, and no sources (see `SKILL.md` §1.1 for the gate), the lenses above cannot do meaningful work. Applying them to insufficient information produces verbose but empty analysis. Switch to degradation mode:
+当输入是单条自然语言句子，没有已确认的背景、没有调研目标、没有来源（见 `SKILL.md` §1.1 的闸门）时，上述透镜无法做有意义的工作。把它们应用到信息不足上会产出冗长但空洞的分析。切换到降级模式：
 
 ```text
 low-density input → skip all-lens ideation
@@ -91,25 +91,25 @@ low-density input → skip all-lens ideation
                    → wait for human to fill in, then re-enter Preflight in sufficient mode
 ```
 
-Degradation triggers (any one is enough):
+降级触发条件（任一即可）：
 
-- no confirmed `background-goal.md` or scope baseline to anchor the research
-- no research goal (business-level vs functional-level not stated)
-- no competitor candidates and no access to public sources
-- the user only mentions a feature ("看看别人怎么做这个功能") with no decision it should inform
+- 没有可锚定调研的已确认 `background-goal.md` 或范围基线
+- 没有调研目标（未说明是业务级还是功能级）
+- 没有竞品候选，也无法访问公开来源
+- 用户只提到一个功能（"看看别人怎么做这个功能"），没有它要支撑的决策
 
-This mode is not a failure state. It is the correct response to insufficient information — saving human review time and producing one clean batch of clarifying questions rather than a 10-competitor artifact full of `待确认`.
+此模式不是失败状态。它是对信息不足的正确回应——节省人工评审时间，产出一批干净的澄清问题，而不是一份塞满 `待确认` 的 10 竞品产物。
 
-## Confirmation Bias Defense (competitive specialization)
+## 确认偏误防御（Confirmation Bias Defense · 竞品特化）
 
-Competitive analysis is a magnet for confirmation bias — the AI finds the competitor that "proves" what the requester already wanted to build:
+竞品分析是确认偏误的磁铁——AI 会找到"证明"请求者本来就想做的东西的那个竞品：
 
-1. Did I search for evidence that the benchmark competitor is actually NOT doing well on our axis — or only evidence that supports copying?
-2. Did I weight a competitor's official marketing as highly as independent user reviews?
-3. If the requester named a competitor upfront, did I independently verify that competitor is the right benchmark, or quietly agree?
+1. 我是否搜索了对标竞品在我们关心的轴上其实做得不好的证据——还是只搜索支持照抄的证据？
+2. 我是否把竞品官方营销和独立的用户评论等同加权？
+3. 如果请求者预先指定了一个竞品，我是独立核实了那个竞品是正确的对标，还是默默同意？
 
-## Knowledge Boundary (competitive specialization)
+## 知识边界（Knowledge Boundary · 竞品特化）
 
-1. Did I distinguish "official source says X" (FACT), "I inferred X from screenshots/reviews" (AI_INFERENCE), and "no public data" (UNKNOWN)?
-2. Did I record retrieval dates so stale competitor facts can be re-verified?
-3. Are unsupported "we should copy Y" conclusions separated from evidence-backed ones?
+1. 我是否区分了"官方来源说 X"（FACT）、"我从截图/评论推断出 X"（AI_INFERENCE）和"没有公开数据"（UNKNOWN）？
+2. 我是否记录了检索日期，以便重新核验过时的竞品事实？
+3. 没有依据的"我们应该照抄 Y"结论是否与有证据支持的结论分开？

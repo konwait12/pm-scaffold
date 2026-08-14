@@ -1,36 +1,36 @@
-# 002 Product Requirements
+# 002 产品需求（Product Requirements）
 
-## Goal
+## 目标（Goal）
 
-Translate confirmed business needs into product scope, functions, user flows, and implementable functional behavior.
+把已确认的业务需求转化为产品范围、功能、用户流程和可实现的功能行为。
 
-## Core Questions
+## 核心问题（Core Questions）
 
-- What is in scope, out of scope, and owned by each system?
-- Which functions satisfy each confirmed story?
-- How does each function behave in normal, alternate, failure, and recovery paths?
+- 什么在范围内、什么在范围外、每个系统拥有什么？
+- 哪些功能满足每条已确认的故事？
+- 每个功能在正常、替代、失败和恢复路径上如何表现？
 
-## Entry
+## 进入条件（Entry）
 
-Stage 001 is confirmed and at least one story has a valid upstream source.
+Stage 001 已确认，且至少一条故事有有效的上游来源。
 
-## Work Items
+## 工作项（Work Items）
 
 1. `product-ux`
 2. `function-description`
 
-## Required Outputs
+## 必需输出（Required Outputs）
 
-Product scope, feature list, UX flows and page-level interaction rules, plus per-function descriptions containing business, permission, validation, state, exception, and acceptance rules.
+产品范围、功能清单、UX 流程和页面级交互规则，以及包含业务、权限、校验、状态、异常和验收规则的逐功能描述。
 
-## Conditional Support
+## 条件支持（Conditional Support）
 
-Function-mode competitive research, solution assessment, field rules, analytics requirements, and prototypes when their trigger is present.
+当触发条件存在时，进行功能模式的竞品调研、方案评估、字段规则、埋点需求和原型。
 
-## Do Not
+## 不做（Do Not）
 
-Do not invent untraceable features, use a prototype as a substitute for rules, or write technical architecture and test cases.
+不要发明不可追溯的功能、用原型替代规则，或编写技术架构和测试用例。
 
-## Human Owners And Exit
+## 人类负责人与退出（Human Owners And Exit）
 
-Product confirms the solution; business confirms scope alignment; development and testing review implementability and verifiability where required.
+产品确认方案；业务确认范围一致性；开发与测试在需要时审查可实现性与可验证性。

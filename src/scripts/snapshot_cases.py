@@ -12,7 +12,7 @@
   python3 src/scripts/snapshot_cases.py --check    # 对比基线（exit 1 有差异）
   python3 src/scripts/snapshot_cases.py            # 仅打印当前统计
 
-基线位置: .test-output/产物快照.json
+基线位置: 99-review/产物快照.json
 """
 
 from __future__ import annotations
@@ -23,7 +23,7 @@ import re
 import sys
 from pathlib import Path
 
-BASE = Path('.test-output/产物快照.json')
+BASE = Path('99-review/产物快照.json')
 
 
 def status_of(p: Path) -> str:

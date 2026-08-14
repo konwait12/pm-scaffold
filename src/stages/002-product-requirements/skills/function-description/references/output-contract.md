@@ -1,4 +1,4 @@
-# Function Description Output Contract
+# 功能描述输出契约（Function Description Output Contract）
 
 交付物：**一个 `function-description.md`**，由 7 个子 skill 依次产出 7 个章节：
 
@@ -14,11 +14,11 @@
 
 ID 前缀语义：
 
-- `FEA-XXX`: confirmed in-scope feature inventory（功能清单）。
-- `BR-XXX`: domain policy, calculation, constraint or state rule（业务规则）。
-- `VL-XXX`: input/data validation, field definitions, and user-visible error outcome（校验规则与字段定义）。
-- `STATE-XXX`: entity state transitions — states × events → target states（状态变化）。
-- `EX-XXX`: exception / failure / retry / rollback / recovery behavior（异常处理）。
-- `AC-XXX`: measurable Given/When/Then acceptance basis（验收依据）。
+- `FEA-XXX`：已确认的范围内功能清单（confirmed in-scope feature inventory）。
+- `BR-XXX`：领域策略、计算、约束或状态规则（domain policy, calculation, constraint or state rule）。
+- `VL-XXX`：输入/数据校验、字段定义与用户可见的错误结果（input/data validation, field definitions, and user-visible error outcome）。
+- `STATE-XXX`：实体状态转移——状态 × 事件 → 目标状态（entity state transitions）。
+- `EX-XXX`：异常 / 失败 / 重试 / 回滚 / 恢复行为（exception / failure / retry / rollback / recovery behavior）。
+- `AC-XXX`：可度量的 Given/When/Then 验收依据（measurable acceptance basis）。
 
 每个 P0/P1 `FUN-XXX` 在 §功能流程 中描述其完整流程（主流程 / 备选 / 异常 / 失败 / 超时 / 权限 / 重试 / 取消 / 回滚路径），并引用其 `FEA-XXX` / `ST-XXX` / 前置条件 / 角色权限。字段规则（§校验规则与字段定义）与埋点章节按需出现。

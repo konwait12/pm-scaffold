@@ -1,21 +1,21 @@
-# Output Contract · Tracking Plan
+# 输出契约 · 埋点与追踪计划（Output Contract · Tracking Plan）
 
-## Artifact States
+## 产物状态（Artifact States）
 
-| Status | Meaning | Downstream use |
+| 状态 | 含义 | 下游使用 |
 |---|---|---|
-| `draft` | 初始收集 | No |
-| `ready_for_sub_skill_review` | 覆盖矩阵已通；待 function-description 编排审 | No |
-| `confirmed` | 由授权人接受（随 function-description 一起） | Yes |
+| `draft` | 初始收集 | 否 |
+| `ready_for_sub_skill_review` | 覆盖矩阵已通；待 function-description 编排审 | 否 |
+| `confirmed` | 由授权人接受（随 function-description 一起） | 是 |
 
-## Version Rules
+## 版本规则（Version Rules）
 
 - 起 `v0.1`；随 function-description 版本同步。
 - 子 Skill 阶段不写 `confirmed`，由 function-description 父 Skill 一起签发。
 
-## Required Sections
+## 必需章节（Required Sections）
 
-| § | 标题 | Required |
+| § | 标题 | 必填 |
 |---|---|---|
 | 1 | 元数据 | Yes |
 | 2 | 事件清单（EV-XXX） | Yes |
@@ -26,7 +26,7 @@
 | 7 | 待确认问题 | Yes |
 | 8 | Constitution Compliance | Yes |
 
-## Event Schema
+## 事件 Schema（Event Schema）
 
 | 字段 | 必填 | 说明 |
 |---|---|---|
@@ -54,14 +54,14 @@
 | `true` | 直接标识（姓名 / 证件号 / 手机） | 加密 + 明确业务必要性 |
 | `sensitive` | 敏感内容（健康 / 财务 / 宗教） | 访问控制 + 最小化 + 明确同意 |
 
-## 覆盖硬约束
+## 覆盖硬约束（Coverage Hard Constraints）
 
 - 每个 P0 FUN-XXX 至少 1 个 `must_track` 事件
 - 每个事件都有 FUN-XXX 和 G-X 引用
 - 同名事件必须合并（不允许 `click_btn` 和 `button_click` 并存）
 - PII 事件必须填 `notes` 写保留期
 
-## 下游 Handoff
+## 下游交接（Downstream Handoff）
 
 ```text
 must_track_count

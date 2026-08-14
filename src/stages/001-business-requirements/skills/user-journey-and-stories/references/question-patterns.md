@@ -1,12 +1,12 @@
-# Question Patterns · user-journey-and-stories
+# 提问模式 · user-journey-and-stories
 
-Canonical question templates for Clarify Sessions. Each template maps to a category and specifies where the answer is written back.
+Clarify Session 的规范提问模板。每个模板对应一个类别，并指明答案回写到哪里。
 
-## 1. Role Clarification
+## 1. 角色澄清（Role Clarification）
 
-**When**: The upstream background lists a role but does not describe what it does in the lifecycle.
+**何时**： The upstream background lists a role but does not describe what it does in the lifecycle.
 
-**Template**:
+**模板**：
 ```
 角色「{role_name}」在{lifecycle_stage}阶段的具体职责是什么？
 - AI 初步判断：{inferred_role_actions}
@@ -15,11 +15,11 @@ Canonical question templates for Clarify Sessions. Each template maps to a categ
 - 回写位置：§2 用户旅程图 → {role_name} 列
 ```
 
-## 2. Lifecycle Boundary
+## 2. 生命周期边界（Lifecycle Boundary）
 
-**When**: It is unclear where one lifecycle stage ends and another begins.
+**何时**： It is unclear where one lifecycle stage ends and another begins.
 
-**Template**:
+**模板**：
 ```
 {stage_a}和{stage_b}的边界在哪里？
 - AI 初步判断：边界是{proposed_boundary}
@@ -28,11 +28,11 @@ Canonical question templates for Clarify Sessions. Each template maps to a categ
 - 回写位置：§1 业务生命周期分解 → {stage_a} / {stage_b}
 ```
 
-## 3. Path Type Coverage
+## 3. 路径类型覆盖（Path Type Coverage）
 
-**When**: The happy path is clear but exception/failure/recovery paths are missing.
+**何时**： The happy path is clear but exception/failure/recovery paths are missing.
 
-**Template**:
+**模板**：
 ```
 在{journey_entry_description}这个场景中，{path_type}路径需要考虑吗？
 - AI 初步判断：{preliminary_assessment}
@@ -41,11 +41,11 @@ Canonical question templates for Clarify Sessions. Each template maps to a categ
 - 回写位置：§2 用户旅程图 → {stage} × {role} 单元格 + §5 路径类型覆盖检查
 ```
 
-## 4. Story Priority
+## 4. 故事优先级（Story Priority）
 
-**When**: Multiple stories derive from the same journey entry and need prioritization.
+**何时**： Multiple stories derive from the same journey entry and need prioritization.
 
-**Template**:
+**模板**：
 ```
 从旅程条目{journey_entry_ref}派生的{story_count}个故事中，哪些是第一期必须覆盖的？
 - AI 初步判断：必须覆盖 ST-{xxx}, ST-{yyy}（依据：上游目标 G{n}）
@@ -54,11 +54,11 @@ Canonical question templates for Clarify Sessions. Each template maps to a categ
 - 回写位置：§3 用户故事卡片 → 优先级提示列
 ```
 
-## 5. Role Interaction
+## 5. 角色交接（Role Interaction）
 
-**When**: Two roles interact but the handoff protocol is unclear.
+**何时**： Two roles interact but the handoff protocol is unclear.
 
-**Template**:
+**模板**：
 ```
 在{stage}阶段，{role_a}和{role_b}之间的交接规则是什么？
 - AI 初步判断：{proposed_handoff}
@@ -67,11 +67,11 @@ Canonical question templates for Clarify Sessions. Each template maps to a categ
 - 回写位置：§2 用户旅程图 → {stage} × {role_a} / {role_b} 单元格 → 交接路径
 ```
 
-## 6. Scope Decision
+## 6. 范围决策（Scope Decision）
 
-**When**: A lifecycle stage or role might be out of scope for the current phase.
+**何时**： A lifecycle stage or role might be out of scope for the current phase.
 
-**Template**:
+**模板**：
 ```
 {lifecycle_stage_or_role}是否纳入本期范围？
 - AI 初步判断：{preliminary}（依据：{evidence}）
@@ -80,11 +80,11 @@ Canonical question templates for Clarify Sessions. Each template maps to a categ
 - 回写位置：§1（如排除，标记为非目标）+ §4 覆盖矩阵（标注排除原因）
 ```
 
-## 7. Story Format Refinement
+## 7. 故事格式细化（Story Format Refinement）
 
-**When**: A story card is too vague or mixes multiple needs.
+**何时**： A story card is too vague or mixes multiple needs.
 
-**Template**:
+**模板**：
 ```
 故事 ST-{xxx}「{current_story_text}」是否需要拆分或细化？
 - AI 初步判断：{analysis}（可能拆分为 ST-{aaa}, ST-{bbb}）
@@ -93,11 +93,11 @@ Canonical question templates for Clarify Sessions. Each template maps to a categ
 - 回写位置：§3 用户故事卡片 → ST-{xxx}
 ```
 
-## 8. Missing Lifecycle Stage
+## 8. 缺失生命周期阶段（Missing Lifecycle Stage）
 
-**When**: A lifecycle stage is logically implied but not mentioned in any source.
+**何时**： A lifecycle stage is logically implied but not mentioned in any source.
 
-**Template**:
+**模板**：
 ```
 当前生命周期缺少「{missing_stage}」阶段（常见于{domain}类项目），是否需要补充？
 - AI 初步判断：需要（理由：{rationale, e.g. "用户完成核心动作后必然涉及后续跟进"}）

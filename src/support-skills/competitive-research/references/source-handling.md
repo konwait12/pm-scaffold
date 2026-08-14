@@ -1,8 +1,8 @@
-# Source Handling · Competitive Research
+# 来源处理 · 竞品调研
 
-## Source Register
+## 来源登记（Source Register）
 
-Assign every competitor source a stable ID and record:
+为每个竞品来源分配一个稳定 ID 并记录：
 
 ```text
 source_id
@@ -15,49 +15,49 @@ location_or_link
 notes
 ```
 
-Use `SRC-001`, `SRC-002`, and so on. Record the retrieval date for every source so stale facts can be re-verified.
+使用 `SRC-001`、`SRC-002` 等。为每个来源记录检索日期，以便重新核验过时事实。
 
-## Extraction Rules
+## 提取规则（Extraction Rules）
 
-1. Extract source statements before normalization — quote what the source says, then interpret.
-2. Keep the publisher, page, and location for material claims.
-3. Separate explicit statements (e.g., a published spec) from implied meaning (e.g., "their onboarding has 5 steps" inferred from a walkthrough video).
-4. Record excluded material with a short reason when it appears relevant but is out of scope or duplicate.
-5. Never treat "not found" as evidence that a competitor lacks a feature — that is `UNKNOWN`, not `FACT`.
-6. A feature that exists only in a vendor's marketing copy is weaker evidence than one confirmed in a shipped product or user review.
+1. 在规范化之前先提取来源陈述——先引用来源原话，再解释。
+2. 重大结论保留发布方、页面和位置。
+3. 区分显式陈述（如已发布的规范）与隐含含义（如从操作视频推断出的"其入驻流程有 5 步"）。
+4. 当相关但超出范围或重复时，用简短理由记录被排除的材料。
+5. 绝不把"没找到"当作竞品没有该功能的证据——那是 `UNKNOWN`，不是 `FACT`。
+6. 只存在于厂商营销文案中的功能，其证据强度弱于在已发布产品或用户评论中确认的功能。
 
-## Authority And Conflicts
+## 权威性与冲突（Authority And Conflicts）
 
-Evaluate authority using:
+使用以下标准评估权威性：
 
-1. explicit human confirmation for this project;
-2. directness of the source (shipped product > official docs > marketing > second-hand summary);
-3. independence (a user review is stronger evidence of real-world behavior than the vendor's own claims);
-4. recency and whether a later version explicitly supersedes an earlier one;
-5. corroboration by independent sources.
+1. 本项目内显式的人工确认；
+2. 来源的直接程度（已发布产品 > 官方文档 > 营销 > 二手转述）；
+3. 独立性（用户评论对真实世界行为的证据强度高于厂商自己的声明）；
+4. 时效性，以及较新版本是否显式取代较早版本；
+5. 独立来源的佐证。
 
-When statements conflict (e.g., vendor claims a feature, user reviews say it does not work):
+当陈述冲突时（例如厂商声称有某功能，用户评论说它不能用）：
 
-- preserve both statements and source IDs;
-- explain the impact of each interpretation;
-- identify the likely fact owner or decision owner;
-- mark the item `CONFLICT` and stop if it changes a material conclusion;
-- never pick the more convenient statement silently.
+- 保留两条陈述和来源 ID；
+- 说明每种解读的影响；
+- 识别可能的事实 owner 或决策 owner；
+- 标记为 `CONFLICT`，若它改变重大结论则停止；
+- 绝不默默选择更顺手的陈述。
 
-## Research Boundary
+## 调研边界（Research Boundary）
 
-Competitive research is public-information research. It can establish what competitors visibly offer, but it cannot confirm:
+竞品调研是基于公开信息的研究。它可以确定竞品明显提供什么，但无法确认：
 
-- whether a competitor's internal product decision succeeded;
-- our internal business intent, scope, or risk tolerance;
-- the acceptability of copying a feature in our context.
+- 竞品的内部产品决策是否成功；
+- 我们内部的业务意图、范围或风险容忍度；
+- 在我们的语境中照搬某功能是否可接受。
 
-Submit those to the responsible human. Findings that would change a material product decision stay at `needs_user_input` until confirmed.
+把这些交给负责任的人。会改变重大产品决策的发现，在确认前保持在 `needs_user_input`。
 
-## Mixed Media
+## 混合媒介（Mixed Media）
 
-- For official sites and docs: record the page and retrieve date; distinguish current vs archived versions.
-- For app-store pages: distinguish the current listing from historical version notes.
-- For user reviews: record the review platform and date; treat a single review as weak evidence, clusters as stronger.
-- For screenshots/walkthrough videos: transcribe visible feature-bearing content and note uncertainty about what was not shown.
-- For industry reports: record publisher, publication date, and whether the data is primary or secondary.
+- 官网和文档：记录页面与检索日期；区分当前版本与归档版本。
+- 应用商店页面：区分当前列表与历史版本说明。
+- 用户评论：记录评论平台与日期；把单条评论视为弱证据，多条聚集为较强证据。
+- 截图/操作视频：转写可见的功能承载内容，并注明未展示内容的不确定性。
+- 行业报告：记录发布方、发布日期，以及数据是原始数据还是二手数据。

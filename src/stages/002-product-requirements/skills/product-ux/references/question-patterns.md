@@ -1,5 +1,5 @@
-# Product UX Question Patterns
+# 产品 UX 提问模式（Product UX Question Patterns）
 
-Ask only after drafting a structural hypothesis. Each question includes judgment, evidence, options, impact, owner, blocking flag, deferral risk, and reflow target.
+只在起草结构性假设之后才提问。每个问题都包含判断、证据、选项、影响、负责人、阻断标记、延期风险与回写目标。
 
-Use questions for: scope inclusion/exclusion, system ownership, module boundary, feature grouping, entry point, material flow alternative, role/channel difference, required state, external dependency, and prototype need. Detailed feedback, validation, permission and business policy questions are routed to `function-description`.
+问题用于：范围纳入/排除、系统归属、模块边界、功能分组、入口点、实质性流程备选、角色/渠道差异、必需状态、外部依赖与原型需求。详细的反馈、校验、权限与业务策略问题路由到 `function-description`。

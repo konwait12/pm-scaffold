@@ -1,58 +1,58 @@
-# Thinking Framework · Tracking Plan
+# 思考框架 · 埋点与追踪计划（Thinking Framework · Tracking Plan）
 
-Use these lenses to improve the candidate. Do not dump the full analysis into the artifact.
+用这些透镜改进候选产物。不要把完整分析倾倒进产物。
 
-## Common Core (MANDATORY)
+## 公共核心（Common Core，必用 MANDATORY）
 
-Apply the **6 core lenses** from `src/framework/thinking-core.md` §1 (First Principles, Systems Thinking, Adversarial Review, Reverse Validation, Confirmation Bias Defense, Knowledge Boundary) plus the check-layer lenses from §2 relevant to this work item (Pre-Mortem before phase close, Fresh-Eyes before Human Gate, Testability before acceptance criteria, Conclusion First + Reader Perspective when writing). Record only findings that change the candidate — do not repeat core-lens analysis verbatim.
+应用 `src/framework/thinking-core.md` §1 的 **6 个核心透镜**（第一性原理 First Principles、系统思维 Systems Thinking、对抗性审视 Adversarial Review、逆向验证 Reverse Validation、确认偏误防御 Confirmation Bias Defense、知识边界 Knowledge Boundary），以及 §2 中与本 work item 相关的检查层透镜（阶段收口前的 Pre-Mortem、Human Gate 前的 Fresh-Eyes、验收标准前的可测试性 Testability、写作时的结论先行 Conclusion First + 读者视角 Reader Perspective）。只记录会改变候选产物的发现——不要逐字重复核心透镜分析。
 
-## Metric Traceability（指标追溯）
+## 指标追溯（Metric Traceability）
 
-Every event must earn its place by supporting a metric and a goal:
+每个事件必须通过支撑一个指标与一个目标来赢得它的位置：
 
-- Which G-X (background-goal) does this event prove or measure?
-- Which metric type does it feed: `north_star` / `funnel_step` / `counter` / `latency` / `conversion` / `retention`?
-- If an event maps to no G-X, it is a candidate for deletion or `nice_to_track`.
-- Walk backwards from each G-X: are the required events and properties present to verify it after launch?
+- 这个事件证明或度量哪个 G-X（background-goal）？
+- 它喂养哪种指标类型：`north_star` / `funnel_step` / `counter` / `latency` / `conversion` / `retention`？
+- 如果某个事件不映射到任何 G-X，它是删除或降为 `nice_to_track` 的候选。
+- 从每个 G-X 倒推：上线后验证它所需的 事件与属性 是否齐全？
 
-## Event Fidelity（事件粒度）
+## 事件粒度（Event Fidelity）
 
-- Is the event one user-meaningful action, not a bundle of several?
-- Is the trigger condition precise enough that two engineers would instrument the same moment?
-- Is the property set complete (each property has key / type / example / pii_flag / required)?
-- Does the event fire at the right point in the user's action sequence (before/after validation, before/after success)?
+- 事件是一个"用户有意义"的动作，而不是几个动作的捆绑？
+- 触发条件是否精确到两个工程师会埋同一个时点？
+- 属性集是否完整（每个属性有 key / type / example / pii_flag / required）？
+- 事件是否在用户动作序列的正确时点触发（校验前/后、成功前/后）？
 
-## PII Discipline（PII 纪律）
+## PII 纪律（PII Discipline）
 
-- Which properties are personal identifiers, behavioral fingerprints, or sensitive content?
-- `false` (non-PII) → standard upload; `quasi` (IP / device ID / location) → hash + consent; `true` (name / ID / phone) → encryption + business necessity; `sensitive` (health / finance / religion) → access control + minimization + explicit consent.
-- Does every PII event carry an explicit data-retention rule in `notes`?
-- Would collecting this property survive a data-protection review?
+- 哪些属性是个人标识符、行为指纹或敏感内容？
+- `false`（非 PII）→ 标准上报；`quasi`（IP / 设备 ID / 位置）→ 哈希 + 用户授权；`true`（姓名 / 证件号 / 手机）→ 加密 + 业务必要性；`sensitive`（健康 / 财务 / 宗教）→ 访问控制 + 最小化 + 显式同意。
+- 每个 PII 事件是否在 `notes` 中带有显式的数据保留规则？
+- 采集这个属性能否通过数据保护评审？
 
-## Coverage vs Noise（覆盖 vs 噪声）
+## 覆盖 vs 噪声（Coverage vs Noise）
 
-- Does every P0 FUN-XXX have at least one `must_track` event?
-- Are there orphan events (no FUN-XXX, no G-X)?
-- Is the event list free of "track everything" noise — events with no metric, goal, or decision use?
-- Are duplicates merged under one consistent `event_name`?
+- 每个 P0 FUN-XXX 是否至少有一个 `must_track` 事件？
+- 有没有孤儿事件（无 FUN-XXX、无 G-X）？
+- 事件清单是否免于"全量追踪"噪声——即没有指标、目标或决策用途的事件？
+- 重复项是否被合并到一个一致的 `event_name` 下？
 
-## Naming Consistency
+## 命名一致性（Naming Consistency）
 
-- Is every `event_name` snake_case verb_noun (`checkout_submit_click`), globally unique?
-- Is `event_type` one of `page_view` / `click` / `submit` / `exposure` / `success` / `error` / `custom`?
-- Do the same action and the same meaning reuse the same event across functions (no `click_btn` vs `button_click`)?
+- 每个 `event_name` 是否 snake_case verb_noun（`checkout_submit_click`）且全局唯一？
+- `event_type` 是否属于 `page_view` / `click` / `submit` / `exposure` / `success` / `error` / `custom`？
+- 跨功能时，同一动作与同一含义是否复用同一事件（不允许 `click_btn` vs `button_click`）？
 
-## Systems Thinking
+## 系统思维（Systems Thinking）
 
-- Does the event need server-side instrumentation (backend events), a third-party SDK, or a miniprogram bridge?
-- Who collects, cleans, and owns the event stream? Is that responsibility visible in the plan?
-- Does upload timing (realtime / near_realtime / batch / on_session_end) match what the metric needs?
+- 事件是否需要服务端埋点（后端事件）、第三方 SDK 或小程序桥？
+- 谁采集、清洗并拥有事件流？该责任在计划中是否可见？
+- 上报时机（realtime / near_realtime / batch / on_session_end）是否匹配指标的需求？
 
 ---
 
-## Low-Density Degradation Mode
+## 低密度降级模式（Low-Density Degradation Mode）
 
-When upstream is not confirmed (function-description FUN-XXX or its rules missing) or the tracking need is a single unqualified sentence, the lenses above cannot do meaningful work. Switch to degradation mode:
+当上游未确认（function-description FUN-XXX 或其规则缺失）或追踪需求只是一句不带资格的单句时，上述透镜无法做有意义的工作。切换为降级模式：
 
 ```text
 low-density / upstream-not-confirmed input → skip lens ideation
@@ -64,10 +64,10 @@ low-density / upstream-not-confirmed input → skip lens ideation
                                              → wait for upstream confirmation or human input, then re-enter Preflight
 ```
 
-Degradation triggers (any one is enough):
+降级触发条件（满足任一即可）：
 
-- function-description (FUN-XXX) or its upstream rules are not confirmed
-- no goals (G-X) to map events to
-- the user only says "add tracking for X" with no metrics, platforms, or trigger context
+- function-description（FUN-XXX）或其上游规则未确认
+- 没有要映射事件的目标（G-X）
+- 用户只说"为 X 加埋点"，没有指标、平台或触发上下文
 
-This mode is not a failure state. An event contract built before upstream is confirmed would be invented data — worse than no plan.
+此模式不是失败状态。在上游确认之前构建的事件合约会是发明出来的数据——比没有计划更糟。

@@ -1,6 +1,6 @@
 # Output Contract · Requirement Restate（双模式能力）
 
-## Purpose
+## 目的（Purpose）
 
 本 skill 是**能力（`output_kind=process`）**：产物是过程记录，**不进 PRD 正文**。两条产物线：
 
@@ -9,18 +9,18 @@
 
 ## Artifact States（两模式共用）
 
-| Status | Meaning | Downstream use |
+| 状态 | 含义 | 下游使用 |
 |---|---|---|
-| `draft` | 初始收集；Audit 未完成 | No |
-| `needs_user_input` | CONFLICT / UNKNOWN 阻断，或答案会实质改变候选集/处置选项 | No |
-| `conditional_review` | 已知晓非阻断未知，可审 | No |
-| `ready_for_human_review` | 自审通过；待 stakeholder 确认（模式一）/ 待人工四值处置（模式二） | No |
-| `confirmed` | 模式一：原 stakeholder 显式确认；**模式二：本记录不允许** | 模式一 Yes |
-| `superseded` | 被新 confirmed 版本取代 | No |
+| `draft` | 初始收集；Audit 未完成 | 否 |
+| `needs_user_input` | CONFLICT / UNKNOWN 阻断，或答案会实质改变候选集/处置选项 | 否 |
+| `conditional_review` | 已知晓非阻断未知，可审 | 否 |
+| `ready_for_human_review` | 自审通过；待 stakeholder 确认（模式一）/ 待人工四值处置（模式二） | 否 |
+| `confirmed` | 模式一：原 stakeholder 显式确认；**模式二：本记录不允许** | 模式一是 |
+| `superseded` | 被新 confirmed 版本取代 | 否 |
 
 > 模式二记录永远不产 `confirmed`：人工的 `include` 决策流入 `project-background-goal` 输入包，只有 `pipeline.py review --decision approve` 可确认下游工作项本身。
 
-## Version Rules
+## 版本规则（Version Rules）
 
 - 起 `v0.1`；人工要求修订时递增 minor。
 - 首次 confirmed 为 `v1.0`（仅模式一适用）。
@@ -37,7 +37,7 @@
 
 ## 模式一 · 需求复述（RR-NNN）
 
-### Required Sections
+### 必需章节（Required Sections）
 
 | § | 标题 | Required |
 |---|---|---|
@@ -53,7 +53,7 @@
 
 空章节用 `待确认` 占位，不删除标题。
 
-### Restate Row Schema
+### 重述行 Schema（Restate Row Schema）
 
 | 字段 | 必填 | 说明 |
 |---|---|---|
@@ -66,7 +66,7 @@
 | `confidence` | Yes | high / medium / low |
 | `solution_leak` | Optional | 标记是否意外夹带方案（要求复审） |
 
-### 模式一 Anti-Patterns Embedded In Contract
+### 模式一 · 内嵌于契约的反模式（Anti-Patterns Embedded In Contract）
 
 - 出现"应该怎么设计"→ invalid，要求改写
 - 多需求塞一行 → 拆 RR-NNN
@@ -93,7 +93,7 @@
 
 ### Disposition Table Contract（人工处置表 · 8 列）
 
-The disposition table has **8 columns** — the canonical shape agreed in `src/shared/brainstorming/rediscovery-templates/scenario-disposition.md`:
+处置表有 **8 列**——在 `src/shared/brainstorming/rediscovery-templates/scenario-disposition.md` 中约定的规范形态：
 
 | Candidate ID | Role-Lifecycle | Candidate | Evidence | Impact | Human Disposition | Reason | Write-back Target |
 |---|---|---|---|---|---|---|---|
@@ -107,11 +107,11 @@ Rules:
 - `defer` → 暂缓；Reason 给出触发条件或计划周期。
 - `research` → 待调研；登记 issue-record / QuestionRecord，不静默搁置。
 
-### Write-back Contract（模式二）
+### 写回契约（Write-back Contract，模式二）
 
-- Only `include` candidates are written back, and **only** into the `project-background-goal` input package（综合为 ≥ 50 字的充分输入）。
-- The write-back bundle must be plain requirement input (what to explore), not a designed solution.
-- After write-back, the work item resumes at `project-background-goal` (registry `resume_work_item`).
+- 只有 `include` 候选被写回，且**只**写回 `project-background-goal` 输入包（综合为 ≥ 50 字的充分输入）。
+- 写回包必须是朴素的输入需求（要探索什么），而不是设计好的方案。
+- 写回后，work item 在 `project-background-goal` 恢复（registry `resume_work_item`）。
 
 ### Human Responsibilities（模式二）
 
@@ -122,11 +122,11 @@ Rules:
 
 ## 两模式共用契约
 
-### Clarifications Session Contract
+### Clarifications Session 契约（Clarifications Session Contract）
 
 `## Clarifications` 一行一 session，≤5 sessions；`accepted_answer` 在 `ready_for_human_review` 前必填。每次 session：`CL-NNN` 单调编号；AI 初判 + 选项 + 影响 + owner + blocking；≤5 问题/轮；答案回写进候选表/处置表/重述清单对应行。未知答案成为普通 QuestionRecord / issue-record 条目，不额外开分支。
 
-### Downstream Handoff
+### 下游交接（Downstream Handoff）
 
 restate 通过后产出的合并体进入 issue-record 的 INF/CLS/CONFLICT 区（模式一），以及 `project-background-goal` 输入包（模式二）：
 

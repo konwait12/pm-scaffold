@@ -1,12 +1,12 @@
-# Question Patterns · prd-assembly
+# 提问模式 · prd-assembly
 
-Clarify Sessions at the PRD assembly step focus on resolving inconsistencies and traceability gaps discovered during aggregation.
+PRD 汇总步骤的 Clarify Session 聚焦于解决聚合期间发现的不一致与追溯缺口。
 
-## 1. Traceability Gap
+## 1. 追溯缺口（Traceability Gap）
 
-**When**: A forward or backward traceability check finds a broken link.
+**何时**： A forward or backward traceability check finds a broken link.
 
-**Template**:
+**模板**：
 ```
 追溯链中发现断裂：{element_a}（{artifact}）→ {element_b}（{artifact}）无对应落位。
 - 断裂描述：{what_is_missing}
@@ -16,11 +16,11 @@ Clarify Sessions at the PRD assembly step focus on resolving inconsistencies and
 - 回写位置：§7 正向追溯检查 / §8 反向追溯检查 → 处理决策
 ```
 
-## 2. Cross-Artifact Contradiction
+## 2. 跨产物矛盾（Cross-Artifact Contradiction）
 
-**When**: Two confirmed artifacts describe the same thing differently.
+**何时**： Two confirmed artifacts describe the same thing differently.
 
-**Template**:
+**模板**：
 ```
 发现跨产物矛盾：{artifact_a} 中描述 {element} 为「{description_a}」，但 {artifact_b} 中描述为「{description_b}」。
 - AI 初步判断：应以 {preferred_version} 为准，理由：{rationale}
@@ -29,11 +29,11 @@ Clarify Sessions at the PRD assembly step focus on resolving inconsistencies and
 - 回写位置：§9 不一致报告
 ```
 
-## 3. Orphan Element
+## 3. 孤儿元素（Orphan Element）
 
-**When**: An element exists in an upstream artifact but has no downstream chain.
+**何时**： An element exists in an upstream artifact but has no downstream chain.
 
-**Template**:
+**模板**：
 ```
 发现孤儿元素：{element_id}「{element_description}」（位于 {artifact}）在 PRD 中没有下游落位。
 - AI 初步判断：应为 {preliminary_disposition}（P0 必覆盖 / P1 标注缺口 / 已废弃）
@@ -42,11 +42,11 @@ Clarify Sessions at the PRD assembly step focus on resolving inconsistencies and
 - 回写位置：§8 反向追溯检查
 ```
 
-## 4. Priority Downgrade Detection
+## 4. 优先级降级检测（Priority Downgrade Detection）
 
-**When**: A P0 story has become a P1 feature or a P1 function.
+**何时**： A P0 story has become a P1 feature or a P1 function.
 
-**Template**:
+**模板**：
 ```
 优先级降级检测：ST-{xxx}（P0）→ FEA-{xxx}（P1）。确认是否有意降级？
 - AI 初步判断：可能原因 = {possible_reason}
@@ -55,11 +55,11 @@ Clarify Sessions at the PRD assembly step focus on resolving inconsistencies and
 - 回写位置：§9 不一致报告
 ```
 
-## 5. Missing NFR
+## 5. 缺失 NFR（Missing NFR）
 
-**When**: A function clearly needs NFR but none is documented.
+**何时**： A function clearly needs NFR but none is documented.
 
-**Template**:
+**模板**：
 ```
 功能 FUN-{xxx}「{function_name}」缺少非功能性需求。该功能涉及 {concern}（如个人信息处理/实时性要求），建议补充 NFR-{category}。
 - AI 初步判断：至少需要 {minimum_nfr}

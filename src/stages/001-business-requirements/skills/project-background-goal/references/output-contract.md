@@ -1,51 +1,51 @@
-# Output Contract
+# 输出契约（Output Contract）
 
-## Artifact States
+## 产物状态（Artifact States）
 
-| Status | Meaning | Downstream use |
+| 状态 | 含义 | 下游使用 |
 |---|---|---|
-| `draft` | Initial candidate; Audit not complete | No |
-| `needs_user_input` | A material fact or decision blocks confirmation | No |
-| `conditional_review` | Structurally reviewable with explicit non-blocking unknowns and unknown | No |
-| `ready_for_human_review` | Self-audit passed; waiting for authorized review | No |
-| `confirmed` | Authorized human explicitly approved this version | Yes |
-| `superseded` | A newer confirmed baseline replaces this version | No |
+| `draft` | 初始候选；Audit 未完成 | 否 |
+| `needs_user_input` | 某个实质性事实或决策阻断确认 | 否 |
+| `conditional_review` | 结构上可评审，含显式的非阻断未知项 | 否 |
+| `ready_for_human_review` | 自审通过；等待授权评审 | 否 |
+| `confirmed` | 被授权的人类已显式批准此版本 | 是 |
+| `superseded` | 更新的已确认基线取代此版本 | 否 |
 
-## Version Rules
+## 版本规则（Version Rules）
 
-- Start candidates at `v0.1`.
-- Increment the minor candidate version for each human-requested revision: `v0.2`, `v0.3`.
-- Use `v1.0` for the first confirmed baseline unless the host project defines another policy.
-- Increment the patch/minor version for confirmed baseline changes according to impact.
-- Keep a concise change summary between human-facing versions. Do not retain every internal self-audit iteration.
+- 候选从 `v0.1` 开始。
+- 每次人工要求修订，递增次要候选版本：`v0.2`、`v0.3`。
+- 首次确认的基线使用 `v1.0`，除非宿主项目另有政策。
+- 已确认基线的改动按影响递增补丁/次要版本。
+- 在面向人的版本之间保留一份简明变更摘要。不要保留每次内部自审迭代。
 
-## Knowledge-State Labels
+## 知识状态标签（Knowledge-State Labels）
 
-| Label | Definition |
+| 标签 | 定义 |
 |---|---|
-| `FACT` | Explicit source statement within the source's authority scope |
-| `DECISION` | Explicit decision by an authorized human |
-| `ASSUMPTION` | Provisional condition accepted for analysis but not confirmed |
-| `AI_INFERENCE` | AI-derived interpretation supported by evidence but not a business fact |
-| `UNKNOWN` | Missing information |
-| `CONFLICT` | Incompatible source statements require resolution |
+| `FACT` | 来源权威范围内的显式来源陈述 |
+| `DECISION` | 被授权人类做出的显式决策 |
+| `ASSUMPTION` | 为分析而接受的临时条件，但未经确认 |
+| `AI_INFERENCE` | AI 推导的解读，有证据支撑但不是业务事实 |
+| `UNKNOWN` | 缺失的信息 |
+| `CONFLICT` | 不兼容的来源陈述需要解决 |
 
-## Required Sections
+## 必需章节（Required Sections）
 
-Use all headings from `src/templates/stage-1-business/background-goal.md`. If a section has no confirmed content, write `待确认` (to be confirmed) and link it to a question or unknown ID; do not delete the heading.
+使用 `src/templates/stage-1-business/background-goal.md` 中的全部标题。如果某个章节没有已确认内容，写入 `待确认` 并链接到某个问题或未知 ID；不要删除标题。
 
-> The placeholder `待确认` is preserved in the Chinese PRD convention. Translators may use `[NEEDS CLARIFICATION]` in English-only artifacts as long as the validator recognizes both forms.
+> 占位符 `待确认` 在中文化 PRD 惯例中保留。翻译者在纯英文产物中可使用 `[NEEDS CLARIFICATION]`，前提是校验器能识别这两种形式。
 
-## Human Responsibilities
+## 人类职责（Human Responsibilities）
 
-- Business fact owner: confirms current-state facts and business context.
-- Goal decision owner: confirms intended outcomes, success judgment, timing, and acceptable risk.
-- Product manager: checks completeness, clarity, source coverage, and downstream usability.
-- Final reviewer: authorizes the baseline for downstream use. One person may hold multiple roles, but the decision rights must be explicit.
+- 业务事实负责人：确认现状事实与业务背景。
+- 目标决策负责人：确认预期结果、成功判断、时间与可接受风险。
+- 产品经理：检查完整性、清晰度、来源覆盖与下游可用性。
+- 最终评审人：授权基线供下游使用。一人可兼任多个角色，但决策权必须明确。
 
-## Downstream Handoff
+## 下游交接（Downstream Handoff）
 
-Emit a compact handoff containing:
+输出一份紧凑的交接包，包含：
 
 ```text
 confirmed_version
@@ -59,32 +59,32 @@ open_nonblocking_unknowns
 source_ids
 ```
 
-Do not create the user journey or user stories in this handoff.
+不要在本交接包中创建用户旅程或用户故事。
 
-## Clarifications Session Contract
+## 澄清 Session 契约（Clarifications Session Contract）
 
-Each Clarify Session is logged as a structured row inside the artifact's `## Clarifications` section (placed after §11 待确认问题 and before §14 Constitution Compliance). One row per Session, ordered by session id:
+每个 Clarify Session 作为产物内 `## Clarifications` 章节的一行结构化记录（放在 §11 待确认问题之后、§14 Constitution Compliance 之前）。每个 Session 一行，按 session id 排序：
 
-| Field | Meaning | Example |
+| 字段 | 含义 | 示例 |
 |---|---|---|
-| `session_id` | Monotonic `CL-NNN`, zero-padded | `CL-001` |
-| `category` | One of 6 Impact × Uncertainty categories (scope / data-model / UX / non-functional / integration / compliance) | `scope` |
-| `question` | The single question asked this turn, paraphrased | "VVIP threshold for invitation scope" |
-| `ai_preliminary_judgment` | The AI's preliminary answer with evidence | "Inferred from SRC-002 §3: VVIP = spend ≥ ¥500k/year; need confirmation" |
-| `options` | 2–5 mutually exclusive options (or "free-form short answer") | A) ¥500k B) ¥300k C) ¥1M D) other |
-| `decision_owner` | Fact owner or decision owner who answers | VP of CRM |
+| `session_id` | 单调递增的 `CL-NNN`，前导补零 | `CL-001` |
+| `category` | 6 种影响 × 不确定性类别之一（scope / data-model / UX / non-functional / integration / compliance） | `scope` |
+| `question` | 本轮提出的唯一问题（转述） | "邀请范围的 VVIP 阈值" |
+| `ai_preliminary_judgment` | AI 的初步答案及证据 | "由 SRC-002 §3 推断：VVIP = 年消费 ≥ ¥500k；需要确认" |
+| `options` | 2–5 个互斥选项（或"自由文本短答"） | A) ¥500k B) ¥300k C) ¥1M D) 其他 |
+| `decision_owner` | 负责回答的事实负责人或决策负责人 | CRM 副总裁 |
 | `blocking` | yes / no | `yes` |
-| `deferral_risk` | What breaks if we defer | "Scope of invitations remains undecidable" |
-| `accepted_answer` | The chosen option after human reply | `A (¥500k)` |
-| `reflow_target` | The artifact section that gets updated | `§8 初步边界与非目标` |
-| `integrated_at` | ISO timestamp when answer was written back | `2026-08-11T10:30:00Z` |
-| `integrated_by` | AI or human actor | `AI` |
-| `audit_recheck` | Result of the re-Audit after integration (`pass` / `fail` / `n/a`) | `pass` |
+| `deferral_risk` | 延期会造成什么破坏 | "邀请范围仍然无法判定" |
+| `accepted_answer` | 人工回复后选择的选项 | `A (¥500k)` |
+| `reflow_target` | 会被更新的产物章节 | `§8 初步边界与非目标` |
+| `integrated_at` | 答案写回的 ISO 时间戳 | `2026-08-11T10:30:00Z` |
+| `integrated_by` | AI 或人类执行者 | `AI` |
+| `audit_recheck` | 集成后重新 Audit 的结果（`pass` / `fail` / `n/a`） | `pass` |
 
-Rules:
+规则：
 
-- One row per Session. Never merge multiple Q+A rounds into a single row.
-- `accepted_answer` MUST be filled in before the artifact reaches `ready_for_human_review`.
-- `reflow_target` MUST reference an existing section heading.
-- `audit_recheck` MUST be the last field filled; if `fail`, switch status back to `needs_user_input` and run another Session.
-- See `SKILL.md` § Clarify Is Its Own Loop for the runtime order.
+- 每个 Session 一行。绝不要把多轮问答合并成一行。
+- 在产物到达 `ready_for_human_review` 之前，`accepted_answer` 必须已填写。
+- `reflow_target` 必须引用一个已存在的章节标题。
+- `audit_recheck` 必须是最后填写的字段；如果是 `fail`，把状态改回 `needs_user_input` 并运行另一个 Session。
+- 运行时顺序见 `SKILL.md` § Clarify 自成一个循环（Clarify Is Its Own Loop）。

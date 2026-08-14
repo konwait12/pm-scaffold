@@ -1,95 +1,95 @@
 ---
 name: interaction-rules
-description: Define page-level interaction rules IX-XXX — user operation → system response, covering normal/error/empty/loading/edge behavior. MUST stay at the page layer; business rules belong to function-description. Sub-skill of product-ux, fills §3 交互规则 of product-ux.md.
+description: 定义页面级交互规则 IX-XXX——用户操作 → 系统响应，覆盖正常/错误/空态/加载/边界行为。必须停留在页面层；业务规则属于 function-description。Sub-skill of product-ux，填充 product-ux.md 的 §3 交互规则。
 ---
 
-# Interaction Rules
+# Interaction Rules · 交互规则
 
-## Purpose And Boundary
+## 目的与边界
 
-Define, for each interactive element on a confirmed page, the exact pair "user operation → system response": what the user does and what the system visibly does back, including state changes, feedback timing, modal/dialog behavior, and navigation triggers. Every rule is written so a developer can implement it and a tester can reproduce it from that single rule.
+为已确认页面上的每个可交互元素，定义精确的「用户操作 → 系统响应」对子：用户做什么、系统可见地回应什么，含状态变化、反馈时机、弹窗/对话框行为与导航触发。每条规则都要写得让开发者能直接实现、测试者能仅凭这一条规则复现。
 
-**Do not** write data validation logic (→ function-description `VL-XXX`), business calculations (→ function-description `BR-XXX`), permission rules (→ function-description), or acceptance criteria (`AC-XXX`). Interaction rules describe what the *user sees and does* at the page layer; the system's domain judgment belongs downstream.
+**不得**编写数据校验逻辑（→ function-description `VL-XXX`）、业务计算（→ function-description `BR-XXX`）、权限规则（→ function-description）或验收标准（`AC-XXX`）。交互规则描述用户在页面层*看到与做*的事；系统的领域判断属于下游。
 
-## Inputs And Outputs
+## 输入与输出
 
-Inputs: the confirmed page skeleton (§2 页面设计) from `page-design`, the confirmed functional flow (§2.1 主流程 / §2.2 分支流程 / §2.3 异常流程) from `functional-flow` (in function-description), and the feature list (`FEA-XXX`) from function-description's `feature-list`. Output: §3 交互规则 IX-XXX of the parent `product-ux.md` — a rule table (ID, 规则描述, 触发条件, 系统响应, 适用页面/功能, 来源) written per `references/rule-writing-format.md`. Not a standalone artifact.
+输入：来自 `page-design` 的已确认页面骨架（§2 页面设计）、来自 `functional-flow`（在 function-description 内）的已确认功能流程（§2.1 主流程 / §2.2 分支流程 / §2.3 异常流程），以及来自 function-description 的 `feature-list` 功能清单（`FEA-XXX`）。输出：父级 `product-ux.md` 的 §3 交互规则 IX-XXX——按 `references/rule-writing-format.md` 书写的规则表（ID、规则描述、触发条件、系统响应、适用页面/功能、来源）。非独立产物。
 
-Load `references/thinking-framework.md` (which references `src/framework/thinking-core.md` §1 mandatory lenses) before analysis. Load `references/output-contract.md` before drafting. Load `references/rule-writing-format.md` before writing any rule. Load `references/audit-checklist.md` and `references/reviewer-checklist.md` before handoff. Run `scripts/validate_artifact.py <product-ux.md> --json` before review.
+分析前加载 `references/thinking-framework.md`（其引用 `src/framework/thinking-core.md` §1 强制透镜）。Draft 前加载 `references/output-contract.md`。写任何规则前加载 `references/rule-writing-format.md`。交接前加载 `references/audit-checklist.md` 与 `references/reviewer-checklist.md`。Review 前运行 `scripts/validate_artifact.py <product-ux.md> --json`。
 
-## Thinking Prompts (per stage)
+## 思考提示（按阶段）
 
 ### 1. Preflight
-- "Which pages and interactive elements are confirmed? Which FEA and flow step does each rule trace to?"
-- Enumerate pages from §2 页面设计 (page-design); on each, list clickable/tappable elements from the actions column.
-- **If the page skeleton is missing or unconfirmed**, return a routing receipt and STOP — rules cannot be attached to invented pages.
+- "哪些页面与可交互元素已确认？每条规则追溯哪个 FEA 与流程步骤？"
+- 从 §2 页面设计（page-design）枚举页面；在每个页面上，从操作列列出可点击/可触碰的元素。
+- **若页面骨架缺失或未确认**，返回 routing receipt 并 STOP——规则不能挂在凭空发明的页面上。
 
 ### 2. Intake
-- "What does each confirmed action actually trigger — not what a generic pattern says it should?"
-- Collect verbatim from §2 actions (page-design) and §2.2 分支流程 branches (functional-flow): the operation, its precondition, and the intended outcome.
-- Classify each rule claim as `FACT`, `DECISION`, `ASSUMPTION`, `AI_INFERENCE`, `UNKNOWN`, or `CONFLICT` per `src/framework/contracts.md`.
-- A response I invent for completeness must be tagged `AI_INFERENCE`.
+- "每个已确认操作实际触发什么——而不是通用模式应该触发什么？"
+- 逐字从 §2 操作（page-design）与 §2.2 分支流程分支（functional-flow）中摘取：操作、其前置条件与预期结果。
+- 按 `src/framework/contracts.md` 将每条规则声明归类为 `FACT` / `DECISION` / `ASSUMPTION` / `AI_INFERENCE` / `UNKNOWN` / `CONFLICT`。
+- 我为补全而发明的响应必须标记 `AI_INFERENCE`。
 
 ### 3. Think (apply thinking-core.md §1 mandatory lenses)
-- **First Principles**: "What is the observable feedback the user must get after this operation? What feedback is implied but unstated?"
-- **Systems Thinking**: "Does this response depend on a downstream system result (async, payment, notification) that must be represented as a state?"
-- **Adversarial**: "What happens on double-click, timeout, network loss, or a stale page? Is the error response defined?"
-- **Reverse Validation**: "From the desired user experience backwards, what responses must exist for each operation?"
-- **Confirmation Bias Defense**: "Am I writing the rule the requester assumed ('submit shows a success toast') or the rule the flow actually needs?"
-- **Knowledge Boundary**: "Which responses are confirmed and which are my page-layer inference?"
+- **First Principles**: "用户在此操作后必须得到什么可观察的反馈？哪些反馈被暗示但未明说？"
+- **Systems Thinking**: "该响应是否依赖必须表示为状态的下游系统结果（异步、支付、通知）？"
+- **Adversarial**: "双击、超时、断网或页面陈旧时会发生什么？错误响应是否已定义？"
+- **Reverse Validation**: "从期望的用户体验反向推导，每个操作必须存在哪些响应？"
+- **Confirmation Bias Defense**: "我是在写需求方假设的规则（'提交显示成功 toast'），还是流程真正需要的规则？"
+- **Knowledge Boundary**: "哪些响应已确认，哪些是我的页面层推断？"
 
 ### 4. Clarify
-- Resolve discoverable gaps first (re-check page actions, flow branches, platform conventions).
-- Batch remaining questions with: AI preliminary judgment, evidence, options, impact, owner, blocking flag.
-- **Stop at `needs_user_input`** when the answer changes a P0 page's interaction or feedback behavior.
-- Limit: ≤5 questions per session. Do not ask about business rules (→ function-description) or visual styling.
+- 先尝试自行消解可发现的缺口（复查页面操作、流程分支、平台惯例）。
+- 剩余问题批量提交：AI 初步判断、依据、选项、影响、owner、阻断标志。
+- 当答案改变某 P0 页面的交互或反馈行为时，**停在 `needs_user_input`**。
+- Limit: 每轮 ≤5 个问题。不问业务规则（→ function-description）或视觉样式。
 - 遇到「待确认 / 冲突 / 信息缺口」信号：主动询问是否登记 issue-record（问题清单，见 `src/shared/clarify/skills/issue-record`）；送审前 dor_check 会硬检查收口与引用。
 
 ### 5. Generate
-- One rule per interactive element or behavior, in §3 table form or paragraph form per `rule-writing-format.md`.
-- Assign `IX-XXX` IDs sequentially and uniquely; every rule references its applicable page and its `FEA-XXX`.
-- Status: use `draft`, `needs_user_input`, or `conditional_review` — **never `confirmed`**.
+- 每个可交互元素或行为一条规则，按 `rule-writing-format.md` 以 §3 表格形式或段落形式书写。
+- 顺序分配唯一 `IX-XXX` ID；每条规则引用其适用页面与 `FEA-XXX`。
+- Status: 用 `draft`、`needs_user_input` 或 `conditional_review`——**永不 `confirmed`**。
 
 ### 6. Audit
-- **Completeness**: every P0 page's interactive elements have a rule; no orphan rules without a page.
-- **State Coverage**: loading/empty/error/disabled/timeout covered per rule where applicable.
-- **Boundary**: scan for validation/calculation/permission keywords → route to function-description.
-- **Implementability**: no "合理提示"/"适当反馈" vagueness; each response is a concrete action or state.
-- Run `scripts/validate_artifact.py <product-ux.md> --json`. Fix all errors. Warnings → document.
+- **Completeness（完整性）**: 每个 P0 页面的可交互元素都有规则；无没有页面依托的孤儿规则。
+- **State Coverage（状态覆盖）**: 在适用处覆盖每条的 loading/空态/错误/禁用/超时。
+- **Boundary（边界）**: 扫描校验/计算/权限关键词 → 路由到 function-description。
+- **Implementability（可实现性）**: 无「合理提示」/「适当反馈」式含糊；每个响应都是具体动作或状态。
+- 运行 `scripts/validate_artifact.py <product-ux.md> --json`。修复所有 error；warning 在审计记录中说明。
 - **B3 收口**：确认 issue-record 的 §13 阶段收口表已更新本 work item 行（问题数 / 收口日期 / 状态；空阶段也落行）。
 
 ### 7. Human Gate
-Present: the IX rule list grouped by layer (entry/identity, core operation, feedback/exception), per-rule trigger→response, and any rule marked `AI_INFERENCE`.
-**Product owner confirms interaction behavior; business owner confirms feedback/error handling.** Approval creates a ReviewRecord with SHA-256.
+Present: 按层分组的 IX 规则清单（入口/身份、核心操作、反馈/异常）、每条规则的触发→响应，以及任何标 `AI_INFERENCE` 的规则。
+**产品负责人确认交互行为；业务负责人确认反馈/错误处理。** 批准产生 ReviewRecord（SHA-256）。
 
 ### 8. Commit / Reflow
-- Only `pipeline.py review --decision approve` may write `confirmed`.
-- On changes: record delta → update affected rules → re-run Audit → return to Human Gate.
-- A changed page action (from page-design) invalidates the rules hanging on it → return to the affected rules, not a downstream patch.
+- 只有 `pipeline.py review --decision approve` 可写入 `confirmed`。
+- 变更时：记录 delta → 更新受影响规则 → 重跑 Audit → 返回 Human Gate。
+- 页面操作（来自 page-design）的改变会使挂在其上的规则失效 → 回到受影响的规则，而非下游打补丁。
 
-## Anti-Patterns
+## 反模式
 
-| ❌ Don't | ✅ Do |
+| ❌ 不要 | ✅ 要 |
 |---|---|
-| Write a functional sentence without the system response ("点击进入下一步") | Pair every trigger with an observable system response |
-| Write the system action without the trigger context ("系统打开弹窗") | State what the user did to cause it |
-| Describe only the success path | Cover loading, empty, error, disabled, timeout for each element |
-| Say "给出合理提示" / "适当反馈" | Give a concrete response: specific message, page, or state |
-| Write "密码必须 8 位" / "仅 VIP 可操作" / "库存不足禁止下单" | Route validation/calculation/permission to function-description |
-| Create orphan rules not tied to a page | Every IX references an applicable page + FEA-XXX |
-| Copy interaction rules between pages blindly | Reuse via a shared, referenceable rule; vary only what genuinely differs |
+| 只写功能句不写系统响应（"点击进入下一步"） | 每个触发都配上可观察的系统响应 |
+| 只写系统动作、丢了触发上下文（"系统打开弹窗"） | 说明是什么用户操作导致该响应 |
+| 只描述成功路径 | 为每个元素覆盖 loading、空态、错误、禁用、超时 |
+| 写"给出合理提示" / "适当反馈" | 给出具体响应：明确的消息、页面或状态 |
+| 写"密码必须 8 位" / "仅 VIP 可操作" / "库存不足禁止下单" | 把校验/计算/权限路由到 function-description |
+| 创建不挂在页面上的孤儿规则 | 每条 IX 引用一个适用页面 + FEA-XXX |
+| 盲目在页面间复制交互规则 | 通过共享、可引用的规则复用；只改变真正不同的部分 |
 
-## Example: Sufficient Input → Sufficient Output
+## 示例：充分输入 → 充分输出
 
-**Input**: confirmed pages for "场地预约" FEA-001 (场地列表页, 详情页, 填写页, 结果页) with actions and next states from page-design.
-**Output**: §3 IX rules — e.g., IX-001 场地卡片点击→进入详情页; IX-002 提交按钮 loading→成功跳结果页/失败驻留表单+错误提示; IX-003 未登录点击预约→跳登录页、登录后回跳; IX-004 名额满的场地置灰不可点; each with trigger→response, applicable page, source, and no BR/VL leakage.
+**输入**: "场地预约" FEA-001 的已确认页面（场地列表页、详情页、填写页、结果页），含来自 page-design 的操作与下一状态。
+**输出**: §3 IX 规则——例如 IX-001 场地卡片点击→进入详情页; IX-002 提交按钮 loading→成功跳结果页/失败驻留表单+错误提示; IX-003 未登录点击预约→跳登录页、登录后回跳; IX-004 名额满的场地置灰不可点; 每条都含触发→响应、适用页面、来源，且无 BR/VL 泄漏。
 
-## Example: Sparse Input → Degraded Output
+## 示例：稀疏输入 → 降级输出
 
-**Input**: "给预约流程加些交互规则吧" with no confirmed pages or actions.
-**Output**: Preflight returns L1 (no page skeleton) → Intake notes no rule material → Think lists missing (哪些可交互元素? 触发与响应? 异常反馈?) → Clarify generates ≤5 batched questions → stops at `needs_user_input`. No IX rules are invented for nonexistent pages.
+**输入**: "给预约流程加些交互规则吧"，没有任何已确认的页面或操作。
+**输出**: Preflight 返回 L1（无页面骨架）→ Intake 记录无规则材料 → Think 列出缺失（哪些可交互元素? 触发与响应? 异常反馈?）→ Clarify 批量生成 ≤5 个问题 → 停在 `needs_user_input`。不为不存在的页面发明任何 IX 规则。
 
-## Load References
+## 加载参考
 
 | 文件 | 用途 | 何时加载 |
 |---|---|---|
@@ -102,6 +102,6 @@ Present: the IX rule list grouped by layer (entry/identity, core operation, feed
 | `references/source-handling.md` | 上游追溯规则（FEA-/PG-/SRC- 引用） | Intake/追溯时 |
 | `references/thinking-framework.md` | 思考透镜（Common Core + 交互规则领域 lens，必读） | 每次任务开始（必读） |
 
-## Completion
+## 完成标准
 
-Every P0 page's interactive elements have an `IX-XXX` rule with trigger → system response; state coverage (loading/empty/error/disabled/timeout) is addressed where applicable; every rule references its applicable page and FEA; no data-validation, calculation, or permission logic leaks into IX; rules are written so a developer can implement and a tester can reproduce them; the rule table matches the page/flow inventory; and an authorized human approves the interaction rules before function-description runs.
+每个 P0 页面的可交互元素都有带 触发 → 系统响应 的 `IX-XXX` 规则；在适用处覆盖状态（loading/空态/错误/禁用/超时）；每条规则引用其适用页面与 FEA；无数据校验、计算或权限逻辑泄漏进 IX；规则写得让开发者可实现、测试者可复现；规则表与页面/流程清单一致；在 function-description 启动前，授权人工已批准这些交互规则。

@@ -1,95 +1,95 @@
 ---
 name: competitive-research
-description: Conduct competitive analysis when business solution is unclear and reference is lacking. Use structured frameworks (feature matrix, positioning map, SWOT) to inform product decisions. All findings are AI_INFERENCE until human-confirmed.
+description: 当业务方案不清晰且缺少参考时进行竞品分析。使用结构化框架（功能矩阵、定位图、SWOT）为产品决策提供依据。所有发现均为 AI_INFERENCE，直到人工确认。
 ---
 
-# Competitive Research
+# 竞品调研（Competitive Research）
 
-## Purpose And Boundary
+## 目的与边界
 
-When the product direction lacks reference — "what do competitors do?", "is there a market standard?", "how do we differentiate?" — this skill systematically analyzes competitors and synthesizes actionable insights for product decisions. Output is the `competitive-analysis.md` artifact consumed by `user-journey-and-stories`, `product-ux`, or `function-description`.
+当产品方向缺少参考——"竞品是怎么做的？""是否存在市场标准？""我们如何差异化？"——本 skill 系统性地分析竞品，并综合出可供产品决策采取行动的洞见。产物是 `competitive-analysis.md`，由 `user-journey-and-stories`、`product-ux` 或 `function-description` 消费。
 
-**Do not** copy competitor features without understanding their context, present findings as confirmed facts, replace user-journey or product-ux work, or conclude "we should do what competitor X does" without differentiation analysis. A competitor's success in their market does not transfer to ours without evidence.
+**不要**在不理解竞品语境的情况下照搬竞品功能、把调研发现当作已确认的事实呈现、替代 user-journey 或 product-ux 的工作，或在没有差异化分析的情况下得出"我们应该照做竞品 X 的做法"的结论。竞品在其市场上的成功，若无证据不会自动迁移到我们的市场。
 
-## Inputs And Outputs
+## 输入与输出
 
-Inputs: a confirmed business baseline (`background-goal.md` with confirmed goals) or scope baseline, a research goal (business-level vs functional-level), and registered competitor sources (official sites, app-store pages, user reviews, public docs, industry reports). If no confirmed background or research goal exists, stop at `needs_user_input` — do not research in a vacuum.
+输入：已确认的业务基线（`background-goal.md`，含已确认的目标）或范围基线、一个调研目标（业务级 vs 功能级）、以及已登记的竞品来源（官网、应用商店页面、用户评价、公开文档、行业报告）。若没有已确认的背景或调研目标，停止在 `needs_user_input`——不要在真空中调研。
 
-Output: `competitive-analysis.md` using the template at `src/templates/support/competitive-analysis.md`.
+输出：`competitive-analysis.md`，使用 `src/templates/support/competitive-analysis.md` 中的模板。
 
-Load `references/thinking-framework.md` (which references `src/framework/thinking-core.md` §1 mandatory lenses) before analysis. Load `references/source-handling.md` at Intake. Load `references/question-patterns.md` at Clarify. Load `references/output-contract.md` before drafting. Load `references/anti-patterns.md` at Generate. Load `references/audit-checklist.md` and `references/reviewer-checklist.md` before handoff. Run `scripts/validate_artifact.py <artifact> --json` before review.
+分析前加载 `references/thinking-framework.md`（其中引用 `src/framework/thinking-core.md` §1 的必用透镜）。Intake 时加载 `references/source-handling.md`。Clarify 时加载 `references/question-patterns.md`。起草前加载 `references/output-contract.md`。Generate 时加载 `references/anti-patterns.md`。移交前加载 `references/audit-checklist.md` 和 `references/reviewer-checklist.md`。评审前运行 `scripts/validate_artifact.py <artifact> --json`。
 
-## Thinking Prompts (per stage)
+## 思考提示（按阶段）
 
-### 1. Preflight
-- "What decision does this research inform? Is the research goal business-level (solution direction) or functional-level (feature design)?"
-- "Which competitors should be studied — direct (same category), indirect (same need, different solution), or aspirational (best-in-class elsewhere)?"
-- Register every competitor source with an SRC-ID. Identify research_owner and decision_owner.
-- **If no confirmed background-goal or research goal exists**, return a routing receipt and STOP at `needs_user_input`.
-- Limit to 3-5 competitors. Assess maturity: L0 (no direction) → L1 (single vague question) → L2 (business direction clear) → L3 (scope defined) → L4 (confirmed upstream).
+### 1. Preflight（预检）
+- "本次调研支撑什么决策？调研目标是业务级（方案方向）还是功能级（功能设计）？"
+- "应研究哪些竞品——直接竞品（同品类）、间接竞品（同一需求、不同方案）还是参照竞品（其他领域的最佳实践）？"
+- 为每个竞品来源登记一个 SRC-ID。识别 research_owner 和 decision_owner。
+- **若没有已确认的 background-goal 或调研目标**，返回路由收据并 STOP 在 `needs_user_input`。
+- 限制在 3-5 个竞品。评估成熟度：L0（无方向）→ L1（单一模糊问题）→ L2（业务方向清晰）→ L3（范围已定义）→ L4（上游已确认）。
 
-### 2. Intake
-- "What does each source actually say about the competitor — not what I assume about their product?"
-- Extract competitor statements verbatim (feature set, pricing, target user, positioning). Classify each as `FACT`, `AI_INFERENCE`, `UNKNOWN`, or `CONFLICT` per `src/framework/contracts.md`.
-- Retain SRC-IDs and locations. Do not merge two competitors' claims into one row.
+### 2. Intake（输入）
+- "每个来源实际上是怎么描述竞品的——而不是我对其产品的假设？"
+- 逐字提取竞品陈述（功能集、定价、目标用户、定位）。按 `src/framework/contracts.md` 将每条归类为 `FACT`、`AI_INFERENCE`、`UNKNOWN` 或 `CONFLICT`。
+- 保留 SRC-ID 和位置。不要将两个竞品的说法合并到一行。
 
-### 3. Think (apply thinking-core.md §1 mandatory lenses + competitive domain lenses)
-- **First Principles**: "What user need does each feature actually serve? Would our confirmed goal survive if competitor X were removed as a reference?"
-- **Systems Thinking**: "Which segments, user flows, and downstream decisions does this research affect?"
-- **Adversarial**: "Could the opposite of my hypothesis be true — is competitor X actually not the benchmark? Is the evidence from one interested party only?"
-- **Reverse Validation**: "From our desired differentiation backwards, what must competitors be failing at?"
-- Domain lenses: Positioning Mapping, Differentiation Scan, Pattern Extraction, Inference Discipline (see `references/thinking-framework.md`).
+### 3. Think（思考；应用 thinking-core.md §1 必用透镜 + 竞品领域透镜）
+- **First Principles（第一性原理）**："每个功能实际服务于什么用户需求？如果把竞品 X 作为参考移除，我们已确认的目标是否仍然成立？"
+- **Systems Thinking（系统思维）**："这项调研会影响哪些细分、用户流和下游决策？"
+- **Adversarial（对抗性审查）**："我的假设的反面是否可能成立——竞品 X 实际上不是对标基准？证据是否只来自某一利益方？"
+- **Reverse Validation（反向验证）**："从我们想要的差异化倒推，竞品必须在哪些方面做失败？"
+- 领域透镜：Positioning Mapping（定位映射）、Differentiation Scan（差异化扫描）、Pattern Extraction（模式提取）、Inference Discipline（推断纪律）（见 `references/thinking-framework.md`）。
 
-### 4. Clarify
-- Research discoverable facts first (official sites, app reviews, public reports).
-- Batch remaining questions with: AI preliminary judgment, evidence, options, impact, owner, blocking flag.
-- **Stop at `needs_user_input`** when the answer changes competitor selection, comparison dimensions, or a material conclusion.
-- Limit: ≤5 questions per session. Order by impact.
+### 4. Clarify（澄清）
+- 先调研可发现的客观事实（官网、应用商店评论、公开报告）。
+- 批量整理剩余问题，附带：AI 初步判断、证据、选项、影响、owner、阻断标记。
+- **当答案会改变竞品选择、对比维度或重大结论时，停止在 `needs_user_input`**。
+- 限制：每会话 ≤5 个问题。按影响排序。
 
-### 5. Generate
-- Fill the template: §1 竞品列表 → §2 逐品分析 → §3 横向对比 → §4 结论 ("So What").
-- Every insight maps to OUR goal (goal ID). All findings tagged `AI_INFERENCE`.
-- Status: use `draft`, `needs_user_input`, or `conditional_review` — **never `confirmed`**.
+### 5. Generate（生成）
+- 填模板：§1 竞品列表 → §2 逐品分析 → §3 横向对比 → §4 结论（"So What"）。
+- 每条洞见都映射到我们的目标（goal ID）。所有发现标记 `AI_INFERENCE`。
+- 状态：使用 `draft`、`needs_user_input` 或 `conditional_review`——**绝不使用 `confirmed`**。
 
-### 6. Audit
-- **Completeness**: All selected competitors covered? All material claims sourced? "So What" present?
-- **Confirmation Bias**: Did I actively search for disconfirming evidence, or only cherry-pick?
-- **Source Fidelity**: Does each claim trace to an SRC-ID? `FACT` vs `AI_INFERENCE` distinct?
-- **Downstream Usability**: Can user-journey-and-stories / product-ux pick this up without re-researching?
-- Run `scripts/validate_artifact.py <artifact> --json`. Fix all errors. Warnings → document in audit notes.
+### 6. Audit（审计）
+- **完整性（Completeness）**：所有选中的竞品都覆盖了吗？所有重大结论都有来源吗？有"So What"吗？
+- **确认偏误（Confirmation Bias）**：我是否主动搜索了反证，还是只挑支持性的证据？
+- **来源保真（Source Fidelity）**：每条结论都能追溯到 SRC-ID 吗？`FACT` 和 `AI_INFERENCE` 是否区分清晰？
+- **下游可用性（Downstream Usability）**：user-journey-and-stories / product-ux 能否无需重新调研就接上？
+- 运行 `scripts/validate_artifact.py <artifact> --json`。修复所有错误。警告 → 记入审计备注。
 
-### 7. Human Gate
-Present: competitor selection rationale (direct/indirect/aspirational), applied framework analysis, cross-competitor patterns and divergences, "So What" synthesis, audit result.
-**Only the business owner may confirm applicability.** All findings remain `AI_INFERENCE` until then. Approval creates a ReviewRecord with SHA-256.
+### 7. Human Gate（人工关卡）
+呈现：竞品选择理由（直接/间接/参照）、所用框架的分析、跨竞品模式与分歧、"So What"综合、审计结果。
+**只有业务负责人可以确认适用性。** 在此之前所有发现保持 `AI_INFERENCE`。批准会创建带 SHA-256 的 ReviewRecord。
 
-### 8. Commit / Reflow
-- Only `pipeline.py review --decision approve` may write `confirmed`.
-- On changes to a confirmed background-goal: record delta → update affected sections → re-run Audit → return to Human Gate.
-- Later contradiction (a competitor changed direction or a new competitor appeared) → re-enter this Skill from Preflight, not patched downstream.
+### 8. Commit / Reflow（提交 / 回流）
+- 只有 `pipeline.py review --decision approve` 可以写入 `confirmed`。
+- 当已确认的 background-goal 发生变化：记录 delta → 更新受影响章节 → 重跑 Audit → 回到 Human Gate。
+- 之后出现矛盾（竞品改变方向或出现新竞品）→ 从 Preflight 重新进入本 skill，而非在下游打补丁。
 
-## Anti-Patterns
+## 反模式
 
-| ❌ Don't | ✅ Do |
+| ❌ 不要 | ✅ 要做 |
 |---|---|
-| "Competitor X does it, so we should too" | Understand WHY they do it — same user need? same context? map to our goal |
-| List 20 competitors with one-line descriptions | Limit to 3-5 with deep analysis |
-| Skip the "So What" synthesis | Every competitive research must answer: what do WE do with this information? |
-| Present findings as facts | Tag everything `AI_INFERENCE` until human confirms |
-| Only look at direct competitors | Include indirect (different solution, same need) and aspirational (best UX) |
-| Judge a feature without knowing its goal | Score every feature against OUR confirmed goal ID, not in a vacuum |
-| Treat a stale source as current | Record retrieval date; re-verify competitor facts before reuse |
+| "竞品 X 这么做了，所以我们也该这么做" | 理解他们为什么这么做——是否满足相同用户需求？语境是否一致？映射到我们的目标 |
+| 列出 20 个竞品配一行描述 | 限制在 3-5 个并做深度分析 |
+| 跳过"So What"综合 | 每次竞品调研都必须回答：我们该拿这些信息做什么？ |
+| 把发现当作事实呈现 | 在人工确认前把一切都标为 `AI_INFERENCE` |
+| 只看直接竞品 | 纳入间接竞品（不同方案、同一需求）和参照竞品（最佳体验） |
+| 不了解功能的目标就评判 | 对照我们已确认的目标 ID 打分每个功能，而不是在真空中打分 |
+| 把过时来源当作现状 | 记录检索日期；复用竞品事实前重新核验 |
 
-## Example: Sufficient Input → Sufficient Output
+## 示例：充分输入 → 充分输出
 
-**Input**: Confirmed `background-goal.md` (goal G1: shorten customer onboarding), business-level research goal, 3 competitor sources registered with SRC-IDs (two direct, one indirect).
-**Output**: Full template — 竞品列表 with selection rationale, 逐品分析 via Positioning Map + Feature Matrix, 横向对比 identifying one market-standard pattern and one gap, 结论 "So What" mapping each insight to G1 with `AI_INFERENCE` tags → status `ready_for_human_review`.
+**输入**：已确认的 `background-goal.md`（目标 G1：缩短客户入驻流程）、业务级调研目标、3 个已登记 SRC-ID 的竞品来源（两个直接、一个间接）。
+**输出**：完整模板——竞品列表（含选择理由）、逐品分析（用定位图 + 功能矩阵）、横向对比（识别出一个市场标准模式和一个空白点）、结论"So What"（把每条洞见映射到 G1 并标 `AI_INFERENCE`）→ 状态 `ready_for_human_review`。
 
-## Example: Sparse Input → Degraded Output
+## 示例：稀疏输入 → 降级输出
 
-**Input**: Slack message "看看竞品怎么做会员等级的".
-**Output**: Preflight finds no confirmed background-goal and no research goal → Intake registers the message as SRC-001 → Think identifies missing: which competitors? which level (business vs functional)? which dimensions matter? → Clarify generates 3 questions (research goal, competitor candidate list, decision this informs) → stops at `needs_user_input`.
+**输入**：Slack 消息"看看竞品怎么做会员等级的"。
+**输出**：Preflight 发现没有已确认的 background-goal 和调研目标 → Intake 把该消息登记为 SRC-001 → Think 识别缺失项：哪些竞品？什么层级（业务级 vs 功能级）？哪些维度重要？→ Clarify 生成 3 个问题（调研目标、竞品候选列表、本次调研支撑的决策）→ 停止在 `needs_user_input`。
 
-## Load References
+## 加载参考文献
 
 | 文件 | 用途 | 何时加载 |
 |---|---|---|
@@ -101,6 +101,6 @@ Present: competitor selection rationale (direct/indirect/aspirational), applied 
 | `references/source-handling.md` | 来源处理规则（SRC-* 登记与引用） | Intake/来源处理时 |
 | `references/thinking-framework.md` | 思考透镜（Common Core + 竞品领域 lens，必读） | 每次任务开始（必读） |
 
-## Completion
+## 完成标准
 
-Competitors are selected with rationale (direct/indirect/aspirational) and limited to 3-5; at least one framework is applied and analyzed; cross-competitor patterns and divergences are identified; every insight maps back to a confirmed goal; "So What" synthesis provides actionable, specific recommendations; all findings carry explicit knowledge state (`AI_INFERENCE` until confirmed); and the business owner confirms or revises insights.
+竞品的选择有理由（直接/间接/参照）并限制在 3-5 个；至少应用并分析了一个框架；识别了跨竞品模式与分歧；每条洞见映射回一个已确认的目标；"So What"综合提供了可执行、具体的建议；所有发现都带有显式的知识状态（`AI_INFERENCE`，直到确认）；业务负责人确认或修订洞见。

@@ -1,5 +1,5 @@
-# Function Description Question Patterns
+# 功能描述提问模式（Function Description Question Patterns）
 
-Questions may cover action/response behavior, business policy, permission, validation, state transition, failure recovery, timing, external dependency, measurement, and acceptance threshold.
+问题可以覆盖动作/响应行为、业务策略、权限、校验、状态转移、失败恢复、时间、外部依赖、度量与验收阈值。
 
-Each batch includes AI preliminary judgment, source evidence, mutually exclusive options, product/business/technical impact, decision owner, blocking flag, deferral risk, and the exact function/rule to update. Scope additions are not decided here; route them upstream.
+每批问题都包含 AI 初步判断、来源证据、互斥选项、产品/业务/技术影响、决策负责人、阻断标记、延期风险与要更新的具体功能/规则。范围新增不在此决策；路由到上游。

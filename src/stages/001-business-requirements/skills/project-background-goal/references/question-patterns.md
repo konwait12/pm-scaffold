@@ -1,34 +1,34 @@
-# Question Patterns
+# 提问模式（Question Patterns）
 
-Eight canonical question templates for the one-question-at-a-time Clarify loop. Each entry gives:
+一次性一问 Clarify 循环的 8 个规范提问模板。每条包含：
 
-- **When to use** — the trigger condition
-- **Question shape** — the prompt structure
-- **Three examples** — paraphrased real cases (desensitized)
-- **Common traps** — typical AI mistakes when asking this kind of question
+- **何时使用** — 触发条件
+- **问题句式** — 提示结构
+- **三个示例** — 转述过的真实案例（已脱敏）
+- **常见陷阱** — AI 问这类问题时最典型的错误
 
-Use these as reference when generating a new question in a Clarify Session. See `SKILL.md` § Clarify Is Its Own Loop for runtime rules.
+在 Clarify Session 中生成新问题时以此为参考。运行时规则见 `SKILL.md` § Clarify 自成一个循环（Clarify Is Its Own Loop）。
 
 ---
 
 ## 1. 来源（Source）
 
-**When to use**: when the artifact's `§1 需求来源与触发` does not have an authoritative source ID; or when sources contradict; or when the requester's authority is unclear.
+**何时使用**： when the artifact's `§1 需求来源与触发` does not have an authoritative source ID; or when sources contradict; or when the requester's authority is unclear.
 
-**Question shape**:
+**问题句式**：
 
 ```
 [为什么重要] 当前材料的 [来源类型] 在 [章节] 中只能支撑 [已有的判断].
 请确认: [是 / 否 / 待补充] 这条信息 [具体内容] 是来自 [来源] 而不是来自 [其他来源]?
 ```
 
-**Examples**:
+**示例**：
 
 - "邮件 SRC-002 §3 说客户分级是 VVIP/普通两级,但纪要 SRC-001 §2 提到还有钻石级。哪一种是业务方最终确认的?"
 - "需求来自产品总监口头描述,但没有书面材料。能否请需求方补一份邮件作为 SRC-003 留存?"
 - "这条 KPI「客单价提升 15%」来源是猜测还是已有数据支撑?如果是猜测,应该归 ASSUMPTION 而不是 FACT。"
 
-**Common traps**:
+**常见陷阱**：
 
 - 接受口头信息不登记为 SRC-*
 - 把不同来源的张冠李戴
@@ -38,22 +38,22 @@ Use these as reference when generating a new question in a Clarify Session. See 
 
 ## 2. 背景（Background）
 
-**When to use**: when `§2 项目与需求背景` is empty or only mentions surface symptoms; or when "why now" is missing.
+**何时使用**： when `§2 项目与需求背景` is empty or only mentions surface symptoms; or when "why now" is missing.
 
-**Question shape**:
+**问题句式**：
 
 ```
 [为什么重要] 业务环境 / 需求由来对 [下游影响] 起决定作用。
 当前 §2 仅写了 [已有的内容]。请补充: [是 / 否 / 具体补充] [业务事件 / 行业变化 / 组织目标调整]?
 ```
 
-**Examples**:
+**示例**：
 
 - "为什么这个项目必须在 Q3 启动?是因为合同 deadline,还是新业务上线,还是合规要求?"
 - "业务方在邮件 SRC-002 里说「配合公司战略」,但具体是哪个战略?是去年的还是今年的版本?"
 - "项目背景里没提到竞品动态。是否需要补充近期 [竞品名称] 的相关动作?"
 
-**Common traps**:
+**常见陷阱**：
 
 - 用"行业大趋势"等空话填充背景
 - 把背景写成方案而不是业务事件
@@ -63,22 +63,22 @@ Use these as reference when generating a new question in a Clarify Session. See 
 
 ## 3. 现状（Current State）
 
-**When to use**: when `§3 当前现状与已有做法` is missing observable limitations; or when the current state is described only as complaints without measurable cost.
+**何时使用**： when `§3 当前现状与已有做法` is missing observable limitations; or when the current state is described only as complaints without measurable cost.
 
-**Question shape**:
+**问题句式**：
 
 ```
 [为什么重要] 现状描述如果不包含 [延迟 / 错误率 / 用户放弃率],后续的成功判断无法对照。
 当前 §3 写了 [已有内容]。请补充 [量化指标]: [具体数值 + 时间窗口 + 来源]?
 ```
 
-**Examples**:
+**示例**：
 
 - "现状写「用户手动操作频繁」,但没有量化。请补充:每周 [操作] 占用 [角色] 多少小时?来源:数据看板 / 客服工单统计 / 业务方估算?"
 - "现状提到「客服压力大」,客服平均响应时长是多少?这是 P99 还是平均值?数据来源是哪个系统?"
 - "现有做法是 Excel + 邮件,但 Excel 模板版本有几个?是否还在维护?"
 
-**Common traps**:
+**常见陷阱**：
 
 - 用「很慢」「很乱」「很难用」等形容词代替数据
 - 把"现状"和"问题"混为一谈
@@ -88,22 +88,22 @@ Use these as reference when generating a new question in a Clarify Session. See 
 
 ## 4. 问题（Problem）
 
-**When to use**: when `§4 核心问题与证据` confuses problem with solution; or when the problem statement is too abstract.
+**何时使用**： when `§4 核心问题与证据` confuses problem with solution; or when the problem statement is too abstract.
 
-**Question shape**:
+**问题句式**：
 
 ```
 [为什么重要] 问题框定决定后续方案的方向。如果把方案当问题,会产生 [错误后果]。
 当前 §4 写了 [已有的内容]。请确认: 去掉 [提议方案 / 功能] 后,这个 [业务问题] 是否仍然存在?
 ```
 
-**Examples**:
+**示例**：
 
 - "§4 写「需要一个按钮用来点赞」。如果去掉按钮,用户不能点赞会引发什么业务问题?"
 - "§4 写「缺少统一通知通道」。这是方案还是问题?真正的业务问题可能是「运营触达用户成功率低」。是否同意重新框定?"
 - "邮件里说「客户流失严重」,请量化:近 6 个月 VVIP 客户复购率是多少?流失的客户有多少?"
 
-**Common traps**:
+**常见陷阱**：
 
 - 把"加按钮"当问题
 - 把功能请求当问题
@@ -113,22 +113,22 @@ Use these as reference when generating a new question in a Clarify Session. See 
 
 ## 5. 目标（Goal）
 
-**When to use**: when `§5 目标、未来期望与成功判断` lacks numeric KPI; or when goal confuses business outcome with delivery outcome; or when success judgment has no measurement.
+**何时使用**： when `§5 目标、未来期望与成功判断` lacks numeric KPI; or when goal confuses business outcome with delivery outcome; or when success judgment has no measurement.
 
-**Question shape**:
+**问题句式**：
 
 ```
 [为什么重要] 目标必须可衡量才能判断项目成功。当前 §5 写 [已有内容]。
 请明确: 这个目标针对的是 [业务结果 / 交付结果 / 用户行为变化]?衡量方式是什么?时间窗口?
 ```
 
-**Examples**:
+**示例**：
 
 - "§5 目标写「提升用户体验」,这是业务结果还是交付结果?能否量化:任务完成时间从 30 秒降到 10 秒?"
 - "§5 目标写「系统日活翻倍」,baseline 是什么?时间窗口是上线后 1 个月 / 3 个月 / 6 个月?"
 - "§5 目标写「运营效率提升」,具体到哪个角色?操作减少了多少步?"
 
-**Common traps**:
+**常见陷阱**：
 
 - 编造 KPI（用户没给就猜）
 - 把交付结果当业务结果（"上线了"≠"用户用了"）
@@ -138,9 +138,9 @@ Use these as reference when generating a new question in a Clarify Session. See 
 
 ## 6. 角色（Roles）
 
-**When to use**: when `§6 用户角色与利益相关者` is missing decision owners or affected parties; or when stakeholder chain is incomplete.
+**何时使用**： when `§6 用户角色与利益相关者` is missing decision owners or affected parties; or when stakeholder chain is incomplete.
 
-**Question shape**:
+**问题句式**：
 
 ```
 [为什么重要] 角色不全会影响后续旅程 / 功能描述 / 验收环节。请补 [角色]:
@@ -150,13 +150,13 @@ Use these as reference when generating a new question in a Clarify Session. See 
 4. 谁验收?
 ```
 
-**Examples**:
+**示例**：
 
 - "§6 写了产品经理和业务方,但谁拍板这个 VVIP 阈值?是 VP / 总监 / PMO?请明确决策者。"
 - "运营角色缺失。但涉及「下单→核销」流程,运营每天会接触 100+ 订单,不能漏。是否补入?"
 - "客服角色未列。但订单核销出错时,客服是第一处理人。谁是客服 owner?"
 
-**Common traps**:
+**常见陷阱**：
 
 - 只列需求方不列决策方
 - 漏掉运营 / 客服 / 法务等支撑角色
@@ -166,9 +166,9 @@ Use these as reference when generating a new question in a Clarify Session. See 
 
 ## 7. 时间（Timing）
 
-**When to use**: when `§7 时间、约束与依赖` is missing deadline or dependency chain; or when scheduling pressure is asserted without evidence.
+**何时使用**： when `§7 时间、约束与依赖` is missing deadline or dependency chain; or when scheduling pressure is asserted without evidence.
 
-**Question shape**:
+**问题句式**：
 
 ```
 [为什么重要] 时间约束决定方案取舍的边界。
@@ -176,13 +176,13 @@ Use these as reference when generating a new question in a Clarify Session. See 
 依赖项包括 [外部条件],目前确认了吗?
 ```
 
-**Examples**:
+**示例**：
 
 - "§7 说「Q3 上线」,但具体到几月几日?是 7/31 / 8/31 还是 9/30?"
 - "上线依赖运营 SOP 的更新,目前 SOP 处于什么阶段?如未确定,方案是否需要分两期?"
 - "§7 没提到合规审批。是否需要法务 review?预计审批周期?"
 
-**Common traps**:
+**常见陷阱**：
 
 - 用「尽快」「尽快尽快」代替具体时间
 - 漏掉外部依赖
@@ -192,9 +192,9 @@ Use these as reference when generating a new question in a Clarify Session. See 
 
 ## 8. 范围（Scope）
 
-**When to use**: when `§8 初步边界与非目标` is missing non-goals; or when scope creep risk is high; or when the boundary between this project and other ongoing projects is unclear.
+**何时使用**： when `§8 初步边界与非目标` is missing non-goals; or when scope creep risk is high; or when the boundary between this project and other ongoing projects is unclear.
 
-**Question shape**:
+**问题句式**：
 
 ```
 [为什么重要] 范围蔓延是项目失控的最大原因。
@@ -202,13 +202,13 @@ Use these as reference when generating a new question in a Clarify Session. See 
 如有边界模糊的项,请列出 [候选项],由人工圈定。
 ```
 
-**Examples**:
+**示例**：
 
 - "§8 写「包含客户邀约」,但「礼品发放」和「回访」是否在本期?请明确。"
 - "积分机制在邮件 SRC-002 提到,但业务方口头说下一版本做。是否应在本版本 §8 写明「积分机制不在本期」?"
 - "数据迁移是否在本期?如果客户已经在用旧系统,迁移策略是什么?"
 
-**Common traps**:
+**常见陷阱**：
 
 - 只写"做什么"不写"不做什么"
 - 把"未来考虑"塞进 §8 包含项
@@ -216,7 +216,7 @@ Use these as reference when generating a new question in a Clarify Session. See 
 
 ---
 
-## Cross-cutting tips
+## 跨主题提示（Cross-cutting tips）
 
 1. **排序原则**：Clarify 一次只问 1个，按 Impact × Uncertainty 排序，先问阻断性高的。
 2. **不要问AI 能查的事实**：公司名、公开财报、行业报告，让 AI 自己查，不要让业务方回答。

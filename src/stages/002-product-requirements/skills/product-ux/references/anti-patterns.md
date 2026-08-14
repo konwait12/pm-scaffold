@@ -1,9 +1,9 @@
-# Product UX Anti-Patterns
+# 产品 UX 反模式（Product UX Anti-Patterns）
 
-- Designing pages before scope and feature structure are stable.
-- Treating every journey entry as a feature without product judgment.
-- Adding features because a competitor has them.
-- Using a polished prototype to hide missing flow or state logic.
-- Writing interaction, validation, permission or business rules in the UX baseline.
-- Omitting failure, timeout, cancellation or recovery paths.
-- Confirming AI-proposed scope without a product owner decision.
+- 在范围与功能结构稳定之前就设计页面。
+- 不做产品判断，把每个旅程条目都当作一个功能。
+- 因为竞品有就加功能。
+- 用精致的原型掩盖缺失的流程或状态逻辑。
+- 在 UX 基线里写交互、校验、权限或业务规则。
+- 遗漏失败、超时、取消或恢复路径。
+- 未经产品负责人决策就确认 AI 提议的范围。

@@ -1,19 +1,19 @@
-# Multi-Solution Comparison · §多方案取舍（可行性分析章节）
+# 多方案取舍（Multi-Solution Comparison · 可行性分析章节）
 
 > feasibility-analysis 的 §多方案取舍 章节。当同一目标存在 ≥2 个可行方案且它们在成本 / 范围 / 时间 / 风险上真正不同时，用加权矩阵客观呈现取舍。该章节嵌入 `feasibility-report.md`，不独立产出。AI 呈现证据与推荐，人工做最终选择。
 > 核心原则：**AI 不替业务方选择。**
 
-## Trigger Condition
+## 触发条件
 
 对任一目标或功能，≥ 2 个可行方案 且 它们在成本、范围、时间或风险上有实质差异。
 
-## Boundary
+## 边界
 
-**Do**: 每个方案给出等深描述（描述、成本、范围、时间、风险、优缺点），用权重矩阵打分，给出 AI 推荐（带置信度 + 可翻转假设），记录人工决策为 `DEC-XXX`。
+**做**：每个方案给出等深描述（描述、成本、范围、时间、风险、优缺点），用权重矩阵打分，给出 AI 推荐（带置信度 + 可翻转假设），记录人工决策为 `DEC-XXX`。
 
-**Do NOT**: 替业务方做选择；制造假对等（把明显劣质的方案包装成可比）；仅有一个可行方案时仍硬凑对比。
+**不做**：替业务方做选择；制造假对等（把明显劣质的方案包装成可比）；仅有一个可行方案时仍硬凑对比。
 
-## Workflow
+## 工作流
 
 ```
 多方案识别
@@ -41,15 +41,15 @@
 8. 选中方案回流：`project-background-goal` §5 目标 / §8 边界、`product-ux` §1 范围基线、`function-description` §2 功能描述
 ```
 
-## Output
+## 输出
 
-Use the template at `src/templates/support/solution-comparison.md` (relative to project root): `## 候选方案` / `## 方案对比矩阵` / `## AI 推荐` / `## 人工决策`.
+使用 `src/templates/support/solution-comparison.md` 中的模板（相对项目根）：`## 候选方案` / `## 方案对比矩阵` / `## AI 推荐` / `## 人工决策`.
 
-## Key Rule
+## 关键规则
 
 AI 推荐章节必须显式声明：**"这是 AI 的推荐。最终决策必须由 [决策人] 做出。"** 同时列出能翻转推荐的假设，供决策人重点复核。
 
-## Completion
+## 完成标准
 
 - 权重在打分前定义并写入产物
 - 每个方案等深描述

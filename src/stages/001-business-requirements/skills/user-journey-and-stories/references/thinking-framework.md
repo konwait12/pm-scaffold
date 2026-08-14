@@ -1,104 +1,101 @@
-# Thinking Framework · user-journey-and-stories
+# 思考框架 · user-journey-and-stories
 
-Lenses for decomposing business lifecycle and deriving story cards from a confirmed project background.
+从已确认的项目背景分解业务生命周期并派生故事卡片的透镜。
 
+## 公共核心（Common Core，必用 MANDATORY）
 
-## Common Core (MANDATORY)
+应用 `src/framework/thinking-core.md` §1 的 **6 个核心透镜**（第一性原理 First Principles、系统思维 Systems Thinking、对抗性审视 Adversarial Review、逆向验证 Reverse Validation、确认偏误防御 Confirmation Bias Defense、知识边界 Knowledge Boundary），以及 §2 中与本 work item 相关的检查层透镜（阶段收口前的 Pre-Mortem、Human Gate 前的 Fresh-Eyes、验收标准前的可测试性 Testability、写作时的结论先行 Conclusion First + 读者视角 Reader Perspective）。只记录会改变候选产物的发现——不要逐字重复核心透镜分析。
 
-Apply the **6 core lenses** from `src/framework/thinking-core.md` §1 (First Principles, Systems Thinking, Adversarial Review, Reverse Validation, Confirmation Bias Defense, Knowledge Boundary) plus the check-layer lenses from §2 relevant to this work item (Pre-Mortem before phase close, Fresh-Eyes before Human Gate, Testability before acceptance criteria, Conclusion First + Reader Perspective when writing). Record only findings that change the candidate — do not repeat core-lens analysis verbatim.
-## Lens 1: Lifecycle Decomposition
+## 透镜 1：生命周期分解（Lifecycle Decomposition）
 
-Break the business domain into sequential stages from the user's perspective, not the system's:
+把业务领域从用户视角（而非系统视角）拆成顺序阶段：
 
-1. Identify the natural start and end of the lifecycle from the background.
-2. List all stages a user passes through (awareness → engagement → transaction → fulfillment → offboarding).
-3. For each stage, ask: who acts? who is affected? what triggers entry? what triggers exit?
-4. Flag stages not mentioned in the background but logically implied.
+1. 从背景中识别生命周期的自然起点与终点。
+2. 列出用户会经过的所有阶段（知晓 awareness → 参与 engagement → 交易 transaction → 履约 fulfillment → 离场 offboarding）。
+3. 对每个阶段追问：谁行动？谁受影响？什么触发进入？什么触发退出？
+4. 标记背景中未提及但逻辑上隐含的阶段。
 
-**Anti-pattern**: Decomposing by system module or page instead of by business event.
+**反模式**：按系统模块或页面分解，而不是按业务事件分解。
 
-## Lens 2: Role-Based Perspective
+## 透镜 2：角色视角（Role-Based Perspective）
 
-For each confirmed role from upstream §6:
+对上游 §6 的每个已确认角色：
 
-1. Walk through the lifecycle stage by stage as that role.
-2. What does this role see, do, need, and fear at each stage?
-3. Where does this role interact with other roles?
-4. What information does this role need from or pass to others?
+1. 以该角色的身份逐阶段走过生命周期。
+2. 这个角色在每个阶段看到什么、做什么、需要什么、害怕什么？
+3. 这个角色在哪里与其他角色交互？
+4. 这个角色需要从别人那里获得哪些信息，或传递哪些信息给他人？
 
-**Anti-pattern**: Focusing only on the primary user and ignoring supporting roles.
+**反模式**：只关注主要用户，忽略支撑角色。
 
-## Lens 3: Path Type Expansion
+## 透镜 3：路径类型展开（Path Type Expansion）
 
-For each journey entry, explicitly consider all 6 path types:
+对每个旅程条目，显式考虑全部 6 种路径类型：
 
-| Type | Question |
+| 类型 | 问题 |
 |---|---|
-| Normal | What happens when everything goes right? |
-| Alternative | What other valid way could this role achieve the same goal? |
-| Exception | What business rule violations can occur? |
-| Failure | What system or external failures can block this? |
-| Handoff | Where does responsibility transfer between roles? |
-| Recovery | How does the user recover from a failure or mistake? |
+| Normal（正常） | 一切都顺利时发生什么？ |
+| Alternative（备选） | 这个角色还有哪些其他合法方式达成同一目标？ |
+| Exception（异常） | 会发生哪些业务规则违反？ |
+| Failure（失败） | 哪些系统或外部失败会阻断它？ |
+| Handoff（交接） | 责任在哪里在角色间转移？ |
+| Recovery（恢复） | 用户如何从失败或错误中恢复？ |
 
-**Anti-pattern**: Only mapping the happy path and calling it done.
+**反模式**：只画快乐路径就宣称完成。
 
-## Lens 4: Story Completeness
+## 透镜 4：故事完整性（Story Completeness）
 
-For each story card, verify:
+对每条故事卡片，核验：
 
-1. Is the scene described clearly enough that a developer could estimate it?
-2. Is the goal stated as an outcome, not a feature?
-3. Can the story be traced back to a specific journey entry?
-4. Does the story's path type match the journey entry?
+1. 场景描述是否足够清晰，让开发者能估工作量？
+2. 目标是否表述为结果而非功能？
+3. 故事能否追溯到具体的旅程条目？
+4. 故事的路径类型是否与旅程条目一致？
 
-**Anti-pattern**: Writing stories as feature requests ("As a user, I want a dashboard") without context.
+**反模式**：把故事写成功能请求（"作为用户，我想要一个仪表板"）而缺少上下文。
 
-## Lens 5: Adversarial Review
+## 透镜 5：对抗性审视（Adversarial Review）
 
-1. If I were the business owner, what lifecycle stage would I say is missing?
-2. If I were a developer, what story would I say is too vague to implement?
-3. If I were a tester, what failure path would I say is uncovered?
-4. If I were the user, what handoff or recovery scenario would I say is ignored?
+1. 如果我是业务负责人，我会说哪个生命周期阶段缺失了？
+2. 如果我是开发者，我会说哪条故事太模糊无法实现？
+3. 如果我是测试者，我会说哪条失败路径没被覆盖？
+4. 如果我是用户，我会说哪个交接或恢复场景被忽略了？
 
-## Lens 6: Role Immersion
+## 透镜 6：角色沉浸（Role Immersion）
 
-For EACH confirmed role from the upstream background, explicitly role-play before deriving story cards:
+对上游背景中**每个**已确认角色，在派生故事卡片之前显式进行角色扮演：
 
-1. **Become this role**: What do I care about? What am I responsible for? What frustrates me today?
-2. **Walk through the lifecycle as this role**: At each stage, what do I see? What do I need? What could go wrong for me specifically?
-3. **What would I ask for?**: If I were this role in a stakeholder meeting, what feature or scenario would I demand that isn't in the source materials?
-4. **What am I afraid of?**: What change or new system would threaten my workflow or responsibilities?
+1. **成为这个角色**：我在乎什么？我负责什么？今天什么让我沮丧？
+2. **以这个角色走过生命周期**：在每个阶段，我看到什么？我需要什么？对我个人来说什么可能出错？
+3. **我会要求什么？**：如果我在干系人会议上以这个角色出现，我会要求哪个来源材料里没有的功能或场景？
+4. **我怕什么？**：什么变化或新系统会威胁我的工作流或职责？
 
-Output: For each role, produce 2-3 "immersed scenarios" that go beyond what the source materials explicitly state. Mark these as **AI_INFERENCE** — they are discovered, not confirmed.
+输出：对每个角色，产出 2-3 个超出来源材料显式陈述范围的"沉浸式场景"。把这些标记为 **AI_INFERENCE**——它们是发现出来的，不是确认出来的。
 
-**Anti-pattern**: Listing roles from the background without actually thinking from their perspective. "内容编辑需要查看稿件" is role-listing. "内容编辑每天收到 30 篇投稿邮件，最怕漏掉高质量作者的首发投递——所以需要统一收件箱和筛选标记" is role-immersion.
+**反模式**：从背景里列角色却不真正从他们的视角思考。"内容编辑需要查看稿件"是列角色。"内容编辑每天收到 30 篇投稿邮件，最怕漏掉高质量作者的首发投递——所以需要统一收件箱和筛选标记"才是角色沉浸。
 
+## 透镜 7：MECE 场景枚举（MECE Scenario Enumeration，B2 场景发散）
 
-## Lens 7: MECE Scenario Enumeration (B2 场景发散)
+在 work item 收口之前，用**矩阵**（而不是列表）穷举候选场景：
 
-Before the work item closes, enumerate candidate scenarios exhaustively using a **matrix**, not a list:
+1. **切面 1 — 角色**：每个已确认角色 × 每个生命周期阶段。空格 = 缺失场景的候选。
+2. **切面 2 — 路径类型**：每个（阶段 × 角色）单元格 × 6 种路径类型（normal/alt/exception/failure/handoff/recovery）。未覆盖的类型 = 异常/失败/交接场景的候选。
+3. **切面 3 — 业务事件**：对每个单元格问"什么事件进入/离开此单元格？"以及"业务方会说什么事件缺失了？"
+4. 只有矩阵完全填满后，再标记：已覆盖单元格（ST-XXX）、B2 候选问题、显式范围外单元格（带原因）。
 
-1. **Cut 1 — Role**: every confirmed role × every lifecycle stage. Empty cells = candidate missing scenarios.
-2. **Cut 2 — Path type**: every (stage × role) cell × the 6 path types (normal/alt/exception/failure/handoff/recovery). Uncovered types = candidate exception/failure/handoff scenarios.
-3. **Cut 3 — Business event**: for each cell, ask "what event enters/exits this cell?" and "what event would business say is missing?"
-4. Only after the matrix is fully filled, mark: covered cells (ST-XXX), B2 candidate questions, explicitly out-of-scope cells (with reason).
+**反模式**：不用矩阵头脑风暴一个扁平列表——这总会漏掉最不明显的单元格里的缺口。只把未覆盖、逻辑隐含或需要范围决策的单元格抛给业务方。
 
-**Anti-pattern**: Brainstorming a flat list without the matrix — this always misses gaps in the least obvious cells. Ask the business only about cells that are uncovered, logically implied, or require a scope decision.
+## 降级模式（Degraded Mode）
 
+当上游背景已确认角色少于 2 个或生命周期线索不清晰时：
 
-## Degraded Mode
+1. 提取任何存在的角色与生命周期线索。
+2. 构建一个最小旅程，缺失阶段用 `UNKNOWN` 标记。
+3. 只派生直接被支撑的故事。
+4. 在 §7 与 §8 显式标记所有缺口。
+5. 对任何阻断性缺口设置 `needs_user_input`。
 
-When the upstream background has fewer than 2 confirmed roles or unclear lifecycle clues:
-
-1. Extract whatever roles and lifecycle hints exist.
-2. Build a minimal journey with `UNKNOWN` markers for missing stages.
-3. Derive only the stories that are directly supported.
-4. Flag all gaps explicitly in §7 and §8.
-5. Set `needs_user_input` for any blocking gap.
-
-
-## Lens 8: 旅程体验验证技法（Journey Experience Validation）
+## 透镜 8：旅程体验验证技法（Journey Experience Validation）
 
 Specs 测功能，Journeys 测体验——旅程在拆成 story 卡之前，先对关键旅程做三重体验验证：
 
@@ -108,10 +105,9 @@ Specs 测功能，Journeys 测体验——旅程在拆成 story 卡之前，先�
 
 产出标注：persona 快照与情绪解读是体验推断，标 **AI_INFERENCE**；错误恢复路径若出自背景材料为 FACT，出自推断为 AI_INFERENCE，均不得写成 confirmed。验证结果随 journey 产物交 Human Gate 人工确认。
 
-**Anti-pattern**: 把旅程写成 specs 列表（步骤 + 系统响应），缺前置状态、缺情绪标注、缺错误恢复路径。
+**反模式**: 把旅程写成 specs 列表（步骤 + 系统响应），缺前置状态、缺情绪标注、缺错误恢复路径。
 
-
-## Lens 9: 范围基线四分类（Scope Baseline Classification）
+## 透镜 9：范围基线四分类（Scope Baseline Classification）
 
 每个干系人期望 / 候选范围项必须归入且仅归入四类之一，每条都带可验证验收依据、知识状态、来源/决议：
 

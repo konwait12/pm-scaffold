@@ -578,8 +578,8 @@ footer{margin-top:24px;text-align:center;color:#888;font-size:11px;padding-top:1
     <tr><td><code>hash_anchor.py</code><br><span style="color:#888;font-size:11px">哈希锚点</span></td><td colspan="2" style="padding-top:10px">record_body_sha256：对产物记录体做 SHA-256 自指纹，供 audit_log 绑定记录体（payload_sha256）。</td></tr>
     <tr><td><code>desensitize_check.py</code><br><span style="color:#888;font-size:11px">脱敏检查</span></td><td colspan="2" style="padding-top:10px">扫描 test/ fixtures 检测未脱敏敏感数据（手机号/身份证/真实邮箱/疑似真名），掩码/泛化形式视为通过，防隐私泄露。</td></tr>
     <tr><td><code>feishu_fetch.py</code><br><span style="color:#888;font-size:11px">飞书取料 ★ 以飞书为主</span></td><td colspan="2" style="padding-top:10px">lark-cli 读取飞书文档 → HTML 表格转 Markdown（修复文本内 < 字符误判）→ 账号/密码/token 脱敏 → source-register 自动登记。用法：<code>python3 src/scripts/feishu_fetch.py &lt;doc-token&gt; --output &lt;材料.md&gt; --register --src-id SRC-001 --src-title "标题"</code></td></tr>
-    <tr><td><code>prd_publish.py</code><br><span style="color:#888;font-size:11px">飞书发布 ★ 闭环出口</span></td><td colspan="2" style="padding-top:10px">产物经 stdin 调 lark-cli docs +create 发布为飞书文档 → doc-id 写回产物 frontmatter <code>feishu_doc_id</code> → 登记 .test-output/飞书发布日志.md。用法：<code>python3 src/scripts/prd_publish.py &lt;prd.md&gt; [--title ...] [--note ...]</code></td></tr>
-    <tr><td><code>snapshot_cases.py</code><br><span style="color:#888;font-size:11px">产物快照对比 ★ 结果比对机器化</span></td><td colspan="2" style="padding-top:10px">借鉴 deepseek-harness 快照理念：录制各案例产物规模基线（.test-output/产物快照.json），--check 对比状态漂移/规模变化（exit 1 有差异）。用法：<code>--record</code> 录基线 / <code>--check</code> 对比</td></tr>
+    <tr><td><code>prd_publish.py</code><br><span style="color:#888;font-size:11px">飞书发布 ★ 闭环出口</span></td><td colspan="2" style="padding-top:10px">产物经 stdin 调 lark-cli docs +create 发布为飞书文档 → doc-id 写回产物 frontmatter <code>feishu_doc_id</code> → 登记 99-review/飞书发布日志.md。用法：<code>python3 src/scripts/prd_publish.py &lt;prd.md&gt; [--title ...] [--note ...]</code></td></tr>
+    <tr><td><code>snapshot_cases.py</code><br><span style="color:#888;font-size:11px">产物快照对比 ★ 结果比对机器化</span></td><td colspan="2" style="padding-top:10px">借鉴 deepseek-harness 快照理念：录制各案例产物规模基线（99-review/产物快照.json），--check 对比状态漂移/规模变化（exit 1 有差异）。用法：<code>--record</code> 录基线 / <code>--check</code> 对比</td></tr>
   </table>
 </section>
 <section id="sec-shared">
@@ -756,7 +756,7 @@ PM Scaffold · 文件完整架构
 </section>
 <section id="sec-feishu">
   <h2>14. 飞书集成与结果对比 <span class="badge">以本地 + 飞书为主</span></h2>
-  <div class="desc">闭环：<b>飞书取材料</b>（feishu_fetch.py，脱敏 + source-register 自动登记）→ <b>本地生成产物</b>（pipeline 全流程）→ <b>飞书发布</b>（prd_publish.py，doc-id 回写产物 frontmatter）。结果对比：<b>产物快照</b>（snapshot_cases.py --record/--check）+ 对比报告（.test-output/测试对比报告-*）。</div>
+  <div class="desc">闭环：<b>飞书取材料</b>（feishu_fetch.py，脱敏 + source-register 自动登记）→ <b>本地生成产物</b>（pipeline 全流程）→ <b>飞书发布</b>（prd_publish.py，doc-id 回写产物 frontmatter）。结果对比：<b>产物快照</b>（snapshot_cases.py --record/--check）+ 对比报告（99-review/测试对比报告-*）。</div>
   <table><tr><th>环节</th><th>脚本</th><th>关键行为</th></tr>
     <tr><td>材料下载</td><td><code>feishu_fetch.py</code></td><td>lark-cli docs +fetch → 表格/标签清洗 → 密码与 token 脱敏（&lt;REDACTED&gt;）→ source-register.md 自动追加 SRC 行</td></tr>
     <tr><td>本地生成</td><td><code>pipeline.py</code> 全流程</td><td>BG→JS→UX→FD→PRD 五级产物 + tracking-plan 分支；gate 机器校验</td></tr>

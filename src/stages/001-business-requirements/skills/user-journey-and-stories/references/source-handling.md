@@ -1,38 +1,38 @@
-# Source Handling · user-journey-and-stories
+# 来源处理 · user-journey-and-stories
 
-This Skill primarily consumes one upstream artifact (confirmed project-background-goal). Source handling is therefore lighter than `project-background-goal`, but must still be rigorous.
+本 Skill 主要消费一个上游产物（已确认的 project-background-goal）。因此来源处理比 `project-background-goal` 更轻量，但仍必须严格。
 
-## Primary Source
+## 主来源（Primary Source）
 
-The confirmed `project-background-goal` artifact is the primary and authoritative source. Its §13 downstream handoff summary provides:
-- `confirmed_roles`: → §2 journey map roles
-- `known_lifecycle_clues`: → §1 lifecycle decomposition
-- `goal_summary`: → §3 story priority hints
-- `constraints_and_dependencies`: → boundary conditions for journey scope
-- `source_ids`: → cross-referenced in §9
+已确认的 `project-background-goal` 产物是主要且权威的来源。它的 §13 下游交接摘要提供：
+- `confirmed_roles`：→ §2 旅程图角色
+- `known_lifecycle_clues`：→ §1 生命周期分解
+- `goal_summary`：→ §3 故事优先级提示
+- `constraints_and_dependencies`：→ 旅程范围的边界条件
+- `source_ids`：→ 在 §9 交叉引用
 
-## Secondary Sources
+## 次要来源（Secondary Sources）
 
-When the upstream artifact references original materials (SRC-001, SRC-002, etc.), these may be consulted for additional context about roles and lifecycle, but only when the upstream artifact's summary is insufficient. Never override the confirmed artifact with raw source interpretation.
+当上游产物引用了原始材料（SRC-001、SRC-002 等）时，可以在上游产物摘要不足的情况下查阅这些材料以获取关于角色与生命周期的额外上下文。绝不用原始来源的解读覆盖已确认的产物。
 
-## Source Registration
+## 来源登记（Source Registration）
 
-Each claim in the journey map and story cards must reference either:
-- The upstream artifact ID (for confirmed background facts)
-- A specific SRC-* ID from the upstream artifact (for direct source evidence)
-- An AI_INFERENCE or ASSUMPTION tag (for derived content)
+旅程图与故事卡片中的每条主张必须引用以下之一：
+- 上游产物 ID（用于已确认的背景事实）
+- 上游产物中的具体 SRC-* ID（用于直接的来源证据）
+- AI_INFERENCE 或 ASSUMPTION 标签（用于推导内容）
 
-## Conflict Handling
+## 冲突处理（Conflict Handling）
 
-If a journey entry conflicts with the upstream background:
-1. Flag as CONFLICT in §7.
-2. Present both the journey-derived claim and the upstream background statement.
-3. Request human resolution via Clarify.
-4. Do not silently pick one side.
+如果旅程条目与上游背景冲突：
+1. 在 §7 标记为 CONFLICT。
+2. 同时呈现旅程派生的主张与上游背景陈述。
+3. 通过 Clarify 请求人工解决。
+4. 不要静默选边。
 
-## Multi-Source Cross-Validation
+## 多来源交叉验证（Multi-Source Cross-Validation）
 
-When the upstream background has ≥ 3 sources, verify that:
-- Role descriptions are consistent across sources
-- Lifecycle stages are supported by ≥ 1 source
-- Pain points in the journey map are traceable to upstream §4
+当上游背景有 ≥ 3 个来源时，核验：
+- 角色描述在来源间一致
+- 生命周期阶段有 ≥ 1 个来源支撑
+- 旅程图中的痛点可追溯到上游 §4

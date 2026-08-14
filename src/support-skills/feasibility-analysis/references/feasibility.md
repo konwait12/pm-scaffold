@@ -1,22 +1,22 @@
-# Feasibility Analysis · 可行性分析模式
+# 可行性分析模式（Feasibility Analysis）
 
 > feasibility-analysis 的主线模式。当技术、合规、资源约束对项目可行性提出疑问时，评估市场空间、技术可行性、投入产出与风险，产出 做 / 不做 / 有条件做 的推荐。
 > 仅在已存在产品级方案后触发（`product-ux` 或 `function-description`），不属于每个项目必做。
 
-## Trigger Conditions (any one)
+## 触发条件（任一即可）
 
 1. 多个技术方案存在显著成本差异（≥ 2x）
 2. 存在未解决的法律 / 合规 / 数据安全红线
 3. 资源约束（预算 / 人力 / 时间）明显不足以支撑目标范围
 4. 业务方明确要求 ROI 测算
 
-## Boundary
+## 边界
 
-**Do**: 分析市场空间、技术可行性、投入产出、风险评估，给出明确推荐：做 / 不做 / 有条件做（条件须具体可衡量）。
+**做**：分析市场空间、技术可行性、投入产出、风险评估，给出明确推荐：做 / 不做 / 有条件做（条件须具体可衡量）。
 
-**Do NOT**: 替代 background-goal；替业务方做业务决策（只提供证据与推荐）；扩写成完整商业计划或技术架构。
+**不做**：替代 background-goal；替业务方做业务决策（只提供证据与推荐）；扩写成完整商业计划或技术架构。
 
-## Workflow
+## 工作流
 
 ```
 触发条件满足
@@ -38,17 +38,17 @@
 6. 结论回流：`project-background-goal` §7 约束、`product-ux` §1.3 假设
 ```
 
-## Output
+## 输出
 
-Use the template at `src/templates/support/feasibility-report.md` (relative to project root): `## 市场空间` / `## 技术可行性` / `## 投入产出` / `## 风险评估` / `## 结论`.
+使用 `src/templates/support/feasibility-report.md` 中的模板（相对项目根）：`## 市场空间` / `## 技术可行性` / `## 投入产出` / `## 风险评估` / `## 结论`.
 
-## Knowledge States
+## 知识状态
 
 - 公开可比数据、报价单 → `FACT`（带 SRC-*）
 - AI 估算的成本 / 收益 / 回本周期 → `AI_INFERENCE`，未经决策人确认不得写死
 - 无数据 → `UNKNOWN`
 
-## Completion
+## 完成标准
 
 - 4 维度全部基于证据分析
 - 推荐清晰可执行

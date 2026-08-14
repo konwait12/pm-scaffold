@@ -1,8 +1,8 @@
-# Source Handling
+# 来源处理（Source Handling）
 
-## Source Register
+## 来源登记（Source Register）
 
-Assign every source a stable ID and record:
+为每个来源分配一个稳定 ID 并记录：
 
 ```text
 source_id
@@ -17,43 +17,43 @@ location_or_link
 notes
 ```
 
-Use `SRC-001`, `SRC-002`, and so on. For meetings, distinguish the transcript from an AI-generated summary.
+使用 `SRC-001`、`SRC-002` 等。对于会议，区分会议纪要原文与 AI 生成的摘要。
 
-## Extraction Rules
+## 提取规则（Extraction Rules）
 
-1. Extract source statements before normalization.
-2. Keep the speaker or author and location for material claims.
-3. Separate explicit statements from implied meaning.
-4. Record excluded material with a short reason when it appears requirement-bearing but is out of scope or duplicate.
-5. Never treat absence as evidence that a requirement does not exist.
+1. 在规范化之前先提取来源陈述。
+2. 对实质性主张保留说话人或作者与位置。
+3. 区分显式陈述与隐含含义。
+4. 当被排除的内容看似承载需求但属于范围外或重复时，记录一条简短原因。
+5. 绝不把"没有提及"当作需求不存在的证据。
 
-## Authority And Conflicts
+## 权威性（Authority）与冲突
 
-Do not define a universal source-type priority. Evaluate authority using:
+不要定义通用的来源类型优先级。用以下方式评估权威性：
 
-1. explicit human confirmation for this project;
-2. decision rights over the specific business fact or goal;
-3. directness of the source;
-4. recency and whether a later statement explicitly supersedes an earlier one;
-5. corroboration by independent sources.
+1. 针对本项目是否有显式的人工确认；
+2. 对特定业务事实或目标的决策权；
+3. 来源的直接程度；
+4. 时效性，以及后续陈述是否显式取代先前陈述；
+5. 独立来源的相互佐证。
 
-When statements conflict:
+当陈述冲突时：
 
-- preserve both statements and source IDs;
-- explain the impact of each interpretation;
-- identify the likely fact owner or decision owner;
-- mark the item `conflict` and stop if it changes a material conclusion;
-- never pick the more convenient statement silently.
+- 保留双方的陈述与来源 ID；
+- 说明每种解读的影响；
+- 识别可能的事实负责人或决策负责人；
+- 当冲突改变实质性结论时，标记为 `conflict` 并停下；
+- 绝不要悄悄选择更"方便"的陈述。
 
-## Research Boundary
+## 调研边界（Research Boundary）
 
-Research only when an external fact could materially improve background understanding and is discoverable. Record source, date, fact/inference status, confidence, applicability, and decision impact.
+仅当外部事实能实质性改善背景理解且可发现时，才做调研。记录来源、日期、事实/推断状态、置信度、适用性与决策影响。
 
-Research cannot confirm internal business intent, project scope, business ownership, or the acceptability of risk. Submit those to the responsible human.
+调研不能确认内部业务意图、项目范围、业务归属或风险的可接受性。把这些提交给负责任的人类。
 
-## Mixed Media
+## 混合媒体（Mixed Media）
 
-- For slides and documents, preserve slide/page/section locations.
-- For images, transcribe visible requirement-bearing text and note uncertainty.
-- For meeting records, distinguish speaker statements, decisions, suggestions, and unresolved discussion.
-- For email threads, preserve sender, recipient context, date, and whether a later message supersedes an earlier one.
+- 对于幻灯片与文档，保留幻灯片/页面/章节位置。
+- 对于图片，转录可见的承载需求文本并注明不确定性。
+- 对于会议记录，区分说话人陈述、决策、建议与未决讨论。
+- 对于邮件线程，保留发件人、收件人上下文、日期，以及后续邮件是否取代先前邮件。

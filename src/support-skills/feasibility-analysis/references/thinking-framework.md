@@ -1,73 +1,73 @@
-# Thinking Framework · Feasibility Analysis
+# 思考框架 · 可行性分析
 
-Use these lenses to improve the candidate. Do not dump the full analysis into the artifact.
+使用以下透镜改进候选产物。不要把完整分析倾倒进产物。
 
-The mainline is feasibility analysis across four dimensions — 市场空间 / 技术可行性 / 投入产出 / 风险评估. Multi-solution comparison is handled as the **§多方案取舍** chapter inside the feasibility report when ≥2 materially different solutions exist. Both require a **product-level solution** to already exist (from Stage 2); you cannot assess "can we build X" until X is concrete.
+主线是跨四个维度的可行性分析——市场空间 / 技术可行性 / 投入产出 / 风险评估。当存在 ≥2 个实质不同的方案时，多方案对比作为可行性报告内部的 **§多方案取舍** 章节处理。两者都要求**产品级方案**已经存在（来自 Stage 2）；在 X 具体之前，你无法评估"我们能不能做 X"。
 
 
-## Common Core (MANDATORY)
+## 公共核心（Common Core · 必用）
 
-Apply the **6 core lenses** from `src/framework/thinking-core.md` §1 (First Principles, Systems Thinking, Adversarial Review, Reverse Validation, Confirmation Bias Defense, Knowledge Boundary) plus the check-layer lenses from §2 relevant to this work item (Pre-Mortem before phase close, Fresh-Eyes before Human Gate, Conclusion First + Reader Perspective when writing). Record only findings that change the candidate — do not repeat core-lens analysis verbatim.
+应用 `src/framework/thinking-core.md` §1 的 **6 个核心透镜**（第一性原理、系统思维、对抗性审查、反向验证、确认偏误防御、知识边界），以及 §2 中与本 work item 相关的检查层透镜（阶段收口前的 Pre-Mortem、Human Gate 前的 Fresh-Eyes、写作时的 Conclusion First + Reader Perspective）。只记录会改变候选产物的发现——不要逐字重复核心透镜分析。
 
-## First Principles
+## 第一性原理（First Principles）
 
-- What is the observable decision we are being asked to help make?
-- Which costs, risks, and "must-haves" are assumptions disguised as requirements?
-- Would the recommended solution still be preferred if a cheap partial fix existed?
-- Is the question truly "which solution" or actually "should we do this at all" (feasibility)?
+- 我们被请求协助做出的可观察决策是什么？
+- 哪些成本、风险和"必须项"是伪装成需求的假设？
+- 如果存在廉价的局部修补，推荐方案是否仍然会被偏爱？
+- 问题真的是"选哪个方案"，还是"我们到底该不该做"（可行性）？
 
-## Feasibility Lens
+## 可行性透镜（Feasibility Lens）
 
-Answer 4 questions with evidence:
+用证据回答 4 个问题：
 
-1. **Market space**: target users, comparable penetration, theoretical space.
-2. **Technical**: each challenge → Verified / Needs Verification / Not Feasible.
-3. **Cost-benefit**: R&D cost, ops cost, expected revenue, payback period.
-4. **Risk**: each risk → impact + mitigation.
+1. **市场空间**：目标用户、可比渗透率、理论空间。
+2. **技术**：每个挑战 → 已验证 / 待验证 / 不可行。
+3. **投入产出**：研发成本、运维成本、预期收益、回本周期。
+4. **风险**：每个风险 → 影响 + 应对。
 
-Conclude with: 做 / 不做 / 有条件做 (state the conditions specifically and measurably).
+结论为：做 / 不做 / 有条件做（把条件说得具体、可衡量）。
 
-**Anti-pattern**: "We want to build an invitation system" → "Yes it's feasible" is meaningless. Any system can be built. Feasibility only matters at the level of "can we implement subscription notifications via WeChat mini-program templates given our architecture?"
+**反模式**："我们想做一个邀请系统"→"是的，可行"毫无意义。任何系统都能做出来。可行性只在"给定我们的架构，能否通过微信小程序模板实现订阅通知？"这一层面才有意义。
 
-## Occam's Razor (领域 lens, from thinking-core.md §3)
+## 奥卡姆剃刀（Occam's Razor · 领域 lens，来自 thinking-core.md §3）
 
-When two solutions both meet the goal, prefer the one with fewer dependencies and less downstream impact. State which solution is simpler and why — do not let "more impressive" outweigh "simpler".
+当两个方案都满足目标时，选依赖更少、下游影响更小的那个。说明哪个方案更简单以及为什么——不要让"更炫"压倒"更简单"。
 
-## Opportunity Cost Lens (领域 lens, from thinking-core.md §3)
+## 机会成本透镜（Opportunity Cost Lens · 领域 lens，来自 thinking-core.md §3）
 
-- What do we give up (other features, other work items) by choosing each solution?
-- Is the marginal benefit of the richer solution worth the marginal cost?
+- 选择每个方案，我们放弃什么（其他功能、其他 work item）？
+- 更丰富方案的边际收益是否值得其边际成本？
 
-## Reversibility Lens
+## 可逆性透镜（Reversibility Lens）
 
-- Can we undo this decision if it turns out wrong?
-- What is the cost of being wrong, and how fast can we detect it?
-- A reversible decision deserves a faster, cheaper path; an irreversible one demands more evidence.
+- 如果这个决定被证明是错的，我们能撤销吗？
+- 犯错成本是多少，我们能多快发现？
+- 可逆的决定值得更快、更便宜的路径；不可逆的决定需要更多证据。
 
-## Systems Thinking
+## 系统思维（Systems Thinking）
 
-Check whether each candidate affects upstream/downstream processes, another role's workload, data ownership, external services, or operational support. A solution that is cheaper but adds permanent ops burden is not cheaper.
+检查每个候选是否影响上游/下游流程、其他角色的工作量、数据所有权、外部服务或运营支持。更便宜但增加永久运维负担的方案并不更便宜。
 
-## Adversarial Review
+## 对抗性审查（Adversarial Review）
 
-Try to invalidate each candidate:
+尝试推翻每个候选：
 
-- Is the "obvious winner" favored because it is the first one heard (anchoring)?
-- Does the evidence for one option come from a single interested party?
-- Is urgency asserted without a real deadline or consequence?
-- Is the analysis optimizing one role while harming another?
+- "明显的赢家"是因为它是第一个被听到的而被偏爱（锚定）吗？
+- 支持某选项的证据是否只来自单一利益方？
+- 是否没有真实期限或后果却强调紧迫？
+- 分析是否在优化一个角色而损害另一个？
 
-Record only findings that affect the candidate or require confirmation.
+只记录影响候选产物或需要确认的发现。
 
-## Reverse Validation
+## 反向验证（Reverse Validation）
 
-Starting from the preferred outcome, ask what must be true for each solution to succeed: prerequisites, baseline data, dependencies, ownership, and constraints. Use the result to reveal what the assessment has not yet verified.
+从偏好结果出发，问每个方案要成功必须具备什么：前提条件、基线数据、依赖、所有权和约束。用结果揭示评估尚未核实的内容。
 
 ---
 
-## Low-Density Degradation Mode
+## 低密度降级模式（Low-Density Degradation Mode）
 
-When the input is a single natural-language sentence with no concrete product-level solution, no cost/constraint data, and no decision owner (see `SKILL.md` §1.1 for the gate), the lenses above cannot do meaningful work. Applying them to insufficient information produces verbose but empty analysis. Switch to degradation mode:
+当输入是单条自然语言句子，没有具体的产品级方案、没有成本/约束数据、没有决策 owner（见 `SKILL.md` §1.1 的闸门）时，上述透镜无法做有意义的工作。把它们应用到信息不足上会产出冗长但空洞的分析。切换到降级模式：
 
 ```text
 low-density input → skip all-lens ideation
@@ -79,25 +79,25 @@ low-density input → skip all-lens ideation
                    → wait for human to fill in, then re-enter Preflight in sufficient mode
 ```
 
-Degradation triggers (any one is enough):
+降级触发条件（任一即可）：
 
-- no concrete product-level solution exists to assess (only a vague idea or feature name)
-- no cost / constraint / compliance / resource data available
-- no named decision owner
-- the user only mentions a feature ("评估一下做不做这个") with no decision it should inform
+- 不存在可评估的具体产品级方案（只有一个模糊的想法或功能名）
+- 没有可用的成本 / 约束 / 合规 / 资源数据
+- 没有指定的决策 owner
+- 用户只提到一个功能（"评估一下做不做这个"），没有它要支撑的决策
 
-This mode is not a failure state. It is the correct response to insufficient information — saving human review time and producing one clean batch of clarifying questions rather than a 4-section feasibility report full of `待确认`.
+此模式不是失败状态。它是对信息不足的正确回应——节省人工评审时间，产出一批干净的澄清问题，而不是一份塞满 `待确认` 的四章节可行性报告。
 
-## Confirmation Bias Defense (assessment specialization)
+## 确认偏误防御（Confirmation Bias Defense · 评估特化）
 
-Assessment is vulnerable to anchoring on the first solution heard and to AI's tendency to produce "balanced-sounding" comparisons that hide real tradeoffs:
+评估容易锚定在第一个听到的方案上，也容易受 AI 倾向产出"听起来平衡"、却隐藏真实取舍的对比影响：
 
-1. Were criteria defined before any solution was scored — or did I pick weights that favor an early favorite?
-2. Are all options described at equal depth, or did I silently pad a favorite?
-3. Does my recommendation actually follow from the matrix, or did I pick the matrix numbers to match a conclusion I already formed?
+1. 标准是在任何方案被打分之前定义的吗——还是我挑了偏向早期偏爱的权重？
+2. 所有选项都以同等深度描述，还是我悄悄给偏爱者灌水？
+3. 我的推荐真的从矩阵中得出，还是我挑矩阵数字来匹配我早已形成的结论？
 
-## Knowledge Boundary (assessment specialization)
+## 知识边界（Knowledge Boundary · 评估特化）
 
-1. Did I distinguish "source says cost = ¥X" (FACT), "I estimated cost" (AI_INFERENCE), and "no cost data" (UNKNOWN)?
-2. Are provisional figures marked as needing owner confirmation instead of presented as established numbers?
-3. Are the assumptions that could flip the recommendation listed explicitly, not buried in prose?
+1. 我是否区分了"来源说成本 = ¥X"（FACT）、"我估算了成本"（AI_INFERENCE）和"没有成本数据"（UNKNOWN）？
+2. 暂定数字是否标记为需要 owner 确认，而不是当作既定的数字呈现？
+3. 可能翻转推荐的假设是否被显式列出，而不是埋在文字里？

@@ -1,8 +1,8 @@
-# Source Handling · Requirement Restate
+# 来源处理 · Requirement Restate
 
-## Source Register
+## 来源登记（Source Register）
 
-Assign every source a stable ID and record:
+为每个来源分配一个稳定 ID 并记录：
 
 ```text
 source_id
@@ -17,51 +17,51 @@ location_or_link
 notes
 ```
 
-Use `SRC-001`, `SRC-002`, and so on. For meetings, distinguish the transcript from an AI-generated summary. For chat/tickets, preserve the thread context and timestamps.
+使用 `SRC-001`、`SRC-002` 等。对于会议，区分会议纪要原文与 AI 生成的摘要。对于聊天/工单，保留线程上下文与时间戳。
 
-## Extraction Rules
+## 提取规则（Extraction Rules）
 
-1. Extract candidate asks **verbatim** before normalization — the original phrasing is the artifact's raw material.
-2. Keep the speaker or author and location for every ask; a later restatement must be able to trace back.
-3. Separate explicit statements from implied meaning; implied meaning becomes `AI_INFERENCE`, never `FACT`.
-4. Merge duplicates across sources explicitly: note "same ask, different words (SRC-001 vs SRC-002)" instead of silently dropping one.
-5. Never treat absence as evidence that a requirement does not exist.
+1. 在规范化之前**逐字**（verbatim）提取候选诉求——原始措辞是产物的原材料。
+2. 对每个诉求保留说话人或作者与位置；后续重述必须能回溯。
+3. 区分显式陈述与隐含含义；隐含含义成为 `AI_INFERENCE`，绝不成为 `FACT`。
+4. 显式跨源合并重复项：注明"同一诉求、不同措辞（SRC-001 vs SRC-002）"，而不是静默丢弃其中一个。
+5. 绝不把"没有提及"当作需求不存在的证据。
 
-## Term Unification
+## 术语统一（Term Unification）
 
-Different sources may use different terms for the same object or action. Do not silently unify:
+不同来源可能对同一对象或动作使用不同术语。不要静默统一：
 
-- record both terms with a mapping (`客户` = `会员`, `核销` = `销核`);
-- flag a term difference for stakeholder confirmation if it might hide a scope/object difference (e.g., `客户` includes anonymous visitors but `会员` does not);
-- keep the stakeholder's preferred term as the primary label in the restatement.
+- 记录两个术语及映射（`客户` = `会员`、`核销` = `销核`）；
+- 如果术语差异可能隐藏范围/对象差异（如 `客户` 含匿名访客而 `会员` 不含），标记术语差异请求 stakeholder 确认；
+- 在重述中把 stakeholder 偏好的术语作为主标签。
 
-## Authority And Conflicts
+## 权威性（Authority）与冲突
 
-Do not define a universal source-type priority. Evaluate authority using:
+不要定义通用的来源类型优先级。用以下方式评估权威性：
 
-1. explicit human confirmation for this project;
-2. decision rights over the specific ask;
-3. directness of the source;
-4. recency and whether a later statement explicitly supersedes an earlier one;
-5. corroboration by independent sources.
+1. 针对本项目是否有显式的人工确认；
+2. 对特定诉求的决策权；
+3. 来源的直接程度；
+4. 时效性，以及后续陈述是否显式取代先前陈述；
+5. 独立来源的相互佐证。
 
-When statements conflict:
+当陈述冲突时：
 
-- preserve both phrasings and source IDs in the CONFLICT list;
-- explain the impact of each interpretation;
-- identify the stakeholder who should choose;
-- mark the item `CONFLICT` — do **not** resolve it here;
-- never pick the more convenient statement silently.
+- 在 CONFLICT 清单中保留双方措辞与来源 ID；
+- 说明每种解读的影响；
+- 识别应该选择哪个 stakeholder；
+- 把条目标记为 `CONFLICT`——**不要在这里解决它**；
+- 绝不要悄悄选择更"方便"的陈述。
 
-## Research Boundary
+## 调研边界（Research Boundary）
 
-Research only when an external fact could disambiguate an ask (industry definition of a term, a standard the ask references) and is discoverable. Record source, date, fact/inference status, confidence, applicability, and decision impact.
+仅当外部事实能消解诉求的歧义（术语的行业定义、诉求引用的标准）且可发现时，才做调研。记录来源、日期、事实/推断状态、置信度、适用性与决策影响。
 
-Research cannot confirm what the stakeholder meant or which phrasing they approve. That is a human decision; submit it to the stakeholder.
+调研不能确认 stakeholder 想表达什么或他们批准哪个措辞。那是人工决策；提交给 stakeholder。
 
-## Mixed Media
+## 混合媒体（Mixed Media）
 
-- For slides and documents, preserve slide/page/section locations.
-- For audio/video transcripts, preserve the timestamp of each ask; note if the transcript is AI-generated.
-- For chat/tickets, preserve sender, thread context, date, and whether a later message supersedes an earlier one.
-- For images, transcribe visible requirement-bearing text and note uncertainty.
+- 对于幻灯片与文档，保留幻灯片/页面/章节位置。
+- 对于音频/视频转写，保留每个诉求的时间戳；注明转写是否由 AI 生成。
+- 对于聊天/工单，保留发件人、线程上下文、日期，以及后续消息是否取代先前消息。
+- 对于图片，转录可见的承载需求文本并注明不确定性。

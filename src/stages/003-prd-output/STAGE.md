@@ -1,25 +1,25 @@
-# 003 PRD Output
+# 003 PRD 输出（PRD Output）
 
-## Goal
+## 目标（Goal）
 
-Assemble confirmed upstream baselines into one consistent, traceable, and reviewable `prd.md`.
+把已确认的上游基线汇总成一份一致、可追溯、可评审的 `prd.md`。
 
-## Entry
+## 进入条件（Entry）
 
-All four upstream work items are confirmed and no unresolved conflict blocks the selected scope.
+四个上游 work item 均已确认，且没有未解决的冲突阻断所选范围。
 
-## Work Item
+## 工作项（Work Item）
 
 `prd-assembly`
 
-## Required Outputs
+## 必需输出（Required Outputs）
 
-`prd.md`, traceability audit result, unresolved-risk summary, and final change summary.
+`prd.md`、可追溯性审计结果、未解决风险摘要和最终变更摘要。
 
-## Do Not
+## 不做（Do Not）
 
-Do not discover, invent, or silently resolve new requirements during assembly.
+在汇总过程中不要发现、发明或静默解决新需求。
 
-## Human Owners And Exit
+## 人类负责人与退出（Human Owners And Exit）
 
-The authorized PRD approver explicitly confirms the final document after business, product, development, and testing concerns are visible.
+授权 PRD 批准人在业务、产品、开发和测试的关注点都可见后，显式确认最终文档。

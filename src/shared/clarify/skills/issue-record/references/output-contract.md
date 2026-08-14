@@ -1,8 +1,8 @@
-# Output Contract · Issue Record（跨阶段共享）
+# 输出契约 · 问题清单（Issue Record · 跨阶段共享）
 
-## Artifact States
+## 产物状态（Artifact States）
 
-| Status | Meaning | Downstream use |
+| 状态 | 含义 | 下游使用 |
 |---|---|---|
 | `draft` | 初始收集；Audit 未完成 | No |
 | `needs_user_input` | 阻断 / 待决；需要先回答 | No |
@@ -11,17 +11,17 @@
 | `confirmed` | 授权人显式接受 closed-out 列表 | Yes |
 | `superseded` | 被新 confirmed 版本取代 | No |
 
-## Version Rules
+## 版本规则（Version Rules）
 
 - 起 `v0.1`，人工要求修订时递增 minor。
 - 首次 confirmed 为 `v1.0`。
 - 新问题随时可加；状态变更走 Audit。
 
-## Knowledge-State Labels
+## 知识状态标签（Knowledge-State Labels）
 
 `FACT` / `DECISION` / `ASSUMPTION` / `AI_INFERENCE` / `UNKNOWN` / `CONFLICT`
 
-## Required Sections
+## 必需章节（Required Sections）
 
 | § | 标题 | Required |
 |---|---|---|
@@ -40,7 +40,7 @@
 
 空章节用 `待确认` 占位，不删除标题。
 
-## Issue Schema
+## 问题结构（Issue Schema）
 
 | 字段 | 必填 | 说明 |
 |---|---|---|
@@ -60,20 +60,20 @@
 | `escalated_to` | Required for escalated | 新 Owner 或机构 |
 | `notes` | Optional | 边缘情况 / 依赖 |
 
-## Audit Hooks
+## 审计钩子（Audit Hooks）
 
 - 上游产物每个"待确认"必须有 ISS-NNN 引用或 `closed_at_intake` 理由
 - 每个 open 都有 Owner
 - BLK / DEC 都有 target_close
 - 30 天以上 open 都有 escalation 记录
 
-## Human Responsibilities
+## 人类职责（Human Responsibilities）
 
 - 决策 Owner：接受 `accepted` 状态，签发 closed-out 列表
 - 问题 Owner：维护状态、Owner、target_close
 - 最终 Reviewer：授权 issue list 用于 PRD 确认
 
-## Downstream Handoff
+## 下游移交（Downstream Handoff）
 
 ```text
 confirmed_version
@@ -89,6 +89,6 @@ critical_top5
 source_ids
 ```
 
-## Clarifications Session Contract
+## 澄清会话契约（Clarifications Session Contract）
 
 `## Clarifications` 一行一 session，≤5 sessions，`accepted_answer` 在 `ready_for_human_review` 前必填。

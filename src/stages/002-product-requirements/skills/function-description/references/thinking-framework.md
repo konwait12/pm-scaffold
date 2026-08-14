@@ -1,20 +1,20 @@
-# Function Description Thinking Framework
+# 功能描述思考框架（Function Description Thinking Framework）
 
-## Common Core (MANDATORY)
+## 公共核心（Common Core，必用 MANDATORY）
 
-Apply the **6 core lenses** from `src/framework/thinking-core.md` §1 (First Principles, Systems Thinking, Adversarial Review, Reverse Validation, Confirmation Bias Defense, Knowledge Boundary) plus the check-layer lenses from §2 relevant to this work item (Pre-Mortem before phase close, Fresh-Eyes before Human Gate, Testability before acceptance criteria, Conclusion First + Reader Perspective when writing). Record only findings that change the candidate — do not repeat core-lens analysis verbatim.
+应用 `src/framework/thinking-core.md` §1 的 **6 个核心透镜**（第一性原理 First Principles、系统思维 Systems Thinking、对抗性审视 Adversarial Review、逆向验证 Reverse Validation、确认偏误防御 Confirmation Bias Defense、知识边界 Knowledge Boundary），以及 §2 中与本 work item 相关的检查层透镜（阶段收口前的 Pre-Mortem、Human Gate 前的 Fresh-Eyes、验收标准前的可测试性 Testability、写作时的结论先行 Conclusion First + 读者视角 Reader Perspective）。只记录会改变候选产物的发现——不要逐字重复核心透镜分析。
 
-For each function examine:
+对每个功能检查：
 
-1. purpose and upstream value;
-2. actor, permission and precondition;
-3. user action and system response (`IX`);
-4. domain policy, calculation and state constraint (`BR`);
-5. input, cross-field and cross-system validation (`VL`);
-6. normal, alternate, exception, failure, timeout, duplicate, cancellation, retry, rollback and recovery paths;
-7. state transitions and side effects;
-8. measurable acceptance (`AC`);
-9. security, performance, availability, accessibility and compliance only when relevant;
-10. reverse trace to feature, story and goal.
+1. 目的与上游价值；
+2. 执行者、权限与前置条件；
+3. 用户动作与系统响应（`IX`）；
+4. 领域策略、计算与状态约束（`BR`）；
+5. 输入、跨字段与跨系统校验（`VL`）；
+6. 正常、备选、异常、失败、超时、重复、取消、重试、回滚与恢复路径；
+7. 状态转移与副作用；
+8. 可度量的验收（`AC`）；
+9. 仅在相关时的安全、性能、可用性、无障碍与合规；
+10. 逆向追溯到功能、故事与目标。
 
-Interaction and business rules coexist in the function block but must never be merged into an ambiguous sentence.
+交互规则与业务规则在功能块中共存，但绝不能被合并成一条含糊的句子。

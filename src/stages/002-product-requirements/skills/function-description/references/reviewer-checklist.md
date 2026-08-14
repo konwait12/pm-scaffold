@@ -1,9 +1,9 @@
-# Human Review Checklist: Function Description
+# 人类审查清单：功能描述（Human Review Checklist: Function Description）
 
-- [ ] Does each function still satisfy its story and UX path?
-- [ ] Are user action, system response and feedback explicit?
-- [ ] Are business, validation, permission and state rules correct?
-- [ ] Are failure and recovery behaviors acceptable to the business?
-- [ ] Can development implement without inventing policy?
-- [ ] Can testing derive cases from measurable acceptance criteria?
-- [ ] Are unresolved decisions visibly blocking confirmation where necessary?
+- [ ] 每个功能是否仍然满足它的故事与 UX 路径？
+- [ ] 用户动作、系统响应与反馈是否显式？
+- [ ] 业务、校验、权限与状态规则是否正确？
+- [ ] 失败与恢复行为业务方是否可接受？
+- [ ] 开发能否在不发明策略的情况下实现？
+- [ ] 测试能否从可度量的验收标准派生用例？
+- [ ] 未决决策是否在必要时以可见方式阻断确认？

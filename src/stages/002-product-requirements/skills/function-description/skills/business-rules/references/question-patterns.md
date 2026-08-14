@@ -1,21 +1,21 @@
 # Question Patterns · business-rules
 
-Eight canonical question templates for the one-question-at-a-time Clarify loop. Each entry gives:
+面向一次一问 Clarify 循环的八个规范提问模板。每条包含：
 
-- **When to use** — the trigger condition
-- **Question shape** — the prompt structure
-- **Three examples** — paraphrased real cases (desensitized, generic business scenarios)
-- **Common traps** — typical AI mistakes when asking this kind of question
+- **何时使用** — 触发条件
+- **问题句式** — 提问结构
+- **三个示例** — 改写后的真实案例（脱敏、通用业务场景）
+- **常见陷阱** — 问此类问题时 AI 的典型错误
 
-Use these as reference when generating a new question in a Clarify Session. See `SKILL.md` § Clarify for runtime rules.
+在 Clarify Session 生成新问题时参考使用。运行时规则见 `SKILL.md` § Clarify。
 
 ---
 
 ## 1. 规则存在性与来源（Rule Existence / Source）
 
-**When to use**: when a candidate BR has no source; or when the story/UX implies a rule but never states it; or when the same rule appears from two contradictory sources.
+**何时使用**: 候选 BR 无来源；或故事/UX 暗示某规则但从未明说；或同一规则出现在两个互相矛盾的来源中。
 
-**Question shape**:
+**问题句式**:
 
 ```
 [为什么重要] 业务规则必须能追溯到已确认来源，否则无法验收也无法审计。
@@ -23,13 +23,13 @@ Use these as reference when generating a new question in a Clarify Session. See 
 请确认: 这条规则 [存在 / 不存在 / 待补充来源]，来源是 [具体材料/决策人]?
 ```
 
-**Examples**:
+**示例**:
 
 - "ST-002 只写「限制报名人数」，但没写数量与规则。请问配额是多少？按活动全局还是每人限报？"
 - "邮件 SRC-002 §3 说 VIP 折扣 9 折，纪要 SRC-001 §2 说 8.5 折。哪一个是业务方最终确认的？"
 - "这条「单笔订单超 ¥100k 需审批」我在上游找不到出处。是业务真实要求还是我的推断？"
 
-**Common traps**:
+**常见陷阱**:
 
 - 把 AI 推断出的约束当作已确认事实
 - 不问规则"存在与否"，直接编一个来源
@@ -39,9 +39,9 @@ Use these as reference when generating a new question in a Clarify Session. See 
 
 ## 2. 计算口径（Calculation）
 
-**When to use**: when a calculation rule lacks formula, unit, or rounding; or when the same quantity appears with different definitions.
+**何时使用**: 计算规则缺少公式、单位或舍入；或同一数量出现不同定义。
 
-**Question shape**:
+**问题句式**:
 
 ```
 [为什么重要] 计算口径不清会导致财务/统计口径错误，验收无法判定。
@@ -49,13 +49,13 @@ Use these as reference when generating a new question in a Clarify Session. See 
 1. 公式是什么? 2. 单位/币种? 3. 舍入规则与精度? 4. 边界值(如满减临界点)如何处理?
 ```
 
-**Examples**:
+**示例**:
 
 - "折扣按订单金额还是按单品价累加？满 ¥500 减 ¥100，是满额即减还是阶梯？」
 - "「客单价」的分母是订单数还是客户数？统计窗口是自然月还是滚动 30 天？"
 - "金额舍入保留几位小数？四舍五入还是银行家舍入？"
 
-**Common traps**:
+**常见陷阱**:
 
 - 用「按规定计算」代替公式
 - 不问币种/单位（分 vs 元）
@@ -65,22 +65,22 @@ Use these as reference when generating a new question in a Clarify Session. See 
 
 ## 3. 约束边界（Constraint Boundary）
 
-**When to use**: when a constraint rule states a bound without boundary behavior; or when bounds contradict each other; or when the reject path is unspecified.
+**何时使用**: 约束规则说明了边界但无边界行为；或边界相互矛盾；或拒绝路径未指明。
 
-**Question shape**:
+**问题句式**:
 
 ```
 [为什么重要] 边界值决定规则的通过/拒绝判据，缺一个边界就缺一种行为。
 规则为 [约束内容]。请明确上下界、开闭区间，以及 [边界值] 落入合法还是非法?
 ```
 
-**Examples**:
+**示例**:
 
 - "配额上限是 100，那第 100 个和第 101 个分别如何处理？是拒绝、排队还是候补？"
 - "「金额不能太大」——具体上限是多少？超上限是拒绝还是转人工审批？"
 - "库存下限为 0 时还能下单吗？临界值为 0 是允许还是禁止？"
 
-**Common traps**:
+**常见陷阱**:
 
 - 只写上限不写下限
 - 边界值含糊（≥ vs >）
@@ -90,22 +90,22 @@ Use these as reference when generating a new question in a Clarify Session. See 
 
 ## 4. 触发条件（Trigger Condition）
 
-**When to use**: when a rule's trigger is vague; or when a rule should fire but the trigger context is not specified.
+**何时使用**: 规则的触发含糊；或规则应触发但触发上下文未指明。
 
-**Question shape**:
+**问题句式**:
 
 ```
 [为什么重要] 触发条件不清，开发无法判断规则何时生效。
 规则为 [规则内容]。请问: 在什么场景/时机下触发? 前置条件是什么? 一次性还是可重复触发?
 ```
 
-**Examples**:
+**示例**:
 
 - "「报名截止后不可修改」——截止时间精确到分钟还是秒？时区是哪个？"
 - "折扣在哪些条件下触发？仅新客，还是老客续费也触发？"
 - "该规则是在提交时触发还是每次查询时触发？"
 
-**Common traps**:
+**常见陷阱**:
 
 - 用「当……时」的空壳触发器
 - 不问重复触发/一次性
@@ -115,9 +115,9 @@ Use these as reference when generating a new question in a Clarify Session. See 
 
 ## 5. 权限规则（Permission）
 
-**When to use**: when a permission rule omits roles; or when who-may/who-may-not is unclear; or when data-scope limits are missing.
+**何时使用**: 权限规则遗漏角色；或谁可以/谁不可以不清晰；或数据范围限制缺失。
 
-**Question shape**:
+**问题句式**:
 
 ```
 [为什么重要] 权限规则决定谁能操作、谁能看数据，漏一个角色就漏一个入口。
@@ -125,13 +125,13 @@ Use these as reference when generating a new question in a Clarify Session. See 
 1. 谁能执行? 2. 谁不能? 3. 按什么数据范围(自己/本部门/全局)?
 ```
 
-**Examples**:
+**示例**:
 
 - "「订单可修改」——谁能改？只有下单客服还是管理员也能？"
 - "「报价可见」——销售看全部还是仅自己名下？"
 - "审批流里第二级审批人是谁？超时未批由谁接手？"
 
-**Common traps**:
+**常见陷阱**:
 
 - 只写谁可以，不写谁不可以
 - 数据范围（行级权限）遗漏
@@ -141,22 +141,22 @@ Use these as reference when generating a new question in a Clarify Session. See 
 
 ## 6. 时序与依赖（Timing / Sequencing）
 
-**When to use**: when a rule implies ordering; or when parallel/forbidden sequences are not covered; or when a dependency on another rule is unstated.
+**何时使用**: 规则暗示顺序；或未覆盖并行/禁止的顺序；或对另一规则的依赖未说明。
 
-**Question shape**:
+**问题句式**:
 
 ```
 [为什么重要] 时序规则影响编排与状态机，漏一个顺序就漏一种状态流。
 规则为 [时序内容]。请明确: 前后顺序? 是否可以并行? 哪些操作被禁止同时发生?
 ```
 
-**Examples**:
+**示例**:
 
 - "取消订单和退款是同一动作还是两个先后动作？取消后还能改地址吗？"
 - "核销与签到是否必须按顺序？跨场次签到是否允许？"
 - "审核驳回后用户修改，是重新进入队列还是直接回到待审核？"
 
-**Common traps**:
+**常见陷阱**:
 
 - 顺序不写（隐含假设）
 - 不问互斥/并行
@@ -166,9 +166,9 @@ Use these as reference when generating a new question in a Clarify Session. See 
 
 ## 7. 规则冲突（Conflict）
 
-**When to use**: when two BRs contradict; or when a new rule conflicts with an existing confirmed rule.
+**何时使用**: 两条 BR 相互矛盾；或新规则与已确认规则冲突。
 
-**Question shape**:
+**问题句式**:
 
 ```
 [为什么重要] 冲突若不显式裁决，下游实现会各自选边，产生不一致行为。
@@ -176,13 +176,13 @@ Use these as reference when generating a new question in a Clarify Session. See 
 请裁决: 保留哪个? 或如何调和? 冲突的最终结论将登记为 CONFLICT-XXX。
 ```
 
-**Examples**:
+**示例**:
 
 - "BR-002 允许取消，BR-007 说提交后不可修改——取消是否算修改？"
 - "全球配额与单场配额同时生效时，取哪个上限？"
 - "「全量推广」与「小范围试点」口径冲突，最终采用哪个？"
 
-**Common traps**:
+**常见陷阱**:
 
 - 静默选边不记录 CONFLICT
 - 不保留双方立场
@@ -192,22 +192,22 @@ Use these as reference when generating a new question in a Clarify Session. See 
 
 ## 8. 例外与拒绝行为（Exception / Reject Behavior）
 
-**When to use**: when a rule lacks its exception branch; or when reject behavior is unspecified; or when the boundary between "rule violation" and "system error" is unclear.
+**何时使用**: 规则缺少例外分支；或拒绝行为未指明；或"违反规则"与"系统错误"的边界不清。
 
-**Question shape**:
+**问题句式**:
 
 ```
 [为什么重要] 例外与拒绝行为决定用户体验，缺一个分支就缺一种失败处理。
 规则为 [规则内容]。请问: 违反时系统如何处理? 有无合法例外(白名单/管理员强制)? 与异常处理子技能的分界在哪?
 ```
 
-**Examples**:
+**示例**:
 
 - "配额打满后用户点击报名，看到什么？直接拒绝还是进入候补队列？"
 - "白名单客户是否豁免配额限制？由谁维护白名单？"
 - "规则失败是业务拒绝（走 BR）还是系统故障（走 exception-handling）？"
 
-**Common traps**:
+**常见陷阱**:
 
 - 只写正常路径，例外分支交给下游猜
 - 白名单/豁免规则漏掉
@@ -215,7 +215,7 @@ Use these as reference when generating a new question in a Clarify Session. See 
 
 ---
 
-## Cross-cutting tips
+## 跨题通用提示
 
 1. **排序原则**：Clarify 一次只问 1 个，按 Impact × Uncertainty 排序，先问阻断性高的。
 2. **不要问 AI 能查的事实**：公司名、公开政策、行业报告，让 AI 自己查，不要让业务方回答。

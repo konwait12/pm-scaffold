@@ -5,7 +5,7 @@ description: 需求重举能力（复述 + 发散收敛，双模式）。模式�
 
 # Requirement Restate（需求重举 · 复述 + 发散收敛双模式能力）
 
-## Purpose And Boundary
+## 目的与边界（Purpose And Boundary）
 
 本 skill 是**能力（`output_kind=process`）**，不是产物型 skill：它产出的过程记录（RR 重述清单 / SCN 发散候选与人工处置表）**永远不进 prd.md 正文**，只作为「共享理解检查点」与「收敛后输入包」喂给后续工作项。注册表 `workflow-registry.json` 已将其标记为 `output_kind: process`。
 
@@ -20,7 +20,7 @@ description: 需求重举能力（复述 + 发散收敛，双模式）。模式�
 
 **本 Skill 属于 Branch**（参见 `src/framework/governance.md` §Human-In-The-Loop Inquiry Contract）。`prd-assembly` 进入 §0 上游清单时会**主动询问**"要不要在 §0 标注 requirement-restate 来源链"——若 stakeholder 显式要求可追溯到 restate，则 §0 加一行 RR-XXX / SCN-XXX 摘要；否则不出现。触发条件：原始需求被多团队/多语言/多源转述、多源术语不一致、误读代价高（合规/法律/昂贵构建）、需要正式的"我们真的同意了吗"检查位、新 stakeholder 加入需重新锚定、材料稀疏到无法进入主干（L0）。
 
-## Inputs And Outputs
+## 输入与输出（Inputs And Outputs）
 
 Inputs:
 - Original source materials（meeting minutes, emails, BRD, audio/video transcripts, chat, tickets）——模式一必需；模式二存在时也登记
@@ -35,17 +35,17 @@ Output（均为**过程记录**，非 PRD 产物）:
 
 Load `references/thinking-framework.md`（Common Core + 领域 lens + 12 维度发散 lens）before analysis. Load `references/output-contract.md`（RR 行契约 + SCN 候选表 / 处置表契约）before drafting. Load `references/audit-checklist.md` and `references/reviewer-checklist.md` before handoff. Load `references/source-handling.md` during Intake when登记 SRC-*。Run `scripts/validate_artifact.py <artifact> --json` before review.
 
-## Thinking Prompts (per stage)
+## 思考提示词（按阶段）（Thinking Prompts per stage）
 
 ### 1. Preflight
 - **选模式**：有可追溯来源（L1+）→ 模式一（RR-NNN）；L0 仅想法 / 材料稀疏 → 模式二（SCN-XXX）；多源歧义 → 模式一（先收敛来源）。若同时材料稀疏且多源歧义，先模式一收敛来源，再由模式二补全未知维度。
-- 模式一："What did the stakeholder actually say, in their own words?" "Which sources are we restating from? Are there audio / video / chat that have not been transcribed?" Identify: project name, project ID（REQ-XXX）, stakeholder(s), sources. Register each source with an SRC-ID. Assess maturity: L0（无源）→ L1（单条口头表述）→ L2（单源书面）→ L3（多源一致）→ L4（多源冲突，需消歧）。
+- 模式一："stakeholder 实际说了什么，用他们自己的话？""我们依据哪些来源重述？有没有未被转写的音频/视频/聊天？"识别：项目名、项目 ID（REQ-XXX）、stakeholder(s)、来源。为每个来源登记 SRC-ID。评估成熟度：L0（无源）→ L1（单条口头表述）→ L2（单源书面）→ L3（多源一致）→ L4（多源冲突，需消歧）。
 - 模式二："Is this L0 (idea only) or thin material? What is the stuck point? What is the evidence boundary?" 确认触发：L0 → 模式二；多源歧义 → 模式一；材料充分 → 直接进入 `project-background-goal`。确认负责处置的人工（business_owner）与证据边界。
-- **If no source exists and the ask is only a paraphrase from memory（模式一）/ the idea is empty or no responsible human is identifiable（模式二）→ return a routing receipt and STOP at `needs_user_input`.**
+- **如果无来源且诉求只是记忆转述（模式一）/ 想法为空或无法识别负责人工（模式二）→ 返回路由回执并在 `needs_user_input` 停下。**
 
 ### 2. Intake
 - 两模式通用：verbatim 保留原始措辞（方言、口语、术语照抄），不翻译成"我们以为的意思"。
-- 模式一："What did each source literally say — not what I think it means?" 逐源提取候选需求；跨源合并重复项（同一诉求、不同措辞）并注明；矛盾标 `CONFLICT`（**不解决，只标记**）；每条标知识状态：`FACT` / `DECISION` / `ASSUMPTION` / `AI_INFERENCE` / `UNKNOWN` / `CONFLICT`；登记 SRC-*。
+- 模式一："每个来源实际上说了什么——不是我认为它是什么意思？"逐源提取候选需求；跨源合并重复项（同一诉求、不同措辞）并注明；矛盾标 `CONFLICT`（**不解决，只标记**）；每条标知识状态：`FACT` / `DECISION` / `ASSUMPTION` / `AI_INFERENCE` / `UNKNOWN` / `CONFLICT`；登记 SRC-*。
 - 模式二：捕获原始想法原文作为证据基础（纯 L0 无源时明示"其余皆为推断"）；若有材料（消息/邮件/纪要）按 `references/source-handling.md` 登记 SRC-*。
 
 ### 3. Think (apply thinking-core.md §1 mandatory lenses + 模式专属 lens)
@@ -61,11 +61,11 @@ Load `references/thinking-framework.md`（Common Core + 领域 lens + 12 维度�
 - 模式一：每个 `CONFLICT`：列出双方措辞，路由给 stakeholder 选择（含 AI 初判 + 选项 + 影响 + owner）。每个 `UNKNOWN`：请 stakeholder 补全。Batch questions：≤5 per session，按影响排序。
 - 模式二：批量提问带 AI 初判 + 证据 + 选项 + 影响 + owner + blocking flag；答案会实质改变候选集或处置选项时 **STOP at `needs_user_input`**。Limit ≤5 questions per session，按影响排序。
 - 遇到「待确认 / 冲突 / 信息缺口」信号：主动询问是否登记 `issue-record`（问题清单）并更新 §13 收口表；送审前 dor_check 会硬检查收口与引用。
-- **Stop at `needs_user_input`** when a conflict or unknown changes the ask itself / when an answer would change the candidate set or the disposition options materially.
+- **当冲突或未知会改变诉求本身 / 当答案会实质改变候选集或处置选项时，停在 `needs_user_input`**。
 
 ### 5. Generate
-- 模式一：填模板 `assets/requirement-restate-template.md`。每条重述需求：ID（`RR-NNN`）、重述（stakeholder 的话）、原始措辞（verbatim）、来源、知识状态、提出方、confidence。发现"方案泄露"（重述夹带方案）→ 标 `solution_leak=true`，需 stakeholder 重新确认。Status: use `draft`, `needs_user_input`, or `conditional_review` — **never `confirmed`**.
-- 模式二：填 SCN 候选表（全 `AI_INFERENCE`，每条含 Evidence 与 Impact）→ 8 列人工处置表（Disposition 留给人工）→ Include 项写回 → 收敛后输入包（≥50 字）。Status: use `draft`, `needs_user_input`, or `conditional_review` — 记录本身**永不** `confirmed`。
+- 模式一：填模板 `assets/requirement-restate-template.md`。每条重述需求：ID（`RR-NNN`）、重述（stakeholder 的话）、原始措辞（verbatim）、来源、知识状态、提出方、confidence。发现"方案泄露"（重述夹带方案）→ 标 `solution_leak=true`，需 stakeholder 重新确认。状态：使用 `draft`、`needs_user_input` 或 `conditional_review`——**绝不用 `confirmed`**。
+- 模式二：填 SCN 候选表（全 `AI_INFERENCE`，每条含 Evidence 与 Impact）→ 8 列人工处置表（Disposition 留给人工）→ Include 项写回 → 收敛后输入包（≥50 字）。状态：使用 `draft`、`needs_user_input` 或 `conditional_review`——记录本身**永不** `confirmed`。
 
 ### 6. Audit
 - **Source Coverage**（模式一）：每条 Intake 登记的 SRC-ID 都反映在重述清单中。
@@ -76,21 +76,21 @@ Load `references/thinking-framework.md`（Common Core + 领域 lens + 12 维度�
 - **Completeness**（模式二）：12 维度全部扫过或显式跳过；每条候选带 Evidence + Impact。
 - **Inference Discipline**（模式二）：每条候选标 `AI_INFERENCE`；无任何内容被当成事实。
 - **Disposition Readiness**（模式二）：处置表就绪；每个 `include` 候选命名写回目标。
-- Run `scripts/validate_artifact.py <artifact> --json`. Fix all errors. Warnings → document in audit notes.
+- 运行 `scripts/validate_artifact.py <artifact> --json`。修复所有错误。警告 → 记录进 audit notes。
 - **B3 收口**（两模式）：确认 issue-record 的 §13 收口表已更新本 skill 行（问题数 / 收口日期 / 状态；空阶段也落行）。
 
 ### 7. Human Gate
-- 模式一：Present 重述条数、冲突条数、未知条数、来源覆盖、audit 结果。**The original stakeholder (or their named delegate) must confirm the restatement.** Approval creates a ReviewRecord with SHA-256.
-- 模式二：Present 发散覆盖摘要（哪些维度产出什么）、候选表（证据+影响）、每条候选的推荐处置、deferral risks。**Only the responsible human (business_owner) may dispose** each candidate（`include` / `exclude` / `defer` / `research`）。Approval of the write-back creates a ReviewRecord with SHA-256.
+- 模式一：Present 重述条数、冲突条数、未知条数、来源覆盖、audit 结果。**原 stakeholder（或其指定代理）必须确认重述。** 批准会创建带 SHA-256 的 ReviewRecord。
+- 模式二：Present 发散覆盖摘要（哪些维度产出什么）、候选表（证据+影响）、每条候选的推荐处置、deferral risks。**只有负责人工（business_owner）可以处置**每个候选（`include` / `exclude` / `defer` / `research`）。写回批准会创建带 SHA-256 的 ReviewRecord。
 
 ### 8. Commit / Reflow
-- 模式一：Only `pipeline.py review --decision approve` may write `confirmed`. On changes: record delta → re-Audit → re-validate → return to Human Gate. 这里浮现的冲突必须升级到 `issue-record.md` 解决，不在本 skill 内解决。
+- 模式一：只有 `pipeline.py review --decision approve` 可以写入 `confirmed`。发生变更时：记录 delta → 重新 Audit → 重新校验 → 返回 Human Gate。这里浮现的冲突必须升级到 `issue-record.md` 解决，不在本 skill 内解决。
 - 模式二：Write back **only `include` candidates** 综合为 ≥50 字充分输入，写入 `project-background-goal` 输入包，然后返回当前 Work Item。处置不完整或出现实质新想法 → 从 Preflight 重新进入本 skill，不补丁下游；写回后出现矛盾 → 重新进入而非静默修订目标产物。
 - 两模式：过程记录本身最高 `ready_for_human_review`；只有 `pipeline.py review` 可确认下游工作项。
 
-## Anti-Patterns
+## 反模式（Anti-Patterns）
 
-| ❌ Don't | ✅ Do |
+| ❌ 不要 | ✅ 要做 |
 |---|---|
 | 用自己的话重述诉求（模式一） | 用 stakeholder 的话；能引用就引用原文 |
 | 隐藏来源（"业务方说要…"） | 始终引用 SRC-ID，具体到段落/时间戳 |
@@ -106,7 +106,7 @@ Load `references/thinking-framework.md`（Common Core + 领域 lens + 12 维度�
 
 ## Example: 模式一 · Sufficient Input → Sufficient Output
 
-**Input**: 3 sources — a meeting transcript, a follow-up email, and a ticket comment — all describing the same ask.
+**输入**：3 个来源——一份会议纪要、一封跟进邮件、一条工单评论——都在描述同一个诉求。
 **Output**: 完整 requirement-restate.md——
 - 7 条重述需求（RR-001…RR-007），每条链接到来源。
 - 1 个 CONFLICT：会议说"所有角色"，邮件说"仅经理" → 路由给 stakeholder 选择。
@@ -126,7 +126,7 @@ Load `references/thinking-framework.md`（Common Core + 领域 lens + 12 维度�
 **Input（模式二）**: 消息 "想做客户邀约活动"（无更多信息）。
 **Output**: Intake 登记消息为证据基础 → L0 判定 → 候选骨架（稀疏证据："AI 推断，无书面来源"）→ 3 个 Clarify 问题（活动目标 / 邀约对象范围 / 期望时间）→ 停于 `needs_user_input`，处置表待人工补齐。
 
-## Load References
+## 加载参考文档（Load References）
 
 | 文件 | 用途 | 何时加载 |
 |---|---|---|
@@ -138,7 +138,7 @@ Load `references/thinking-framework.md`（Common Core + 领域 lens + 12 维度�
 | `references/source-handling.md` | 来源处理规则（SRC-* 登记与引用） | Intake/来源处理时 |
 | `references/thinking-framework.md` | 思考透镜（Common Core + 领域 lens + 12 维度发散 lens，必读） | 每次任务开始（必读） |
 
-## Completion
+## 完成标准（Completion）
 
 - 模式一：每条来源里的诉求都用 stakeholder 的话重述；每行都有来源绑定与原始措辞；冲突全部标记并路由到 issue-record；未知全部路由给 stakeholder；原 stakeholder（或其指定代理）确认"是的，这就是我说的"。
 - 模式二：L0/稀疏触发确认且证据边界明确；12 维度全部扫过或显式跳过；候选已聚类去重并拥有稳定 `SCN-XXX` ID；每条候选带 Evidence、Impact 与 `AI_INFERENCE` 标注；处置表可供人工四值处置（或已处置）；仅 `include` 候选综合为 ≥50 字输入包写入 `project-background-goal`。
