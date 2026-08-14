@@ -4,7 +4,7 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 [![Repo](https://img.shields.io/badge/GitHub-konwait12%2Fpm--scaffold-blue.svg)](https://github.com/konwait12/pm-scaffold)
-[![Tests](https://img.shields.io/badge/tests-84%2F84-green.svg)](run_tests_mac.sh)
+[![Tests](https://img.shields.io/badge/tests-85%2F85-green.svg)](run_tests_mac.sh)
 
 ---
 

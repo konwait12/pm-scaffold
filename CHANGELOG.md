@@ -7,6 +7,32 @@ All notable changes to PM Scaffold · 产品 AI 脚手架 are documented here. T
 ### Added
 - (next release) — placeholder
 
+## [0.4.1] - 2026-08-14
+
+### Changed · 全中文化
+- 19 个 SKILL.md + references + 3 个 STAGE.md 全部中文化（英文术语/代码引用/8 步循环阶段名保留，标题改为「中文（英文对照）」）
+
+### Fixed · 深度审查修复
+- contracts.md RegistryContract schema 字段名漂移（stage_id→stage、artifact_path→artifact_dir/artifact_file、required_inputs→required_outputs 等 6 处）
+- prd-assembly 的 --variant/executive/technical 死功能残留（3 文件）+ resolver.py TEMPLATE_MAP 已删模板映射
+- 登记追加顺序 bug（feishu_fetch/prd_publish，插到表尾而非分隔行后）
+- desensitize_check 接入 run_tests_mac.sh（fixtures 脱敏自动化，隐私闭环）
+- read_frontmatter 统一到 workflow_registry（删 3 处重复实现）
+- snapshot_cases 变量命名、function-description「§异常处理」→「§异常与失败处理」
+
+### Removed · 隐私与清理
+- 公开 docs 泄露的内部 .test-output 路径 + Issue 编号（B12/F1/G1/ISS-011 等，6 文档清理为自包含描述）
+- source-register-skeleton / readme-skeleton 孤儿模板（pipeline 改读模板消除硬编码）
+- 计划类文档移入 docs/00-plan（gitignore 不推公开）
+- prd_publish/snapshot_cases 日志路径 .test-output → 99-review
+
+### Added
+- prd.md 模板新增 5.5 名词解释 + 5.6 涉及团队及职责（补齐真实 PRD 共性）
+- capability-fragments 通用能力片段库索引
+
+### Tests
+- 85/85 PASS（新增 desensitize fixtures 自检项）
+
 ## [0.4.0] - 2026-08-14
 
 ### Added · Harness 架构借鉴落地（事件溯源 + 投影缓存 + 注册表契约 + 统一错误格式）
