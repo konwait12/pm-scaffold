@@ -4,9 +4,13 @@
 
 Each work item runs structural validation, semantic/domain audit, communication check and human review. PRD assembly additionally runs cross-artifact relationship and record validation.
 
+The event-sourcing layer (`audit_log` + `projection_cache`) provides the single source of truth for review/change lifecycle; validators read from `.audit/projection.json`, not from glob+sort. Every state transition appends an `AuditEvent` to `.audit/events.jsonl` first, then mutates artifact frontmatter — events precede state, so the log is always replayable.
+
 ## Confirmation
 
 `confirmed` requires a reviewer authorized by the requirement's `00-input/authorized-reviewers.json`; the selected role must also appear in the Work Item's registry `reviewer_roles`. The ReviewRecord binds timestamp, stable reviewer ID, role and reviewed artifact version/hash. `ready_for_human_review`, `conditional_review`, `simulated` and `needs_user_input` are not completion. Human rejection or any blocking machine gate returns failure.
+
+Every review/change/confirm/reflow appends an `AuditEvent` to `.audit/events.jsonl` via `audit_log.append_event`; `projection_cache` folds the latest state into `.audit/projection.json`. The hash chain (`prev_hash` + `event_sha256` self-fingerprint + `payload_sha256` bound to record body) makes any tampering detectable by `audit_log.verify_chain`.
 
 ## Quality Dimensions
 
@@ -80,6 +84,10 @@ The main trunk is **non-negotiable** because the PRD cannot exist without backgr
 | `human-gate` | Branch (shared) | Governance; not a PRD artifact | (n/a) | Each Trunk / Branch needs a review record before `confirmed` |
 | `audit` | Branch (shared) | Triggers §10 inconsistency report | (n/a) | Findings in §10 |
 | `traceability` | Branch (shared) | Required for §7 / §8 / §9 | (n/a) | — |
+
+> **Note on the `audit` row** — two distinct concepts share this name and must not be conflated:
+> - The **shared audit mechanism** (§10 inconsistency-report trigger) is a *runtime behavior* executed by `consistency_check` / `dor_check` / `traceability_check` against the live artifact set; it produces findings into §10 of the PRD.
+> - The **`audit_log` event-sourcing module** (`src/scripts/audit_log.py` + `src/scripts/projection_cache.py`) is *infrastructure* — it records every review/change/confirm/reflow event into `.audit/events.jsonl` and folds the latest state into `.audit/projection.json`. It is a foundation module backing the Quality Sequence, not a Skill branch and not the same as the §10 audit trigger.
 
 ### Issue Record — 每个案例必备的稳定产物（非可选分支）
 

@@ -31,6 +31,22 @@ import re
 import sys
 from pathlib import Path
 
+# ── 统一错误格式引导（借鉴点四: make_issue 契约）───────────
+def _bootstrap_scripts() -> None:
+    import sys as _sys
+    p = Path(__file__).resolve().parent
+    while p.parent != p:
+        cand = p / "src" / "scripts"
+        if (cand / "validation_errors.py").is_file():
+            if str(cand) not in _sys.path:
+                _sys.path.insert(0, str(cand))
+            return
+        p = p.parent
+
+_bootstrap_scripts()
+from validation_errors import make_issue
+# ─────────────────────────────────────────────────────────
+
 # ── Per-sub-skill configuration (edit these) ──────────────
 SECTION_NAME = "功能清单"
 FEA_ID_RE = re.compile(r"FEA-\d+")
@@ -50,6 +66,9 @@ PARENT_ARTIFACT_GLOBS = [
     "requirements/*/002-product-requirements/function-description.md",
 ]
 # ─────────────────────────────────────────────────────────
+
+SKILL_ID = "feature_list"         # issue family（统一错误格式分组）
+CHECK_PREFIX = "fl"               # issue check_id 语义化前缀
 
 
 def _norm(h: str) -> str:
@@ -105,12 +124,111 @@ def _orphan_fea_rows(section: str) -> list[str]:
     return orphans
 
 
+def _make_issues(errors: list[str], warnings: list[str], path: Path) -> list[dict]:
+    """双轨制: errors/warnings 保持字符串列表, issues 为 make_issue 标准 dict."""
+    issues: list[dict] = []
+    for e in errors:
+        if e.startswith("File not found"):
+            cid, sev, exp, act, fix = (
+                f"{CHECK_PREFIX}.file_not_found", "CRITICAL",
+                "产物文件必须存在且可读", f"文件不存在: {e}",
+                "确认产物路径正确, 或先创建对应的 artifact 文件",
+            )
+        elif e.startswith("status 'confirmed' is not allowed"):
+            cid, sev, exp, act, fix = (
+                f"{CHECK_PREFIX}.status_confirmed", "CRITICAL",
+                "子 skill 输出永远不允许 status=confirmed",
+                f"实际状态: {e}",
+                "将状态改为 draft / ready_for_human_review 等, 由 pipeline.py review --decision approve 负责置为 confirmed",
+            )
+        elif e.startswith("Invalid status"):
+            cid, sev, exp, act, fix = (
+                f"{CHECK_PREFIX}.status_invalid", "CRITICAL",
+                "frontmatter status 必须在白名单内（且不含 confirmed）",
+                f"非法状态: {e}",
+                "修正 frontmatter 的 status 字段为合法取值",
+            )
+        elif e.startswith("Missing required section"):
+            cid, sev, exp, act, fix = (
+                f"{CHECK_PREFIX}.missing_section", "CRITICAL",
+                f"父产物必须包含 '{SECTION_NAME}' 章节",
+                f"未找到章节: {e}",
+                f"在父产物中添加 '## {SECTION_NAME}' 章节并填充本子 skill 输出",
+            )
+        elif e.startswith("No FEA-XXX feature identifiers"):
+            cid, sev, exp, act, fix = (
+                f"{CHECK_PREFIX}.missing_fea_ids", "CRITICAL",
+                f"'{SECTION_NAME}' 章节内必须包含至少一个 FEA-XXX 功能标识符（占位符不算）",
+                f"未找到任何 FEA-XXX 标识符",
+                "为功能行补充形如 FEA-001 的稳定标识符",
+            )
+        elif e.startswith("FEA row(s) without ST-XXX"):
+            cid, sev, exp, act, fix = (
+                f"{CHECK_PREFIX}.orphan_fea", "CRITICAL",
+                "每个 FEA 表格行必须追溯至少一个 ST-XXX 故事",
+                f"存在孤立 FEA 行: {e}",
+                "为孤立功能行补充所属故事 ST-XXX 引用",
+            )
+        elif e.startswith("No ST-XXX identifiers"):
+            cid, sev, exp, act, fix = (
+                f"{CHECK_PREFIX}.missing_st_ids", "CRITICAL",
+                "存在 FEA 行时章节内必须引用至少一个 ST-XXX 故事",
+                f"未找到任何 ST-XXX 标识符",
+                "在章节中补充故事来源 ST-XXX 引用",
+            )
+        else:
+            cid, sev, exp, act, fix = f"{CHECK_PREFIX}.error", "CRITICAL", None, None, None
+        issues.append(make_issue(
+            severity=sev, check_id=cid, family=SKILL_ID,
+            location=str(path), message=e,
+            expected=exp, actual=act, repair_hint=fix,
+        ))
+    for w in warnings:
+        if w.startswith("No frontmatter found"):
+            cid, exp, act, fix = (
+                f"{CHECK_PREFIX}.missing_frontmatter",
+                "产物应带 YAML frontmatter 以便校验状态",
+                "未发现 frontmatter",
+                "在产物头部补充 YAML frontmatter（含 status 字段）",
+            )
+        elif w.startswith("No P0/P1/P2 priority markers"):
+            cid, exp, act, fix = (
+                f"{CHECK_PREFIX}.missing_priority",
+                f"'{SECTION_NAME}' 章节内应包含 P0/P1/P2 优先级标记",
+                "未发现任何优先级标记",
+                "为功能行补充 P0/P1/P2 优先级标记",
+            )
+        elif w.startswith("No knowledge-state tags"):
+            cid, exp, act, fix = (
+                f"{CHECK_PREFIX}.missing_ks_tags",
+                "可追溯内容应带有知识状态标签 (FACT/DECISION/AI_INFERENCE/UNKNOWN)",
+                f"{SECTION_NAME} 章节未发现任何知识状态标签",
+                "在事实/决定/推断内容旁标注 FACT / DECISION / AI_INFERENCE / UNKNOWN",
+            )
+        elif w.startswith("status is ready_for_human_review but no FEA"):
+            cid, exp, act, fix = (
+                f"{CHECK_PREFIX}.review_without_fea",
+                "ready_for_human_review 状态要求章节内已有 FEA 标识符",
+                "状态就绪但无 FEA 标识符",
+                "补充功能清单内容及 FEA-XXX 标识符后再提交评审",
+            )
+        else:
+            cid, exp, act, fix = f"{CHECK_PREFIX}.warning", None, None, None
+        issues.append(make_issue(
+            severity="MEDIUM", check_id=cid, family=SKILL_ID,
+            location=str(path), message=w,
+            expected=exp, actual=act, repair_hint=fix, blocking=False,
+        ))
+    return issues
+
+
 def validate(path: Path) -> dict[str, object]:
     errors: list[str] = []
     warnings: list[str] = []
 
     if not path.is_file():
-        return {"ok": False, "errors": [f"File not found: {path}"], "warnings": []}
+        return {"ok": False, "errors": [f"File not found: {path}"], "warnings": [],
+                "issues": _make_issues([f"File not found: {path}"], [], path)}
 
     text = path.read_text(encoding="utf-8")
     meta = parse_frontmatter(text)
@@ -132,7 +250,8 @@ def validate(path: Path) -> dict[str, object]:
     section = _section_text(text)
     if section is None:
         errors.append(f"Missing required section: {SECTION_NAME}")
-        return {"ok": not errors, "errors": errors, "warnings": warnings}
+        return {"ok": not errors, "errors": errors, "warnings": warnings,
+                "issues": _make_issues(errors, warnings, path)}
 
     # FEA identifiers must exist in the section (FEA-XXX placeholder does not count).
     fea_ids = sorted(set(FEA_ID_RE.findall(section)))
@@ -162,7 +281,8 @@ def validate(path: Path) -> dict[str, object]:
     if status == "ready_for_human_review" and not fea_ids:
         warnings.append("status is ready_for_human_review but no FEA identifiers found")
 
-    return {"ok": not errors, "errors": errors, "warnings": warnings}
+    return {"ok": not errors, "errors": errors, "warnings": warnings,
+            "issues": _make_issues(errors, warnings, path)}
 
 
 def resolve_artifact(path_arg: str | None) -> Path | None:

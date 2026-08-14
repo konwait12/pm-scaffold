@@ -7,6 +7,30 @@ All notable changes to PM Scaffold · 产品 AI 脚手架 are documented here. T
 ### Added
 - (next release) — placeholder
 
+## [0.4.0] - 2026-08-14
+
+### Added · Harness 架构借鉴落地（事件溯源 + 投影缓存 + 注册表契约 + 统一错误格式）
+- `src/scripts/audit_log.py` — Harness 借鉴点一·事件溯源。每案例 `requirements/REQ-NNN-*/.audit/events.jsonl` append-only；提供 `append_event` / `replay_events` / `verify_chain` / `reconstruct_causality`；事件 token = `review|change|decision|confirm|reject|reflow|init`；prev_hash 链 + event_sha256 自指纹 + payload_sha256 绑定记录体 + 单调 recorded_at；幂等写入（同 event_type+payload+payload_sha256 不重复）。
+- `src/scripts/projection_cache.py` — Harness 借鉴点二·投影缓存。从事件日志折叠派生 `.audit/projection.json`，提供 `build_projection` / `read_projection` / `is_stale` / `latest_review_for`；替代 `branch_validator` 旧的 glob+sort（B7 时序陷阱）；对老案例保留 legacy fallback（带 warning）。
+- `src/scripts/registry_contract_check.py` — Harness 借鉴点三·注册表契约硬化。schema 校验 + 模板↔校验器字段闭环（E3_drift：模板新增 required 字段但校验器未引用即报错）；作为 `run_tests_mac.sh` 第一项，任何失败 abort（fail loud）。
+- `src/scripts/validation_errors.py` — Harness 借鉴点四·统一错误格式。`make_issue` 输出 8+ 字段：severity / blocking / check_id / check_family / location / field_path / message / expectation / actual / repair_hint / source_ref；配套 `format_issue` / `aggregate_by_check_id` / `wrap_unexpected`。
+- `src/framework/contracts.md` — Shared Records 新增 AuditEvent / ProjectionCache / ValidatorIssue / RegistryContract 四项契约；新增「Validator Issue Format」「Registry Contract」两节；Confirmation Invariant 补「事件先于状态变更」。
+- 事件溯源闭环：`audit_log.append_event` 成功后自动重建 `projection_cache`（事件 ⟺ 模型可见强一致；重建失败仅 warn，投影为派生视图可随时重建）。
+- `pipeline.py` 新增 `audit backfill` 子命令：为 pre-audit_log 的历史需求目录（REQ-001~008）从 `99-review/*.md` 反推事件（`backfilled: true`），按 reviewed_at/changed_at 时间戳排序保证事件日志时序；`REQ-001/002/004` 已回填（5/5/6 事件），审计链全部 PASS。
+
+### Changed
+- `src/framework/constitution.md` — 新增第 7 条硬宪法（事件溯源不可篡改：prev_hash 链断 / event_sha256 不符即 CRITICAL）与第 8 条硬宪法（校验器必须用 `validation_errors.make_issue` 输出统一错误格式，禁止裸 stack trace）；第 3 条补 `registry_contract_check` 作为必跑关卡。
+- `run_tests_mac.sh` — 新增 Phase 0 registry 契约自检（`registry_contract_check.py` 作为首项 fail-loud 关卡，失败立即 abort，不再跑后续测试）。
+- 错误格式统一（借鉴点四推广至全部校验器）——`registry_contract_check.py` / `consistency_check.py` / `traceability_check.py` / `branch_validator.py` 全线迁移到 `make_issue`（6 类 ad-hoc 格式收敛为 1 个契约：severity/blocking/check_id/check_family/location/field_path/message/expectation/actual/repair_hint/source_ref）。
+- 22 个 skill 校验器（5 主 skill + 8 子 skill + issue-record + 8 支撑 skill）采用双轨制迁移：`errors`/`warnings` 保持字符串列表（skill 单测断言 `"substr" in error`），新增标准化 `issues` 数组（`check_id` 语义化标签 + severity/blocking 映射）；`waiver_required`/`waivable` 旧结构映射为 `severity=HIGH, blocking=False`。
+- `projection_cache.py` — 修复 `_artifact_status_fields` 在产物未创建时缺 `reviewer/reviewed_at/confirmed_at` 键导致事件折叠 KeyError 的 bug。
+- `registry_contract_check.py` — 修复 Python 3.12+ 移除 `ast.Str` 导致的 AttributeError（改用 `getattr(ast, "Str", None)` 兼容写法）。
+
+### Tests
+- 新增 `test/scripts/test_audit_log.py`：10 个单元测试覆盖幂等写入 / 哈希链连续性 / event_sha256 自指纹篡改检测 / payload_sha256 绑定记录体 / 单调 recorded_at / verify_chain 报错路径 / reconstruct_causality 因果重建 / GENESIS prev_hash / 未知 event_type 拒绝 / 跨进程字节级一致。
+- 新增 `test/scripts/test_validation_errors.py`（10 用例：blocking 默认值 / 消息推导 / wrap_unexpected 不泄漏堆栈 / format_issue / aggregate 分组）、`test/scripts/test_projection_cache.py`（5 用例：折叠 / 自动重建闭环 / stale 检测 / review 事件 latest_review_for）、`test/scripts/test_registry_contract_check.py`（12 用例：schema 五类缺陷 / E3_drift / 真实注册表）。
+- 回归测试 79 → 84 通过（新增 3 个测试文件 + REQ-001~008 事件回填后 audit 链校验纳入 branch_validator gate）。
+
 ## [0.3.1] - 2026-08-13
 
 ### Fixed · 运行时崩溃

@@ -14,6 +14,21 @@ import sys
 from pathlib import Path
 
 
+def _bootstrap_scripts() -> None:
+    import sys as _sys
+    p = Path(__file__).resolve().parent
+    while p.parent != p:
+        cand = p / "src" / "scripts"
+        if (cand / "validation_errors.py").is_file():
+            if str(cand) not in _sys.path:
+                _sys.path.insert(0, str(cand))
+            return
+        p = p.parent
+
+_bootstrap_scripts()
+from validation_errors import make_issue
+
+
 REQUIRED_FRONTMATTER = {
     "artifact_id",
     "version",
@@ -155,7 +170,63 @@ def validate(path: Path) -> dict[str, object]:
     # --- Semantic red flags ---
     warnings.extend(check_semantic_red_flags(text, metadata))
 
-    return {"ok": not errors, "errors": errors, "warnings": warnings}
+    issues = [
+        make_issue(
+            severity="CRITICAL",
+            check_id=_uj_error_check_id(e),
+            family="user_journey_and_stories",
+            location=str(path),
+            message=e,
+        )
+        for e in errors
+    ]
+    issues.extend(
+        make_issue(
+            severity="MEDIUM",
+            check_id=_uj_warning_check_id(w),
+            family="user_journey_and_stories",
+            location=str(path),
+            message=w,
+            blocking=False,
+        )
+        for w in warnings
+    )
+    return {"ok": not errors, "errors": errors, "warnings": warnings, "issues": issues}
+
+
+_UJ_ERROR_RULES = [
+    ("Missing frontmatter fields:", "uj.missing_frontmatter"),
+    ("Invalid status", "uj.invalid_status"),
+    ("Missing or placeholder upstream_artifact_id;", "uj.missing_upstream"),
+    ("Missing required headings:", "uj.missing_headings"),
+    ("No ST-* story card identifier found", "uj.missing_story_cards"),
+    ("Confirmed artifact has unresolved confirmation fields:", "uj.unresolved_confirmation"),
+]
+
+_UJ_WARNING_RULES = [
+    ("Confirmed artifact still contains 待确认 markers in body content", "uj.pending_markers_in_confirmed"),
+    ("业务生命周期分解 has fewer than 2 non-placeholder stages", "uj.insufficient_lifecycle_stages"),
+    ("no story card uses the canonical", "uj.no_canonical_story_format"),
+    ("旅程→故事覆盖矩阵 has", "uj.unexplained_coverage_gaps"),
+    ("role-grouped listing has no non-placeholder role sections", "uj.no_role_groups"),
+    ("exceeds the 5-session cap", "uj.clarifications_over_cap"),
+    ("session row(s)", "uj.clarifications_unfilled"),
+    ("critical path types still 待确认 in §5", "uj.uncovered_path_types"),
+]
+
+
+def _uj_error_check_id(msg: str) -> str:
+    for needle, check_id in _UJ_ERROR_RULES:
+        if needle in msg:
+            return check_id
+    return "uj.structural"
+
+
+def _uj_warning_check_id(msg: str) -> str:
+    for needle, check_id in _UJ_WARNING_RULES:
+        if needle in msg:
+            return check_id
+    return "uj.semantic"
 
 
 def check_semantic_red_flags(text: str, metadata: dict[str, str]) -> list[str]:

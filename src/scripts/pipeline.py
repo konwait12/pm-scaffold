@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import re
 import subprocess
@@ -22,6 +23,7 @@ from workflow_registry import (
     work_items,
 )
 
+import audit_log
 import hash_anchor
 
 
@@ -189,6 +191,13 @@ def init_requirement(name: str | None) -> int:
         "| `99-review/` | 评审记录 | ⏸ |\n",
         encoding="utf-8",
     )
+    # 事件溯源：初始化完成写入 init 事件（inline payload 无需 record 文件）
+    audit_log.append_event(
+        req_dir,
+        event_type="init",
+        payload={"skeleton_created_by": "pipeline.py init", "registry_schema_version": len(list(work_items()))},
+        extra={"requirement_name": name},
+    )
     print(f"Created {req_dir}")
     print(f"  Next: put source materials in {req_dir}/00-input/, then run")
     print(f"        python3 src/scripts/pipeline.py {req_dir} status")
@@ -332,10 +341,29 @@ def review(req_dir: Path, item: dict, decision: str, reviewer: str, reviewer_id:
     ]
     record_text = "\n".join(record_lines)
     record_sha256 = hash_anchor.record_body_sha256(record_text)
-    record.write_text(
-        record_text.replace(hash_anchor.RECORD_SHA256_PLACEHOLDER, record_sha256),
-        encoding="utf-8",
-    )
+    final_record_text = record_text.replace(hash_anchor.RECORD_SHA256_PLACEHOLDER, record_sha256)
+    record.write_text(final_record_text, encoding="utf-8")
+    # 事件溯源：为本次评审写入 review 审计事件（绑定 ReviewRecord hash）
+    try:
+        audit_log.append_event(
+            req_dir,
+            event_type="review",
+            payload=str(record.relative_to(req_dir)),
+            payload_sha256=hashlib.sha256(final_record_text.encode("utf-8")).hexdigest(),
+            extra={
+                "work_item": item["id"],
+                "decision": decision,
+                "reviewer": reviewer,
+                "reviewer_id": reviewer_id,
+                "reviewer_role": reviewer_role,
+                "artifact_version": artifact_version,
+                "artifact_content_sha256": artifact_hash,
+            },
+        )
+    except (ValueError, FileNotFoundError) as audit_err:
+        # 审计事件写入失败必须 fail-loud：确认操作整体中止
+        print(f"ERROR: failed to append review audit event: {audit_err}", file=sys.stderr)
+        return 1
     # B13 fix: record an external append-only hash anchor on approve.
     # The ReviewRecord is closed-loop (artifact + ReviewRecord can be swapped
     # together); the anchor chain under 99-review/.hash-anchor.jsonl provides
@@ -359,6 +387,26 @@ def review(req_dir: Path, item: dict, decision: str, reviewer: str, reviewer_id:
             req_dir, item, artifact, current_status, "draft",
             reason, reviewer, reviewer_id, reviewer_role, comments,
         )
+        # 事件溯源：逆向跃迁 change 记录 → change 审计事件
+        try:
+            change_record_text = change_record.read_text(encoding="utf-8")
+            audit_log.append_event(
+                req_dir,
+                event_type="change",
+                payload=str(change_record.relative_to(req_dir)),
+                payload_sha256=hash_anchor._line_sha256(change_record_text) if hasattr(hash_anchor, "_line_sha256")
+                    else __import__("hashlib").sha256(change_record_text.encode("utf-8")).hexdigest(),
+                extra={
+                    "work_item": item["id"],
+                    "from_status": current_status,
+                    "to_status": "draft",
+                    "reason": reason,
+                    "changed_by": reviewer,
+                },
+            )
+        except (ValueError, FileNotFoundError) as audit_err:
+            print(f"ERROR: failed to append change audit event: {audit_err}", file=sys.stderr)
+            return 1
         print(f"Recorded change: {change_record.relative_to(req_dir)}")
     text = artifact_text
     target_status = "confirmed" if decision == "approve" else "draft"
@@ -374,13 +422,128 @@ def review(req_dir: Path, item: dict, decision: str, reviewer: str, reviewer_id:
     return 0 if decision == "approve" else 2
 
 
+def _match_field(text: str, pattern: str) -> str | None:
+    m = re.search(pattern, text)
+    return m.group(1).strip() if m else None
+
+
+def audit_backfill(req_dir: Path) -> int:
+    """Backfill AuditEvents from legacy review/change records (pre-audit_log).
+
+    REQ-001~008 were created before event sourcing was adopted: they carry
+    ``99-review/review-*.md`` / ``change-*.md`` records but no
+    ``.audit/events.jsonl``. This command replays those records into
+    append-only events (marked ``backfilled: true``) so ``verify_chain`` /
+    ``reconstruct_causality`` / ``projection_cache`` work for history
+    directories without rewriting any existing content.
+
+    Idempotent: a record already referenced by an existing event's ``payload``
+    is skipped. ``recorded_at`` is taken from the record's ``reviewed_at`` /
+    ``changed_at`` when it keeps the log monotonic; otherwise the append uses
+    "now" and the original timestamp stays preserved in the record body.
+    """
+    events = audit_log.replay_events(req_dir)
+    existing_refs = {ev["payload"] for ev in events if isinstance(ev.get("payload"), str)}
+
+    def _iso(ts: str | None):
+        try:
+            return datetime.fromisoformat(ts.replace("Z", "+00:00")) if ts else None
+        except ValueError:
+            return None
+
+    last_dt: datetime | None = None
+    for ev in events:
+        dt = _iso(ev.get("recorded_at"))
+        if dt and (last_dt is None or dt > last_dt):
+            last_dt = dt
+
+    review_dir = req_dir / "99-review"
+    if not review_dir.is_dir():
+        print("No 99-review/ records found; nothing to backfill.", file=sys.stderr)
+        return 1
+
+    appended = 0
+    skipped = 0
+    # Collect (path, text, ts_dt) then sort by timestamp so the event log is
+    # CHRONOLOGICAL — projection_cache folds with "latest event wins", which
+    # assumes events arrive in time order. Alphabetical order is NOT
+    # chronological (e.g. "review-x-2026-08-14-1.md" sorts before
+    # "review-x-2026-08-14.md" because '-' < '.'), so sorting by ts matters
+    # when a work item has multiple review records (REQ-004 had two).
+    pending: list[tuple[Path, str, datetime | None]] = []
+    for pattern in ("review-*.md", "change-*.md"):
+        for p in sorted(review_dir.glob(pattern)):
+            rel = str(p.relative_to(req_dir))
+            if rel in existing_refs:
+                skipped += 1
+                continue
+            try:
+                text = p.read_text(encoding="utf-8")
+            except OSError as e:
+                print(f"ERROR: cannot read {rel}: {e}", file=sys.stderr)
+                return 1
+            ts = (_match_field(text, r"(?m)^\s*-\s*reviewed_at:\s*(.+)$")
+                  or _match_field(text, r"(?m)^\s*-\s*changed_at:\s*(.+)$"))
+            pending.append((p, text, _iso(ts)))
+
+    pending.sort(key=lambda t: (t[2] is not None, t[2] or datetime.min, t[0].name))
+    for p, text, rec_dt in pending:
+        rel = str(p.relative_to(req_dir))
+        extra = {
+            "backfilled": True,
+            "work_item": _match_field(text, r"(?m)^\s*-\s*work_item:\s*(\S+)"),
+            "decision": _match_field(text, r"(?m)^\s*-\s*decision:\s*(\S+)"),
+            "reviewer": _match_field(text, r"(?m)^\s*-\s*reviewer:\s*(.+)$"),
+            "from_status": _match_field(text, r"(?m)^\s*-\s*from_status:\s*(\S+)"),
+            "to_status": _match_field(text, r"(?m)^\s*-\s*to_status:\s*(\S+)"),
+            "reason": _match_field(text, r"(?m)^\s*-\s*reason:\s*(.+)$"),
+            "artifact_content_sha256": _match_field(text, r"(?m)^\s*-\s*artifact_content_sha256:\s*([0-9a-f]{64})"),
+            "artifact_version": _match_field(text, r"(?m)^\s*-\s*artifact_version:\s*(\S+)"),
+        }
+        recorded_at = None
+        if rec_dt and (last_dt is None or rec_dt >= last_dt):
+            recorded_at = _match_field(text, r"(?m)^\s*-\s*reviewed_at:\s*(.+)$") \
+                or _match_field(text, r"(?m)^\s*-\s*changed_at:\s*(.+)$")
+            last_dt = rec_dt
+        payload_sha256 = hashlib.sha256(text.encode("utf-8")).hexdigest()
+        try:
+            audit_log.append_event(
+                req_dir,
+                event_type="review" if p.name.startswith("review-") else "change",
+                payload=rel,
+                payload_sha256=payload_sha256,
+                recorded_at=recorded_at,
+                extra=extra,
+            )
+        except (ValueError, FileNotFoundError) as audit_err:
+            # Monotonic guard: retry with "now" so backfill never blocks.
+            print(f"WARN: {rel}: {audit_err}; retrying with current timestamp", file=sys.stderr)
+            audit_log.append_event(
+                req_dir,
+                event_type="review" if p.name.startswith("review-") else "change",
+                payload=rel,
+                payload_sha256=payload_sha256,
+                extra=extra,
+            )
+        appended += 1
+
+    print(json.dumps({
+        "requirement": req_dir.resolve().name,
+        "appended_events": appended,
+        "already_referenced": skipped,
+        "note": "backfilled events carry backfilled:true; original reviewed_at/changed_at "
+                "remain in the record bodies (events store recorded_at=backfill time when monotonic)",
+    }, ensure_ascii=False, indent=2))
+    return 0
+
+
 def main() -> int:
     # `pipeline.py init <name>` — init is the action, <name> is the target.
     if len(sys.argv) >= 2 and sys.argv[1] == "init":
         return init_requirement(sys.argv[2] if len(sys.argv) > 2 else None)
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("req_dir", type=Path)
-    parser.add_argument("action", nargs="?", choices=["status", "entry", "gate", "review", "reflow"], default="status")
+    parser.add_argument("action", nargs="?", choices=["status", "entry", "gate", "review", "reflow", "backfill"], default="status")
     parser.add_argument("--stage")
     parser.add_argument("--work-item", choices=[item["id"] for item in work_items()])
     parser.add_argument("--wave", type=int, choices=range(1, 6), help="Deprecated compatibility alias")
@@ -461,6 +624,8 @@ def main() -> int:
             "branch_skill_signals": branch_skill_signals(args.req_dir, result["work_items"]),
         }, ensure_ascii=False, indent=2))
         return 0
+    if args.action == "backfill":
+        return audit_backfill(args.req_dir)
     if not (args.work_item or args.wave):
         print("ERROR: --work-item is required", file=sys.stderr)
         return 1
@@ -497,25 +662,40 @@ def main() -> int:
             while record.exists():
                 record = review_dir / f"change-record-reflow-{now[:10]}-{suffix}.md"
                 suffix += 1
-            record.write_text(
-                "\n".join([
-                    f"# Change Record: reflow {item['id']}", "",
-                    f"- trigger: {item['id']} changed",
-                    # B12: reverse transitions (`* → superseded`) carry the same
-                    # audit fields as `--decision changes` (from/to/reason/changed_*).
-                    f"- from_status: confirmed/ready_for_human_review",
-                    f"- to_status: superseded",
-                    f"- reason: {args.reason or 'reflow triggered by upstream change'}",
-                    f"- changed_at: {now}",
-                    f"- changed_by: reflow (machine-executed, human-initiated)",
-                    f"- superseded: {', '.join(results['superseded'])}", "",
-                    "- decision_id: 待填写（DEC-NNN，对齐 src/templates/others/decision-record.md）",
-                    "- decider: 待填写", "- rationale: 待填写", "",
-                    "Downstream artifacts were flipped to `superseded`; they must be re-validated",
-                    "after the earliest affected work item is re-confirmed.", "",
-                ]), encoding="utf-8",
-            )
+            record_body = "\n".join([
+                f"# Change Record: reflow {item['id']}", "",
+                f"- trigger: {item['id']} changed",
+                # B12: reverse transitions (`* → superseded`) carry the same
+                # audit fields as `--decision changes` (from/to/reason/changed_*).
+                f"- from_status: confirmed/ready_for_human_review",
+                f"- to_status: superseded",
+                f"- reason: {args.reason or 'reflow triggered by upstream change'}",
+                f"- changed_at: {now}",
+                f"- changed_by: reflow (machine-executed, human-initiated)",
+                f"- superseded: {', '.join(results['superseded'])}", "",
+                "- decision_id: 待填写（DEC-NNN，对齐 src/templates/others/decision-record.md）",
+                "- decider: 待填写", "- rationale: 待填写", "",
+                "Downstream artifacts were flipped to `superseded`; they must be re-validated",
+                "after the earliest affected work item is re-confirmed.", "",
+            ])
+            record.write_text(record_body, encoding="utf-8")
             results["change_record"] = str(record.relative_to(args.req_dir))
+            # 事件溯源：reflow 后追加 reflow 审计事件
+            try:
+                audit_log.append_event(
+                    args.req_dir,
+                    event_type="reflow",
+                    payload=str(record.relative_to(args.req_dir)),
+                    payload_sha256=__import__("hashlib").sha256(record_body.encode("utf-8")).hexdigest(),
+                    extra={
+                        "work_item": item["id"],
+                        "superseded": results["superseded"],
+                        "reason": args.reason or "reflow triggered by upstream change",
+                    },
+                )
+            except (ValueError, FileNotFoundError) as audit_err:
+                print(f"ERROR: failed to append reflow audit event: {audit_err}", file=sys.stderr)
+                return 1
         print(json.dumps(results, ensure_ascii=False, indent=2))
         return 0
     if not args.decision or not args.reviewer or not args.reviewer_id or not args.reviewer_role:

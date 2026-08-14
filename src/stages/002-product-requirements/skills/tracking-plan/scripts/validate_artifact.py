@@ -20,6 +20,22 @@ import re
 import sys
 from pathlib import Path
 
+
+def _bootstrap_scripts() -> None:
+    import sys as _sys
+    p = Path(__file__).resolve().parent
+    while p.parent != p:
+        cand = p / "src" / "scripts"
+        if (cand / "validation_errors.py").is_file():
+            if str(cand) not in _sys.path:
+                _sys.path.insert(0, str(cand))
+            return
+        p = p.parent
+
+_bootstrap_scripts()
+from validation_errors import make_issue
+
+
 # ── Per-sub-skill configuration (edit these) ──────────────
 SECTION_NAME = "埋点需求分析"        # sub-skill output section in parent artifact
 ID_PATTERN = r"EV-\d+"              # event ID prefix
@@ -101,10 +117,63 @@ def _extract_section(text: str, section_name: str) -> str:
     return text[start_pos:end_pos]
 
 
+def _make_result(path: Path, errors: list[str], warnings: list[str]) -> dict:
+    issues = [
+        make_issue(
+            severity="CRITICAL",
+            check_id=_tp_error_check_id(e),
+            family="tracking_plan",
+            location=str(path),
+            message=e,
+        )
+        for e in errors
+    ]
+    issues.extend(
+        make_issue(
+            severity="MEDIUM",
+            check_id=_tp_warning_check_id(w),
+            family="tracking_plan",
+            location=str(path),
+            message=w,
+            blocking=False,
+        )
+        for w in warnings
+    )
+    return {"ok": not errors, "errors": errors, "warnings": warnings, "issues": issues}
+
+
+_TP_ERROR_RULES = [
+    ("File not found:", "tp.file_not_found"),
+    ("Missing required section:", "tp.missing_section"),
+    ("Empty section:", "tp.empty_section"),
+    ("No EV-", "tp.no_event_ids"),
+    ("missing reference to", "tp.event_missing_ref"),
+]
+
+_TP_WARNING_RULES = [
+    ("no pii_flag values detected", "tp.no_pii_flags"),
+    ("coverage matrix not found", "tp.no_coverage_matrix"),
+]
+
+
+def _tp_error_check_id(msg: str) -> str:
+    for needle, check_id in _TP_ERROR_RULES:
+        if needle in msg:
+            return check_id
+    return "tp.structural"
+
+
+def _tp_warning_check_id(msg: str) -> str:
+    for needle, check_id in _TP_WARNING_RULES:
+        if needle in msg:
+            return check_id
+    return "tp.semantic"
+
+
 def validate(path: Path) -> dict:
     errors, warnings = [], []
     if not path.is_file():
-        return {"ok": False, "errors": [f"File not found: {path}"], "warnings": []}
+        return _make_result(path, [f"File not found: {path}"], [])
 
     text = path.read_text(encoding="utf-8")
 
@@ -115,12 +184,12 @@ def validate(path: Path) -> dict:
     ]
     if _norm(SECTION_NAME) not in headings:
         errors.append(f"Missing required section: {SECTION_NAME}")
-        return {"ok": False, "errors": errors, "warnings": warnings}
+        return _make_result(path, errors, warnings)
 
     section_body = _extract_section(text, SECTION_NAME)
     if not section_body:
         errors.append(f"Empty section: {SECTION_NAME}")
-        return {"ok": False, "errors": errors, "warnings": warnings}
+        return _make_result(path, errors, warnings)
 
     # ID prefix must be present
     ids = re.findall(ID_PATTERN, section_body)
@@ -166,7 +235,7 @@ def validate(path: Path) -> dict:
             "a must_track count"
         )
 
-    return {"ok": not errors, "errors": errors, "warnings": warnings}
+    return _make_result(path, errors, warnings)
 
 
 def main() -> int:

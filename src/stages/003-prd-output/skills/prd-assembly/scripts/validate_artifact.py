@@ -6,6 +6,25 @@ from __future__ import annotations
 import argparse, json, re, sys
 from pathlib import Path
 
+
+def _bootstrap_scripts() -> None:
+    import sys as _sys
+    p = Path(__file__).resolve().parent
+    while p.parent != p:
+        cand = p / "src" / "scripts"
+        if (cand / "validation_errors.py").is_file():
+            if str(cand) not in _sys.path:
+                _sys.path.insert(0, str(cand))
+            return
+        p = p.parent
+
+
+_bootstrap_scripts()
+from validation_errors import make_issue
+
+SKILL_ID = "prd_assembly"     # issue family（统一错误格式分组）
+CHECK_PREFIX = "prd"          # issue check_id 语义化前缀
+
 REQUIRED_FRONTMATTER = {
     "artifact_id", "version", "status", "owner",
     "business_fact_owner", "goal_decision_owner", "reviewer",
@@ -116,7 +135,56 @@ def validate(path: Path) -> dict[str, object]:
         if any(m in text for m in new_content_markers):
             warnings.append("Semantic: PRD contains '新增需求/补充功能/额外建议' markers; PRD assembly should only aggregate, not introduce new requirements")
 
-    return {"ok": not errors, "errors": errors, "warnings": warnings}
+    return {"ok": not errors, "errors": errors, "warnings": warnings,
+            "issues": _make_issues(errors, warnings, path)}
+
+
+_PRD_ERROR_RULES = [
+    ("Missing frontmatter fields:", "prd.missing_frontmatter"),
+    ("Invalid status", "prd.invalid_status"),
+    ("Missing required headings:", "prd.missing_headings"),
+    ("No RTM", "prd.missing_rtm"),
+    ("Confirmed artifact has unresolved confirmation fields:", "prd.unresolved_confirmation"),
+    ("PRD DoD D5.2 failed:", "prd.d52_missing_upstream"),
+]
+
+_PRD_WARNING_RULES = [
+    ("Confirmed PRD still contains 待确认 markers", "prd.pending_markers_in_confirmed"),
+    ("RTM has no data rows", "prd.rtm_no_data"),
+    ("RTM header has", "prd.rtm_column_count"),
+    ("RTM rows have", "prd.rtm_incomplete_p0"),
+    ("PRD contains", "prd.new_content_markers"),
+]
+
+
+def _check_id(msg: str, rules: list[tuple[str, str]], fallback: str) -> str:
+    for needle, check_id in rules:
+        if needle in msg:
+            return check_id
+    return fallback
+
+
+def _make_issues(errors: list[str], warnings: list[str], path: Path) -> list[dict]:
+    """双轨制：errors/warnings 保持字符串列表，issues 为 make_issue 统一 dict。"""
+    issues: list[dict] = []
+    for e in errors:
+        issues.append(make_issue(
+            severity="CRITICAL",
+            check_id=_check_id(e, _PRD_ERROR_RULES, "prd.structural"),
+            family=SKILL_ID,
+            location=str(path),
+            message=e,
+        ))
+    for w in warnings:
+        issues.append(make_issue(
+            severity="MEDIUM",
+            check_id=_check_id(w, _PRD_WARNING_RULES, "prd.semantic"),
+            family=SKILL_ID,
+            location=str(path),
+            message=w,
+            blocking=False,
+        ))
+    return issues
 
 
 def main() -> int:

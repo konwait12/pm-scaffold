@@ -1,6 +1,6 @@
 # PM Scaffold · 产品 AI 脚手架 · 架构文档
 
-> **版本**：v0.1 · 2026-08-12
+> **版本**：v0.4.0 · 2026-08-14
 > **范围**：3 阶段 × 5 主 Skill × 9 子 Skill × 9 共享模块 × 4 分支 + 1 能力 的整体架构说明
 > **目的**：帮助新成员快速理解项目结构与数据流；为外部协作者提供架构门面
 
@@ -89,6 +89,19 @@ PRD 输出（`prd-assembly`）是下游。
 
 9 个 sub-skill 与 9 个 shared 模块是**横向复用**机制，不独立构成业务阶段。`feature-list` 等被 `function-description` 顺序调用，输出 §功能清单 / §功能流程 / §BR / §VL / §State / §Exception / §AC 七个章节；`page-design` / `interaction-rules` 挂在 `product-ux`。
 
+### 2.6 事件溯源 + 投影缓存（Harness 借鉴）
+
+v0.4.0 起，脚手架引入 Harness 风格的事件溯源基础设施，作为 review/change 生命周期的单一事实来源：
+
+| 模块 | 文件 | 角色 |
+|---|---|---|
+| 事件溯源 | `src/scripts/audit_log.py` | append-only `.audit/events.jsonl`；事件 token = `review/change/decision/confirm/reject/reflow/init`；每事件含 `prev_hash` 链 + `event_sha256` 自指纹 + `payload_sha256` 绑定记录体 + 单调 `recorded_at`；提供 `append_event` / `replay_events` / `verify_chain` / `reconstruct_causality` |
+| 投影缓存 | `src/scripts/projection_cache.py` | 从事件日志折叠 `.audit/projection.json`（latest status / artifact hash / reviewer / review record）；提供 `build_projection` / `read_projection` / `is_stale` / `latest_review_for`；替代 branch_validator 旧 glob+sort；老案例带 warning fallback |
+| 注册表契约硬化 | `src/scripts/registry_contract_check.py` | schema 校验 + 模板↔校验器字段闭环（E3_drift）；`run_tests_mac.sh` Phase 0 首项 fail-loud |
+| 统一错误格式 | `src/scripts/validation_errors.py` | `make_issue` 输出 8+ 字段（severity / blocking / check_id / check_family / location / field_path / message / expectation / actual / repair_hint / source_ref）；`format_issue` / `aggregate_by_check_id` / `wrap_unexpected` |
+
+**不变式**：**event ⟺ model-visible state**——没有事件先落到 `events.jsonl`，状态变更不算正式发生。validators 一律读 `projection.json` 派生视图，不直接 glob+sort markdown（老案例 fallback 带 warning）。
+
 ---
 
 ## 3. 数据流
@@ -103,6 +116,8 @@ PRD 输出（`prd-assembly`）是下游。
   → prd-assembly (汇总 → prd.md)
   → 发布复核（SHA-256）
 ```
+
+每步状态跃迁同步追加事件到 `requirements/REQ-NNN-*/.audit/events.jsonl`（append-only 事件）+ 由 `projection_cache` 折叠派生 `.audit/projection.json`（latest status / hash 派生视图）；事件先于状态变更，保证整条数据流可 replay。
 
 每步产物都有：
 - frontmatter 10 字段（见 `src/templates/_frontmatter-schema.md`）
@@ -123,7 +138,7 @@ PRD 输出（`prd-assembly`）是下游。
 | 4 分支产物 + 1 能力 | `src/support-skills/*/`（竞品/可行性）+ `src/stages/*/skills/{requirement-restate,tracking-plan}/` + `src/shared/clarify/skills/issue-record/` |
 | 9 共享模块 | `src/shared/{audit,human-gate,clarify,...}/` |
 | 26 产物模板 | `src/templates/stage-{1,2,3}-*/` + `src/templates/{support,others,records}/` |
-| 8 核心脚本 | `src/scripts/{orchestrator,pipeline,workflow_registry,consistency_check,traceability_check,dor_check,property_check,branch_validator}.py` |
+| 12 核心脚本 | `src/scripts/{orchestrator,pipeline,workflow_registry,consistency_check,traceability_check,dor_check,property_check,branch_validator}.py` + `audit_log.py`（事件溯源 append-only 日志 + hash 链）+ `projection_cache.py`（投影缓存派生视图）+ `registry_contract_check.py`（注册表契约硬化 Phase 0 首项）+ `validation_errors.py`（统一错误格式 make_issue 8+ 字段） |
 | 模板库接口 | `src/templates/library/{README.md,manifest.schema.json,classifier-interface.md}` |
 | 测试 | `test/skills/*/`（20 套 fixture）+ `test/scripts/*.py`（集成测试） |
 
@@ -133,15 +148,16 @@ PRD 输出（`prd-assembly`）是下游。
 
 ### 5.1 测试
 
-`run_tests_mac.sh` 跑 8 类检查：
+`run_tests_mac.sh` 跑 9 类检查（Phase 0 fail-loud 首项 + 原 8 类）：
+- **Phase 0 注册表契约自检**（`registry_contract_check.py`，schema + 模板↔校验器闭环 E3_drift，失败即 abort 后续测试）
 - 跨文档一致性（`consistency_check.py`）
 - 5 个主 Skill 产物校验
 - 9 个子 Skill 产物校验
 - 5 个分支/能力 Skill 校验器（注册表驱动：4 产物 + 1 能力）
-- 单元/集成测试（workflow_runtime / cross_skill_integration / 5 主 skill 校验器）
+- 单元/集成测试（workflow_runtime / cross_skill_integration / 5 主 skill 校验器 + `test_audit_log.py` 10 个单元测试覆盖幂等/哈希链/自指纹/payload 绑定/单调时间戳）
 - 需求目录状态 / 记录 / RTM 校验
 
-**当前结果**：58/58 PASS
+**当前结果**：81/81 PASS（v0.4.0：新增 audit_log 10 个单元测试，property_check 全线迁移 `make_issue` 无回归）
 
 ### 5.2 发布
 

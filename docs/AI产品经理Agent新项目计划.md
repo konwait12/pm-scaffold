@@ -1,6 +1,7 @@
-# AI 产品经理 Agent 新项目计划（Agent 化大改造）
+# Nova：AI 产品经理 Agent 新项目计划（Agent 化大改造）
 
 > 版本：v0.1（2026-08-14）
+> 项目代号：**Nova**（AI 产品经理 Agent）
 > 定位：**独立新项目**，与现有 PM Scaffold 脚手架不冲突。复用脚手架的产物规范、校验器、术语表，但引入 agent 运行时能力。
 > 参考基准：DeepSeek Harness（dsh）、OpenAI Codex、Anthropic Claude Code 三家架构的深度搬运与参考。
 > 调研日期：2026-08-14（dsh 于 2026-08-13 开源，MIT 协议）

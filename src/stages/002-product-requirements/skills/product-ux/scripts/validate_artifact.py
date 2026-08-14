@@ -6,6 +6,22 @@ from __future__ import annotations
 import argparse, json, re, sys
 from pathlib import Path
 
+
+def _bootstrap_scripts() -> None:
+    import sys as _sys
+    p = Path(__file__).resolve().parent
+    while p.parent != p:
+        cand = p / "src" / "scripts"
+        if (cand / "validation_errors.py").is_file():
+            if str(cand) not in _sys.path:
+                _sys.path.insert(0, str(cand))
+            return
+        p = p.parent
+
+_bootstrap_scripts()
+from validation_errors import make_issue
+
+
 REQUIRED_FRONTMATTER = {
     "artifact_id", "version", "status", "owner",
     "business_fact_owner", "goal_decision_owner", "reviewer",
@@ -112,7 +128,60 @@ def validate(path: Path) -> dict[str, object]:
             if unfilled:
                 warnings.append(f"Clarifications: session rows {unfilled} unfilled at ready_for_human_review")
 
-    return {"ok": not errors, "errors": errors, "warnings": warnings}
+    issues = [
+        make_issue(
+            severity="CRITICAL",
+            check_id=_px_error_check_id(e),
+            family="product_ux",
+            location=str(path),
+            message=e,
+        )
+        for e in errors
+    ]
+    issues.extend(
+        make_issue(
+            severity="MEDIUM",
+            check_id=_px_warning_check_id(w),
+            family="product_ux",
+            location=str(path),
+            message=w,
+            blocking=False,
+        )
+        for w in warnings
+    )
+    return {"ok": not errors, "errors": errors, "warnings": warnings, "issues": issues}
+
+
+_PX_ERROR_RULES = [
+    ("Missing frontmatter fields:", "px.missing_frontmatter"),
+    ("Invalid status", "px.invalid_status"),
+    ("Missing required headings:", "px.missing_headings"),
+    ("Business rules (BR/VL/AC) belong to function-description", "px.br_vl_ac_not_allowed"),
+    ("Confirmed artifact has unresolved confirmation fields:", "px.unresolved_confirmation"),
+    ("Missing upstream_artifact_id;", "px.missing_upstream"),
+]
+
+_PX_WARNING_RULES = [
+    ("Confirmed artifact still contains 待确认 markers in body content", "px.pending_markers_in_confirmed"),
+    ("no page/step skeleton rows", "px.no_page_skeleton"),
+    ("interaction rules (IX-*) found", "px.ix_under_specified"),
+    ("exceeds 5-session cap", "px.clarifications_over_cap"),
+    ("session rows", "px.clarifications_unfilled"),
+]
+
+
+def _px_error_check_id(msg: str) -> str:
+    for needle, check_id in _PX_ERROR_RULES:
+        if needle in msg:
+            return check_id
+    return "px.structural"
+
+
+def _px_warning_check_id(msg: str) -> str:
+    for needle, check_id in _PX_WARNING_RULES:
+        if needle in msg:
+            return check_id
+    return "px.semantic"
 
 
 def main() -> int:

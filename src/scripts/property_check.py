@@ -20,6 +20,13 @@ import sys
 from collections import defaultdict
 from pathlib import Path
 
+SCRIPTS_DIR = Path(__file__).resolve().parent
+if str(SCRIPTS_DIR) not in sys.path:
+    sys.path.insert(0, str(SCRIPTS_DIR))
+from validation_errors import make_issue
+
+FAMILY = "property_check"
+
 
 def _norm(text: str) -> str:
     """Normalize text for comparison: lowercase, strip brackets/parens content."""
@@ -47,37 +54,46 @@ def _parse_frontmatter(text: str) -> dict[str, str]:
     return result
 
 
-def check_minimum_threshold(text: str) -> list[dict]:
-    """B11: minimum threshold — an artifact must not silent-pass the gate.
-
-    An empty file or a section-less artifact must NOT be reported as complete
-    just because the four content checks find nothing to flag. Require:
-      1. at least one ``## `` or ``# `` heading section, and
-      2. the required frontmatter fields ``artifact_id`` / ``status``.
-    Any missing requirement is reported as an ERROR (CRITICAL), not a warning,
-    so ``machine_gate`` rejects the artifact with a non-zero exit.
-    """
+def check_minimum_threshold(text: str, artifact_path: str = "<artifact>") -> list[dict]:
+    """B11: minimum threshold — an artifact must not silent-pass the gate."""
     issues = []
     if not re.search(r"(?m)^#{1,2}\s+\S+", text):
-        issues.append({
-            "severity": "CRITICAL",
-            "check": "minimum_threshold",
-            "message": "产物缺少章节标题：必须至少有一个 `## ` 或 `# ` 章节（空文件/无章节产物不得通过）",
-        })
+        issues.append(make_issue(
+            severity="CRITICAL",
+            check_id="minimum_threshold.no_headings",
+            family=FAMILY,
+            location=artifact_path,
+            field_path="sections.headings",
+            message="产物缺少章节标题",
+            expected="至少有一个 `## ` 或 `# ` 章节（空文件/无章节产物不得通过闸门）",
+            actual="全文 0 个 # 或 ## 标题",
+            repair_hint="在产物开头添加章节标题，例如 ## 1. 业务背景 / ## 功能清单 FEA-001；若使用模板请按模板的章节结构填写内容",
+            source_ref="constitution §4 知识状态必须标注 + B11 silent-pass gate",
+        ))
     fm = _parse_frontmatter(text)
     for field in ("artifact_id", "status"):
         if not fm.get(field):
-            issues.append({
-                "severity": "CRITICAL",
-                "check": "minimum_threshold",
-                "message": f"frontmatter 缺少必备字段 {field}",
-            })
+            issues.append(make_issue(
+                severity="CRITICAL",
+                check_id=f"minimum_threshold.missing_frontmatter_{field}",
+                family=FAMILY,
+                location=artifact_path,
+                field_path=f"frontmatter.{field}",
+                message=f"frontmatter 缺少必备字段 {field}",
+                expected=f"产物 YAML frontmatter 必须含 `{field}: <value>`（与 templates/_frontmatter-schema.md 一致）",
+                actual=f"frontmatter 中未找到字段 {field}（或值为空）",
+                repair_hint=f"在文件最上方 YAML frontmatter（---...--- 区块）中添加一行: `{field}: {'<如-FD-001>' if field=='artifact_id' else 'draft'}`",
+                source_ref="contracts.md §Artifact States + _frontmatter-schema.md",
+            ))
     if not issues:
-        issues.append({
-            "severity": "INFO",
-            "check": "minimum_threshold",
-            "message": "Minimum threshold: artifact has ≥1 heading section and required frontmatter (artifact_id/status)",
-        })
+        issues.append(make_issue(
+            severity="INFO",
+            check_id="minimum_threshold.pass",
+            family=FAMILY,
+            location=artifact_path,
+            message="Minimum threshold OK: ≥1 heading section + required frontmatter (artifact_id/status)",
+            blocking=False,
+        ))
     return issues
 
 
@@ -121,18 +137,29 @@ def section_by_keyword(text: str, *keywords: str) -> str:
     )
 
 
-def check_state_machine(text: str) -> list[dict]:
+def check_state_machine(text: str, artifact_path: str = "<artifact>") -> list[dict]:
     """Check state transition completeness (parses the 状态变化 section only)."""
     issues = []
-    # Only parse the 状态变化 section, and read the 6-column table correctly:
-    # | STATE | 状态名称 | 触发事件 | 目标状态 | 条件 | 所属 FUN |
     section = section_by_keyword(text, "状态变化")
     state_rows = re.findall(
         r'\|\s*[^|]+\s*\|\s*([^|]+)\s*\|\s*([^|]+)\s*\|\s*([^|]+)\s*\|',
         section,
     )
     if not state_rows:
-        return [{"severity": "MEDIUM", "check": "state_machine", "message": "No state transition table found in 状态变化 section"}]
+        issues.append(make_issue(
+            severity="MEDIUM",
+            check_id="state_machine.missing_table",
+            family=FAMILY,
+            location=artifact_path,
+            field_path="sections.状态变化.table",
+            message="No state transition table found in 状态变化 section",
+            expected="若产物定义状态机（状态变化章节非空），必须包含 STATE × 触发事件 → 目标状态 的6列表格",
+            actual="状态变化章节未匹配到任何4列以上的状态行（可能标题命名不一致或使用了纯列表）",
+            repair_hint="按子模板 state-machine-output.md 的 6 列格式填写：| STATE | 状态名称 | 触发事件 | 目标状态 | 条件 | 所属 FUN |",
+            source_ref="state-machine skill output-contract §状态迁移矩阵",
+            blocking=False,
+        ))
+        return issues
 
     states = set()
     events = set()
@@ -150,50 +177,58 @@ def check_state_machine(text: str) -> list[dict]:
             events.add(event)
             transitions.add((current, event))
 
-    # Check: every state has at least one outgoing transition (except terminal)
     terminal_keywords = ['完成', '结束', '关闭', '归档', 'done', 'complete', 'closed']
     for state in states:
         if any(kw in state for kw in terminal_keywords):
             continue
         outgoing = [(s, e) for (s, e) in transitions if s == state]
         if not outgoing:
-            issues.append({
-                "severity": "HIGH",
-                "check": "state_machine",
-                "message": f"State '{state}' has no outgoing transitions (non-terminal state)",
-            })
+            issues.append(make_issue(
+                severity="HIGH",
+                check_id="state_machine.no_outgoing",
+                family=FAMILY,
+                location=artifact_path,
+                field_path=f"sections.状态变化.states.{state}",
+                message=f"State '{state}' has no outgoing transitions (non-terminal state)",
+                expected=f"非终态 '{state}' 必须至少定义 1 条 触发事件→目标状态 的迁移行",
+                actual=f"'{state}' 当前状态变化表格中 outgoing 迁移数 = 0",
+                repair_hint=f"在 状态变化 表格为 '{state}' 增加至少一个触发事件（如「用户提交」「审批通过」「系统处理完成」「超时 N 分钟」等），并指定目标状态",
+                source_ref="thinking-core.md §透镜7 穷尽性 / state-machine subskill output-contract",
+            ))
 
-    # Check: each event transitions from at least one state
     for event in events:
         incoming = [(s, e) for (s, e) in transitions if e == event]
         if not incoming:
-            issues.append({
-                "severity": "MEDIUM",
-                "check": "state_machine",
-                "message": f"Event '{event}' triggers no transitions",
-            })
+            issues.append(make_issue(
+                severity="MEDIUM",
+                check_id="state_machine.event_no_incoming",
+                family=FAMILY,
+                location=artifact_path,
+                field_path=f"sections.状态变化.events.{event}",
+                message=f"Event '{event}' triggers no transitions",
+                expected=f"每个在表中出现过的触发事件 '{event}' 必须至少从 1 个源状态触发迁移",
+                actual=f"事件 '{event}' 在全表匹配到 0 条 incoming 迁移（可能只是目标状态的注释？）",
+                repair_hint=f"若 '{event}' 是真实触发条件，请为它在表格中补充至少一行源状态；若是拼写错误或注释，请删除或修正事件名称",
+                source_ref="state-machine 子技能 SKILL.md §完整性检查",
+                blocking=False,
+            ))
 
     if not issues:
-        issues.append({
-            "severity": "INFO",
-            "check": "state_machine",
-            "message": f"State machine: {len(states)} states, {len(events)} events, {len(transitions)} transitions — appears complete",
-        })
+        issues.append(make_issue(
+            severity="INFO",
+            check_id="state_machine.pass",
+            family=FAMILY,
+            location=artifact_path,
+            message=f"State machine: {len(states)} states, {len(events)} events, {len(transitions)} transitions — appears complete",
+            blocking=False,
+        ))
 
     return issues
 
 
-def check_exception_coverage(text: str) -> list[dict]:
+def check_exception_coverage(text: str, artifact_path: str = "<artifact>") -> list[dict]:
     """Check every BR exception branch has a recovery path."""
     issues = []
-    # BR table columns: | BR-ID | 规则内容 | 类型 | 触发条件 | 预期行为 | 所属功能 | 来源 |
-    # OBS-004: exception semantics are judged from the 规则内容 column (col 2),
-    # NOT the 类型 column (col 3). A BR whose 类型 cell says 异常 but whose content
-    # carries no exception keyword must NOT be flagged, while a BR whose content
-    # contains 失败/异常/拒绝/… must be (the recovery check then applies).
-    # Single-character keywords (不/满) are intentionally excluded: against full
-    # sentence content they match benign substrings (不同/不改/无效/满足 …) and
-    # would re-introduce the exact false positives OBS-004 removes.
     exception_keywords = ['失败', '异常', '超时', '过期', '无法', '拒绝', '禁止', '冲突']
     br_rows = re.findall(
         r'\|\s*(' + _rule_id_re("BR") + r')\s*\|([^|\n]+)\|([^|\n]+)\|([^|\n]+)\|([^|\n]+)\|',
@@ -209,8 +244,6 @@ def check_exception_coverage(text: str) -> list[dict]:
                 "row": " | ".join(c.strip() for c in (content, rule_type, trigger, behavior)),
             })
 
-    # Exception-handling entries that demonstrably carry a recovery path: an
-    # EX/BR row whose text contains a recovery keyword (same table row).
     recovery_keywords = ['恢复', '重试', '重授权', '重新', '联系']
     ex_with_recovery: list[tuple[str, str]] = []
     for line in section_by_keyword(text, "异常").split("\n"):
@@ -220,35 +253,39 @@ def check_exception_coverage(text: str) -> list[dict]:
 
     for br in exception_brs:
         br_id = br["id"]
-        # A recovery counts when (a) an exception entry with a recovery path cites
-        # this BR (e.g. EX 触发条件: 提交时当日已有预约（BR-009）), (b) the BR row
-        # cites an EX id that has a recovery (e.g. 预期行为: 异常详情见 EX-001), or
-        # (c) the BR row itself spells out the recovery (重试/重新/恢复/联系 …).
         has_recovery = (
             any(br_id in row_text for _, row_text in ex_with_recovery)
             or any(ex_id in br["row"] for ex_id, _ in ex_with_recovery)
             or any(kw in br["row"] for kw in recovery_keywords)
         )
         if not has_recovery:
-            issues.append({
-                "severity": "HIGH",
-                "check": "exception_coverage",
-                "message": f"BR {br_id} ('{br['content'][:60]}') 规则内容含异常语义"
-                           f"（失败/异常/拒绝 等），但异常处理章节未找到 recovery path"
-                           f"（类型列：'{br['row'].split(' | ')[1][:20]}'）",
-            })
+            issues.append(make_issue(
+                severity="HIGH",
+                check_id="exception_coverage.missing_recovery",
+                family=FAMILY,
+                location=artifact_path,
+                field_path=f"tables.业务规则.rows.{br_id}",
+                message=f"BR {br_id} 规则内容含异常语义，但异常处理章节未找到 recovery path",
+                expected=f"每条包含异常/失败/拒绝/超时语义的业务规则（{br_id}）必须在 异常与失败处理 章节定义对应的恢复路径（重试/回滚/联系支持/转人工 等）",
+                actual=f"{br_id} 的规则内容：'{br['content'][:60]}'；未在 异常章节匹配到含 恢复/重试/重新/联系 等关键字的恢复方案；规则类型列='{br['row'].split(' | ')[1][:20]}'",
+                repair_hint=f"（1）在 异常与失败处理 表格中为 {br_id} 新增 EX-xxx 行，写明恢复方式（重试 N 次？转人工？提示用户并返回草稿？）；（2）或在业务规则表格本 {br_id} 行的「预期行为」列直接声明恢复动作",
+                source_ref="exception-handling subskill output-contract / thinking-core.md §透镜8 异常路径",
+            ))
 
     if not issues:
-        issues.append({
-            "severity": "INFO",
-            "check": "exception_coverage",
-            "message": f"Exception coverage: {len(exception_brs)} exception BRs, all have recovery paths",
-        })
+        issues.append(make_issue(
+            severity="INFO",
+            check_id="exception_coverage.pass",
+            family=FAMILY,
+            location=artifact_path,
+            message=f"Exception coverage: {len(exception_brs)} exception BRs, all have recovery paths",
+            blocking=False,
+        ))
 
     return issues
 
 
-def check_vl_ac_pairing(text: str) -> list[dict]:
+def check_vl_ac_pairing(text: str, artifact_path: str = "<artifact>") -> list[dict]:
     """Check every VL's owning FUN has a corresponding AC (VL↔AC via 所属 FUN)."""
     issues = []
     vl_section = section_by_keyword(text, "校验规则")
@@ -256,28 +293,33 @@ def check_vl_ac_pairing(text: str) -> list[dict]:
     vl_ids = set(re.findall(_rule_id_re("VL"), vl_section))
     ac_ids = set(re.findall(_rule_id_re("AC"), ac_section))
 
-    # FUN is the 5th column in both tables:
-    #   VL: | VL-001 | 校验内容 | 校验规则 | 错误提示 | FUN-XXX | 来源 |
-    #   AC: | AC-001 | 验收标准 | 量化阈值 | 来源目标 G | FUN-XXX | 优先级 |
-    # `[^|\n]` (not `[^|]`) keeps each match on a single table row so a trailing
-    # `VL-00X` cell in a field table cannot anchor across newlines and capture
-    # a neighbouring 类型 column (布尔/数字/文本) as if it were a FUN id.
     vl_funs = set(re.findall(r'\|\s*VL-\d+[A-Z]?\s*\|(?:[^|\n]*\|){3}\s*([^|\n]+?)\s*\|', vl_section))
     ac_funs = set(re.findall(r'\|\s*AC-\d+[A-Z]?\s*\|(?:[^|\n]*\|){3}\s*([^|\n]+?)\s*\|', ac_section))
     uncovered = {f for f in vl_funs - ac_funs if f and f != "—"}
     for fun in sorted(uncovered):
-        issues.append({
-            "severity": "MEDIUM",
-            "check": "vl_ac_pairing",
-            "message": f"FUN {fun} has validation rules (VL) but no acceptance criteria (AC)",
-        })
+        issues.append(make_issue(
+            severity="MEDIUM",
+            check_id="vl_ac_pairing.uncovered_fun",
+            family=FAMILY,
+            location=artifact_path,
+            field_path=f"tables.校验规则.FUNs.{fun}",
+            message=f"FUN {fun} has validation rules (VL) but no acceptance criteria (AC)",
+            expected=f"每个在 校验规则 表格中出现过的所属 FUN={fun}，必须在 验收依据 表格中有至少一行 验收标准 AC-xxx 覆盖（可验证阈值）",
+            actual=f"所属 FUN '{fun}' 匹配到 VL 规则（共 {len(vl_ids)} 个 VL），但 AC 表格的所属 FUN 集合缺少 '{fun}'（当前 AC 共 {len(ac_ids)} 条）",
+            repair_hint=f"在 验收依据 章节添加 AC-xxx 行，其所属 FUN 列填 '{fun}'，量化阈值列写出该功能的可验证指标（如『成功率≥99.9%』『P95 响应<200ms』『字段 XXX 必过后台校验』）",
+            source_ref="acceptance-criteria subskill SKILL.md §EAR 语法",
+            blocking=False,
+        ))
 
     if not issues:
-        issues.append({
-            "severity": "INFO",
-            "check": "vl_ac_pairing",
-            "message": f"VL↔AC pairing: {len(vl_ids)} VLs, {len(ac_ids)} ACs — all VL FUNs covered by ACs",
-        })
+        issues.append(make_issue(
+            severity="INFO",
+            check_id="vl_ac_pairing.pass",
+            family=FAMILY,
+            location=artifact_path,
+            message=f"VL↔AC pairing: {len(vl_ids)} VLs, {len(ac_ids)} ACs — all VL FUNs covered by ACs",
+            blocking=False,
+        ))
 
     return issues
 
@@ -304,15 +346,8 @@ def _id_fun_pairs(section: str, id_prefix: str, gap: int) -> list[tuple[str, str
     return pairs
 
 
-def _table_rule_density(text: str) -> list[dict]:
-    """Table-based rule density for 功能清单表格 layouts (no `### FUN-XXX`).
-
-    The 功能清单 table defines features (FEA-XXX); FUN IDs are referenced in
-    the 功能流程 / 业务规则 / 校验规则 / 验收依据 tables. BR/VL/AC counts are
-    aggregated per FUN from the 所属 FUN column of the rule tables, then the
-    same density thresholds as the heading-based path are applied. When no FUN
-    can be located, keep the B5 "skipped" warning as a fallback.
-    """
+def _table_rule_density(text: str, artifact_path: str) -> list[dict]:
+    """Table-based rule density for 功能清单表格 layouts (no `### FUN-XXX`)."""
     issues = []
     br_pairs = _id_fun_pairs(section_by_keyword(text, "业务规则"), "BR", 4)
     vl_pairs = _id_fun_pairs(section_by_keyword(text, "校验规则"), "VL", 3)
@@ -320,11 +355,19 @@ def _table_rule_density(text: str) -> list[dict]:
 
     funs = sorted({fun for _, fun in br_pairs + vl_pairs + ac_pairs})
     if not funs:
-        issues.append({
-            "severity": "MEDIUM",
-            "check": "rule_density",
-            "message": "未检测到功能子标题（### FUN-XXX）或表格中的 FUN 引用，规则密度校验跳过",
-        })
+        issues.append(make_issue(
+            severity="MEDIUM",
+            check_id="rule_density.no_fun_refs",
+            family=FAMILY,
+            location=artifact_path,
+            field_path="tables.功能清单",
+            message="未检测到功能子标题（### FUN-XXX）或表格中的 FUN 引用，规则密度校验跳过",
+            expected="function-description 产物应至少定义 FUN-XXX 并在业务规则/校验规则/验收依据表格的 所属 FUN 列引用它",
+            actual="业务规则/校验规则/验收依据 三张表全部未匹配到 FUN-XXX 引用",
+            repair_hint="（1）在功能清单中为每个功能定义 FUN-xxx 编号；（2）在业务规则/校验规则/验收依据表格的 所属 FUN 列填入对应 FUN-xxx（不可留空）",
+            source_ref="function-description skill §FUN/BR/VL/AC 编号规范",
+            blocking=False,
+        ))
         return issues
 
     for fun in funs:
@@ -334,48 +377,52 @@ def _table_rule_density(text: str) -> list[dict]:
         total = br_count + vl_count + ac_count
 
         if total < 3:
-            issues.append({
-                "severity": "HIGH",
-                "check": "rule_density",
-                "message": f"{fun} has only {total} rules (BR={br_count}, VL={vl_count}, AC={ac_count}) — under-specified (minimum 3)",
-            })
+            issues.append(make_issue(
+                severity="HIGH",
+                check_id="rule_density.underspecified",
+                family=FAMILY,
+                location=artifact_path,
+                field_path=f"tables.rules.FUNs.{fun}",
+                message=f"{fun} has only {total} rules (BR={br_count}, VL={vl_count}, AC={ac_count}) — under-specified (minimum 3)",
+                expected=f"每个 FUN 至少需要 3 条 BR+VL+AC 规则合计（推荐 6 条以上，覆盖 规则/校验/验收三个维度）",
+                actual=f"{fun} 当前只有 {total} 条：BR={br_count}, VL={vl_count}, AC={ac_count}",
+                repair_hint=f"为 {fun} 补充规则：至少 1 条业务规则(BR) + 1 条校验规则(VL) + 1 条验收标准(AC)，合计 ≥ 3；推荐达到 6 条以通过 MEDIUM 提示",
+                source_ref="thinking-core.md §透镜4 功能描述密度 / property_check §B5",
+            ))
         elif total < 6:
-            issues.append({
-                "severity": "MEDIUM",
-                "check": "rule_density",
-                "message": f"{fun} has {total} rules (BR={br_count}, VL={vl_count}, AC={ac_count}) — consider adding more coverage",
-            })
+            issues.append(make_issue(
+                severity="MEDIUM",
+                check_id="rule_density.consider_more",
+                family=FAMILY,
+                location=artifact_path,
+                field_path=f"tables.rules.FUNs.{fun}",
+                message=f"{fun} has {total} rules (BR={br_count}, VL={vl_count}, AC={ac_count}) — consider adding more coverage",
+                expected=f"建议每个 FUN 的 BR+VL+AC 合计达到 6 条以上，确保业务规则、前后端校验、验收阈值三维度都覆盖充分",
+                actual=f"{fun} 当前 {total} 条（BR={br_count}, VL={vl_count}, AC={ac_count}），低于 6 条建议阈值",
+                repair_hint=f"检查 {fun} 是否遗漏以下维度：异常分支 BR、边界条件 VL、非功能指标 AC（性能/安全/可用性阈值）；各加 1 条即可达标",
+                source_ref="thinking-core.md §透镜5 异常穷尽 / §透镜9 非功能约束",
+                blocking=False,
+            ))
 
-    if not issues:
-        issues.append({
-            "severity": "INFO",
-            "check": "rule_density",
-            "message": f"All {len(funs)} FUNs have sufficient rule density",
-        })
+    if not any(i["severity"] in {"HIGH", "MEDIUM"} for i in issues):
+        issues.append(make_issue(
+            severity="INFO",
+            check_id="rule_density.pass_table",
+            family=FAMILY,
+            location=artifact_path,
+            message=f"All {len(funs)} FUNs have sufficient rule density (table layout)",
+            blocking=False,
+        ))
 
     return issues
 
 
-def check_rule_density(text: str) -> list[dict]:
-    """Check each FUN has sufficient rule coverage.
-
-    Supports two artifact layouts:
-    1. `### FUN-XXX` sub-heading blocks (each FUN's rules live under its
-       heading) — original heading-based path, unchanged.
-    2. Table-based feature lists (功能清单表格): FUN IDs are referenced in the
-       所属 FUN column of the 业务规则 / 校验规则 / 验收依据 tables, and
-       BR/VL/AC counts are aggregated per FUN from those tables.
-    Falls back to a MEDIUM "skipped" warning when no FUN can be located.
-    """
+def check_rule_density(text: str, artifact_path: str = "<artifact>") -> list[dict]:
+    """Check each FUN has sufficient rule coverage."""
     issues = []
     fun_blocks = re.split(r'###\s+(FUN-\d+[A-Z]?)', text)
-    # `re.split` with a capturing group returns [prefix, id, block, id, block, ...].
-    # When no `### FUN-XXX` heading matches, the list has length 1 (just the whole
-    # text) and the loop below never runs — so we must detect that case explicitly
-    # instead of silently reporting "all blocks pass".
     if len(fun_blocks) < 3:
-        # No `### FUN-XXX` headings → try the table-based layout.
-        return _table_rule_density(text)
+        return _table_rule_density(text, artifact_path)
 
     for i in range(1, len(fun_blocks), 2):
         fun_id = fun_blocks[i]
@@ -386,24 +433,42 @@ def check_rule_density(text: str) -> list[dict]:
         total = br_count + vl_count + ac_count
 
         if total < 3:
-            issues.append({
-                "severity": "HIGH",
-                "check": "rule_density",
-                "message": f"{fun_id} has only {total} rules (BR={br_count}, VL={vl_count}, AC={ac_count}) — under-specified (minimum 3)",
-            })
+            issues.append(make_issue(
+                severity="HIGH",
+                check_id="rule_density.underspecified",
+                family=FAMILY,
+                location=artifact_path,
+                field_path=f"sections.heading_blocks.{fun_id}",
+                message=f"{fun_id} has only {total} rules (BR={br_count}, VL={vl_count}, AC={ac_count}) — under-specified (minimum 3)",
+                expected=f"每个 ### FUN-xxx 子块至少需要 3 条 BR+VL+AC 规则合计",
+                actual=f"{fun_id} 当前 {total} 条：BR={br_count}, VL={vl_count}, AC={ac_count}",
+                repair_hint=f"在 ### {fun_id} 下方小节补充至少 3 条：1条业务规则(BR) + 1条校验(VL) + 1条验收(AC)",
+                source_ref="thinking-core.md §透镜4 / property_check §B5",
+            ))
         elif total < 6:
-            issues.append({
-                "severity": "MEDIUM",
-                "check": "rule_density",
-                "message": f"{fun_id} has {total} rules (BR={br_count}, VL={vl_count}, AC={ac_count}) — consider adding more coverage",
-            })
+            issues.append(make_issue(
+                severity="MEDIUM",
+                check_id="rule_density.consider_more",
+                family=FAMILY,
+                location=artifact_path,
+                field_path=f"sections.heading_blocks.{fun_id}",
+                message=f"{fun_id} has {total} rules (BR={br_count}, VL={vl_count}, AC={ac_count}) — consider adding more coverage",
+                expected=f"建议每个 FUN 子块 ≥6 条 BR+VL+AC 合计",
+                actual=f"{fun_id} 当前 {total} 条（BR={br_count}, VL={vl_count}, AC={ac_count}）",
+                repair_hint=f"为 {fun_id} 增加异常业务 BR、边界校验 VL、以及非功能 AC（性能/安全/可用性）各至少 1 条",
+                source_ref="thinking-core.md §透镜5 / §透镜9",
+                blocking=False,
+            ))
 
-    if not issues:
-        issues.append({
-            "severity": "INFO",
-            "check": "rule_density",
-            "message": "All FUN blocks have sufficient rule density",
-        })
+    if not any(i["severity"] in {"HIGH", "MEDIUM"} for i in issues):
+        issues.append(make_issue(
+            severity="INFO",
+            check_id="rule_density.pass_heading",
+            family=FAMILY,
+            location=artifact_path,
+            message="All FUN blocks have sufficient rule density",
+            blocking=False,
+        ))
 
     return issues
 
@@ -419,34 +484,39 @@ def main():
         sys.exit(2)
 
     text = args.artifact.read_text(encoding="utf-8")
+    art_path = str(args.artifact)
 
     all_issues = []
-    all_issues.extend(check_minimum_threshold(text))
-    all_issues.extend(check_state_machine(text))
-    all_issues.extend(check_exception_coverage(text))
-    all_issues.extend(check_vl_ac_pairing(text))
-    all_issues.extend(check_rule_density(text))
+    all_issues.extend(check_minimum_threshold(text, art_path))
+    all_issues.extend(check_state_machine(text, art_path))
+    all_issues.extend(check_exception_coverage(text, art_path))
+    all_issues.extend(check_vl_ac_pairing(text, art_path))
+    all_issues.extend(check_rule_density(text, art_path))
 
-    errors = [i for i in all_issues if i["severity"] in ("HIGH", "CRITICAL")]
-    warnings = [i for i in all_issues if i["severity"] == "MEDIUM"]
-    info = [i for i in all_issues if i["severity"] == "INFO"]
+    errors = [i for i in all_issues if i.get("severity") in ("HIGH", "CRITICAL") and i.get("blocking", True)]
+    warnings = [i for i in all_issues if i.get("severity") == "MEDIUM" or (i.get("severity") in ("HIGH","CRITICAL") and not i.get("blocking", True))]
+    info = [i for i in all_issues if i.get("severity") == "INFO"]
 
     if args.json:
+        from validation_errors import aggregate_by_check_id
         print(json.dumps({
             "ok": len(errors) == 0,
             "errors": errors,
             "warnings": warnings,
             "info": [i["message"] for i in info],
+            "aggregate_by_check_id": aggregate_by_check_id([errors + warnings]),
+            "total_issues_scanned": len(all_issues),
         }, ensure_ascii=False, indent=2))
     else:
+        from validation_errors import format_issue
         for e in errors:
-            print(f"ERROR [{e['check']}]: {e['message']}")
+            print(f"ERROR {format_issue(e)}")
         for w in warnings:
-            print(f"WARN  [{w['check']}]: {w['message']}")
+            print(f"WARN  {format_issue(w)}")
         for i in info:
-            print(f"INFO  [{i['check']}]: {i['message']}")
+            print(f"INFO  [{i.get('check_id')}] {i['message']}")
         if not errors:
-            print("✅ Property checks passed")
+            print("✅ Property checks passed (standardized format: [check_id] location.field_path: expect vs actual (修复))")
 
     sys.exit(0 if len(errors) == 0 else 1)
 

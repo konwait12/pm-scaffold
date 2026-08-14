@@ -34,7 +34,7 @@
 | 2 | `src/framework/constitution.md` | 6 条硬宪法，违反任何一条 = 缺陷 |
 | 3 | `src/framework/workflow.md` | 每个 Work Item 必走的 8 步循环 |
 | 4 | `src/framework/thinking-core.md` | 17 个思考透镜，§1 的 6 个核心透镜每次必用 |
-| 5 | `src/framework/contracts.md` | 知识状态标注 + 确认不变式 |
+| 5 | `src/framework/contracts.md` | 知识状态标注 + 确认不变式；含 AuditEvent / ProjectionCache / ValidatorIssue / RegistryContract 等扩展 Shared Records 契约（v0.4.0 Harness 借鉴） |
 
 之后读当前需求的 `STAGE.md` 和对应 Skill 的 `SKILL.md`。
 
@@ -49,6 +49,7 @@
 5. **产物单点存放**——一个 artifact 一个位置，版本演进用 v0.* 快照，不在别处复制。
 6. **变更已确认内容使下游失效**——回归到最早受影响的 Work Item 重跑。
 7. **注册表是唯一真相源**——不要硬编码路径 / 阶段名 / Skill 名。
+8. **事件日志不可篡改 + 校验器统一错误格式**（v0.4.0 硬宪法第 7/8 条）—— `.audit/events.jsonl` 是 append-only 单一事实来源；`prev_hash` 链断 / `event_sha256` 自指纹不符 / `payload_sha256` 不绑定记录体即 CRITICAL，由 `audit_log.verify_chain` 检测；所有校验器必须用 `validation_errors.make_issue` 输出统一错误格式（8+ 字段：severity / blocking / check_id / check_family / location / field_path / message / expectation / actual / repair_hint / source_ref），禁止裸 stack trace。`registry_contract_check.py` 作为 `run_tests_mac.sh` 首项 fail-loud 关卡，任何 skill 新增/修改必须通过。
 
 ---
 
@@ -154,7 +155,7 @@ src/framework/       宪法、契约、思考核心、注册表（先读这里�
 src/stages/          3 阶段 × 5 主 skill + 9 子 skill
 src/shared/          9 个共享机制（审计/澄清/变更/闸门/追溯等）
 src/support-skills/  4 支持 skill；+4 分支 skill 在 stages/shared（共 8）
-src/scripts/         pipeline / orchestrator / 校验器
+src/scripts/         pipeline / orchestrator / dor_check / branch_validator / audit_log / projection_cache / registry_contract_check / validation_errors（后四项为 v0.4.0 Harness 借鉴基础设施）
 src/templates/       24 个产物模板 + resolver
 src/toolkit/         工具使用指南（Figma / Mermaid / lark-cli）
 test/                回归测试（fixtures + 单元/集成测试）

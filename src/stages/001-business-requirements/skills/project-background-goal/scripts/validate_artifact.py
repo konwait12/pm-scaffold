@@ -14,6 +14,21 @@ import sys
 from pathlib import Path
 
 
+def _bootstrap_scripts() -> None:
+    import sys as _sys
+    p = Path(__file__).resolve().parent
+    while p.parent != p:
+        cand = p / "src" / "scripts"
+        if (cand / "validation_errors.py").is_file():
+            if str(cand) not in _sys.path:
+                _sys.path.insert(0, str(cand))
+            return
+        p = p.parent
+
+_bootstrap_scripts()
+from validation_errors import make_issue
+
+
 REQUIRED_FRONTMATTER = {
     "artifact_id",
     "version",
@@ -152,18 +167,65 @@ def validate(path: Path) -> dict[str, object]:
     errors.extend(sem_errors)
     warnings.extend(sem_warnings)
 
-    issues = []
-    for e in errors:
-        issues.append({"code": "BG-STRUCT", "severity": "blocking", "message": e, "waivable": False})
+    issues = [
+        make_issue(
+            severity="CRITICAL",
+            check_id=_bg_error_check_id(e),
+            family="project_background_goal",
+            location=str(path),
+            message=e,
+        )
+        for e in errors
+    ]
     for w in warnings:
-        severity = "advisory"
-        waivable = False
+        severity = "MEDIUM"
         if "ready_for_human_review" in w and ("空" in w or "empty" in w.lower()):
-            severity, waivable = "waiver_required", True
+            severity = "HIGH"
         elif "待确认" in w and "UNKNOWN" in w:
-            severity, waivable = "waiver_required", True
-        issues.append({"code": "BG-SEMANTIC", "severity": severity, "message": w, "waivable": waivable})
+            severity = "HIGH"
+        issues.append(make_issue(
+            severity=severity,
+            check_id=_bg_warning_check_id(w),
+            family="project_background_goal",
+            location=str(path),
+            message=w,
+            blocking=False,
+        ))
     return {"ok": not errors, "errors": errors, "warnings": warnings, "issues": issues}
+
+
+_BG_ERROR_RULES = [
+    ("Missing frontmatter fields:", "bg.missing_frontmatter"),
+    ("Invalid status", "bg.invalid_status"),
+    ("Missing required headings:", "bg.missing_headings"),
+    ("No SRC-* source traceability identifier found", "bg.missing_src_traceability"),
+    ("Confirmed artifact has unresolved confirmation fields:", "bg.unresolved_confirmation"),
+    ("目标、未来期望与成功判断 section is empty", "bg.empty_goal_at_review"),
+]
+
+_BG_WARNING_RULES = [
+    ("Confirmed artifact still contains 待确认 markers in body content", "bg.pending_markers_in_confirmed"),
+    ("Artifact is unusually short", "bg.artifact_too_short"),
+    ("implementation vocabulary", "bg.solution_as_fact"),
+    ("markers found but status is", "bg.status_mismatch_pending_markers"),
+    ("exceeds the 5-session cap", "bg.clarifications_over_cap"),
+    ("session row(s)", "bg.clarifications_unfilled"),
+    ("no numeric fit criterion", "bg.no_numeric_fit_criterion"),
+]
+
+
+def _bg_error_check_id(msg: str) -> str:
+    for needle, check_id in _BG_ERROR_RULES:
+        if needle in msg:
+            return check_id
+    return "bg.structural"
+
+
+def _bg_warning_check_id(msg: str) -> str:
+    for needle, check_id in _BG_WARNING_RULES:
+        if needle in msg:
+            return check_id
+    return "bg.semantic"
 
 
 def check_semantic_red_flags(text: str, metadata: dict[str, str]) -> tuple[list[str], list[str]]:

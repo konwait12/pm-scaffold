@@ -39,6 +39,8 @@
 | 有效 reviewer | confirmed 产物必须有有效人工 reviewer（非 AI / 待确认 / simulated） | `src/scripts/branch_validator.py` |
 | 记录自指纹（B13） | ReviewRecord 正文（除自身行）的 `record_sha256` 自指纹，篡改任一字段即 CRITICAL | `src/scripts/hash_anchor.py` `record_body_sha256()` |
 | 外部锚点链（B13） | `99-review/.hash-anchor.jsonl` append-only 锚点链，防「artifact + ReviewRecord 同步篡改」 | `src/scripts/hash_anchor.py` `record_anchor()` / `verify_anchor_chain()` / `verify_artifact_anchored()` |
+| 事件溯源链（Harness 借鉴点一） | `.audit/events.jsonl` append-only + `event_sha256` 自指纹 + `prev_hash` 链 + 单调 `recorded_at` + `payload_sha256` 绑定记录体；`audit_log.verify_chain` 检测任何篡改（删行 / 改字段 / 断链） | `src/scripts/audit_log.py` `append_event()` / `verify_chain()` / `reconstruct_causality()` |
+| 投影缓存（Harness 借鉴点二） | `.audit/projection.json` 派生视图：从事件日志折叠 latest status / artifact hash / reviewer / review record；`is_stale` 检测自动重建；`branch_validator` 改读 projection 替代 glob+sort（老案例带 warning fallback） | `src/scripts/projection_cache.py` `build_projection()` / `read_projection()` / `is_stale()` / `latest_review_for()` |
 
 > **B13 的意义**：仅比对 artifact hash 与 ReviewRecord hash 是「闭环校验」，同步篡改可绕过；`record_sha256` 自指纹 + `.hash-anchor.jsonl` 外部锚点提供篡改可检测的外部参照。变更管理必须**自动重算并更新**这些锚点，而不是让用户手动改 hash（F1 的根因）。
 
@@ -96,6 +98,7 @@
 - 批准后，`src/shared/change-management/archive.py` 生成 `99-review/change-record-CHG-NNN.md`（ChangeRecord），含审批摘要 / 归档时间 / 下游级联 / 解决清单。
 - 同时登记 `DecisionRecord`（DEC-NNN，decider 必须是人）。
 - 本文件 §六 提供统一的 change-record 模板（from_status / to_status / reason / changed_at / changed_by / downstream_impact）。
+- 同时通过 `audit_log.append_event` 写入 `change` 类型事件到 `requirements/REQ-NNN-*/.audit/events.jsonl`，`payload` 指向 ChangeRecord 路径，`payload_sha256` 绑定 ChangeRecord 正文（任何对 ChangeRecord 的事后篡改都会在 `audit_log.verify_chain` 时被检测到）。
 
 **⑤ 更新下游**
 - 用 `pipeline.py reflow --apply` 将受影响下游 confirmed 产物翻转 `superseded`，并生成 `change-record-reflow-*.md`。
@@ -126,6 +129,7 @@
 1. **`confirmed → draft` 必须留痕 + reason**（B12）：现状 `pipeline.py --decision changes` 仅对 approve 路径校验 `current_status`，对 revert 路径无审批 / 留痕要求，已 confirmed 产物可被静默回退为 draft。**变更管理要求**：所有 `* → draft` 逆向跃迁必须记录 `modification-record.md`（`src/shared/human-gate/revision-templates/modification-record.md`）或 ChangeRecord，含 reason / changed_by / changed_at。
 2. **`confirmed → superseded` 必须 superseded_reason**：reflow 翻转时在 `change-record-reflow-*.md` 记录触发原因与受影响清单。
 3. **不可变基线保护**：任何对 confirmed 产物的内容修改，若未先走变更流程（未先置 superseded / 留痕回退 draft），`branch_validator` 报 CRITICAL 阻断。
+4. **事件先于状态**（Harness 借鉴点一·事件溯源）：每次状态跃迁必须**先** `audit_log.append_event` 落事件（type ∈ `{change, confirm, reject, reflow}`，`payload` 指向对应 ChangeRecord / ReviewRecord 路径，`payload_sha256` 绑定记录体），**再**改写 frontmatter `status` 字段。事件日志先于状态变更，保证 `.audit/events.jsonl` 始终可 replay 出完整因果链；若顺序倒置（先改状态后落事件），中途崩溃会留下「状态已变但无事件」的不可追溯窗口。`projection_cache` 随后折叠派生 `.audit/projection.json` 作为下游 validator 的统一读取入口。
 
 ### 4.3 与 B12/B13 修复的衔接
 
@@ -253,3 +257,7 @@ downstream_impact: [{受影响下游产物 ID 列表}]
 | confirmed hash 校验 / 锚点校验 | `src/scripts/branch_validator.py` |
 | record_sha256 / .hash-anchor.jsonl | `src/scripts/hash_anchor.py` |
 | B12 / B13 / F1 / ISS-011 / P1 / M1 来源 | `.test-output/问题清单-PM-Scaffold实测.md` §二 / §三 / §五 / §六 |
+| 事件溯源链（change/confirm/reflow 生命周期单一事实来源） | `src/scripts/audit_log.py`（`.audit/events.jsonl` append-only + prev_hash 链 + event_sha256 自指纹 + payload_sha256 绑定记录体） |
+| 投影缓存（latest status / hash 派生视图，validators 统一读取入口） | `src/scripts/projection_cache.py`（`.audit/projection.json`，自动重建，老案例带 warning fallback） |
+| 注册表契约硬化（schema + 模板↔校验器闭环 E3_drift，变更后必跑） | `src/scripts/registry_contract_check.py`（`run_tests_mac.sh` Phase 0 首项 fail-loud） |
+| 校验器统一错误格式（make_issue 8+ 字段，变更校验结果统一形态） | `src/scripts/validation_errors.py` |

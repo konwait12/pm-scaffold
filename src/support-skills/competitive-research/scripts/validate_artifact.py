@@ -6,6 +6,22 @@ from __future__ import annotations
 import argparse, json, re, sys
 from pathlib import Path
 
+
+def _bootstrap_scripts() -> None:
+    import sys as _sys
+    p = Path(__file__).resolve().parent
+    while p.parent != p:
+        cand = p / "src" / "scripts"
+        if (cand / "validation_errors.py").is_file():
+            if str(cand) not in _sys.path:
+                _sys.path.insert(0, str(cand))
+            return
+        p = p.parent
+
+_bootstrap_scripts()
+from validation_errors import make_issue
+
+
 REQUIRED_HEADINGS = ["竞品列表", "逐品分析", "横向对比", "结论"]
 PENDING = ("待确认",)
 ANALYSIS_SECTIONS = ["逐品分析", "横向对比"]
@@ -52,7 +68,53 @@ def validate(path: Path) -> dict:
                 "No SRC-ID found: 逐品分析/横向对比 claims must cite SRC-xxx "
                 "(Source Fidelity)"
             )
-    return {"ok": not errors, "errors": errors, "warnings": warnings}
+    issues = [
+        make_issue(
+            severity="CRITICAL",
+            check_id=_cr_error_check_id(e),
+            family="competitive_research",
+            location=str(path),
+            message=e,
+        )
+        for e in errors
+    ]
+    issues.extend(
+        make_issue(
+            severity="MEDIUM",
+            check_id=_cr_warning_check_id(w),
+            family="competitive_research",
+            location=str(path),
+            message=w,
+            blocking=False,
+        )
+        for w in warnings
+    )
+    return {"ok": not errors, "errors": errors, "warnings": warnings, "issues": issues}
+
+
+_CR_ERROR_RULES = [
+    ("Missing required heading:", "cr.missing_heading"),
+]
+
+_CR_WARNING_RULES = [
+    ("Competitive findings should be marked AI_INFERENCE until confirmed", "cr.claims_not_marked_inference"),
+    ("Artifact contains 待确认 placeholders", "cr.pending_placeholders"),
+    ("No SRC-ID found: 逐品分析/横向对比 claims must cite SRC-xxx", "cr.missing_src_fidelity"),
+]
+
+
+def _cr_error_check_id(msg: str) -> str:
+    for needle, check_id in _CR_ERROR_RULES:
+        if needle in msg:
+            return check_id
+    return "cr.structural"
+
+
+def _cr_warning_check_id(msg: str) -> str:
+    for needle, check_id in _CR_WARNING_RULES:
+        if needle in msg:
+            return check_id
+    return "cr.semantic"
 
 
 def main() -> int:

@@ -15,6 +15,21 @@ import sys
 from pathlib import Path
 
 
+def _bootstrap_scripts() -> None:
+    import sys as _sys
+    p = Path(__file__).resolve().parent
+    while p.parent != p:
+        cand = p / "src" / "scripts"
+        if (cand / "validation_errors.py").is_file():
+            if str(cand) not in _sys.path:
+                _sys.path.insert(0, str(cand))
+            return
+        p = p.parent
+
+_bootstrap_scripts()
+from validation_errors import make_issue
+
+
 REQUIRED_FRONTMATTER = {
     "artifact_id",
     "version",
@@ -183,12 +198,58 @@ def validate(path: Path) -> dict[str, object]:
                 + ", ".join(unresolved)
             )
 
-    issues = []
-    for e in errors:
-        issues.append({"code": "RR-STRUCT", "severity": "blocking", "message": e, "waivable": False})
-    for w in warnings:
-        issues.append({"code": "RR-SEMANTIC", "severity": "advisory", "message": w, "waivable": False})
+    issues = [
+        make_issue(
+            severity="CRITICAL",
+            check_id=_rr_error_check_id(e),
+            family="requirement_restate",
+            location=str(path),
+            message=e,
+        )
+        for e in errors
+    ]
+    issues.extend(
+        make_issue(
+            severity="MEDIUM",
+            check_id=_rr_warning_check_id(w),
+            family="requirement_restate",
+            location=str(path),
+            message=w,
+            blocking=False,
+        )
+        for w in warnings
+    )
     return {"ok": not errors, "errors": errors, "warnings": warnings, "issues": issues}
+
+
+_RR_ERROR_RULES = [
+    ("Missing frontmatter fields:", "rr.missing_frontmatter"),
+    ("Invalid status", "rr.invalid_status"),
+    ("Missing required headings:", "rr.missing_headings"),
+    ("No SRC-* source traceability identifier found", "rr.missing_src_traceability"),
+    ("Confirmed artifact has unresolved confirmation fields:", "rr.unresolved_confirmation"),
+]
+
+_RR_WARNING_RULES = [
+    ("重述需求清单 is empty at ready_for_human_review", "rr.empty_restate_list_at_review"),
+    ("has placeholder restated or original_phrase", "rr.placeholder_restated"),
+    ("conflict description still placeholder", "rr.placeholder_conflict"),
+    ("divergence candidate has placeholder Evidence or Impact", "rr.placeholder_divergence_candidate"),
+]
+
+
+def _rr_error_check_id(msg: str) -> str:
+    for needle, check_id in _RR_ERROR_RULES:
+        if needle in msg:
+            return check_id
+    return "rr.structural"
+
+
+def _rr_warning_check_id(msg: str) -> str:
+    for needle, check_id in _RR_WARNING_RULES:
+        if needle in msg:
+            return check_id
+    return "rr.semantic"
 
 
 def main() -> int:

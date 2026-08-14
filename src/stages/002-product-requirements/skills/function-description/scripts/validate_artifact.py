@@ -6,6 +6,22 @@ from __future__ import annotations
 import argparse, json, re, sys
 from pathlib import Path
 
+
+def _bootstrap_scripts() -> None:
+    import sys as _sys
+    p = Path(__file__).resolve().parent
+    while p.parent != p:
+        cand = p / "src" / "scripts"
+        if (cand / "validation_errors.py").is_file():
+            if str(cand) not in _sys.path:
+                _sys.path.insert(0, str(cand))
+            return
+        p = p.parent
+
+_bootstrap_scripts()
+from validation_errors import make_issue
+
+
 REQUIRED_FRONTMATTER = {
     "artifact_id", "version", "status", "owner",
     "business_fact_owner", "goal_decision_owner", "reviewer",
@@ -189,7 +205,66 @@ def validate(path: Path) -> dict[str, object]:
             if unfilled:
                 warnings.append(f"Clarifications: session rows {unfilled} unfilled")
 
-    return {"ok": not errors, "errors": errors, "warnings": warnings}
+    issues = [
+        make_issue(
+            severity="CRITICAL",
+            check_id=_fd_error_check_id(e),
+            family="function_description",
+            location=str(path),
+            message=e,
+        )
+        for e in errors
+    ]
+    issues.extend(
+        make_issue(
+            severity="MEDIUM",
+            check_id=_fd_warning_check_id(w),
+            family="function_description",
+            location=str(path),
+            message=w,
+            blocking=False,
+        )
+        for w in warnings
+    )
+    return {"ok": not errors, "errors": errors, "warnings": warnings, "issues": issues}
+
+
+_FD_ERROR_RULES = [
+    ("Missing frontmatter fields:", "fd.missing_frontmatter"),
+    ("Invalid status", "fd.invalid_status"),
+    ("Missing required headings:", "fd.missing_headings"),
+    ("No FEA-* feature identifier found", "fd.missing_features"),
+    ("No FUN-* function identifier found", "fd.missing_functions"),
+    ("No BR-* business rule identifier found", "fd.missing_business_rules"),
+    ("Confirmed artifact has unresolved confirmation fields:", "fd.unresolved_confirmation"),
+    ("Missing upstream_artifact_id;", "fd.missing_upstream"),
+    ("Semantic (D4.4): AC-", "fd.d44_no_gwt"),
+]
+
+_FD_WARNING_RULES = [
+    ("Confirmed artifact still contains 待确认 markers in body", "fd.pending_markers_in_confirmed"),
+    ("no business rules (BR-*)", "fd.functions_without_business_rules"),
+    ("no acceptance criteria (AC-*)", "fd.functions_without_acceptance_criteria"),
+    ("functions with only", "fd.low_rule_density"),
+    ("P0 functions but only", "fd.p0_missing_exception_handling"),
+    ("interaction rules (IX-*) found", "fd.ix_belongs_to_ux"),
+    ("exceeds 5-session cap", "fd.clarifications_over_cap"),
+    ("session rows", "fd.clarifications_unfilled"),
+]
+
+
+def _fd_error_check_id(msg: str) -> str:
+    for needle, check_id in _FD_ERROR_RULES:
+        if needle in msg:
+            return check_id
+    return "fd.structural"
+
+
+def _fd_warning_check_id(msg: str) -> str:
+    for needle, check_id in _FD_WARNING_RULES:
+        if needle in msg:
+            return check_id
+    return "fd.semantic"
 
 
 def main() -> int:

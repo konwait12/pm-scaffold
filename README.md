@@ -4,7 +4,7 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 [![Repo](https://img.shields.io/badge/GitHub-konwait12%2Fpm--scaffold-blue.svg)](https://github.com/konwait12/pm-scaffold)
-[![Tests](https://img.shields.io/badge/tests-61%2F61-green.svg)](run_tests_mac.sh)
+[![Tests](https://img.shields.io/badge/tests-81%2F81-green.svg)](run_tests_mac.sh)
 
 ---
 
@@ -16,7 +16,7 @@
 open src/toolkit/visualization/scaffold-flow.html
 ```
 
-打开后：左侧点「**📖 新手教程 · 从这里开始**」，10 章协作手册教你——用什么 Agent、怎么给 AI 下指令、从零到第一份 prd.md 的完整剧本。左侧导航是项目全景：流程图（每条线有条件标注）、19 个 Skill 说明书、10 个产物说明书、11 个脚本说明书、命令全集、文件架构。**看完这个驾驶舱，你就了解这个项目的一切。**
+打开后：左侧点「**📖 新手教程 · 从这里开始**」，10 章协作手册教你——用什么 Agent、怎么给 AI 下指令、从零到第一份 prd.md 的完整剧本。左侧导航是项目全景：流程图（每条线有条件标注）、19 个 Skill 说明书、10 个产物说明书、15 个脚本说明书、命令全集、文件架构。**看完这个驾驶舱，你就了解这个项目的一切。**
 
 ---
 
@@ -72,6 +72,7 @@ flowchart LR
     SH -.服务.-> S3
     BR[4 分支产物 + 1 能力<br/>竞品/可行性/埋点/问题清单 + 需求重举] -.按需触发.-> S1
     BR -.按需触发.-> S2
+    AU[事件溯源层<br/>.audit/events.jsonl + projection.json<br/>Harness 借鉴·单一事实来源] -.event source.-> SH
 ```
 
 每个工作项走 8 步循环：`Preflight → Intake → Think → Clarify → Generate → Audit → Human Gate → Commit/Reflow`。机器闸门只能产出 `ready_for_human_review`，`confirmed` 只能由真实人工评审产生。产物状态机：`draft → needs_user_input / conditional_review / ready_for_human_review → confirmed`（`superseded` = 上游变更被级联失效）。
@@ -98,6 +99,7 @@ flowchart LR
 
 | 命令 | 作用 | 谁能改状态 |
 |---|---|---|
+| `python3 src/scripts/registry_contract_check.py` | registry 自检（schema + 模板↔校验器闭环 E3_drift），作为 `run_tests_mac.sh` 第一项 fail-loud | 只读 |
 | `pipeline.py init REQ-NNN-topic` | 建需求骨架 | 机器（仅骨架） |
 | `pipeline.py <req> status` | 状态 + next + 越级检测 + 信号层 | 只读 |
 | `pipeline.py <req> entry` | L0-L4 内容判定 + entry_blocked + 分支信号 | 只读 |
@@ -112,7 +114,7 @@ src/framework/       宪法、契约、17 思考透镜、workflow-registry.json�
 src/stages/          3 阶段 × 5 主 skill + 9 子 skill + 3 分支 skill
 src/support-skills/  4 支持 skill（发散/竞品/方案/发布）
 src/shared/          9 共享机制（审计/澄清/变更/闸门/追溯等）
-src/scripts/         pipeline / orchestrator / dor_check 等 11 个脚本
+src/scripts/         pipeline / orchestrator / dor_check 等 15 个脚本（含 audit_log / projection_cache / registry_contract_check / validation_errors 四项 Harness 借鉴基础设施）
 src/templates/       24 个产物模板 + resolver（优先级栈）
 src/toolkit/         工具指南 + visualization/（驾驶舱 HTML）
 test/                回归测试（fixtures 正反例 + 单元/集成）
@@ -131,7 +133,7 @@ requirements/        你的需求实例（运行时生成，gitignore——每�
 ## 验证
 
 ```bash
-bash run_tests_mac.sh                          # 全量回归（61 项，含负例反向断言）
+bash run_tests_mac.sh                          # 全量回归（81 项，含负例反向断言；首项 registry_contract_check）
 python3 src/scripts/consistency_check.py       # 跨文档一致性
 python3 src/scripts/pipeline.py <REQ-DIR> status  # 需求状态
 ```

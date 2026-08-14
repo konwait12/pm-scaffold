@@ -24,7 +24,10 @@ negative() {
   fi
 }
 
-# ---- Phase 0: cross-document consistency (must pass before anything else) ----
+# ---- Phase 0: registry contract (借鉴点三) — must pass BEFORE consistency, so template↔validator drift never reaches fixtures ----
+run "registry/contract-schema+closure" python3 "$ROOT/src/scripts/registry_contract_check.py"
+
+# ---- Phase 0b: cross-document consistency (registry-vs-docs paths / skill contracts / E1/E3/E desensitization) ----
 run "consistency/registry-vs-docs" python3 "$ROOT/src/scripts/consistency_check.py"
 
 while IFS=$'\t' read -r skill path; do

@@ -6,6 +6,22 @@ from __future__ import annotations
 import argparse, json, re, sys
 from pathlib import Path
 
+
+def _bootstrap_scripts() -> None:
+    import sys as _sys
+    p = Path(__file__).resolve().parent
+    while p.parent != p:
+        cand = p / "src" / "scripts"
+        if (cand / "validation_errors.py").is_file():
+            if str(cand) not in _sys.path:
+                _sys.path.insert(0, str(cand))
+            return
+        p = p.parent
+
+_bootstrap_scripts()
+from validation_errors import make_issue
+
+
 FEASIBILITY_HEADINGS = ["市场空间", "技术可行性", "投入产出", "风险评估", "结论"]
 COMPARISON_HEADINGS = ["候选方案", "方案对比矩阵", "AI 推荐", "人工决策"]
 PENDING = ("待确认",)
@@ -42,7 +58,53 @@ def validate(path: Path) -> dict:
             "No SRC-ID or knowledge-state label (FACT/DECISION/AI_INFERENCE/UNKNOWN) "
             "found: cost/risk figures must be traceable (Source Fidelity)"
         )
-    return {"ok": not errors, "errors": errors, "warnings": warnings}
+    issues = [
+        make_issue(
+            severity="CRITICAL",
+            check_id=_fa_error_check_id(e),
+            family="feasibility_analysis",
+            location=str(path),
+            message=e,
+        )
+        for e in errors
+    ]
+    issues.extend(
+        make_issue(
+            severity="MEDIUM",
+            check_id=_fa_warning_check_id(w),
+            family="feasibility_analysis",
+            location=str(path),
+            message=w,
+            blocking=False,
+        )
+        for w in warnings
+    )
+    return {"ok": not errors, "errors": errors, "warnings": warnings, "issues": issues}
+
+
+_FA_ERROR_RULES = [
+    ("Missing required heading:", "fa.missing_heading"),
+]
+
+_FA_WARNING_RULES = [
+    ("No clear recommendation found", "fa.no_clear_recommendation"),
+    ("Assessment still has 待确认 placeholders", "fa.pending_placeholders"),
+    ("No SRC-ID or knowledge-state label", "fa.missing_src_fidelity"),
+]
+
+
+def _fa_error_check_id(msg: str) -> str:
+    for needle, check_id in _FA_ERROR_RULES:
+        if needle in msg:
+            return check_id
+    return "fa.structural"
+
+
+def _fa_warning_check_id(msg: str) -> str:
+    for needle, check_id in _FA_WARNING_RULES:
+        if needle in msg:
+            return check_id
+    return "fa.semantic"
 
 
 def main() -> int:
