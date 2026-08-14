@@ -1,8 +1,6 @@
-# 团队职责矩阵（RACI · G2）
+# 团队职责矩阵（RACI）
 
-> 本文档定义 PM Scaffold 脚手架各环节的角色与职责边界，用 RACI 矩阵表达「谁执行 / 谁负责 / 咨询谁 / 知会谁」，并明确「AI 可以做什么 / 必须人审什么」的人机分工（对应 ISS-011）。
->
-> 对应问题清单条目：`.test-output/问题清单-PM-Scaffold实测.md` §三 **G2**（缺少「涉及团队及职责总结」落点）、§三 **ISS-011**（「改版 + CR」并存无显式变更管理落点 → 人机分工）。
+> 本文档定义 PM Scaffold 脚手架各环节的角色与职责边界，用 RACI 矩阵表达「谁执行 / 谁负责 / 咨询谁 / 知会谁」，并明确「AI 可以做什么 / 必须人审什么」的人机分工。覆盖两个交付物落点：角色与职责的 RACI 表达、人机分工边界（后者与 `docs/变更管理机制-change-management.md` 的改版 / CR 落点衔接）。
 > 相关概念：评审角色约束见 `src/framework/contracts.md`（Confirmation Invariant）与 `src/framework/governance.md`（Confirmation）；角色枚举见 `src/framework/workflow-registry.json`（`reviewer_roles` / `support_capabilities[*].responsible_role`）。
 
 ---
@@ -13,7 +11,7 @@
 
 1. **脚手架各环节有哪些角色**：`business_owner` / `product_manager` / `ux_designer` / `tech_lead` / `qa` / `ai_agent` / `reviewer` / `approver` 的定义与在现有机制中的落点。
 2. **每个环节谁做什么**：用 RACI 矩阵列出 10 个环节 × 8 个角色。
-3. **人机分工边界**：AI 可以做什么、必须人审什么（ISS-011）。
+3. **人机分工边界**：AI 可以做什么、必须人审什么。
 
 > 本文档是**文档**，不改变任何代码行为。RACI 是职责约定，不是校验器输入；但其中「reviewer 必须命中 `authorized-reviewers.json` + `reviewer_roles`」等约束与现有代码一致，是**硬约束**。
 
@@ -98,7 +96,7 @@
 
 ---
 
-## 四、AI 可以做什么 / 必须人审什么（ISS-011 人机分工）
+## 四、AI 可以做什么 / 必须人审什么（人机分工）
 
 ### 4.1 AI 可以做什么（ai_agent 的权限边界）
 
@@ -124,7 +122,7 @@
 | 5 | **批准变更**：变更提案 §6 审批表由 `business_owner` / `product_owner` 给出 approved | `src/shared/change-management/proposal-template.md`；`archive.py` `validate_approved()` |
 | 6 | **绕过 human gate**：`--yes` 只跑机器检查，不产生确认 | `src/scripts/pipeline.py`（`--yes` NOTICE） |
 | 7 | **对 `simulated` 产物 approve**：reviewer 名含 simulated / 模拟被拒绝 | `src/scripts/pipeline.py`；`docs/状态语义矩阵.md` §四 |
-| 8 | **静默回退已确认产物**：`confirmed → draft` 必须留痕（B12，见变更管理文档） | `.test-output/问题清单-PM-Scaffold实测.md` §二 B12 |
+| 8 | **静默回退已确认产物**：`confirmed → draft` 必须留痕（见变更管理文档） | `docs/变更管理机制-change-management.md`（逆向跃迁留痕要求） |
 
 ### 4.3 人机分工的校验闭环
 
@@ -148,7 +146,7 @@ branch_validator 复核（hash 绑定 + record_sha256 + 锚点）
 
 1. **评审角色硬约束**：`reviewer` 必须命中 `00-input/authorized-reviewers.json` 且角色在 registry `reviewer_roles` 内（`src/scripts/pipeline.py` / `branch_validator.py`）。RACI 中的「评审」环节只允许 `business_owner` / `product_owner` 作为 reviewer。
 2. **frontmatter 角色字段**：`business_fact_owner` / `goal_decision_owner` / `owner` / `reviewer` 与本文档角色一一对应（`src/templates/_frontmatter-schema.md` §1）。
-3. **G2 建议的落地方向**（本文档不实现，仅记录）：在 `prd.md` 新增「涉及团队及职责总结」章节（团队 / 系统 / 职责 / 交付物 / 依赖），并扩展 frontmatter 支持多团队字段；本 RACI 矩阵可作为该章节的权威来源。
+3. **「涉及团队及职责总结」章节的落地方向**（本文档不实现，仅记录）：在 `prd.md` 新增「涉及团队及职责总结」章节（团队 / 系统 / 职责 / 交付物 / 依赖），并扩展 frontmatter 支持多团队字段；本 RACI 矩阵可作为该章节的权威来源。
 4. **多团队协作**：真实多系统 PRD（WeCom / CCE / Lion / Apollo）的职责边界由本矩阵的「角色 × 环节」表达；每个团队映射到对应角色（如 CCE 团队 → tech_lead 视角、业务方 → business_owner 视角）。
 
 ---
@@ -165,7 +163,7 @@ branch_validator 复核（hash 绑定 + record_sha256 + 锚点）
 
 | 版本 | 日期 | 变更 |
 |---|---|---|
-| v0.1 | 2026-08-14 | 首版 RACI 矩阵，沉淀自 `src/framework/workflow-registry.json`、`src/framework/contracts.md`、`src/framework/governance.md` 与 `.test-output/问题清单-PM-Scaffold实测.md`（G2 / ISS-011） |
+| v0.1 | 2026-08-14 | 首版 RACI 矩阵，沉淀自 `src/framework/workflow-registry.json`、`src/framework/contracts.md`、`src/framework/governance.md` 与既有代码行为 |
 
 ---
 
@@ -180,4 +178,3 @@ branch_validator 复核（hash 绑定 + record_sha256 + 锚点）
 | confirmed 复核（reviewer / hash / 锚点） | `src/scripts/branch_validator.py` |
 | frontmatter 角色字段 | `src/templates/_frontmatter-schema.md` §1 |
 | 变更审批表 | `src/shared/change-management/proposal-template.md` §6 |
-| G2 / ISS-011 来源 | `.test-output/问题清单-PM-Scaffold实测.md` §三 G2 / ISS-011 |

@@ -1,8 +1,8 @@
-# 术语表（Glossary · G1）
+# 术语表（Glossary）
 
 > 本文档是 PM Scaffold 脚手架**核心术语的语义权威参考**：定义、出现位置、相关校验器与示例，全部以现有 framework 文档（`src/framework/*.md`）、注册表（`src/framework/workflow-registry.json`）与真实代码行为（`src/scripts/*.py`）为证据，不臆测。
 >
-> 对应问题清单条目：`.test-output/问题清单-PM-Scaffold实测.md` §三 **G1**（缺少「名词解释 / 术语表」落点）。
+> 本文档覆盖「术语表」这一交付物落点：为脚手架核心术语提供统一、可核验的语义权威参考。
 > 相关概念：产物状态语义见 `docs/状态语义矩阵.md`；知识状态标签见 `src/framework/contracts.md`；主干/分支区分见 `src/framework/governance.md`。
 
 ---
@@ -15,7 +15,7 @@
 2. **术语之间的边界**：哪些是脚手架本体术语（收录），哪些是具体案例词（**不收录**，见 §四）。
 3. **使用约定**：写产物、写文档、写校验器时如何保持一致（见 §五）。
 
-> 本术语表是**文档**，不是校验器输入。它不改变任何代码行为；后续如需将术语表落地为产物章节（G1 建议：`prd.md` / `function-description.md` 新增「术语表」章节），以本文档为权威来源。
+> 本术语表是**文档**，不是校验器输入。它不改变任何代码行为；后续如需将术语表落地为产物章节（`prd.md` / `function-description.md` 新增「术语表」章节），以本文档为权威来源。
 
 ---
 
@@ -45,7 +45,7 @@
 
 | 项 | 内容 |
 |---|---|
-| **定义** | 人工评审产物后生成的记录文件，是 `confirmed` 状态的**唯一合法证据**。字段见 `src/framework/contracts.md` Shared Records：`work_item` / `artifact_version` / `artifact_content_sha256` / `decision` / `reviewer` / `reviewer_id` / `reviewer_role` / `reviewed_at` / `record_created_at` / `record_sha256` / `comments`。B13 修复后，每条记录带 `record_sha256` 自指纹，并在 `99-review/.hash-anchor.jsonl` 落外部锚点。 |
+| **定义** | 人工评审产物后生成的记录文件，是 `confirmed` 状态的**唯一合法证据**。字段见 `src/framework/contracts.md` Shared Records：`work_item` / `artifact_version` / `artifact_content_sha256` / `decision` / `reviewer` / `reviewer_id` / `reviewer_role` / `reviewed_at` / `record_created_at` / `record_sha256` / `comments`。每条记录带 `record_sha256` 自指纹，并在 `99-review/.hash-anchor.jsonl` 落外部锚点。 |
 | **出现位置** | `src/framework/contracts.md`（Shared Records）；`src/scripts/pipeline.py` `review()`（写入逻辑）；`src/scripts/hash_anchor.py`（自指纹 + 锚点）；实际落点 `requirements/REQ-XXX/99-review/review-*.md`。 |
 | **相关校验器** | `src/scripts/branch_validator.py`（confirmed 必须有匹配 ReviewRecord + hash 一致 + 锚点校验）；`src/scripts/hash_anchor.py`（`record_body_sha256` / `verify_anchor_chain` / `verify_artifact_anchored`）。 |
 | **示例** | `99-review/review-prd-assembly-2026-08-13.md`，含 `- artifact_content_sha256: <64位hex>`、`- reviewer: <授权人名>`、`- record_sha256: <64位hex>`。 |
@@ -75,7 +75,7 @@
 | **定义** | **测试线专用终态**：仅用于跑测 / 演示，产物不进入正式交付，全程**不要求人工确认**。gate 对 simulated 跳过知识状态 / 阶段收口 / trace 强制（`status=simulated (gate not enforced)`）。`pipeline.py review` 拒绝 reviewer 名含 simulated / 模拟。 |
 | **出现位置** | `docs/状态语义矩阵.md`（§一 状态全景表 / §四 明确约定）；`src/templates/_frontmatter-schema.md` §2（状态枚举）；`run_tests_mac.sh`（`grep -q '^status: simulated'` 跳过 trace）。 |
 | **相关校验器** | `src/scripts/dor_check.py`（simulated 跳过 gate）；`src/scripts/orchestrator.py`（simulated 不在 active 集合 → 不产生越级）；`src/scripts/pipeline.py`（review 拒绝 simulated）。 |
-| **示例** | `requirements/REQ-007-insidemp/`、`requirements/REQ-008-bae/` 全流程 `status: simulated`，`workflow_valid=true`（无 ISS-004 卡点）。 |
+| **示例** | `requirements/REQ-007-insidemp/`、`requirements/REQ-008-bae/` 全流程 `status: simulated`，`workflow_valid=true`（无越级待审卡点）。 |
 
 ### 2.7 confirmed（已确认状态）
 
@@ -99,8 +99,8 @@
 
 | 项 | 内容 |
 |---|---|
-| **定义** | `prd.md` frontmatter 的扩展字段，列出 PRD 引用的上游产物 ID，用于 RTM 正反向追溯。**必须使用上游产物 `artifact_id` 的原始格式**（单连字符，如 `BG-001`），不得加版本后缀（B3 修复后约定统一）。 |
-| **出现位置** | `src/templates/_frontmatter-schema.md` §3（扩展字段）；`src/stages/003-prd-output/skills/prd-assembly/scripts/validate_artifact.py`（DoR 校验正则）；`src/scripts/consistency_check.py`（`check_upstream_artifact_ids_contract`，E1 落地）。 |
+| **定义** | `prd.md` frontmatter 的扩展字段，列出 PRD 引用的上游产物 ID，用于 RTM 正反向追溯。**必须使用上游产物 `artifact_id` 的原始格式**（单连字符，如 `BG-001`），不得加版本后缀（统一约定）。 |
+| **出现位置** | `src/templates/_frontmatter-schema.md` §3（扩展字段）；`src/stages/003-prd-output/skills/prd-assembly/scripts/validate_artifact.py`（DoR 校验正则）；`src/scripts/consistency_check.py`（`check_upstream_artifact_ids_contract`）。 |
 | **相关校验器** | `src/stages/003-prd-output/skills/prd-assembly/scripts/validate_artifact.py`（正则 `(BG|JS|UX|FD)-\d+(?:-\d+)?`）；`src/scripts/consistency_check.py`（模板 ↔ 校验器约定一致性）。 |
 | **示例** | `upstream_artifact_ids: ["BG-001", "JS-001", "UX-001", "FD-001"]`。 |
 
@@ -108,8 +108,8 @@
 
 | 项 | 内容 |
 |---|---|
-| **定义** | function-description 的逻辑完备性维度：每个 FUN 必须有足够的 BR + VL + AC 覆盖。阈值：总数 < 3 → HIGH（under-specified）；< 6 → MEDIUM（建议补充）。支持两种布局：`### FUN-XXX` 子标题块、功能清单表格（按「所属 FUN」列聚合，O3 落地）。无 FUN 可定位时输出 MEDIUM「规则密度校验跳过」兜底（B5 修复）。 |
-| **出现位置** | `src/scripts/property_check.py`（`check_rule_density` / `_table_rule_density` / `_id_fun_pairs`）；`.test-output/问题清单-PM-Scaffold实测.md`（B5 / O3 / OBS-008）。 |
+| **定义** | function-description 的逻辑完备性维度：每个 FUN 必须有足够的 BR + VL + AC 覆盖。阈值：总数 < 3 → HIGH（under-specified）；< 6 → MEDIUM（建议补充）。支持两种布局：`### FUN-XXX` 子标题块、功能清单表格（按「所属 FUN」列聚合）。无 FUN 可定位时输出 MEDIUM「规则密度校验跳过」兜底。 |
+| **出现位置** | `src/scripts/property_check.py`（`check_rule_density` / `_table_rule_density` / `_id_fun_pairs`）。 |
 | **相关校验器** | `src/scripts/property_check.py`（仅 function-description 触发，见 `pipeline.py machine_gate()`）。 |
 | **示例** | `FUN-001 has only 2 rules (BR=1, VL=0, AC=1) — under-specified (minimum 3)`。 |
 
@@ -117,7 +117,7 @@
 
 | 项 | 内容 |
 |---|---|
-| **定义** | 跨案例重复出现的「通用能力 / 组件型功能」标准片段库（OBS-007 落地）。生成 `function-description` 时，组件型 / 通用型功能**优先引用片段而非重写**；每个片段可追溯到来源案例。片段自带 ≥3 条标准 BR 兜底（关联 OBS-008 规则密度）。 |
+| **定义** | 跨案例重复出现的「通用能力 / 组件型功能」标准片段库。生成 `function-description` 时，组件型 / 通用型功能**优先引用片段而非重写**；每个片段可追溯到来源案例。片段自带 ≥3 条标准 BR 兜底（满足规则密度要求）。 |
 | **出现位置** | `src/shared/capability-fragments/README.md`（使用约定 / 片段清单）；`src/shared/capability-fragments/{subscription-notice,comment-validation,time-picker}.md`（片段本体）。 |
 | **相关校验器** | 无独立校验器（纯 Markdown 知识库）；片段被复制进产物后，产物仍走既有 gate 校验（`validate_artifact.py` / `property_check.py`）。 |
 | **示例** | `time-picker.md`（时间/年月选择组件，4 BR / 3 AC / 2 EX，来源 REQ-008-bae FUN-009）。 |
@@ -138,19 +138,19 @@
 | `TraceabilityLink`（追溯链接） | 源 ID / 目标 ID / 关系类型 / 证据位置。 | `src/framework/contracts.md`（Shared Records） |
 | `authorized-reviewers.json` | 授权评审人清单（id / name / roles），`confirmed` 的唯一合法 reviewer 来源。 | `requirements/REQ-XXX/00-input/authorized-reviewers.json`；`src/scripts/pipeline.py` `load_authorized_reviewer()` |
 | `reviewer_roles` | work_item 允许的评审角色集合（registry 定义），reviewer 角色必须命中。 | `src/framework/workflow-registry.json` `work_items[*].reviewer_roles` |
-| `active 态` | 集合 `{needs_user_input, conditional_review, ready_for_human_review}`；单 active 约束 + 上游未 confirmed 即越级（ISS-004）。 | `docs/状态语义矩阵.md` §2.4；`src/scripts/orchestrator.py` |
+| `active 态` | 集合 `{needs_user_input, conditional_review, ready_for_human_review}`；单 active 约束 + 上游未 confirmed 即越级（越级待审）。 | `docs/状态语义矩阵.md` §2.4；`src/scripts/orchestrator.py` |
 | `DoR / DoD` | Definition of Ready / Done：work_item 送审前的硬门禁（材料、知识状态、阶段收口）。 | `src/scripts/dor_check.py`；`src/framework/governance.md`（Stage Closeout） |
 | `reflow`（回流） | 变更后从最早受影响 work_item 重跑；`pipeline.py reflow --apply` 将下游 confirmed 翻转 superseded。 | `src/scripts/pipeline.py`；`src/shared/change-management/reflow-templates/reflow-record.md` |
 | `Inquiry Gate`（询问闸门） | 每个分支 / 产物的「默认行为 vs 覆盖」询问机制。 | `src/framework/governance.md`（Human-In-The-Loop Inquiry Contract） |
 | `stage_closeup`（阶段收口） | `ready_for_human_review` 送审前强制：issue-record 收口行 + 待确认同行引用。 | `src/scripts/dor_check.py`；`src/framework/governance.md`（Stage Closeout） |
-| `record_sha256`（记录自指纹） | ReviewRecord 正文（除自身行）的 SHA-256，B13 防「artifact + ReviewRecord 同步篡改」。 | `src/scripts/hash_anchor.py` `record_body_sha256()` |
+| `record_sha256`（记录自指纹） | ReviewRecord 正文（除自身行）的 SHA-256，用于防「artifact + ReviewRecord 同步篡改」。 | `src/scripts/hash_anchor.py` `record_body_sha256()` |
 | `.hash-anchor.jsonl`（外部锚点链） | `99-review/` 下的 append-only 锚点链，提供篡改可检测的外部参照。 | `src/scripts/hash_anchor.py` |
 
 ---
 
 ## 四、不在术语表内的边界
 
-以下内容**明确不收录**进本术语表，避免脚手架被具体案例污染（对应 E5 / E6 / E7 的「案例污染」问题）：
+以下内容**明确不收录**进本术语表，避免脚手架被具体案例污染（对应「案例污染」问题）：
 
 1. **具体案例词**：RSVP、FSN、WeCom、WFJ、OAB、showmp、insidemp、bae、service-account、香奈儿、CCE、Lion、Apollo、TKU、By Session 等——它们是三份飞书文档中的真实项目词，不是脚手架核心术语。
 2. **具体案例 ID**：`REQ-001`~`REQ-008`、`BG-RSV-2026S`、`FUN-005`、`BR-018`、`SRC-001` 等具体编号——它们是案例数据，随案例变化，不进入脚手架本体术语表。
@@ -166,8 +166,8 @@
 1. **产物正文**：写 `prd.md` / `function-description.md` 等产物时，核心术语（work_item / artifact / confirmed / superseded / branch 等）按本文档定义使用，不得自造同义词。
 2. **文档引用**：framework 文档与本文档互相引用时使用相对路径（如 `src/framework/contracts.md`），与现有文档风格一致。
 3. **校验器命名**：术语对应的校验器命名（`branch_validator` / `property_check` / `dor_check` / `orchestrator` / `traceability_check` / `hash_anchor`）与本文档一致，不引入别名。
-4. **新增术语**：新增核心术语时，先在本文档登记（定义 / 出现位置 / 相关校验器 / 示例），再在 framework 文档与代码中落地，避免术语漂移（对应 B14 / N19 的「状态枚举单源」精神）。
-5. **案例词隔离**：任何示例一律使用占位符（`REQ-NNN-<topic>` / `<example>` / 通用业务词），不直接套用具体案例词（对应 E5 建议）。
+4. **新增术语**：新增核心术语时，先在本文档登记（定义 / 出现位置 / 相关校验器 / 示例），再在 framework 文档与代码中落地，避免术语漂移（遵循「状态枚举单源」精神）。
+5. **案例词隔离**：任何示例一律使用占位符（`REQ-NNN-<topic>` / `<example>` / 通用业务词），不直接套用具体案例词（避免案例污染）。
 
 ---
 
@@ -175,7 +175,7 @@
 
 | 版本 | 日期 | 变更 |
 |---|---|---|
-| v0.1 | 2026-08-14 | 首版术语表，沉淀自 `src/framework/*.md`、`src/framework/workflow-registry.json`、`docs/状态语义矩阵.md` 与 `.test-output/问题清单-PM-Scaffold实测.md`（G1） |
+| v0.1 | 2026-08-14 | 首版术语表，沉淀自 `src/framework/*.md`、`src/framework/workflow-registry.json`、`docs/状态语义矩阵.md` 与既有代码行为 |
 
 ---
 
@@ -195,4 +195,3 @@
 | rule_density / 逻辑完备性 | `src/scripts/property_check.py` |
 | record_sha256 / .hash-anchor.jsonl | `src/scripts/hash_anchor.py` |
 | 能力片段库 | `src/shared/capability-fragments/README.md` |
-| G1 来源 | `.test-output/问题清单-PM-Scaffold实测.md` §三 G1 |

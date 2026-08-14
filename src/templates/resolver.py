@@ -4,7 +4,7 @@
 Usage:
   python3 resolver.py <template-name> <req-dir> [--preset <name>]
   python3 resolver.py background-goal.md requirements/REQ-NNN-topic
-  python3 resolver.py prd.md requirements/REQ-NNN-topic --preset executive
+  python3 resolver.py prd.md requirements/REQ-NNN-topic --preset <name>
 
 Priority (highest first):
   1. Project-level overrides:  requirements/REQ-NNN/.templates/<name>
@@ -33,8 +33,6 @@ TEMPLATE_MAP = {
     "product-ux.md": "stage-2-product/product-ux.md",
     "function-description.md": "stage-2-product/function-description.md",
     "prd.md": "stage-3-prd/prd.md",
-    "prd-executive.md": "stage-3-prd/prd-executive.md",
-    "prd-technical.md": "stage-3-prd/prd-technical.md",
 }
 
 

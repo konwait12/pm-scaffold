@@ -16,7 +16,7 @@ Produce the single final `prd.md` by organizing confirmed upstream content, vali
 **Inputs**: All four upstream work items confirmed (project-background-goal, user-journey-and-stories, product-ux, function-description).
 
 **Outputs**:
-- `prd.md` (standard, or `--variant executive|technical`)：7 正文节 + 需求追溯矩阵（附录）+ 自审记录（附录）
+- `prd.md`：7 正文节 + 需求追溯矩阵（附录）+ 自审记录（附录）
 - 正向/反向追溯检查、不一致报告、Review taxonomy 结论 → 进 `99-review/` 评审记录，**不写进 prd.md 正文**（由机器在 gate 时产出）
 
 Load `references/thinking-framework.md` (→ `thinking-core.md` §1 mandatory + §2 check + §3 pre-mortem) before assembly. Load `src/shared/audit/review-taxonomy.md` before audit. If upstream `product-ux` produced a clickable prototype, load `references/prototype-embedding.md` (§4 分功能详述 may embed iframe slices + version switcher; optional, text rules remain authoritative).
@@ -44,7 +44,7 @@ Load without changing knowledge state: source IDs, goals (G1-G5), roles, lifecyc
 - 遇到「待确认 / 冲突 / 信息缺口」信号：主动询问是否登记 issue-record（问题清单，见 `src/shared/clarify/skills/issue-record`）；送审前 dor_check 会硬检查收口与引用。
 
 ### 5. Generate
-Fill template (resolved by `src/templates/resolver.py prd.md` or `--variant`).
+Fill template (resolved by `src/templates/resolver.py prd.md`).
 正文 7 节：项目背景与目标 → 业务角色/旅程/故事 → UX → 分功能描述 → 按需章节 → 事实与决定 → 验收依据；附录 2 节：需求追溯矩阵、自审记录（Constitution Compliance）。
 正向/反向追溯检查与不一致报告**不写进正文**——它们在 Audit 阶段由机器产出、进 99-review 评审记录。
 
@@ -70,7 +70,7 @@ Any broken relationship, unapproved addition, or REVISION-level finding → gate
 
 ### 7. Human Gate
 Present to authorized final approver:
-- The PRD (standard + requested variant)
+- The PRD
 - Trace report (forward + reverse, edge counts, orphan detection)
 - Inconsistency report (with [Contradiction]/[Gap]/etc. labels)
 - Unresolved risks (UNK-XXX that became material)
@@ -115,7 +115,7 @@ From `src/shared/audit/review-taxonomy.md`:
 | `references/anti-patterns.md` | AI 常见反模式（写产物时对照规避） | Generate 时对照 |
 | `references/audit-checklist.md` | Audit 自审清单 | Audit 前 |
 | `references/output-contract.md` | 产物结构与 ID 契约 | Draft 前 |
-| `references/prd-structure-reference.md` | PRD 结构参考（章节组织方法论 + 三个 variant 裁剪策略） | Generate 前 |
+| `references/prd-structure-reference.md` | PRD 结构参考（章节组织方法论） | Generate 前 |
 | `references/prototype-embedding.md` | PRD 原型嵌入技法（上游有原型时用） | 上游有原型时 |
 | `references/question-patterns.md` | Clarify 提问模板（8 类句式） | Clarify 提问时 |
 | `references/reviewer-checklist.md` | 人工评审清单（Human Gate 用） | Human Gate 前 |

@@ -19,13 +19,13 @@ Each produces a section of the function-description artifact:
 3. `business-rules` → §业务规则 (BR table: domain constraints, calculations, policies)
 4. `validation-rules` → §校验规则与字段定义 (VL table: field-level + cross-field checks, error messages + field definitions)
 5. `state-machine` → §状态变化 (STATE table: states × events → target states)
-6. `exception-handling` → §异常处理 (EX table: failure modes + user-visible recovery)
+6. `exception-handling` → §异常与失败处理 (EX table: failure modes + user-visible recovery)
 7. `acceptance-criteria` → §验收依据 (AC table: Given/When/Then + quantified thresholds)
 
 ## Inputs And Outputs
 
 **Input**: 上游功能清单 FEA（`feature-list` 子 skill 产出）+ confirmed `product-ux` (IX, pages) + confirmed business upstream (ST, scope baseline).
-**Output**: 一个 `function-description.md`，由 7 个子 skill 依次产出 7 个章节：§功能清单 / §功能流程 / §业务规则 / §校验规则与字段定义 / §状态变化 / §异常处理 / §验收依据。字段规则和埋点章节按需出现。
+**Output**: 一个 `function-description.md`，由 7 个子 skill 依次产出 7 个章节：§功能清单 / §功能流程 / §业务规则 / §校验规则与字段定义 / §状态变化 / §异常与失败处理 / §验收依据。字段规则和埋点章节按需出现。
 
 Load `references/thinking-framework.md` (→ `thinking-core.md` §1 mandatory + §2 check lenses) before analysis. Load `references/ears-syntax.md` before writing BR/VL rules (EARS 句式标准).
 
@@ -66,7 +66,7 @@ Fill template (resolved by `src/templates/resolver.py function-description.md`).
 - `business-rules` → §业务规则 (BR-*: domain constraints, calculations, state policies — one rule per row, linked to source BRD)
 - `validation-rules` → §校验规则与字段定义 (VL-*: field-level checks with exact error message text + field definitions)
 - `state-machine` → §状态变化 (STATE-*: all states × all events → target states, check completeness)
-- `exception-handling` → §异常处理 (EX-*: trigger → system behavior → user sees → recovery → associated BR)
+- `exception-handling` → §异常与失败处理 (EX-*: trigger → system behavior → user sees → recovery → associated BR)
 - `acceptance-criteria` → §验收依据 (AC-*: Given/When/Then + quantified threshold (≤3s, >95%, etc.) + linked to G-X goal)
 
 Rule density guard: each FUN must have ≥3 BR+VL+AC (validator will warn if under-specified).
