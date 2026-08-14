@@ -141,13 +141,17 @@ def update_source_register(register_path: Path, src_id: str, title: str, token: 
     if register_path.is_file():
         text = register_path.read_text(encoding='utf-8')
         if '|---' in text and src_id not in text:
-            # 追加到表尾（最后一个 |--- 分隔行之后的首个数据行后）
+            # 追加到表尾：从后往前找最后一个「以 | 开头」的行插到它后面——
+            # 是数据行则为真正的表尾；若只有表头+分隔行（无数据行），则插到分隔行后。
             lines = text.splitlines()
+            insert_idx = None
             for idx in range(len(lines) - 1, -1, -1):
-                if lines[idx].lstrip().startswith('|') and '---' in lines[idx]:
-                    lines.insert(idx + 1, line.rstrip('\n'))
+                if lines[idx].lstrip().startswith('|'):
+                    insert_idx = idx + 1
                     break
-            register_path.write_text('\n'.join(lines) + '\n', encoding='utf-8')
+            if insert_idx is not None:
+                lines.insert(insert_idx, line.rstrip('\n'))
+                register_path.write_text('\n'.join(lines) + '\n', encoding='utf-8')
         else:
             register_path.write_text(text + line, encoding='utf-8')
     else:

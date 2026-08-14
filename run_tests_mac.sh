@@ -27,7 +27,10 @@ negative() {
 # ---- Phase 0: registry contract (借鉴点三) — must pass BEFORE consistency, so template↔validator drift never reaches fixtures ----
 run "registry/contract-schema+closure" python3 "$ROOT/src/scripts/registry_contract_check.py"
 
-# ---- Phase 0b: cross-document consistency (registry-vs-docs paths / skill contracts / E1/E3/E desensitization) ----
+# ---- Phase 0b-1: fixtures 脱敏检查（E3）— 任一疑似未脱敏真实数据即 FAIL ----
+run "desensitize/test-fixtures" python3 "$ROOT/src/scripts/desensitize_check.py"
+
+# ---- Phase 0b-2: cross-document consistency (registry-vs-docs paths / skill contracts / E1/E3/E desensitization) ----
 run "consistency/registry-vs-docs" python3 "$ROOT/src/scripts/consistency_check.py"
 
 while IFS=$'\t' read -r skill path; do

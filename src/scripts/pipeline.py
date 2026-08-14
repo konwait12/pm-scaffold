@@ -167,30 +167,38 @@ def init_requirement(name: str | None) -> int:
     (req_dir / "00-input" / "authorized-reviewers.json").write_text(
         json.dumps({"reviewers": []}, ensure_ascii=False, indent=2) + "\n", encoding="utf-8",
     )
+    # 单一真相源：source-register 骨架来自 project-init 共享模板（src/shared/
+    # project-init/templates/source-register-skeleton.md），不在 pipeline 内硬编码。
+    source_register_template = (
+        Path(__file__).parent.parent
+        / "shared/project-init/templates/source-register-skeleton.md"
+    )
+    if not source_register_template.is_file():
+        print(f"ERROR: source-register template not found: {source_register_template}", file=sys.stderr)
+        return 1
     (req_dir / "00-input" / "source-register.md").write_text(
-        "# 来源登记 (Source Register)\n\n"
-        "> 登记所有原始需求材料。格式: SRC-NNN → 材料位置 / URL / 飞书链接\n\n"
-        "| 来源 ID | 类型 | 位置 | 摘要 | 登记日期 | 权威范围 |\n"
-        "|---|---|---|---|---|---|\n"
-        "| SRC-001 | `待填写` | `待填写` | `待填写` | `待填写` | `待填写` |\n",
+        source_register_template.read_text(encoding="utf-8"),
         encoding="utf-8",
     )
-    # README index skeleton
-    rows = "\n".join(
-        f"| `{item['artifact_dir']}/` | `{item['id']}`: {item['name']} | ⏸ |"
-        for item in work_items()
+    # 单一真相源：README 骨架来自 project-init 共享模板（src/shared/project-init/
+    # templates/readme-skeleton.md），不在 pipeline 内硬编码 README 索引表。
+    readme_template = (
+        Path(__file__).parent.parent
+        / "shared/project-init/templates/readme-skeleton.md"
     )
-    (req_dir / "README.md").write_text(
-        f"# {name}\n\n"
-        "> 需求产物索引\n\n"
-        "## 业务一句话\n\n`待填写`\n\n"
-        "## 目录索引\n\n"
-        "| 目录 | 内容 | 状态 |\n|---|---|---|\n"
-        "| `00-input/` | 原始需求材料 + authorized-reviewers.json | `待填写` |\n"
-        f"{rows}\n"
-        "| `99-review/` | 评审记录 | ⏸ |\n",
-        encoding="utf-8",
+    if not readme_template.is_file():
+        print(f"ERROR: README template not found: {readme_template}", file=sys.stderr)
+        return 1
+    # 模板含占位符 REQ-{NNN} · {业务主题}，读取后按需求名替换
+    m = re.match(r"REQ-(\d{3})(?:-(.+))?$", name)
+    req_num = m.group(1) if m else ""
+    req_topic = (m.group(2) if m and m.group(2) else "").strip()
+    readme_content = (
+        readme_template.read_text(encoding="utf-8")
+        .replace("{NNN}", req_num)
+        .replace("{业务主题}", req_topic)
     )
+    (req_dir / "README.md").write_text(readme_content, encoding="utf-8")
     # 事件溯源：初始化完成写入 init 事件（inline payload 无需 record 文件）
     audit_log.append_event(
         req_dir,

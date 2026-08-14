@@ -40,19 +40,19 @@ def ids_of(p: Path, pattern: str) -> int:
 
 
 def scan_case(d: Path) -> dict:
-    st = d / '001-business-requirements/02-user-journey-stories/journey-and-stories.md'
-    js = d / '001-business-requirements/01-background-goal/background-goal.md'
+    journey = d / '001-business-requirements/02-user-journey-stories/journey-and-stories.md'
+    bg = d / '001-business-requirements/01-background-goal/background-goal.md'
     ux = d / '002-product-requirements/01-product-ux/product-ux.md'
     fd = d / '002-product-requirements/02-function-description/function-description.md'
     prd = d / '003-prd-output/prd.md'
     tp = d / '99-review/support/tracking-plan.md'
     return {
         'statuses': {
-            'BG': status_of(js), 'JS': status_of(st), 'UX': status_of(ux),
+            'BG': status_of(bg), 'JS': status_of(journey), 'UX': status_of(ux),
             'FD': status_of(fd), 'PRD': status_of(prd),
         },
         'counts': {
-            'ST': ids_of(st, r'\bST-\d+\b'),
+            'ST': ids_of(journey, r'\bST-\d+\b'),
             'FEA': ids_of(fd, r'\bFEA-\d+\b'),
             'FUN': ids_of(fd, r'\bFUN-\d+\b'),
             'BR': ids_of(fd, r'\bBR-\d+\b'),

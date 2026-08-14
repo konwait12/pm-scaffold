@@ -117,7 +117,8 @@ class FeishuToolTest(unittest.TestCase):
             fm = prd_publish.read_frontmatter(artifact)
             self.assertEqual(fm['artifact_id'], 'PRD-001')
             self.assertEqual(fm['version'], 'v0.2')
-            self.assertNotIn('owner', fm)
+            # 复用 workflow_registry 权威实现：缩进嵌套键会被扁平化解析为顶层字段
+            self.assertEqual(fm.get('owner'), 'PM')
             self.assertIsNone(fm.get('missing_key'))
 
     def test_prd_publish_help_exposes_new_options(self) -> None:

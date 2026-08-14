@@ -50,7 +50,7 @@
   - repair_hint: actionable fix instruction (not just "X is missing" but HOW to fix it).
   - source_ref: constitution clause / skill output-contract section / DEC-SRC id that justifies the check.
 - `RegistryContract`: schema + closure invariants enforced by `registry_contract_check.py`.
-  - Schema shape: `workflow-registry.json` must declare `stages[]` (each with `id`, `name`, `skills[]`), `work_items[]` (each with `id`, `name`, `stage_id`, `artifact_path`, `reviewer_roles`, `entry_material`, `required_inputs`, `predecessors`, `depends_on`, `produces`), and `internal_capabilities[]`.
+  - Schema shape: `workflow-registry.json` must declare `stages[]` (each with `id`, `name`, `path`, `work_items`), `work_items[]` (each with `id`, `name`, `order`, `stage`, `skill_path`, `artifact_dir`, `artifact_file`, `artifact_prefix`, `required_outputs`, `predecessors`, `legacy_wave`, `legacy_artifact_dir`, `reviewer_roles`, `human_gate`), and `internal_capabilities[]`.
   - Reference integrity: every `predecessors` / `depends_on` / `parent_work_item` must resolve to an existing work_item id.
   - Template↔validator closure: every frontmatter field declared in a skill's template must be referenced in that skill's `validate_artifact.py` (AST-verified); drift is E3_drift.
   - Run order: `registry_contract_check.py` is the first phase of `run_tests_mac.sh`; any failure aborts before consistency_check runs.

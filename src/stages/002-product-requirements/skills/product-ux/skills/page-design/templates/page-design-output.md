@@ -9,8 +9,8 @@ upstream_artifact_id: UX-{REQ}
 
 ## 页面设计
 
-> 本节由 `page-design` 子 Skill 生成，属于 product-ux §4 Framework 层。
-> 上游：product-ux §2 (FEA) + §3 (IX/流程)
+> 本节由 `page-design` 子 Skill 生成，属于 product-ux §2 页面设计。
+> 上游：function-description §1 功能清单 (FEA-XXX) + product-ux §3 交互规则 (IX-XXX)
 
 ### 页面清单
 

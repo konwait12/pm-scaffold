@@ -23,6 +23,8 @@ import sys
 from datetime import datetime
 from pathlib import Path
 
+from workflow_registry import read_frontmatter
+
 DEFAULT_FEISHU_DOMAIN = 'ccegroup.feishu.cn'
 DEFAULT_TITLE_TEMPLATE = '[PM Scaffold] {case} {artifact_id} v{version}'
 LOG_PATH = Path('.test-output/飞书发布日志.md')
@@ -37,23 +39,6 @@ def run_lark(args: list[str], input_text: str | None = None) -> dict:
         return json.loads(proc.stdout)
     except json.JSONDecodeError as exc:
         raise RuntimeError(f'lark-cli 输出非 JSON: {exc}\n{proc.stdout[:300]}') from exc
-
-
-def read_frontmatter(path: Path) -> dict[str, str]:
-    text = path.read_text(encoding='utf-8')
-    m = re.match(r'\A---\s*\n(.*?)\n---\s*\n', text, re.DOTALL)
-    if not m:
-        return {}
-    result: dict[str, str] = {}
-    for line in m.group(1).splitlines():
-        if line.lstrip().startswith('#'):
-            continue
-        match = re.match(r'^([^:#\s][^:]*?)\s*:\s*(.*?)\s*$', line)
-        if not match:
-            continue
-        key, value = match.groups()
-        result[key.strip()] = value.strip().strip('"\'')
-    return result
 
 
 def upsert_frontmatter_field(path: Path, key: str, value: str) -> None:
@@ -76,12 +61,17 @@ def append_log(entry: dict, log_path: Path = LOG_PATH) -> None:
     if log_path.is_file():
         text = log_path.read_text(encoding='utf-8')
         if '|---' in text:
+            # 追加到表尾：从后往前找最后一个「以 | 开头」的行插到它后面——
+            # 是数据行则为真正的表尾；若只有表头+分隔行（无数据行），则插到分隔行后。
             lines = text.splitlines()
+            insert_idx = None
             for idx in range(len(lines) - 1, -1, -1):
-                if lines[idx].lstrip().startswith('|') and '---' in lines[idx]:
-                    lines.insert(idx + 1, line.rstrip('\n'))
+                if lines[idx].lstrip().startswith('|'):
+                    insert_idx = idx + 1
                     break
-            log_path.write_text('\n'.join(lines) + '\n', encoding='utf-8')
+            if insert_idx is not None:
+                lines.insert(insert_idx, line.rstrip('\n'))
+                log_path.write_text('\n'.join(lines) + '\n', encoding='utf-8')
         else:
             log_path.write_text(text + line, encoding='utf-8')
     else:

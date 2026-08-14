@@ -54,5 +54,8 @@ Invariant: **event ⟺ model-visible state** — no review/change is considered 
 
 - `competitive-research`: business or function mode when external evidence is needed.
 - `feasibility-analysis`: feasibility across market/technical/cost/risk before entering the main trunk; multi-solution tradeoffs handled as a chapter.
+- `requirement-restate`: requirement restate capability (restate + diverge) when input is sparse, sources conflict, or L0 is idea-only.
+- `tracking-plan`: data tracking / instrumentation plan when a feature needs measurement data.
+- `issue-record`: cross-stage issue list; B3 closure before any work item is sent for review.
 
 Visualization remains a toolkit capability. It is required only where the work-item contract explicitly requires a flow representation.
