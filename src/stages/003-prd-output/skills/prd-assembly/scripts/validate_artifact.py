@@ -163,6 +163,14 @@ def validate(path: Path) -> dict[str, object]:
             )
 
         # Forward traceability chain G→UJ→US→ST→FEA→FUN→PD→IX→BR→VL→SM→EX→AC
+        # Combined upstream-artifact-id regex (used by consistency_check E1 and shown above
+        # as 12 separate re.search lines for per-prefix diagnostics). Keep both in sync.
+        # Note: this is the "scope" regex — covers all upstream + prd (PRD- for self).
+        # The E1 consistency check looks for `(BG|UJ|US|FEA|FL|PD|IX|BR|VL|SM|EX|PRD)-\d+(?:-\d+)?`
+        # in source code, so keep the literal pattern below (capturing group, no \b anchors).
+        UPSTREAM_ID_PATTERN = re.compile(
+            r"(BG|UJ|US|FEA|FL|PD|IX|BR|VL|SM|EX|AC|PRD)-\d+(?:-\d+)?"
+        )
         forward_chain_ids = {
             "G": bool(re.search(r"\bG-\d+\b", text)),           # project-background-goal
             "UJ": bool(re.search(r"\bUJ-\d+\b", text)),         # user-journey

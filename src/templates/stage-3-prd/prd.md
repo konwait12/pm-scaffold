@@ -50,19 +50,19 @@ This PRD is a living source of truth — not a static document. When consuming t
 
 ## 2. 业务角色、用户旅程与用户故事
 
-（从 `user-journey-and-stories` 已确认产物完整引用）
+（从 `user-journey` + `user-stories` 已确认产物完整引用）
 
 `待确认`
 
 ## 3. UX：页面设计与交互规则
 
-（从 `product-ux` 已确认产物完整引用）
+（从 `page-design` + `interaction-rules` 已确认产物完整引用）
 
 `待确认`
 
 ## 4. 分功能描述
 
-（从 `function-description` 已确认产物完整引用）
+（从 `feature-list` / `functional-flow` / `business-rules` / `validation-rules` / `state-machine` / `exception-handling` / `acceptance-criteria` 已确认产物完整引用）
 
 `待确认`
 
@@ -70,7 +70,7 @@ This PRD is a living source of truth — not a static document. When consuming t
 
 ### 5.1 字段规则
 
-（从 `function-description` 的字段定义表引用，如无内容标注"本期不适用"）
+（从 `feature-list` / `functional-flow` / `business-rules` / `validation-rules` / `state-machine` / `exception-handling` / `acceptance-criteria` 的字段定义表引用，如无内容标注"本期不适用"）
 
 ### 5.2 埋点需求分析
 

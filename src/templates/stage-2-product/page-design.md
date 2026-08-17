@@ -3,7 +3,7 @@
 本模板由 page-design SKILL.md 驱动。
 待确认 是唯一占位符。
 
-v2 拆分说明：自 product-ux.md §2（页面设计）独立。
+v2 拆分说明：自 page-design + interaction-rules.md §2（页面设计）独立。
 交互规则部分 → interaction-rules.md。
 -->
 ---

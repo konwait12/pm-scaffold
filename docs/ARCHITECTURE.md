@@ -17,12 +17,12 @@ flowchart TB
 
     subgraph S1["Stage 1 · 业务需求"]
         A1["project-background-goal"]
-        A2["user-journey-and-stories"]
+        A2["user-journey + user-stories"]
     end
 
     subgraph S2["Stage 2 · 产品需求"]
-        B1["product-ux<br/>page-design + interaction-rules"]
-        B2["function-description<br/>feature-list + functional-flow + business-rules + validation-rules + state-machine + exception-handling + acceptance-criteria"]
+        B1["page-design + interaction-rules<br/>page-design + interaction-rules"]
+        B2["feature-list (et al.)<br/>feature-list + functional-flow + business-rules + validation-rules + state-machine + exception-handling + acceptance-criteria"]
     end
 
     subgraph S3["Stage 3 · PRD 输出"]
@@ -64,11 +64,11 @@ flowchart TB
 
 ### 2.1 5 主 Skill 的层级关系
 
-业务需求分析（`project-background-goal` + `user-journey-and-stories`）是上游；
-产品需求分析（`product-ux` + `function-description`）是中游；
+业务需求分析（`project-background-goal` + `user-journey` + `user-stories`）是上游；
+产品需求分析（`page-design` + `interaction-rules` + `feature-list` / `functional-flow` / `business-rules` / `validation-rules` / `state-machine` / `exception-handling` / `acceptance-criteria`）是中游；
 PRD 输出（`prd-assembly`）是下游。
 
-**有意收敛**：不把"功能清单"或"功能流程"作为独立主干；它们是 `function-description` 的子 skill 章节（feature-list / functional-flow），`product-ux` 只承载页面设计与交互规则。
+**有意收敛**：不把"功能清单"或"功能流程"作为独立主干；它们是 `feature-list` / `functional-flow` / `business-rules` / `validation-rules` / `state-machine` / `exception-handling` / `acceptance-criteria` 的子 skill 章节（feature-list / functional-flow），`page-design` + `interaction-rules` 只承载页面设计与交互规则。
 
 ### 2.2 Constitution 治理层
 
@@ -87,7 +87,7 @@ PRD 输出（`prd-assembly`）是下游。
 
 ### 2.5 共享机制复用
 
-9 个 sub-skill 与 9 个 shared 模块是**横向复用**机制，不独立构成业务阶段。`feature-list` 等被 `function-description` 顺序调用，输出 §功能清单 / §功能流程 / §BR / §VL / §State / §Exception / §AC 七个章节；`page-design` / `interaction-rules` 挂在 `product-ux`。
+9 个 sub-skill 与 9 个 shared 模块是**横向复用**机制，不独立构成业务阶段。`feature-list` 等被 `feature-list` / `functional-flow` / `business-rules` / `validation-rules` / `state-machine` / `exception-handling` / `acceptance-criteria` 顺序调用，输出 §功能清单 / §功能流程 / §BR / §VL / §State / §Exception / §AC 七个章节；`page-design` / `interaction-rules` 挂在 `page-design` + `interaction-rules`。
 
 ### 2.6 事件溯源 + 投影缓存（Harness 借鉴）
 
@@ -110,9 +110,9 @@ v0.4.0 起，脚手架引入 Harness 风格的事件溯源基础设施，作为 
 [输入材料] 
   → intake-routing 判定 L0-L4
   → project-background-goal (背景+目标)
-  → user-journey-and-stories (旅程+故事)
-  → product-ux (页面设计+交互规则)
-  → function-description (FEA/FLOW/BR/VL/State/Exception/AC 七章节)
+  → user-journey + user-stories (旅程+故事)
+  → page-design + interaction-rules (页面设计+交互规则)
+  → feature-list (et al.) (FEA/FLOW/BR/VL/State/Exception/AC 七章节)
   → prd-assembly (汇总 → prd.md)
   → 发布复核（SHA-256）
 ```
@@ -134,7 +134,7 @@ v0.4.0 起，脚手架引入 Harness 风格的事件溯源基础设施，作为 
 | 框架规则 | `src/framework/constitution.md` / `contracts.md` / `governance.md` / `thinking-core.md` |
 | 工作流注册 | `src/framework/workflow-registry.json` |
 | 5 主 Skill | `src/stages/{001,002,003}-*/skills/*/` |
-| 9 子 Skill | `src/stages/002-product-requirements/skills/{function-description,product-ux}/skills/*/` |
+| 9 子 Skill | `src/stages/002-product-requirements/skills/{feature-list (et al.),page-design + interaction-rules}/skills/*/` |
 | 4 分支产物 + 1 能力 | `src/support-skills/*/`（竞品/可行性）+ `src/stages/*/skills/{requirement-restate,tracking-plan}/` + `src/shared/clarify/skills/issue-record/` |
 | 9 共享模块 | `src/shared/{audit,human-gate,clarify,...}/` |
 | 26 产物模板 | `src/templates/stage-{1,2,3}-*/` + `src/templates/{support,others,records}/` |

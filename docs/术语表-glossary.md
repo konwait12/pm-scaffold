@@ -15,7 +15,7 @@
 2. **术语之间的边界**：哪些是脚手架本体术语（收录），哪些是具体案例词（**不收录**，见 §四）。
 3. **使用约定**：写产物、写文档、写校验器时如何保持一致（见 §五）。
 
-> 本术语表是**文档**，不是校验器输入。它不改变任何代码行为；后续如需将术语表落地为产物章节（`prd.md` / `function-description.md` 新增「术语表」章节），以本文档为权威来源。
+> 本术语表是**文档**，不是校验器输入。它不改变任何代码行为；后续如需将术语表落地为产物章节（`prd.md` / `feature-list (et al.).md` 新增「术语表」章节），以本文档为权威来源。
 
 ---
 
@@ -27,7 +27,7 @@
 
 | 项 | 内容 |
 |---|---|
-| **定义** | 脚手架执行的最小工作单元。每个 work_item 对应一个 Skill、一个产物文件、一组前置依赖（predecessors）与一组评审角色（reviewer_roles）。5 个主 work_item 构成主干：`project-background-goal` → `user-journey-and-stories` → `product-ux` → `function-description` → `prd-assembly`。 |
+| **定义** | 脚手架执行的最小工作单元。每个 work_item 对应一个 Skill、一个产物文件、一组前置依赖（predecessors）与一组评审角色（reviewer_roles）。5 个主 work_item 构成主干：`project-background-goal` → `user-journey` + `user-stories` → `page-design` + `interaction-rules` → `feature-list` / `functional-flow` / `business-rules` / `validation-rules` / `state-machine` / `exception-handling` / `acceptance-criteria` → `prd-assembly`。 |
 | **出现位置** | `src/framework/workflow-registry.json` 的 `work_items[]`（权威定义）；`src/framework/workflow.md`（Backbone 与 Work-Item Cycle）；`src/framework/governance.md`（Main Trunk vs. Branch）。 |
 | **相关校验器** | `src/scripts/orchestrator.py`（active 态 / workflow_valid / next_work_item 判定）；`src/scripts/pipeline.py`（`--work-item` 参数、`resolve_work_item`）；`src/scripts/workflow_registry.py`（`work_items()` / `resolve_work_item()`）。 |
 | **示例** | `project-background-goal`（order=1，predecessors=[]，reviewer_roles=[business_owner, product_owner]）；`prd-assembly`（order=5，predecessors=其余 4 个主 work_item）。 |
@@ -38,7 +38,7 @@
 |---|---|
 | **定义** | work_item 产出的正式交付文件（Markdown），带 frontmatter 元数据（`artifact_id` / `version` / `status` / `owner` 等）。产物是**状态机的载体**：`draft → … → confirmed` 的状态跃迁都发生在 artifact 的 `status` 字段上。产物不定义架构（宪法第 3 条：artifacts do not define architecture）。 |
 | **出现位置** | `src/templates/_frontmatter-schema.md`（frontmatter 字段权威定义）；`src/framework/workflow-registry.json` 的 `artifact_types[]`（产物 ID / 生产者 / PRD 落点 / 依赖）；各 work_item 的 `artifact_dir` / `artifact_file`。 |
-| **相关校验器** | `src/stages/*/skills/*/scripts/validate_artifact.py`（结构 + 语义红线）；`src/scripts/property_check.py`（function-description 逻辑完备性）；`src/scripts/branch_validator.py`（confirmed 产物 hash 绑定）。 |
+| **相关校验器** | `src/stages/*/skills/*/scripts/validate_artifact.py`（结构 + 语义红线）；`src/scripts/property_check.py`（feature-list (et al.) 逻辑完备性）；`src/scripts/branch_validator.py`（confirmed 产物 hash 绑定）。 |
 | **示例** | `001-business-requirements/01-background-goal/background-goal.md`（artifact_id=`BG-001`）；`003-prd-output/prd.md`（artifact_id=`PRD-001`）。 |
 
 ### 2.3 ReviewRecord（评审记录）
@@ -54,16 +54,16 @@
 
 | 项 | 内容 |
 |---|---|
-| **定义** | 由多个机器校验器组合而成的**候选生成闸门**：`dor_check`（DoR/DoD + 知识状态 + 阶段收口）+ `branch_validator`（评审记录 / hash / 锚点）+ `traceability_check`（prd-assembly 的 RTM 正反向追溯）+ `property_check`（function-description 逻辑完备性）。**机器校验只能产生 `ready_for_human_review`，不能产生 `confirmed`**（宪法第 6 条：Human gates cannot be bypassed）。 |
+| **定义** | 由多个机器校验器组合而成的**候选生成闸门**：`dor_check`（DoR/DoD + 知识状态 + 阶段收口）+ `branch_validator`（评审记录 / hash / 锚点）+ `traceability_check`（prd-assembly 的 RTM 正反向追溯）+ `property_check`（feature-list (et al.) 逻辑完备性）。**机器校验只能产生 `ready_for_human_review`，不能产生 `confirmed`**（宪法第 6 条：Human gates cannot be bypassed）。 |
 | **出现位置** | `src/framework/contracts.md`（Confirmation Invariant）；`src/framework/governance.md`（Quality Sequence / Confirmation）；`src/scripts/pipeline.py` `machine_gate()`。 |
 | **相关校验器** | `src/scripts/dor_check.py`；`src/scripts/branch_validator.py`；`src/scripts/traceability_check.py`；`src/scripts/property_check.py`。 |
-| **示例** | `python3 src/scripts/pipeline.py requirements/REQ-XXX gate --work-item function-description` 返回 `{"ok": true/false, ...}`；`ok=true` 只代表「候选可送审」，不代表「已确认」。 |
+| **示例** | `python3 src/scripts/pipeline.py requirements/REQ-XXX gate --work-item feature-list (et al.)` 返回 `{"ok": true/false, ...}`；`ok=true` 只代表「候选可送审」，不代表「已确认」。 |
 
 ### 2.5 branch（分支 / 可选能力）
 
 | 项 | 内容 |
 |---|---|
-| **定义** | 相对**主干（Main Trunk）**的可选 / 条件能力。主干是 5 个主 work_item（必需、无 Inquiry）；分支是其余一切（function-description 的子 Skill、共享机制 clarify / change-management / decision-log / intake-routing / project-init / human-gate / audit / traceability、可选支持能力 competitive-research / feasibility-analysis / tracking-plan / issue-record / requirement-restate 等）。**每个分支入口都触发 Inquiry Gate**（默认行为 vs 覆盖）。 |
+| **定义** | 相对**主干（Main Trunk）**的可选 / 条件能力。主干是 5 个主 work_item（必需、无 Inquiry）；分支是其余一切（feature-list (et al.) 的子 Skill、共享机制 clarify / change-management / decision-log / intake-routing / project-init / human-gate / audit / traceability、可选支持能力 competitive-research / feasibility-analysis / tracking-plan / issue-record / requirement-restate 等）。**每个分支入口都触发 Inquiry Gate**（默认行为 vs 覆盖）。 |
 | **出现位置** | `src/framework/governance.md`（Main Trunk vs. Branch — Strict Distinction、Default Behaviors By Artifact）；`src/framework/workflow-registry.json` 的 `support_capabilities[]` 与 `internal_capabilities[]`。 |
 | **相关校验器** | `src/scripts/pipeline.py`（`branch_skill_signals` / `entry_branch_signals`）；各分支 Skill 的 `scripts/validate_artifact.py`（如 `src/stages/002-product-requirements/skills/tracking-plan/scripts/validate_artifact.py`）。 |
 | **示例** | `tracking-plan`（分支，产物落 `99-review/support/tracking-plan.md`）；`requirement-restate`（分支能力，产物落 `99-review/support/`）。 |
@@ -93,7 +93,7 @@
 | **定义** | 被更新的确认版本 / 变更回流替代，**必须重新校验**。`superseded` 视为「待重跑」：会成为 `next_work_item`，其下游保持 DoR 阻断直到重新 confirmed。由人工发起（`pipeline.py reflow --apply` 由机器执行，语义上代表人工发起的变更）。 |
 | **出现位置** | `docs/状态语义矩阵.md`（§一 / §四）；`src/framework/contracts.md`（Artifact States）；`src/framework/workflow-registry.json`（`dependency_policy.cascade_invalidation`）。 |
 | **相关校验器** | `src/scripts/pipeline.py`（reflow 动作）；`src/scripts/orchestrator.py`（superseded 视为待重跑 / next_work_item）。 |
-| **示例** | 变更确认后，下游 `product-ux` / `function-description` / `prd-assembly` 被翻转 `status: superseded`，需从最早受影响 work_item 重跑。 |
+| **示例** | 变更确认后，下游 `page-design` + `interaction-rules` / `feature-list` / `functional-flow` / `business-rules` / `validation-rules` / `state-machine` / `exception-handling` / `acceptance-criteria` / `prd-assembly` 被翻转 `status: superseded`，需从最早受影响 work_item 重跑。 |
 
 ### 2.9 upstream_artifact_ids（上游产物 ID 列表）
 
@@ -102,22 +102,22 @@
 | **定义** | `prd.md` frontmatter 的扩展字段，列出 PRD 引用的上游产物 ID，用于 RTM 正反向追溯。**必须使用上游产物 `artifact_id` 的原始格式**（单连字符，如 `BG-001`），不得加版本后缀（统一约定）。 |
 | **出现位置** | `src/templates/_frontmatter-schema.md` §3（扩展字段）；`src/stages/003-prd-output/skills/prd-assembly/scripts/validate_artifact.py`（DoR 校验正则）；`src/scripts/consistency_check.py`（`check_upstream_artifact_ids_contract`）。 |
 | **相关校验器** | `src/stages/003-prd-output/skills/prd-assembly/scripts/validate_artifact.py`（正则 `(BG|JS|UX|FD)-\d+(?:-\d+)?`）；`src/scripts/consistency_check.py`（模板 ↔ 校验器约定一致性）。 |
-| **示例** | `upstream_artifact_ids: ["BG-001", "JS-001", "UX-001", "FD-001"]`。 |
+| **示例** | `upstream_artifact_ids: ["BG-001", "UJ/US-001", "UX-001", "FD-001"]`。 |
 
 ### 2.10 rule_density（规则密度）
 
 | 项 | 内容 |
 |---|---|
-| **定义** | function-description 的逻辑完备性维度：每个 FUN 必须有足够的 BR + VL + AC 覆盖。阈值：总数 < 3 → HIGH（under-specified）；< 6 → MEDIUM（建议补充）。支持两种布局：`### FUN-XXX` 子标题块、功能清单表格（按「所属 FUN」列聚合）。无 FUN 可定位时输出 MEDIUM「规则密度校验跳过」兜底。 |
+| **定义** | feature-list (et al.) 的逻辑完备性维度：每个 FUN 必须有足够的 BR + VL + AC 覆盖。阈值：总数 < 3 → HIGH（under-specified）；< 6 → MEDIUM（建议补充）。支持两种布局：`### FUN-XXX` 子标题块、功能清单表格（按「所属 FUN」列聚合）。无 FUN 可定位时输出 MEDIUM「规则密度校验跳过」兜底。 |
 | **出现位置** | `src/scripts/property_check.py`（`check_rule_density` / `_table_rule_density` / `_id_fun_pairs`）。 |
-| **相关校验器** | `src/scripts/property_check.py`（仅 function-description 触发，见 `pipeline.py machine_gate()`）。 |
+| **相关校验器** | `src/scripts/property_check.py`（仅 feature-list (et al.) 触发，见 `pipeline.py machine_gate()`）。 |
 | **示例** | `FUN-001 has only 2 rules (BR=1, VL=0, AC=1) — under-specified (minimum 3)`。 |
 
 ### 2.11 capability-fragment（能力片段）
 
 | 项 | 内容 |
 |---|---|
-| **定义** | 跨案例重复出现的「通用能力 / 组件型功能」标准片段库。生成 `function-description` 时，组件型 / 通用型功能**优先引用片段而非重写**；每个片段可追溯到来源案例。片段自带 ≥3 条标准 BR 兜底（满足规则密度要求）。 |
+| **定义** | 跨案例重复出现的「通用能力 / 组件型功能」标准片段库。生成 `feature-list` / `functional-flow` / `business-rules` / `validation-rules` / `state-machine` / `exception-handling` / `acceptance-criteria` 时，组件型 / 通用型功能**优先引用片段而非重写**；每个片段可追溯到来源案例。片段自带 ≥3 条标准 BR 兜底（满足规则密度要求）。 |
 | **出现位置** | `src/shared/capability-fragments/README.md`（使用约定 / 片段清单）；`src/shared/capability-fragments/{subscription-notice,comment-validation,time-picker}.md`（片段本体）。 |
 | **相关校验器** | 无独立校验器（纯 Markdown 知识库）；片段被复制进产物后，产物仍走既有 gate 校验（`validate_artifact.py` / `property_check.py`）。 |
 | **示例** | `time-picker.md`（时间/年月选择组件，4 BR / 3 AC / 2 EX，来源 REQ-008-bae FUN-009）。 |
@@ -163,7 +163,7 @@
 
 ## 五、术语使用约定
 
-1. **产物正文**：写 `prd.md` / `function-description.md` 等产物时，核心术语（work_item / artifact / confirmed / superseded / branch 等）按本文档定义使用，不得自造同义词。
+1. **产物正文**：写 `prd.md` / `feature-list (et al.).md` 等产物时，核心术语（work_item / artifact / confirmed / superseded / branch 等）按本文档定义使用，不得自造同义词。
 2. **文档引用**：framework 文档与本文档互相引用时使用相对路径（如 `src/framework/contracts.md`），与现有文档风格一致。
 3. **校验器命名**：术语对应的校验器命名（`branch_validator` / `property_check` / `dor_check` / `orchestrator` / `traceability_check` / `hash_anchor`）与本文档一致，不引入别名。
 4. **新增术语**：新增核心术语时，先在本文档登记（定义 / 出现位置 / 相关校验器 / 示例），再在 framework 文档与代码中落地，避免术语漂移（遵循「状态枚举单源」精神）。

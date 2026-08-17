@@ -23,14 +23,14 @@
 
 | 我想画... | 用什么 | 命令/方式 |
 |---|---|---|
-| 用户旅程图 | Mermaid `graph LR` | 嵌入 `user-journey-and-stories` §2，可选 Figma `generate_diagram` 导出 FigJam |
-| 功能流程图 | Mermaid `graph TD` | 嵌入 `function-description` §2，含决策分支+异常路径 |
+| 用户旅程图 | Mermaid `graph LR` | 嵌入 `user-journey` + `user-stories` §2，可选 Figma `generate_diagram` 导出 FigJam |
+| 功能流程图 | Mermaid `graph TD` | 嵌入 `feature-list` / `functional-flow` / `business-rules` / `validation-rules` / `state-machine` / `exception-handling` / `acceptance-criteria` §2，含决策分支+异常路径 |
 | 系统架构图 | Figma `generate_diagram` (architecture) | 树状 Module→Feature，可编辑 |
-| 功能结构树 | Mermaid `graph TD` | `function-description` §1 功能清单（FEA 树）内嵌 |
+| 功能结构树 | Mermaid `graph TD` | `feature-list` / `functional-flow` / `business-rules` / `validation-rules` / `state-machine` / `exception-handling` / `acceptance-criteria` §1 功能清单（FEA 树）内嵌 |
 | 时序图 | Mermaid `sequenceDiagram` | 角色间交互、API 调用流 |
 | 甘特图 | Mermaid `gantt` | 项目排期、里程碑 |
-| ER 图/数据模型 | Mermaid `erDiagram` | `function-description` 数据模型 |
-| 状态图 | Mermaid `stateDiagram-v2` | `function-description` 状态变化 |
+| ER 图/数据模型 | Mermaid `erDiagram` | `feature-list` / `functional-flow` / `business-rules` / `validation-rules` / `state-machine` / `exception-handling` / `acceptance-criteria` 数据模型 |
+| 状态图 | Mermaid `stateDiagram-v2` | `feature-list` / `functional-flow` / `business-rules` / `validation-rules` / `state-machine` / `exception-handling` / `acceptance-criteria` 状态变化 |
 | 可点击原型 | `frontend-design` Skill (+ `theme-factory`) | HTML+CSS+JS，品牌主题 |
 | 数据图表 | `dataviz` Skill 或 ECharts/Chart.js | 竞品对比雷达图、漏斗图、KPI 卡片 |
 | 竞品定位图 | `dataviz` Skill → 散点/气泡图 | 价格 vs 功能矩阵 |
@@ -179,7 +179,7 @@ diagramify diff base.mmd modified.mmd
 # src/scripts/render_diagrams.sh
 #!/bin/bash
 # 将指定 .md 文件中所有 Mermaid 块渲染为 SVG
-# 用法: bash render_diagrams.sh requirements/REQ-NNN-<topic>/001-business-requirements/02-user-journey-stories/journey-and-stories.md
+# 用法: bash render_diagrams.sh requirements/REQ-NNN-<topic>/001-business-requirements/02-user-journey-stories/user-journey.md / user-stories.md
 
 INPUT="$1"
 OUTPUT="${INPUT%.md}-rendered.md"

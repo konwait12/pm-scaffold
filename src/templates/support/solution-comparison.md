@@ -2,7 +2,7 @@
 # 多方案对比
 
 **决策问题**: `待填写`（我们要解决什么问题）
-**触发场景**: `待填写`（`project-background-goal` 目标方案 / `product-ux` 范围选择 / `function-description` 实现方式）
+**触发场景**: `待填写`（`project-background-goal` 目标方案 / `page-design` + `interaction-rules` 范围选择 / `feature-list` / `functional-flow` / `business-rules` / `validation-rules` / `state-machine` / `exception-handling` / `acceptance-criteria` 实现方式）
 
 ## 候选方案
 

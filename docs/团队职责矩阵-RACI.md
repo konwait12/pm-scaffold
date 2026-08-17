@@ -25,9 +25,9 @@
 |---|---|---|---|
 | `business_owner` | 业务负责人 | 拥有业务事实与业务目标，对「业务真相」负责（宪法第 1 条：Business truth remains human-owned）。 | registry `reviewer_roles`（BG / JS / FD / PRD）；frontmatter `business_fact_owner`；`support_capabilities[*].responsible_role` |
 | `product_manager` | 产品经理 | 拥有需求内容与目标决策，对 PRD 内容与范围负责。 | registry `reviewer_roles` 中的 `product_owner`（**本文档 `product_manager` 与 registry `product_owner` 同义**）；frontmatter `goal_decision_owner` |
-| `ux_designer` | UX 设计师 | 拥有用户旅程 / 页面设计 / 交互规则的设计产出。 | 参与 `user-journey-and-stories` / `product-ux` 环节；不在 registry `reviewer_roles` 内（评审角色由 product_owner 承担） |
-| `tech_lead` | 技术负责人 | 拥有功能描述 / 技术可行性视角，是 PRD 的下游消费者（研发）。 | 参与 `function-description` 环节；不在 registry `reviewer_roles` 内 |
-| `qa` | 测试 | 拥有验收判据视角，是 PRD 的下游消费者（测试）。 | 参与 `function-description`（AC）/ `tracking-plan` 环节；不在 registry `reviewer_roles` 内 |
+| `ux_designer` | UX 设计师 | 拥有用户旅程 / 页面设计 / 交互规则的设计产出。 | 参与 `user-journey` + `user-stories` / `page-design` + `interaction-rules` 环节；不在 registry `reviewer_roles` 内（评审角色由 product_owner 承担） |
+| `tech_lead` | 技术负责人 | 拥有功能描述 / 技术可行性视角，是 PRD 的下游消费者（研发）。 | 参与 `feature-list` / `functional-flow` / `business-rules` / `validation-rules` / `state-machine` / `exception-handling` / `acceptance-criteria` 环节；不在 registry `reviewer_roles` 内 |
+| `qa` | 测试 | 拥有验收判据视角，是 PRD 的下游消费者（测试）。 | 参与 `feature-list` / `functional-flow` / `business-rules` / `validation-rules` / `state-machine` / `exception-handling` / `acceptance-criteria`（AC）/ `tracking-plan` 环节；不在 registry `reviewer_roles` 内 |
 | `ai_agent` | AI 智能体 | 脚手架的执行者：起草产物、跑机器校验、登记记录。**永远不能设置 `confirmed`**。 | `src/scripts/pipeline.py`（review 拒绝 AI / 待确认 / simulated 名）；`src/framework/contracts.md`（Confirmation Invariant） |
 | `reviewer` | 评审人 | 执行评审、提出意见的人；对产物质量把关。**必须命中 `00-input/authorized-reviewers.json` 且角色在 registry `reviewer_roles` 内**。 | `src/scripts/pipeline.py` `load_authorized_reviewer()`；`src/scripts/branch_validator.py` |
 | `approver` | 审批人 | 对确认 / 变更负最终责任的人。当前模型下 reviewer 即 approver（`review --decision approve`）；变更审批由 `business_owner` / `product_owner` 承担。 | `src/shared/change-management/proposal-template.md` §6 审批表 |
@@ -38,7 +38,7 @@
 
 | 角色 | 是否在 `reviewer_roles` 可选项 | 可评审的 work_item |
 |---|---|---|
-| `business_owner` | ✅ | `project-background-goal` / `user-journey-and-stories` / `function-description` / `prd-assembly` |
+| `business_owner` | ✅ | `project-background-goal` / `user-journey` + `user-stories` / `feature-list` / `functional-flow` / `business-rules` / `validation-rules` / `state-machine` / `exception-handling` / `acceptance-criteria` / `prd-assembly` |
 | `product_owner`（= `product_manager`） | ✅ | 全部 5 个主 work_item |
 | `ux_designer` | ❌（不参与评审确认） | — |
 | `tech_lead` | ❌（不参与评审确认） | — |
@@ -85,9 +85,9 @@
 |---|---|---|
 | 1. 需求澄清 | `intake-routing` / `clarify` / `requirement-restate` | ai_agent 起草澄清问题、登记 Q-/ISS-，product_manager 拍板澄清结果；business_owner 提供业务事实答案。 |
 | 2. 背景目标 | `project-background-goal` | business_owner 提供业务事实与目标（`business_fact_owner`），product_manager 拍板目标决策（`goal_decision_owner`），ai_agent 起草 BG 产物。 |
-| 3. 用户旅程 | `user-journey-and-stories` | ux_designer 主导旅程 / 场景 / 用户故事设计，product_manager 负责范围基线，ai_agent 起草。 |
-| 4. UX 设计 | `product-ux`（page-design + interaction-rules） | ux_designer 主导页面设计与交互规则，product_manager 负责 UX 范围，ai_agent 起草。 |
-| 5. 功能描述 | `function-description`（feature-list / functional-flow / business-rules / validation-rules / state-machine / exception-handling / acceptance-criteria） | tech_lead 主导功能与规则（下游研发视角），qa 提供验收判据视角（AC），product_manager 负责，ai_agent 起草。 |
+| 3. 用户旅程 | `user-journey` + `user-stories` | ux_designer 主导旅程 / 场景 / 用户故事设计，product_manager 负责范围基线，ai_agent 起草。 |
+| 4. UX 设计 | `page-design` + `interaction-rules`（page-design + interaction-rules） | ux_designer 主导页面设计与交互规则，product_manager 负责 UX 范围，ai_agent 起草。 |
+| 5. 功能描述 | `feature-list` / `functional-flow` / `business-rules` / `validation-rules` / `state-machine` / `exception-handling` / `acceptance-criteria`（feature-list / functional-flow / business-rules / validation-rules / state-machine / exception-handling / acceptance-criteria） | tech_lead 主导功能与规则（下游研发视角），qa 提供验收判据视角（AC），product_manager 负责，ai_agent 起草。 |
 | 6. 追踪计划 | `tracking-plan`（分支） | business_owner 提供埋点 / 数据需求（registry `responsible_role`），qa 提供口径视角，product_manager 负责，ai_agent 起草。 |
 | 7. PRD 组装 | `prd-assembly` | ai_agent 聚合已确认上游产物（不得新增需求），product_manager 对最终 PRD 负责。 |
 | 8. 评审 | `human-gate` / `pipeline.py review` | reviewer 执行评审（命中 authorized-reviewers.json + reviewer_roles），approver 批准确认；ai_agent 只跑机器校验（`--yes`），不参与确认。 |

@@ -3,7 +3,7 @@
 本模板由 acceptance-criteria SKILL.md 驱动。
 待确认 是唯一占位符。
 
-v2 拆分说明：自 function-description.md §7（验收依据）独立。
+v2 拆分说明：自 feature-list (et al.).md §7（验收依据）独立。
 -->
 ---
 artifact_id: ""

@@ -31,7 +31,7 @@
 | 跳过的步骤 | 是否需回填 | 回填时机 | 风险 |
 |---|---|---|---|
 | `project-background-goal` | 是 / 否 | `待填写` | `待填写` |
-| `user-journey-and-stories` | 是 / 否 | `待填写` | `待填写` |
+| `user-journey` + `user-stories` | 是 / 否 | `待填写` | `待填写` |
 
 ## 人工确认
 - [ ] 同意判定成熟度

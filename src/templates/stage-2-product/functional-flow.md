@@ -3,7 +3,7 @@
 本模板由 functional-flow SKILL.md 驱动。
 待确认 是唯一占位符。
 
-v2 拆分说明：自 function-description.md §2（功能流程）独立。
+v2 拆分说明：自 feature-list (et al.).md §2（功能流程）独立。
 -->
 ---
 artifact_id: ""

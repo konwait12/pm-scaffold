@@ -3,7 +3,7 @@
 本模板由 feature-list SKILL.md 驱动。
 待确认 是唯一占位符。
 
-v2 拆分说明：自 function-description.md §1（功能清单）独立。
+v2 拆分说明：自 feature-list (et al.).md §1（功能清单）独立。
 -->
 ---
 artifact_id: ""

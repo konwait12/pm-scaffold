@@ -3,7 +3,7 @@
 
 **分析对象**: `待填写`（需求/功能名称）
 **分析日期**: `待填写`
-**上游依据**: `待填写`（`project-background-goal` artifact ID / `product-ux` FEA-XXX）
+**上游依据**: `待填写`（`project-background-goal` artifact ID / `page-design` + `interaction-rules` FEA-XXX）
 
 ## 一、市场空间
 

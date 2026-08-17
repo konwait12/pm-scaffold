@@ -11,18 +11,18 @@ PM Scaffold 脚手架 (注册表驱动，PRD-only)
 ├── Stage 1: 业务需求 ────────────────────────────────────
 │   ├── project-background-goal
 │   │   └── 🔌 requirements-gathering (干系人发现 + MoSCoW)
-│   └── user-journey-and-stories
+│   └── user-journey + user-stories
 │       └── 🔌 user-journeys (情感旅程 + 痛点上色 + Playwright 验证)
 │
 ├── Stage 2: 产品需求 ────────────────────────────────────
-│   ├── product-ux
+│   ├── page-design + interaction-rules
 │   │   ├── 🔌 flow2demo (流程→交互文档+可视化板)
 │   │   ├── 🔌 interactive-demo-factory (可点击原型工厂)
 │   │   ├── 🔌 pm-phase-4.5-prototype (确认页面清单→HTML原型)
 │   │   ├── 🔌 image2html (截图→HTML重建，高保真模式)
 │   │   ├── 🔌 frontend-design (让原型看起来有设计感)
 │   │   └── 🔌 impeccable (原型设计审计+打磨)
-│   └── function-description
+│   └── feature-list (et al.)
 │       └── 🔌 prd-writer (IR/BR 规范 + 分支覆盖)
 │
 ├── Stage 3: PRD 输出 ────────────────────────────────────
@@ -51,13 +51,13 @@ PM Scaffold 脚手架 (注册表驱动，PRD-only)
 - **注意**: 其 StakeholderDiscovery 的 7 类干系人可作为 persona profiling 模板
 
 ### `user-journeys` — Stage 1 WI2 增强
-- **调用时机**: user-journey-and-stories 的 Think Phase C（情感映射）时
+- **调用时机**: user-journey + user-stories 的 Think Phase C（情感映射）时
 - **输入**: 已确认的角色 + 生命周期阶段
 - **输出**: 情感弧线、痛点上色、错误恢复路径
 - **借鉴**: 其 `critical/common/edge-cases` 三级旅程分类可直接映射到脚手架路径类型覆盖
 
 ### `pm-phase-4.5-prototype` — Stage 2 WI1 原型生成
-- **调用时机**: product-ux 的 Generate Phase C（页面骨架）完成后
+- **调用时机**: page-design + interaction-rules 的 Generate Phase C（页面骨架）完成后
 - **输入**: 用户故事文档 + 功能设计文档 (FEA + IX)
 - **输出**: 页面清单确认表 → 单一 HTML 交互原型（覆盖主流程+所有分支）
 - **脚手架集成点**: 作为 page-design 子 Skill 的高保真输出选项
@@ -92,10 +92,10 @@ PM Scaffold 脚手架 (注册表驱动，PRD-only)
 - **注意**: agile-pm-workflow Step 4.2/6.1 已示范调用方式
 
 ### `prd-writer` — Stage 2 WI2 IR/BR 规范
-- **调用时机**: function-description 写交互规则和业务规则时
+- **调用时机**: feature-list (et al.) 写交互规则和业务规则时
 - **输入**: 功能设计文档
 - **输出**: 工程就绪的 IR/BR 规范（含 input/output/error codes、分支覆盖、Feishu 同步清单）
-- **独特价值**: 其 IR/BR 规范章节可直接作为 function-description 的 detailed-spec 模板
+- **独特价值**: 其 IR/BR 规范章节可直接作为 feature-list (et al.) 的 detailed-spec 模板
 
 ### `dataviz` — Stage 3 图表
 - **调用时机**: PRD 包含指标仪表盘或数据可视化时
@@ -112,7 +112,7 @@ PM Scaffold 脚手架 (注册表驱动，PRD-only)
 ## 调用规则
 
 1. **外部 Skill 是增强，不是替代** — 脚手架的核心 pipeline（注册表→SKILL.md→validator→Human Gate）不变。外部 Skill 在特定阶段被调用，但产物仍需通过脚手架的 validator 和 Human Gate。
-2. **调用后产物归入对应阶段目录** — 原型 HTML → `02-product-requirements/01-product-ux/`；交互文档 → 同目录
+2. **调用后产物归入对应阶段目录** — 原型 HTML → `02-product-requirements/01-page-design + interaction-rules/`；交互文档 → 同目录
 3. **AI_INFERENCE 标记传播** — 外部 Skill 的产出通常标记 AI_INFERENCE，直到人工在 Human Gate 确认
 4. **不破坏 confirmed 不变式** — 外部 Skill 不能设置 confirmed 状态
 

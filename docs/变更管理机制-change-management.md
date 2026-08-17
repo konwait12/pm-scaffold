@@ -59,7 +59,7 @@
 | 业务需求变更 | 改版 / CR（在既有版本上增量变更） | 受控变更流程（§三） |
 | 缺陷修复 | 下游分析暴露上游缺陷，需修正已 confirmed 产物 | 变更流程 + 留痕 + 锚点重算 |
 | 上游输入更新 | 上游材料 / 事实更新，影响已确认基线 | — |
-| 范围变更 | `product-ux` confirmed 后新增 / 修改范围 | `governance.md` Change Control |
+| 范围变更 | `page-design` + `interaction-rules` confirmed 后新增 / 修改范围 | `governance.md` Change Control |
 
 ### 3.2 变更流程总览
 

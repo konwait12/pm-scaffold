@@ -3,7 +3,7 @@
 本模板由 validation-rules SKILL.md 驱动。
 待确认 是唯一占位符。
 
-v2 拆分说明：自 function-description.md §4（校验规则）独立。
+v2 拆分说明：自 feature-list (et al.).md §4（校验规则）独立。
 -->
 ---
 artifact_id: ""
