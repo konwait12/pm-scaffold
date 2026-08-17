@@ -11,14 +11,14 @@ REQ-001 实际只完成 `project-background-goal`（`requirements/REQ-001-hire-w
 ---
 artifact_id: PRD-HIRE-001
 version: v1.0
-status: confirmed
+status: ready_for_human_review
 owner: PM-Office
 business_fact_owner: VP of Talent
 goal_decision_owner: VP of Talent
 reviewer: VP of Talent
 created_at: 2026-08-11
 updated_at: 2026-08-11
-confirmed_at: 2026-08-11
+confirmed_at: ""
 upstream_artifact_ids: ["BG-HIRE-002", "JS-HIRE-001"]
 ---
 

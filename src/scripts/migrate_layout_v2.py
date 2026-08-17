@@ -28,10 +28,18 @@ from pathlib import Path
 MAPPINGS = {
     "00_input": "00-input",
     "01_background-goal": "001-business-requirements/01-background-goal",
-    "02_journey-stories": "001-business-requirements/02-user-journey-stories",
-    "03_ux": "002-product-requirements/01-product-ux",
-    "04_function": "002-product-requirements/02-function-description",
-    "05_prd": "003-prd-output",
+    "02_user-journey": "001-business-requirements/02-user-journey",
+    "03_user-stories": "001-business-requirements/03-user-stories",
+    "04_feature-list": "002-product-requirements/01-feature-list",
+    "05_functional-flow": "002-product-requirements/02-functional-flow",
+    "06_page-design": "002-product-requirements/03-page-design",
+    "07_interaction-rules": "002-product-requirements/04-interaction-rules",
+    "08_business-rules": "002-product-requirements/05-business-rules",
+    "09_validation-rules": "002-product-requirements/06-validation-rules",
+    "10_state-machine": "002-product-requirements/07-state-machine",
+    "11_exception-handling": "002-product-requirements/08-exception-handling",
+    "12_acceptance-criteria": "002-product-requirements/09-acceptance-criteria",
+    "13_prd": "003-prd-output",
     "99_review": "99-review",
 }
 

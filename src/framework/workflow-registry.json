@@ -1,5 +1,5 @@
 {
-  "schema_version": 6,
+  "schema_version": 7,
   "stages": [
     {
       "id": "001-business-requirements",
@@ -7,7 +7,8 @@
       "path": "src/stages/001-business-requirements",
       "work_items": [
         "project-background-goal",
-        "user-journey-and-stories"
+        "user-journey",
+        "user-stories"
       ]
     },
     {
@@ -15,8 +16,15 @@
       "name": "产品需求阶段",
       "path": "src/stages/002-product-requirements",
       "work_items": [
-        "product-ux",
-        "function-description"
+        "feature-list",
+        "functional-flow",
+        "page-design",
+        "interaction-rules",
+        "business-rules",
+        "validation-rules",
+        "state-machine",
+        "exception-handling",
+        "acceptance-criteria"
       ]
     },
     {
@@ -42,86 +50,266 @@
         "project-background-goals"
       ],
       "predecessors": [],
-      "legacy_wave": 1,
-      "legacy_artifact_dir": "01_background-goal",
       "reviewer_roles": [
         "business_owner",
         "product_owner"
       ],
-      "human_gate": true
+      "human_gate": true,
+      "legacy_wave": 1,
+      "legacy_artifact_dir": "01_background-goal"
     },
     {
-      "id": "user-journey-and-stories",
-      "name": "用户旅程与用户故事",
+      "id": "user-journey",
+      "name": "用户旅程",
       "order": 2,
       "stage": "001-business-requirements",
-      "skill_path": "src/stages/001-business-requirements/skills/user-journey-and-stories",
-      "artifact_dir": "001-business-requirements/02-user-journey-stories",
-      "artifact_file": "journey-and-stories.md",
-      "artifact_prefix": "JS-",
+      "skill_path": "src/stages/001-business-requirements/skills/user-journey",
+      "artifact_dir": "001-business-requirements/02-user-journey",
+      "artifact_file": "user-journey.md",
+      "artifact_prefix": "UJ-",
       "required_outputs": [
-        "journey-and-stories"
+        "user-journey"
       ],
       "predecessors": [
         "project-background-goal"
       ],
-      "legacy_wave": 2,
-      "legacy_artifact_dir": "02_journey-stories",
       "reviewer_roles": [
         "business_owner",
         "product_owner"
       ],
-      "human_gate": true
+      "human_gate": true,
+      "legacy_wave": 2,
+      "legacy_artifact_dir": "02_journey-stories"
     },
     {
-      "id": "product-ux",
-      "name": "产品 UX",
+      "id": "user-stories",
+      "name": "用户故事与范围基线",
       "order": 3,
-      "stage": "002-product-requirements",
-      "skill_path": "src/stages/002-product-requirements/skills/product-ux",
-      "artifact_dir": "002-product-requirements/01-product-ux",
-      "artifact_file": "product-ux.md",
-      "artifact_prefix": "UX-",
+      "stage": "001-business-requirements",
+      "skill_path": "src/stages/001-business-requirements/skills/user-stories",
+      "artifact_dir": "001-business-requirements/03-user-stories",
+      "artifact_file": "user-stories.md",
+      "artifact_prefix": "US-",
       "required_outputs": [
-        "product-ux"
+        "user-stories"
       ],
       "predecessors": [
-        "user-journey-and-stories"
+        "user-journey"
       ],
-      "legacy_wave": 3,
-      "legacy_artifact_dir": "03_ux",
       "reviewer_roles": [
+        "business_owner",
         "product_owner"
       ],
-      "human_gate": true
+      "human_gate": true,
+      "legacy_wave": 3,
+      "legacy_artifact_dir": "02_journey-stories"
     },
     {
-      "id": "function-description",
-      "name": "功能描述",
+      "id": "feature-list",
+      "name": "功能清单",
       "order": 4,
       "stage": "002-product-requirements",
-      "skill_path": "src/stages/002-product-requirements/skills/function-description",
-      "artifact_dir": "002-product-requirements/02-function-description",
-      "artifact_file": "function-description.md",
-      "artifact_prefix": "FD-",
+      "skill_path": "src/stages/002-product-requirements/skills/feature-list",
+      "artifact_dir": "002-product-requirements/01-feature-list",
+      "artifact_file": "feature-list.md",
+      "artifact_prefix": "FEA-",
       "required_outputs": [
-        "function-specifications"
+        "feature-list"
       ],
       "predecessors": [
-        "product-ux"
+        "user-stories"
       ],
-      "legacy_wave": 4,
-      "legacy_artifact_dir": "04_function",
       "reviewer_roles": [
         "product_owner",
         "business_owner"
       ],
-      "human_gate": true
+      "human_gate": true,
+      "legacy_wave": 4,
+      "legacy_artifact_dir": "02_function-description"
+    },
+    {
+      "id": "functional-flow",
+      "name": "功能流程",
+      "order": 5,
+      "stage": "002-product-requirements",
+      "skill_path": "src/stages/002-product-requirements/skills/functional-flow",
+      "artifact_dir": "002-product-requirements/02-functional-flow",
+      "artifact_file": "functional-flow.md",
+      "artifact_prefix": "FL-",
+      "required_outputs": [
+        "functional-flow"
+      ],
+      "predecessors": [
+        "feature-list"
+      ],
+      "reviewer_roles": [
+        "product_owner"
+      ],
+      "human_gate": true,
+      "legacy_wave": 5,
+      "legacy_artifact_dir": "02_function-description"
+    },
+    {
+      "id": "page-design",
+      "name": "页面设计与原型",
+      "order": 6,
+      "stage": "002-product-requirements",
+      "skill_path": "src/stages/002-product-requirements/skills/page-design",
+      "artifact_dir": "002-product-requirements/03-page-design",
+      "artifact_file": "page-design.md",
+      "artifact_prefix": "PD-",
+      "required_outputs": [
+        "page-design"
+      ],
+      "predecessors": [
+        "functional-flow"
+      ],
+      "reviewer_roles": [
+        "product_owner"
+      ],
+      "human_gate": true,
+      "legacy_wave": 6,
+      "legacy_artifact_dir": "01_product-ux"
+    },
+    {
+      "id": "interaction-rules",
+      "name": "交互规则",
+      "order": 7,
+      "stage": "002-product-requirements",
+      "skill_path": "src/stages/002-product-requirements/skills/interaction-rules",
+      "artifact_dir": "002-product-requirements/04-interaction-rules",
+      "artifact_file": "interaction-rules.md",
+      "artifact_prefix": "IX-",
+      "required_outputs": [
+        "interaction-rules"
+      ],
+      "predecessors": [
+        "page-design"
+      ],
+      "reviewer_roles": [
+        "product_owner"
+      ],
+      "human_gate": true,
+      "legacy_wave": 7,
+      "legacy_artifact_dir": "01_product-ux"
+    },
+    {
+      "id": "business-rules",
+      "name": "业务规则",
+      "order": 8,
+      "stage": "002-product-requirements",
+      "skill_path": "src/stages/002-product-requirements/skills/business-rules",
+      "artifact_dir": "002-product-requirements/05-business-rules",
+      "artifact_file": "business-rules.md",
+      "artifact_prefix": "BR-",
+      "required_outputs": [
+        "business-rules"
+      ],
+      "predecessors": [
+        "functional-flow"
+      ],
+      "reviewer_roles": [
+        "product_owner",
+        "business_owner"
+      ],
+      "human_gate": true,
+      "legacy_wave": 8,
+      "legacy_artifact_dir": "02_function-description"
+    },
+    {
+      "id": "validation-rules",
+      "name": "字段与校验规则",
+      "order": 9,
+      "stage": "002-product-requirements",
+      "skill_path": "src/stages/002-product-requirements/skills/validation-rules",
+      "artifact_dir": "002-product-requirements/06-validation-rules",
+      "artifact_file": "validation-rules.md",
+      "artifact_prefix": "VL-",
+      "required_outputs": [
+        "validation-rules"
+      ],
+      "predecessors": [
+        "business-rules"
+      ],
+      "reviewer_roles": [
+        "product_owner"
+      ],
+      "human_gate": true,
+      "legacy_wave": 9,
+      "legacy_artifact_dir": "02_function-description"
+    },
+    {
+      "id": "state-machine",
+      "name": "状态变化",
+      "order": 10,
+      "stage": "002-product-requirements",
+      "skill_path": "src/stages/002-product-requirements/skills/state-machine",
+      "artifact_dir": "002-product-requirements/07-state-machine",
+      "artifact_file": "state-machine.md",
+      "artifact_prefix": "SM-",
+      "required_outputs": [
+        "state-machine"
+      ],
+      "predecessors": [
+        "business-rules"
+      ],
+      "reviewer_roles": [
+        "product_owner"
+      ],
+      "human_gate": true,
+      "legacy_wave": 10,
+      "legacy_artifact_dir": "02_function-description"
+    },
+    {
+      "id": "exception-handling",
+      "name": "异常与失败处理",
+      "order": 11,
+      "stage": "002-product-requirements",
+      "skill_path": "src/stages/002-product-requirements/skills/exception-handling",
+      "artifact_dir": "002-product-requirements/08-exception-handling",
+      "artifact_file": "exception-handling.md",
+      "artifact_prefix": "EX-",
+      "required_outputs": [
+        "exception-handling"
+      ],
+      "predecessors": [
+        "state-machine"
+      ],
+      "reviewer_roles": [
+        "product_owner"
+      ],
+      "human_gate": true,
+      "legacy_wave": 11,
+      "legacy_artifact_dir": "02_function-description"
+    },
+    {
+      "id": "acceptance-criteria",
+      "name": "验收标准",
+      "order": 12,
+      "stage": "002-product-requirements",
+      "skill_path": "src/stages/002-product-requirements/skills/acceptance-criteria",
+      "artifact_dir": "002-product-requirements/09-acceptance-criteria",
+      "artifact_file": "acceptance-criteria.md",
+      "artifact_prefix": "AC-",
+      "required_outputs": [
+        "acceptance-criteria"
+      ],
+      "predecessors": [
+        "exception-handling",
+        "interaction-rules"
+      ],
+      "reviewer_roles": [
+        "product_owner",
+        "business_owner"
+      ],
+      "human_gate": true,
+      "legacy_wave": 12,
+      "legacy_artifact_dir": "02_function-description"
     },
     {
       "id": "prd-assembly",
       "name": "PRD 汇总",
-      "order": 5,
+      "order": 13,
       "stage": "003-prd-output",
       "skill_path": "src/stages/003-prd-output/skills/prd-assembly",
       "artifact_dir": "003-prd-output",
@@ -132,84 +320,28 @@
       ],
       "predecessors": [
         "project-background-goal",
-        "user-journey-and-stories",
-        "product-ux",
-        "function-description"
+        "user-journey",
+        "user-stories",
+        "feature-list",
+        "functional-flow",
+        "page-design",
+        "interaction-rules",
+        "business-rules",
+        "validation-rules",
+        "state-machine",
+        "exception-handling",
+        "acceptance-criteria"
       ],
-      "legacy_wave": 5,
-      "legacy_artifact_dir": "05_prd",
       "reviewer_roles": [
         "product_owner",
         "business_owner"
       ],
-      "human_gate": true
+      "human_gate": true,
+      "legacy_wave": 13,
+      "legacy_artifact_dir": "05_prd"
     }
   ],
-  "internal_capabilities": [
-    {
-      "id": "page-design",
-      "parent_work_item": "product-ux",
-      "order": 1,
-      "skill_path": "src/stages/002-product-requirements/skills/product-ux/skills/page-design",
-      "output_section": "页面设计"
-    },
-    {
-      "id": "interaction-rules",
-      "parent_work_item": "product-ux",
-      "order": 2,
-      "skill_path": "src/stages/002-product-requirements/skills/product-ux/skills/interaction-rules",
-      "output_section": "交互规则"
-    },
-    {
-      "id": "feature-list",
-      "parent_work_item": "function-description",
-      "order": 1,
-      "skill_path": "src/stages/002-product-requirements/skills/function-description/skills/feature-list",
-      "output_section": "功能清单"
-    },
-    {
-      "id": "functional-flow",
-      "parent_work_item": "function-description",
-      "order": 2,
-      "skill_path": "src/stages/002-product-requirements/skills/function-description/skills/functional-flow",
-      "output_section": "功能流程"
-    },
-    {
-      "id": "business-rules",
-      "parent_work_item": "function-description",
-      "order": 3,
-      "skill_path": "src/stages/002-product-requirements/skills/function-description/skills/business-rules",
-      "output_section": "业务规则"
-    },
-    {
-      "id": "validation-rules",
-      "parent_work_item": "function-description",
-      "order": 4,
-      "skill_path": "src/stages/002-product-requirements/skills/function-description/skills/validation-rules",
-      "output_section": "校验规则与字段定义"
-    },
-    {
-      "id": "state-machine",
-      "parent_work_item": "function-description",
-      "order": 5,
-      "skill_path": "src/stages/002-product-requirements/skills/function-description/skills/state-machine",
-      "output_section": "状态变化"
-    },
-    {
-      "id": "exception-handling",
-      "parent_work_item": "function-description",
-      "order": 6,
-      "skill_path": "src/stages/002-product-requirements/skills/function-description/skills/exception-handling",
-      "output_section": "异常与失败处理"
-    },
-    {
-      "id": "acceptance-criteria",
-      "parent_work_item": "function-description",
-      "order": 7,
-      "skill_path": "src/stages/002-product-requirements/skills/function-description/skills/acceptance-criteria",
-      "output_section": "验收依据"
-    }
-  ],
+  "internal_capabilities": [],
   "artifact_types": [
     {
       "id": "project-background-goals",
@@ -220,33 +352,114 @@
       "depends_on": []
     },
     {
-      "id": "journey-and-stories",
-      "name": "用户旅程与用户故事（含范围基线）",
-      "producer": "user-journey-and-stories",
-      "artifact_file": "001-business-requirements/02-user-journey-stories/journey-and-stories.md",
-      "prd_destination": "角色、业务生命周期、场景路径、用户故事、范围基线（In/Out/Deferred/Conditional）",
+      "id": "user-journey",
+      "name": "用户旅程（生命周期×角色×情绪）",
+      "producer": "user-journey",
+      "artifact_file": "001-business-requirements/02-user-journey/user-journey.md",
+      "prd_destination": "角色、业务生命周期、场景路径、情绪映射、痛点→机会",
       "depends_on": [
         "project-background-goals"
       ]
     },
     {
-      "id": "product-ux",
-      "name": "产品 UX（页面设计 + 交互规则）",
-      "producer": "product-ux",
-      "artifact_file": "002-product-requirements/01-product-ux/product-ux.md",
-      "prd_destination": "页面骨架、交互规则、UX 体验",
+      "id": "user-stories",
+      "name": "用户故事与范围基线",
+      "producer": "user-stories",
+      "artifact_file": "001-business-requirements/03-user-stories/user-stories.md",
+      "prd_destination": "用户故事、MoSCoW 优先级、范围基线（In/Out/Deferred/Conditional）",
       "depends_on": [
-        "journey-and-stories"
+        "user-journey"
       ]
     },
     {
-      "id": "function-specifications",
-      "name": "功能描述与规则集（功能清单/流程/FUN/BR/VL/State/Exception/AC/字段）",
-      "producer": "function-description",
-      "artifact_file": "002-product-requirements/02-function-description/function-description.md",
-      "prd_destination": "功能清单 FEA、功能流程、FUN 功能描述 + BR/VL/State/Exception/AC/字段规则",
+      "id": "feature-list",
+      "name": "功能清单 FEA",
+      "producer": "feature-list",
+      "artifact_file": "002-product-requirements/01-feature-list/feature-list.md",
+      "prd_destination": "功能清单 FEA-XXX、P0/P1 优先级、US 追溯",
       "depends_on": [
-        "product-ux"
+        "user-stories"
+      ]
+    },
+    {
+      "id": "functional-flow",
+      "name": "功能流程（主/备选/异常路径）",
+      "producer": "functional-flow",
+      "artifact_file": "002-product-requirements/02-functional-flow/functional-flow.md",
+      "prd_destination": "主/备选/异常路径、Mermaid 流程图、FEA 追溯",
+      "depends_on": [
+        "feature-list"
+      ]
+    },
+    {
+      "id": "page-design",
+      "name": "页面设计与原型",
+      "producer": "page-design",
+      "artifact_file": "002-product-requirements/03-page-design/page-design.md",
+      "prd_destination": "页面骨架、组件清单、前置条件、FEA 追溯",
+      "depends_on": [
+        "functional-flow"
+      ]
+    },
+    {
+      "id": "interaction-rules",
+      "name": "交互规则 IX",
+      "producer": "interaction-rules",
+      "artifact_file": "002-product-requirements/04-interaction-rules/interaction-rules.md",
+      "prd_destination": "页面级交互规则 IX-XXX、5 状态覆盖、PD 追溯",
+      "depends_on": [
+        "page-design"
+      ]
+    },
+    {
+      "id": "business-rules",
+      "name": "业务规则 BR",
+      "producer": "business-rules",
+      "artifact_file": "002-product-requirements/05-business-rules/business-rules.md",
+      "prd_destination": "业务规则 BR-XXX、规则语句、来源追溯",
+      "depends_on": [
+        "functional-flow"
+      ]
+    },
+    {
+      "id": "validation-rules",
+      "name": "字段与校验规则 VL",
+      "producer": "validation-rules",
+      "artifact_file": "002-product-requirements/06-validation-rules/validation-rules.md",
+      "prd_destination": "字段定义 VL-XXX、错误提示、BR 追溯",
+      "depends_on": [
+        "business-rules"
+      ]
+    },
+    {
+      "id": "state-machine",
+      "name": "状态变化 SM",
+      "producer": "state-machine",
+      "artifact_file": "002-product-requirements/07-state-machine/state-machine.md",
+      "prd_destination": "状态机 STATE-XXX、状态×事件→目标状态",
+      "depends_on": [
+        "business-rules"
+      ]
+    },
+    {
+      "id": "exception-handling",
+      "name": "异常与失败处理 EX",
+      "producer": "exception-handling",
+      "artifact_file": "002-product-requirements/08-exception-handling/exception-handling.md",
+      "prd_destination": "异常 EX-XXX、失败模式、恢复路径",
+      "depends_on": [
+        "state-machine"
+      ]
+    },
+    {
+      "id": "acceptance-criteria",
+      "name": "验收标准 AC",
+      "producer": "acceptance-criteria",
+      "artifact_file": "002-product-requirements/09-acceptance-criteria/acceptance-criteria.md",
+      "prd_destination": "验收 AC-XXX、Given/When/Then、量化阈值",
+      "depends_on": [
+        "exception-handling",
+        "interaction-rules"
       ]
     },
     {
@@ -257,9 +470,17 @@
       "prd_destination": "最终唯一产品交付 prd.md",
       "depends_on": [
         "project-background-goals",
-        "journey-and-stories",
-        "product-ux",
-        "function-specifications"
+        "user-journey",
+        "user-stories",
+        "feature-list",
+        "functional-flow",
+        "page-design",
+        "interaction-rules",
+        "business-rules",
+        "validation-rules",
+        "state-machine",
+        "exception-handling",
+        "acceptance-criteria"
       ]
     }
   ],

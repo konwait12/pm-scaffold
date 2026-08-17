@@ -220,9 +220,13 @@ def machine_gate(req_dir: Path, item: dict) -> dict:
     cross = {"ok": True, "skipped": item["id"] != "prd-assembly"}
     if item["id"] == "prd-assembly":
         cross = run_json("traceability_check.py", req_dir)
-    # logical-completeness property check only applies to function-description
-    prop = {"ok": True, "skipped": item["id"] != "function-description"}
-    if item["id"] == "function-description":
+    # logical-completeness property check applies to all 9 stage-2 work items
+    STAGE2_IDS = {
+        "feature-list", "functional-flow", "page-design", "interaction-rules",
+        "business-rules", "validation-rules", "state-machine", "exception-handling", "acceptance-criteria"
+    }
+    prop = {"ok": True, "skipped": item["id"] not in STAGE2_IDS}
+    if item["id"] in STAGE2_IDS:
         art = find_artifact(req_dir, item)
         prop = run_property_check(art) if art else {"ok": False, "skipped": False, "error": "artifact not found"}
     # issue-record: 每个案例必备的稳定产物，pipeline gate 强制校验（非可选分支）
@@ -589,16 +593,21 @@ def main() -> int:
         if result["invalid_active_items"]:
             maturity = "⚠️ 越级待审"
             entry = f"先修正: 将 {', '.join(result['invalid_active_items'])} 降为 draft，确认 {result['active_work_item']}"
-        elif confirmed_count == 5:
+        elif confirmed_count == 13:
             maturity, entry = "L4 已全部确认", "PRD 已确认，可发布（复核由 branch_validator 自动执行）"
-        elif result["work_items"].get("product-ux") in ACTIVE:
-            maturity, entry = "L3 产品方案已成型", "Stage 2 (product-ux 续跑)"
-        elif result["work_items"].get("user-journey-and-stories") in ACTIVE:
-            maturity, entry = "L1/L2 业务需求已成型", "Stage 1 (user-journey-and-stories 续跑)"
+        elif any(result["work_items"].get(wid) in ACTIVE for wid in (
+            "feature-list", "functional-flow", "page-design", "interaction-rules",
+            "business-rules", "validation-rules", "state-machine", "exception-handling", "acceptance-criteria"
+        )):
+            maturity, entry = "L3 产品方案已成型", "Stage 2 (feature-list 等续跑)"
+        elif result["work_items"].get("user-stories") in ACTIVE:
+            maturity, entry = "L1/L2 业务需求已成型", "Stage 1 (user-stories 续跑)"
+        elif result["work_items"].get("user-journey") in ACTIVE:
+            maturity, entry = "L1/L2 业务需求已成型", "Stage 1 (user-journey 续跑)"
         elif result["work_items"].get("project-background-goal") in ACTIVE:
             maturity, entry = "L1 背景已成型", "Stage 1 (project-background-goal 续跑)"
         elif artifact_count > 0:
-            maturity, entry = f"L1 已有 {artifact_count} 份产物", "Stage 1 (user-journey-and-stories)"
+            maturity, entry = f"L1 已有 {artifact_count} 份产物", "Stage 1 (user-journey)"
         elif src_count > 0:
             sig = entry_content_signals(args.req_dir)
             if sig["features"] and sig["rules"]:

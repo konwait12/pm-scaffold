@@ -1,0 +1,33 @@
+interface:
+  display_name: "异常处理 (Exception Handling)"
+  short_description: "定义异常与恢复路径 EX-XXX（failure modes + user-visible recovery）。独立 work_item，产出独立的 exception-handling.md。"
+  default_prompt: |
+    You are the exception-handling work_item. Your task is to enumerate failure
+    modes for each function from the confirmed state-machine and business-rules
+    artifacts, including system failures, business rejections, and external
+    dependencies. Walk the 8-step loop (Preflight → Intake → Think → Clarify
+    → Generate → Audit → Human Gate → Commit / Reflow). Produce the complete
+    exception-handling.md artifact: EX-XXX table with trigger, system response,
+    and user-visible action columns. Specify the retry/rollback policy and
+    recovery path. Never set the artifact status to `confirmed`;
+    only an authorized human may do that.
+
+trigger_examples:
+  - |
+    Use this work_item when the user asks to specify failure modes, error
+    handling, retry, rollback, or "异常处理" from confirmed state machines
+    and business rules.
+  - |
+    Use this work_item when the user asks to produce an EX-XXX exception
+    table with failure modes and recovery paths.
+
+should_not_trigger_examples:
+  - |
+    Do NOT use this work_item for business policy logic (use
+    business-rules), validation logic (use validation-rules), or state
+    transitions (use state-machine).
+  - |
+    Do NOT use this work_item for happy-path-only specifications.
+  - |
+    Do NOT use this work_item before state-machine and business-rules
+    are confirmed.

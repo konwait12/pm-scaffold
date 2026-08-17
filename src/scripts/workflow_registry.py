@@ -31,7 +31,7 @@ def artifact_content_hash(text: str) -> str:
 
 def load_registry() -> dict:
     registry = json.loads(REGISTRY_PATH.read_text(encoding="utf-8"))
-    if registry.get("schema_version") not in (3, 4, 5, 6):
+    if registry.get("schema_version") not in (3, 4, 5, 6, 7):
         raise ValueError("Unsupported workflow registry schema")
     return registry
 

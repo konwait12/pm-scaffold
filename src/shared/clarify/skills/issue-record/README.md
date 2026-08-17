@@ -53,7 +53,7 @@
 
 ## 与上下游的衔接
 
-- **上游汇聚点**：所有产物（background-goal、scope、journey、UX、function-description、PRD）的"待确认"都应被提升为 ISS-NNN
+- **上游汇聚点**：所有产物（background-goal、user-journey、user-stories、feature-list、functional-flow、page-design、interaction-rules、business-rules、validation-rules、state-machine、exception-handling、acceptance-criteria、PRD）的"待确认"都应被提升为 ISS-NNN
 - **下游关闸**：PRD 确认前，Issue Record 必须有 confirmed 版本
 - **同级互补**：scope 定"做什么"，issue-record 列"卡点/风险/待决"
 - **与 `clarify/issue-templates/issue-record.md` 共存**：单条问题字段模板 vs. 全局清单

@@ -1,17 +1,25 @@
 #!/usr/bin/env python3
-"""Cross-Skill end-to-end integration tests (v1.2E).
+"""Cross-Skill end-to-end integration tests (v2.0).
 
-Validates the full 5-work-item pipeline on a self-contained fixture
+Validates the full 13-work-item pipeline on a self-contained fixture
 without going through Human Gate approval, so we can catch regressions
 introduced by validator / frontmatter / orchestration changes that the
 single-skill unit tests would miss.
 
-Pipeline under test:
+Pipeline under test (v2):
   project-background-goal  (Stage 1)
-    → user-journey-and-stories  (Stage 1)
-      → product-ux  (Stage 2)
-        → function-description  (Stage 2)
-          → prd-assembly  (Stage 3)
+    → user-journey  (Stage 1)
+      → user-stories  (Stage 1)
+        → feature-list  (Stage 2)
+          → functional-flow  (Stage 2)
+            → page-design  (Stage 2)
+              → interaction-rules  (Stage 2)
+                → business-rules  (Stage 2)
+                  → validation-rules  (Stage 2)
+                    → state-machine  (Stage 2)
+                      → exception-handling  (Stage 2)
+                        → acceptance-criteria  (Stage 2)
+                          → prd-assembly  (Stage 3)
 
 The fixture stays in `draft`/`ready_for_human_review` and is read-only;
 no status transitions are attempted.
@@ -34,17 +42,25 @@ sys.path.insert(0, str(SCRIPTS))
 import workflow_registry  # noqa: E402
 
 
-FIVE_MAIN_ITEMS = [
+THIRTEEN_MAIN_ITEMS = [
     "project-background-goal",
-    "user-journey-and-stories",
-    "product-ux",
-    "function-description",
+    "user-journey",
+    "user-stories",
+    "feature-list",
+    "functional-flow",
+    "page-design",
+    "interaction-rules",
+    "business-rules",
+    "validation-rules",
+    "state-machine",
+    "exception-handling",
+    "acceptance-criteria",
     "prd-assembly",
 ]
 
 
 class CrossSkillPipelineTest(unittest.TestCase):
-    """Simulate the full 5-Skill pipeline on a self-built fixture and assert
+    """Simulate the full 13-Skill pipeline on a self-built fixture and assert
     that every artifact passes its own validator and that the orchestrator
     can sequence them in the correct order."""
 
@@ -59,11 +75,11 @@ class CrossSkillPipelineTest(unittest.TestCase):
                 capture_output=True, text=True, check=True, encoding="utf-8", errors="replace",
             )
             payload = json.loads(result.stdout)
-            self.assertEqual(payload["next_work_item"], FIVE_MAIN_ITEMS[0])
+            self.assertEqual(payload["next_work_item"], THIRTEEN_MAIN_ITEMS[0])
             self.assertTrue(payload["workflow_valid"])
 
     def test_each_main_work_item_has_assets_template_and_validator(self) -> None:
-        """Each of the 5 main work items must have:
+        """Each of the 13 main work items must have:
           - a SKILL.md
           - a scripts/validate_artifact.py
           - an assets/output-template.md
@@ -74,7 +90,7 @@ class CrossSkillPipelineTest(unittest.TestCase):
         """
         registry = workflow_registry.load_registry()
         items_by_id = {item["id"]: item for item in registry["work_items"]}
-        for work_id in FIVE_MAIN_ITEMS:
+        for work_id in THIRTEEN_MAIN_ITEMS:
             item = items_by_id[work_id]
             self.assertTrue((ROOT / item["skill_path"] / "SKILL.md").is_file(),
                             f"{work_id} missing SKILL.md")
@@ -90,7 +106,7 @@ class CrossSkillPipelineTest(unittest.TestCase):
                                 f"{work_id} has no template in src/templates either")
 
     def test_each_main_template_has_all_six_knowledge_states_placeholder_or_marker(self) -> None:
-        """The reference template for each of the 5 main work items must
+        """The reference template for each of the 13 main work items must
         surface all six knowledge states (FACT / DECISION / ASSUMPTION /
         AI_INFERENCE / UNKNOWN / CONFLICT) somewhere in its text — either as
         a column header, an example row, a heading, or a Comment.
@@ -106,12 +122,20 @@ class CrossSkillPipelineTest(unittest.TestCase):
         states = ("FACT", "DECISION", "ASSUMPTION", "AI_INFERENCE", "UNKNOWN", "CONFLICT")
         template_paths = {
             "project-background-goal": ROOT / "src/templates/stage-1-business/background-goal.md",
-            "user-journey-and-stories": ROOT / "src/templates/stage-1-business/journey-and-stories.md",
-            "product-ux": ROOT / "src/templates/stage-2-product/product-ux.md",
-            "function-description": ROOT / "src/templates/stage-2-product/function-description.md",
+            "user-journey": ROOT / "src/templates/stage-1-business/user-journey.md",
+            "user-stories": ROOT / "src/templates/stage-1-business/user-stories.md",
+            "feature-list": ROOT / "src/templates/stage-2-product/feature-list.md",
+            "functional-flow": ROOT / "src/templates/stage-2-product/functional-flow.md",
+            "page-design": ROOT / "src/templates/stage-2-product/page-design.md",
+            "interaction-rules": ROOT / "src/templates/stage-2-product/interaction-rules.md",
+            "business-rules": ROOT / "src/templates/stage-2-product/business-rules.md",
+            "validation-rules": ROOT / "src/templates/stage-2-product/validation-rules.md",
+            "state-machine": ROOT / "src/templates/stage-2-product/state-machine.md",
+            "exception-handling": ROOT / "src/templates/stage-2-product/exception-handling.md",
+            "acceptance-criteria": ROOT / "src/templates/stage-2-product/acceptance-criteria.md",
             "prd-assembly": ROOT / "src/templates/stage-3-prd/prd.md",
         }
-        # Concat all 5 template bodies once for a global check (catches cases
+        # Concat all 13 template bodies once for a global check (catches cases
         # where one template delegates to another).
         global_text = ""
         for path in template_paths.values():
@@ -119,7 +143,7 @@ class CrossSkillPipelineTest(unittest.TestCase):
             global_text += path.read_text(encoding="utf-8") + "\n"
         for state in states:
             self.assertIn(state, global_text,
-                          f"none of the 5 main templates mention knowledge state: {state}")
+                          f"none of the 13 main templates mention knowledge state: {state}")
 
     def test_dor_check_knowledge_state_gate_fires_for_incomplete_artifact(self) -> None:
         """A `ready_for_human_review` artifact missing any of the six
@@ -161,7 +185,7 @@ class CrossSkillPipelineTest(unittest.TestCase):
             )
             payload = json.loads(result.stdout)
             self.assertEqual(payload["mode"], "dry-run")
-            self.assertEqual(payload["next_work_item"], FIVE_MAIN_ITEMS[0])
+            self.assertEqual(payload["next_work_item"], THIRTEEN_MAIN_ITEMS[0])
             self.assertTrue(payload["would_modify_files"],
                             "dry-run must surface at least one would-touch path")
             for entry in payload["would_modify_files"]:

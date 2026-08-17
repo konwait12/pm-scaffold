@@ -7,7 +7,7 @@ issue-record 的来源是阶段产物加上携带问题信号的原始材料。�
 ```text
 source_id
 title_or_description
-format                  (background-goal / 范围基线 / journey / UX / function-description / prd / 会议 / 邮件 / 口头)
+format                  (background-goal / user-journey / user-stories / feature-list / functional-flow / page-design / interaction-rules / business-rules / prd / 会议 / 邮件 / 口头)
 author_or_speaker
 provided_by
 created_at

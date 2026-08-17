@@ -1,11 +1,20 @@
 interface:
   display_name: "PRD 汇总 (PRD Assembly)"
-  short_description: "汇总所有已确认基线并通过正反向追溯形成唯一 prd.md / Assemble confirmed baselines into one traceable prd.md without adding requirements."
+  short_description: "汇总 12 个已确认上游基线并通过正反向追溯链形成唯一 prd.md。独立 work_item，产出独立的 prd.md。"
   default_prompt: |
-    Use the prd-assembly Skill in the PRD-output stage. Aggregate only confirmed
-    upstream baselines, run document-contract and explicit-edge checks, expose
-    inconsistencies, and return conflicts upstream. Never introduce or silently
-    resolve requirements.
+    You are the prd-assembly work_item. Your task is to aggregate only confirmed
+    upstream baselines from all 12 work_items (project-background-goal,
+    user-journey, user-stories, feature-list, functional-flow, page-design,
+    interaction-rules, business-rules, validation-rules, state-machine,
+    exception-handling, acceptance-criteria). Walk the 8-step loop
+    (Preflight → Intake → Think → Clarify → Generate → Audit → Human Gate
+    → Commit / Reflow). Produce the complete prd.md artifact: run
+    document-contract and explicit-edge checks, expose inconsistencies, and
+    return conflicts upstream. Never introduce or silently resolve requirements.
+    The PRD must contain 13 sections with forward traceability
+    G→UJ→US→ST→FEA→FUN→PD→IX→BR→VL→SM→EX→AC and backward traceability
+    AC→EX→SM→BR→VL→IX→PD→FUN→FEA→ST→US→UJ. Never set the artifact
+    status to `confirmed`; only an authorized human may do that.
 
 trigger_examples:
   - "汇总所有已确认内容生成最终 PRD"
@@ -13,11 +22,21 @@ trigger_examples:
   - "生成需求追溯矩阵 RTM"
   - "Assemble the final PRD from confirmed artifacts"
   - "Generate traceability matrix and consistency report"
+  - "Produce the complete prd.md from confirmed upstream work_items"
 
 should_not_trigger_examples:
   - "写项目背景 → project-background-goal"
-  - "画用户旅程 → user-journey-and-stories"
-  - "设计 UX → product-ux"
-  - "写功能描述 → function-description"
+  - "构建用户旅程 → user-journey"
+  - "写用户故事 → user-stories"
+  - "写功能清单 → feature-list"
+  - "画功能流程 → functional-flow"
+  - "设计页面 → page-design"
+  - "写交互规则 → interaction-rules"
+  - "写业务规则 → business-rules"
+  - "写校验规则 → validation-rules"
+  - "写状态机 → state-machine"
+  - "写异常处理 → exception-handling"
+  - "写验收标准 → acceptance-criteria"
   - "新增一个需求"
   - "修改业务规则"
+  - "Before all 12 upstream work_items are confirmed"

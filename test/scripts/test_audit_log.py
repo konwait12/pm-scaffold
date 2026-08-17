@@ -197,7 +197,7 @@ class TestAuditLog(unittest.TestCase):
         audit_log.append_event(
             self.req, "reflow", "99-review/change-record-reflow.md",
             payload_sha256=audit_log._sha256_text(rrec.read_text(encoding="utf-8")),
-            extra={"work_item": "project-background-goal", "superseded": ["product-ux"]},
+            extra={"work_item": "project-background-goal", "superseded": ["page-design"]},
         )
         causality = audit_log.reconstruct_causality(self.req)
         self.assertTrue(causality["chain_ok"])

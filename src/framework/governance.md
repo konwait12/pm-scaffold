@@ -50,8 +50,8 @@ Every Skill must trigger a structured inquiry when ANY of these conditions occur
 
 | Class | Definition | PRD Treatment |
 |---|---|---|
-| **Main Trunk**（5 work_items） | `project-background-goal` / `user-journey-and-stories` / `product-ux` / `function-description` / `prd-assembly` itself | **Required, no inquiry.** Trunk content goes into the corresponding fixed PRD section without asking. |
-| **Branch / Optional**（everything else） | sub-skills of function-description, shared mechanisms (clarify, change-management, decision-log, intake-routing, project-init, human-gate, audit, traceability), optional support skills (competitive-research, feasibility-analysis, tracking-plan, requirement-restate 能力, ...) | **Inquiry required.** Every branch entry triggers the inquiry template. Default behavior per artifact (see table below). |
+| **Main Trunk**（13 work_items） | `project-background-goal` / `user-journey` / `user-stories` / `feature-list` / `functional-flow` / `page-design` / `interaction-rules` / `business-rules` / `validation-rules` / `state-machine` / `exception-handling` / `acceptance-criteria` / `prd-assembly` | **Required, no inquiry.** Trunk content goes into the corresponding fixed PRD section without asking. |
+| **Branch / Optional**（3 触发才跑） | shared mechanisms (clarify, change-management, decision-log, intake-routing, project-init, human-gate, audit, traceability), optional support skills (competitive-research, feasibility-analysis, tracking-plan, requirement-restate 能力, ...) | **Inquiry required.** Every branch entry triggers the inquiry template. Default behavior per artifact (see table below). |
 
 > 例外：`issue-record`（跨阶段问题清单）虽由 shared clarify 机制产出，但已从「可选分支」提升为**每个案例必备的稳定产物**（见下文「Issue Record — 每个案例必备的稳定产物」），不再走 inquiry 可选流程。
 
@@ -62,18 +62,21 @@ The main trunk is **non-negotiable** because the PRD cannot exist without backgr
 | Artifact | Class | Default PRD inclusion | Inquiry gate | Override effect |
 |---|---|---|---|---|
 | `project-background-goal` | Trunk §1 | Required (§1) | None | — |
-| `user-journey-and-stories` | Trunk §2 | Required (§2) | None | — |
-| `product-ux` | Trunk §3 | Required (§3) | None | — |
-| `function-description` | Trunk §4 | Required (§4) | None | — |
-| `prd-assembly` | Trunk §5-§10 | Required (§5-§10) | None | — |
-| `business-rules` | Sub of §4 | **Aggregate into §4** | Inquiry at sub-skill entry | User can split or omit BR detail |
-| `validation-rules` | Sub of §4 | **Aggregate into §4** | Inquiry at sub-skill entry | User can split or omit VL detail |
-| `state-machine` | Sub of §4 | **Aggregate into §4** | Inquiry at sub-skill entry | User can inline or skip |
-| `exception-handling` | Sub of §4 | **Aggregate into §4** | Inquiry at sub-skill entry | User can inline or skip |
-| `acceptance-criteria` | Sub of §4 | **Aggregate into §4** | Inquiry at sub-skill entry | User can split or omit AC detail |
-| `tracking-plan` | Sub of §4 (optional) | Optional (§5.2 埋点) | Inquiry at sub-skill entry + prd-assembly §5 | Verbatim event table in §5.2 if user accepts |
-| `requirement-restate` | Branch (001) | Default NOT in PRD | Inquiry at Skill entry | User can attach RR-XXX provenance to §0 |
-| **`issue-record`** | **每个案例必备**（非可选） | Default NOT in PRD | 无（强制产出，无需询问） | User can expose risk summary in §9 / §10 if visibility is needed |
+| `user-journey` | Trunk §2 | Required (§2) | None | — |
+| `user-stories` | Trunk §3 | Required (§3) | None | — |
+| `feature-list` | Trunk §4 | Required (§4) | None | — |
+| `functional-flow` | Trunk §5 | Required (§5) | None | — |
+| `page-design` | Trunk §6 | Required (§6) | None | — |
+| `interaction-rules` | Trunk §7 | Required (§7) | None | — |
+| `business-rules` | Trunk §8 | Required (§8) | None | — |
+| `validation-rules` | Trunk §9 | Required (§9) | None | — |
+| `state-machine` | Trunk §10 | Required (§10) | None | — |
+| `exception-handling` | Trunk §11 | Required (§11) | None | — |
+| `acceptance-criteria` | Trunk §12 | Required (§12) | None | — |
+| `prd-assembly` | Trunk §13-§14 | Required (§13-§14) | None | — |
+| `tracking-plan` | Branch (optional) | Optional (§5.2 埋点) | Inquiry at Skill entry + prd-assembly §5 | Verbatim event table in §5.2 if user accepts |
+| `requirement-restate` | Branch (能力) | Default NOT in PRD | Inquiry at Skill entry | User can attach RR-XXX provenance to §0 |
+| **`issue-record`** | **每个案例必备**（非可选） | Default NOT in PRD | 无（强制产出，无需询问） | User can expose risk summary in §13 / §14 if visibility is needed |
 | `competitive-research` | Branch (support) | Optional (supporting evidence) | Inquiry at Skill entry | User can attach comparison table to §0 or as appendix |
 | `feasibility-analysis` | Branch (support) | Optional (supporting evidence) | Inquiry at Skill entry | User can attach trade-off analysis to §0 or as appendix |
 | `clarify` cycle | Branch (shared) | Internal; not a PRD artifact | (n/a) | Its results feed issue-record or upstream artifacts |
@@ -118,4 +121,4 @@ PRD-only scope and "no fixed PRD template" are both constitutional principles. T
 1. `99-review/support/issue-record.md` 必须存在且通过 `src/shared/clarify/skills/issue-record/scripts/validate_artifact.py` 结构校验（frontmatter + §1-§13，模板见 `assets/issue-record-template.md`），且 §13 阶段收口表含本 work item 行——**空阶段也必须落行（问题数=0），这是审计证据**。pipeline gate（`machine_gate`）会强制校验，缺失或校验失败即 gate 失败。
 2. 产物正文每个「待确认」标记必须带同一行的 Q-/ISS-/DEC-/SRC- 引用。
 
-伴随信号（不自动执行动作）：B1 连续 3 轮 changes 熔断提示；B3 open 问题 7 天 flag / 14 天 escalate；范围冻结（product-ux confirmed 后上游再评审 → 提示走 change-mgmt）。
+伴随信号（不自动执行动作）：B1 连续 3 轮 changes 熔断提示；B3 open 问题 7 天 flag / 14 天 escalate；范围冻结（page-design/interaction-rules confirmed 后上游再评审 → 提示走 change-mgmt）。

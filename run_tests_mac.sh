@@ -79,23 +79,11 @@ for c in r.get('support_capabilities', []):
 PY
 )
 
-# Fixture-test sub-skill validators (now with fixture dirs)
-for dir in "$ROOT"/src/stages/002-product-requirements/skills/product-ux/skills/*/ "$ROOT"/src/stages/002-product-requirements/skills/function-description/skills/*/; do
-  skill=$(basename "$dir")
-  validator="$dir/scripts/validate_artifact.py"
-  fixtures="$ROOT/test/skills/$skill/fixtures"
-  [ -f "$validator" ] || { printf 'FAIL missing sub-validator %s\n' "$skill"; FAIL=$((FAIL + 1)); continue; }
-  [ -d "$fixtures" ] || { printf 'FAIL missing fixtures %s\n' "$skill"; FAIL=$((FAIL + 1)); continue; }
-  for fixture in "$fixtures"/*.md; do
-    [ -f "$fixture" ] || continue
-    case "$(basename "$fixture")" in
-      *violation*)
-        negative "sub-skill/$skill/$(basename "$fixture")" python3 "$validator" "$fixture" --json
-        continue ;;
-    esac
-    run "sub-skill/$skill/$(basename "$fixture")" python3 "$validator" "$fixture" --json
-  done
-done
+# Fixture-test sub-skill validators (now use top-level skill paths in v2 decomposition)
+# All 11 promoted sub-skills now live at src/stages/002-product-requirements/skills/<skill>/
+# Their fixtures are tested via Loop 1 (registry-driven) above.
+# This Loop 2 is kept as a no-op for backward compat.
+:
 
 # Fixture-test branch/support-skill validators (registry-driven)
 while IFS=$'\t' read -r skill path; do

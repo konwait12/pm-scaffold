@@ -30,7 +30,7 @@ AI 写需求最大的风险不是写得慢，而是：**推断冒充事实、没
 - **变更闭环（Loop）**：上游变更自动级联失效下游并回流重跑（`reflow --apply`），不让失效产物流入下游。
 - **B3 每阶段强制收口**：每个工作项送审前，问题清单必须存在且收口表含该工作项行（空阶段也是审计证据），每个「待确认」必须带问题引用。
 - **入口探索阶段**：`entry` 按材料内容判定 L0-L4；L0（仅想法）先发散收敛（候选人工处置），多源/歧义先需求复述——不带着糊涂需求进主干。
-- **19 个同等丰富的 Skill**：5 主 + 9 子 + 4 分支产物 + 1 能力，每个都有统一的执行协议 + 7 类知识库 + 机器校验器 + 回归测试。
+- **19 个同等丰富的 Skill**：13 主干 + 3 分支 + 1 常驻 + 2 能力，每个都有统一的执行协议 + 7 类知识库 + 机器校验器 + 回归测试。
 
 ## 快速开始
 
@@ -63,8 +63,8 @@ python3 src/scripts/pipeline.py requirements/REQ-NNN-my-feature review \
 ```mermaid
 flowchart LR
     I[原始材料<br/>邮件/纪要/PPT] --> E[成熟度判定 L0-L4]
-    E --> S1[001 业务需求<br/>背景目标 → 用户旅程故事]
-    S1 --> S2[002 产品需求<br/>产品UX → 功能描述]
+    E --> S1[001 业务需求<br/>背景目标 → 用户旅程 → 用户故事]
+    S1 --> S2[002 产品需求<br/>功能清单 → 功能流程 → 页面/交互/规则 → 验收标准]
     S2 --> S3[003 PRD汇总<br/>prd-assembly]
     S3 --> P[prd.md<br/>人工最终确认]
     SH[9 共享机制<br/>审计/澄清/变更/闸门/追溯] -.服务.-> S1
@@ -89,10 +89,10 @@ flowchart LR
 
 | 层 | Skill |
 |---|---|
-| 主（5 · 主干必做） | `project-background-goal`（项目背景与目标）· `user-journey-and-stories`（用户旅程与故事）· `product-ux`（产品 UX）· `function-description`（功能描述）· `prd-assembly`（PRD 汇总，只聚合不发明） |
-| 子（9 · 挂父产物章节） | `page-design`（页面设计）· `interaction-rules`（交互规则）· `feature-list`（功能清单）· `functional-flow`（功能流程）· `business-rules`（业务规则）· `validation-rules`（校验规则）· `state-machine`（状态机）· `exception-handling`（异常处理）· `acceptance-criteria`（验收标准） |
-| 分支产物（4 · 触发才跑） | `competitive-research`（竞品调研）· `feasibility-analysis`（可行性分析）· `tracking-plan`（埋点计划）· `issue-record`（问题清单·B3 收口） |
-| 能力（1 · 过程记录不进 PRD） | `requirement-restate`（需求重举：复述 + 发散收敛双模式） |
+| 主干（13 · 主干必做） | `project-background-goal`（项目背景与目标）· `user-journey`（用户旅程）· `user-stories`（用户故事）· `feature-list`（功能清单）· `functional-flow`（功能流程）· `page-design`（页面设计）· `interaction-rules`（交互规则）· `business-rules`（业务规则）· `validation-rules`（校验规则）· `state-machine`（状态机）· `exception-handling`（异常处理）· `acceptance-criteria`（验收标准）· `prd-assembly`（PRD 汇总，只聚合不发明） |
+| 分支（3 · 触发才跑） | `competitive-research`（竞品调研）· `feasibility-analysis`（可行性分析）· `tracking-plan`（埋点计划） |
+| 常驻（1 · 始终监控） | `issue-record`（问题清单·B3 收口） |
+| 能力（2 · 按需调用） | `requirement-restate`（需求重举：复述 + 发散收敛双模式）· `prd-assembly`（PRD 汇总能力） |
 
 每个 skill 拥有统一的完整结构：`SKILL.md`（统一执行协议）+ `references/`（7 类知识库）+ `agents/openai.yaml`（Agent 路由元数据）+ `validate_artifact.py`（机器校验器）+ 示例 + 回归测试（含 violation 负例反向断言）。
 
@@ -112,7 +112,7 @@ flowchart LR
 
 ```text
 src/framework/       宪法、契约、17 思考透镜、workflow-registry.json（唯一真相源）
-src/stages/          3 阶段 × 5 主 skill + 9 子 skill + requirement-restate（能力）+ tracking-plan（分支）
+src/stages/          3 阶段 × 13 主干 skill + 2 能力 skill + tracking-plan（分支）
 src/support-skills/  2 支持 skill（competitive-research / feasibility-analysis）
 src/shared/          9 共享机制（审计/澄清/变更/闸门/追溯等）+ issue-record（B3 收口）
 src/scripts/         pipeline / orchestrator / dor_check 等 18 个脚本（含 audit_log / projection_cache / registry_contract_check / validation_errors 四项 Harness 借鉴基础设施）

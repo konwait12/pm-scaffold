@@ -73,10 +73,18 @@ requirements/REQ-NNN-topic/
 ├── 00-input/                      # 原始材料 + authorized-reviewers.json
 ├── 001-business-requirements/
 │   ├── 01-background-goal/
-│   └── 02-user-journey-stories/
+│   ├── 02-user-journey/
+│   └── 03-user-stories/
 ├── 002-product-requirements/
-│   ├── 01-product-ux/
-│   └── 02-function-description/
+│   ├── 01-feature-list/
+│   ├── 02-functional-flow/
+│   ├── 03-page-design/
+│   ├── 04-interaction-rules/
+│   ├── 05-business-rules/
+│   ├── 06-validation-rules/
+│   ├── 07-state-machine/
+│   ├── 08-exception-handling/
+│   └── 09-acceptance-criteria/
 ├── 003-prd-output/prd.md          # 唯一最终交付物
 └── 99-review/                     # 评审记录 + support/issue-record.md（B3 收口）
 ```
@@ -123,17 +131,19 @@ python3 src/scripts/consistency_check.py
 
 ---
 
-## 7. Skill 全景（5 主 + 9 子 + 4 分支 + 1 能力 = 19）
+## 7. Skill 全景（13 主干 + 3 分支 + 1 常驻 + 2 能力 = 19）
 
-**主 skill（5，主干必做，永不询问）**
-`project-background-goal` → `user-journey-and-stories` → `product-ux` → `function-description` → `prd-assembly`
+**主干 skill（13，主干必做，永不询问）**
+`project-background-goal` → `user-journey` → `user-stories` → `feature-list` → `functional-flow` → `page-design` → `interaction-rules` → `business-rules` → `validation-rules` → `state-machine` → `exception-handling` → `acceptance-criteria` → `prd-assembly`
 
-**子 skill（9，挂到父 skill 的产物章节）**
-`product-ux` 内：`page-design` / `interaction-rules`
-`function-description` 内：`feature-list` / `functional-flow` / `business-rules` / `validation-rules` / `state-machine` / `exception-handling` / `acceptance-criteria`
+**分支 skill（3，触发才跑）**
+`competitive-research`（竞品调研）、`feasibility-analysis`（可行性分析）、`tracking-plan`（埋点计划）
 
-**分支/条件 skill（4 产物 + 1 能力，触发才跑）**
-`competitive-research`（竞品调研）、`feasibility-analysis`（可行性分析）、`tracking-plan`（埋点计划）、`issue-record`（问题清单）——另 `requirement-restate`（需求重举能力：复述+发散，过程记录）
+**常驻 skill（1，始终监控）**
+`issue-record`（问题清单）
+
+**能力 skill（2，按需调用）**
+`requirement-restate`（需求重举能力：复述+发散，过程记录）、`prd-assembly`（PRD 汇总能力）
 
 每个 skill 的权威行为见各自的 `SKILL.md`（含 8 步 Thinking Prompts、Anti-Patterns、示例、Load References、Completion 清单）。
 

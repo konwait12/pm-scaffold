@@ -1,6 +1,13 @@
 <!--
-产物模板：功能描述（7 个按关注点章节，由 7 个子 skill 各产出一章）
-function-description SKILL.md 驱动 · 待确认 是唯一占位符。
+DEPRECATED（v2 拆分）· 本文件已拆分为 7 个独立模板：
+  - feature-list.md（§1 功能清单）
+  - functional-flow.md（§2 功能流程）
+  - business-rules.md（§3 业务规则）
+  - validation-rules.md（§4 校验规则）
+  - state-machine.md（§5 状态变化）
+  - exception-handling.md（§6 异常处理）
+  - acceptance-criteria.md（§7 验收依据）
+本文件保留用于旧案例回溯，新案例请使用上述 7 个独立模板。
 -->
 ---
 artifact_id: ""

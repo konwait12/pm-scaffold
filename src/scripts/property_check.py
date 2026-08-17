@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Property-based completeness checker for function-description artifacts.
+"""Property-based completeness checker for stage-2 product-requirements artifacts.
 
 Goes beyond structural validation to check logical completeness:
 1. State machine exhaustiveness: every state × known event → target state defined
@@ -7,7 +7,11 @@ Goes beyond structural validation to check logical completeness:
 3. VL↔AC pairing: every validation rule has a corresponding acceptance criterion
 4. Rule density: each FUN has sufficient BR+VL+AC coverage
 
-Usage: python3 property_check.py <function-description.md> [--json]
+Accepts any of the 9 stage-2 artifact types:
+  feature-list, functional-flow, page-design, interaction-rules,
+  business-rules, validation-rules, state-machine, exception-handling, acceptance-criteria
+
+Usage: python3 property_check.py <stage2-artifact.md> [--json]
 Exit 0 = complete, 1 = gaps found.
 """
 
@@ -362,10 +366,10 @@ def _table_rule_density(text: str, artifact_path: str) -> list[dict]:
             location=artifact_path,
             field_path="tables.功能清单",
             message="未检测到功能子标题（### FUN-XXX）或表格中的 FUN 引用，规则密度校验跳过",
-            expected="function-description 产物应至少定义 FUN-XXX 并在业务规则/校验规则/验收依据表格的 所属 FUN 列引用它",
+            expected="stage-2 产物应至少定义 FUN-XXX 并在业务规则/校验规则/验收依据表格的 所属 FUN 列引用它",
             actual="业务规则/校验规则/验收依据 三张表全部未匹配到 FUN-XXX 引用",
             repair_hint="（1）在功能清单中为每个功能定义 FUN-xxx 编号；（2）在业务规则/校验规则/验收依据表格的 所属 FUN 列填入对应 FUN-xxx（不可留空）",
-            source_ref="function-description skill §FUN/BR/VL/AC 编号规范",
+            source_ref="stage-2 skill §FUN/BR/VL/AC 编号规范",
             blocking=False,
         ))
         return issues
@@ -474,8 +478,8 @@ def check_rule_density(text: str, artifact_path: str = "<artifact>") -> list[dic
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Property-based completeness checker for function-description artifacts")
-    parser.add_argument("artifact", type=Path, help="Path to function-description.md")
+    parser = argparse.ArgumentParser(description="Property-based completeness checker for stage-2 product-requirements artifacts")
+    parser.add_argument("artifact", type=Path, help="Path to a stage-2 artifact (feature-list/functional-flow/.../acceptance-criteria.md)")
     parser.add_argument("--json", action="store_true")
     args = parser.parse_args()
 

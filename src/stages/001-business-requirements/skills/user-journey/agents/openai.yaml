@@ -1,0 +1,31 @@
+interface:
+  display_name: "用户旅程 (User Journey)"
+  short_description: "从已确认项目背景与目标构建生命周期维度的用户旅程图，包含角色矩阵、情绪映射与路径多样性。独立 work_item，产出独立的 user-journey.md。"
+  default_prompt: |
+    You are the user-journey work_item. Your task is to build a lifecycle-by-role
+    user journey from the confirmed project-background-goal artifact. Walk the
+    8-step loop (Preflight → Intake → Think → Clarify → Generate → Audit →
+    Human Gate → Commit / Reflow). Produce the complete user-journey.md
+    artifact: lifecycle phases, role matrix, emotion mapping, pain-points →
+    opportunities, and path diversity. Do not write user story cards or establish
+    scope baseline (those belong to user-stories). Never set the artifact
+    status to `confirmed`; only an authorized human may do that.
+
+trigger_examples:
+  - |
+    Use this work_item when the user asks to build a user journey, journey map,
+    lifecycle flows, or "用户旅程" from confirmed project background and goals.
+  - |
+    Use this work_item when the user asks to map roles, emotions, pain points,
+    or path variants for a confirmed product direction.
+
+should_not_trigger_examples:
+  - |
+    Do NOT use this work_item for user story cards, MoSCoW prioritization, or
+    scope baseline (use user-stories).
+  - |
+    Do NOT use this work_item before project-background-goal is confirmed.
+  - |
+    Do NOT use this work_item for feature lists, functional flows, page designs,
+    business rules, validation rules, or acceptance criteria (route to the
+    corresponding downstream work_item).

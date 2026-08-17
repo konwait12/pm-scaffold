@@ -109,11 +109,11 @@
 
 | lens | 触发时机 | 核心问题 | 主要使用 Skill |
 |---|---|---|---|
-| 同理心视角 / Empathy | 旅程/UX/功能分析 | 换到每个角色身上，他的场景、挫败点、期望是什么？ | user-journey-and-stories, product-ux |
-| MECE 穷举 / MECE Enumeration | 场景发散、功能清单 | 按角色×生命周期×路径类型切矩阵，先切分再填充，禁止直接列清单 | user-journey-and-stories（B2 场景发散） |
-| 边界扫描 / Boundary Scan | 范围基线、UX Scope | 哪些是本期不做但相邻的？边界在哪、谁负责交界处？ | product-ux（Scope 层） |
+| 同理心视角 / Empathy | 旅程/UX/功能分析 | 换到每个角色身上，他的场景、挫败点、期望是什么？ | user-journey, user-stories, page-design, interaction-rules |
+| MECE 穷举 / MECE Enumeration | 场景发散、功能清单 | 按角色×生命周期×路径类型切矩阵，先切分再填充，禁止直接列清单 | user-journey, user-stories |
+| 边界扫描 / Boundary Scan | 范围基线、UX Scope | 哪些是本期不做但相邻的？边界在哪、谁负责交界处？ | page-design（Scope 层） |
 | 奥卡姆剃刀 / Occam's Razor | 多方案取舍 | 两个方案都能达标时，哪个依赖最少、下游影响最小？ | feasibility-analysis |
-| 机会成本视角 / Opportunity Cost | 范围收口 | 做这个的代价是放弃什么？值得吗？ | product-ux, prd-assembly |
+| 机会成本视角 / Opportunity Cost | 范围收口 | 做这个的代价是放弃什么？值得吗？ | page-design, prd-assembly |
 | 一致性校验 / Consistency Check | PRD 汇总 | 正向：每个产物都有章节；反向：每节都能追溯；有无自相矛盾？ | prd-assembly |
 
 ---
@@ -137,12 +137,12 @@
 
 | 技法 | 来源 | 注册位置 | 触发条件 | 产物 |
 |---|---|---|---|---|
-| 可点击原型技法 | interactive-demo-factory + flow2demo | `product-ux/skills/page-design/references/prototype-techniques.md` | P0 流程 ≥ 3 页 / 状态分支 / 需多方评审 | prototype/index.html + demo-flow.md |
-| 规则写作规范 | 交互规则书写格式 | `product-ux/skills/interaction-rules/references/rule-writing-format.md` | 任何 IX-XXX 交互规则产出 | 段落式 IX 规则（含异常/边界） |
+| 可点击原型技法 | interactive-demo-factory + flow2demo | `page-design/references/prototype-techniques.md` | P0 流程 ≥ 3 页 / 状态分支 / 需多方评审 | prototype/index.html + demo-flow.md |
+| 规则写作规范 | 交互规则书写格式 | `interaction-rules/references/rule-writing-format.md` | 任何 IX-XXX 交互规则产出 | 段落式 IX 规则（含异常/边界） |
 | PRD 原型嵌入 | agile-pm-workflow | `prd-assembly/references/prototype-embedding.md` | 上游已有可点击原型 | PRD §4 内嵌 iframe 切片 + 版本切换器 |
 
 使用规则：
-1. **文本规则是权威，技法产物是增强**：原型/切片不替代 page-design §4、interaction-rules §5、function-description 的文字详述。
+1. **文本规则是权威，技法产物是增强**：原型/切片不替代 page-design §4、interaction-rules §5 及各独立 stage-2 技能产物的文字详述。
 2. **按需触发，不设全局闸门**：与「图表不设必须先询问的全局闸门」原则一致（见 `src/framework/governance.md`）。
 3. **忠于输入**：原型不发明页面、不静默补状态；缺失信息标记 `待确认` 交人工。
 4. **版本联动**：PRD 内嵌切片路径必须与原型版本一一对应，绝不覆盖历史版本。

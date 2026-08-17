@@ -1,0 +1,31 @@
+interface:
+  display_name: "业务规则 (Business Rules)"
+  short_description: "定义领域级业务规则 BR-XXX（约束、计算、策略）并追溯来源。独立 work_item，产出独立的 business-rules.md。"
+  default_prompt: |
+    You are the business-rules work_item. Your task is to extract domain-level
+    constraints, calculations, and policies from the confirmed functional-flow
+    and feature-list artifacts. Walk the 8-step loop (Preflight → Intake →
+    Think → Clarify → Generate → Audit → Human Gate → Commit / Reflow).
+    Produce the complete business-rules.md artifact: rule ID (BR-XXX),
+    rule statement, source traceability (to upstream FEA/ST), and exception
+    path. Each rule must be traceable to ears-syntax.md guidelines. Never set
+    the artifact status to `confirmed`; only an authorized human may do that.
+
+trigger_examples:
+  - |
+    Use this work_item when the user asks to extract business rules, domain
+    constraints, calculation policies, or "业务规则" from confirmed functional
+    flows and features.
+  - |
+    Use this work_item when the user asks to produce a BR-XXX rule table with
+    source traceability and EARS syntax compliance.
+
+should_not_trigger_examples:
+  - |
+    Do NOT use this work_item for field-level validation rules (use
+    validation-rules), state transitions (use state-machine), exception
+    recovery (use exception-handling), or Given/When/Then acceptance
+    criteria (use acceptance-criteria).
+  - |
+    Do NOT use this work_item before functional-flow and feature-list
+    are confirmed.

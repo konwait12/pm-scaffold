@@ -1,0 +1,30 @@
+interface:
+  display_name: "校验规则 (Validation Rules)"
+  short_description: "定义字段级和跨字段校验规则 VL-XXX（必填、格式、范围、错误消息）。独立 work_item，产出独立的 validation-rules.md。"
+  default_prompt: |
+    You are the validation-rules work_item. Your task is to derive field-level
+    and cross-field checks from the confirmed business-rules and functional-flow
+    artifacts. Walk the 8-step loop (Preflight → Intake → Think → Clarify →
+    Generate → Audit → Human Gate → Commit / Reflow). Produce the complete
+    validation-rules.md artifact: VL-XXX table with field, rule type,
+    expression, and user-visible error message in EARS-compliant syntax.
+    Each rule must be traceable to nfr-catalog.md guidelines. Never set the
+    artifact status to `confirmed`; only an authorized human may do that.
+
+trigger_examples:
+  - |
+    Use this work_item when the user asks to specify field validation,
+    format checks, range constraints, or "校验规则" / "字段规则" from
+    confirmed business rules and functional flows.
+  - |
+    Use this work_item when the user asks to produce VL-XXX rules in
+    EARS syntax with error messages and upstream traceability.
+
+should_not_trigger_examples:
+  - |
+    Do NOT use this work_item for business policy logic (use business-rules),
+    state machine transitions (use state-machine), or user-facing recovery
+    (use exception-handling).
+  - |
+    Do NOT use this work_item before business-rules and functional-flow
+    are confirmed.

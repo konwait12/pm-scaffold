@@ -1,0 +1,31 @@
+interface:
+  display_name: "验收标准 (Acceptance Criteria)"
+  short_description: "定义可测量验收标准 AC-XXX（Given/When/Then + 量化阈值 + G-X 追溯）。独立 work_item，产出独立的 acceptance-criteria.md。"
+  default_prompt: |
+    You are the acceptance-criteria work_item. Your task is to write atomic,
+    independently testable AC items in Given/When/Then format, referencing
+    quantified thresholds from Stage 1 goals (G-X). Walk the 8-step loop
+    (Preflight → Intake → Think → Clarify → Generate → Audit → Human Gate
+    → Commit / Reflow). Produce the complete acceptance-criteria.md artifact:
+    AC-XXX items with Given/When/Then format and quantified thresholds. Cover
+    main flow and primary exception path. Each AC must trace to G-X goal
+    references. Never set the artifact status to `confirmed`;
+    only an authorized human may do that.
+
+trigger_examples:
+  - |
+    Use this work_item when the user asks to define acceptance criteria,
+    done conditions, or "验收标准" for confirmed P0 functions.
+  - |
+    Use this work_item when the user asks to produce AC-XXX items in
+    Given/When/Then format with quantified thresholds and G-X traceability.
+
+should_not_trigger_examples:
+  - |
+    Do NOT use this work_item for test cases (the artifact is the AC
+    table, not test scripts).
+  - |
+    Do NOT use this work_item before all upstream work_items
+    (feature-list, functional-flow, page-design, interaction-rules,
+    business-rules, validation-rules, state-machine, exception-handling)
+    are confirmed.

@@ -14,7 +14,7 @@ Checks:
    real (non-simulated) requirement product exists yet.
 6. (E1) Template ↔ validator contract: `_frontmatter-schema.md`'s
    `upstream_artifact_ids` example must match the regex the prd-assembly validator
-   actually accepts `(BG|JS|UX|FD)-\\d+(?:-\\d+)?`, so the template and the validator
+   actually accepts `(BG|UJ|US|FEA|FL|PD|IX|BR|VL|SM|EX|PRD)-\\d+(?:-\\d+)?`, so the template and the validator
    cannot silently drift apart again (single- vs double-hyphen convention).
 
 Exit code 0 = consistent, 1 = inconsistencies found (non-interactive must fail).
@@ -379,7 +379,7 @@ def check_reference_integrity(registry: dict, issues: list[dict[str, Any]]) -> N
 
 def check_upstream_artifact_ids_contract(issues: list[dict[str, Any]]) -> None:
     """E1: `_frontmatter-schema.md` 的 upstream_artifact_ids 示例必须与 prd-assembly
-    校验器实际接受的正则 (BG|JS|UX|FD)-\\d+(?:-\\d+)? 一致。
+    校验器实际接受的正则 (BG|UJ|US|FEA|FL|PD|IX|BR|VL|SM|EX|PRD)-\\d+(?:-\\d+)? 一致。
 
     背景：模板示例曾写单连字符（BG-XXX），而校验器曾要求双连字符，导致 gate 失败；
     现校验器已兼容单连字符。此检查作为自动化护栏，防止模板与校验器约定再次漂移。
@@ -433,9 +433,9 @@ def check_upstream_artifact_ids_contract(issues: list[dict[str, Any]]) -> None:
     vm = re.search(r"\(BG\|JS\|UX\|FD\)-\\d\+\(\?:-\\d\+\)\?", vtext)
     if not vm:
         _add(issues, "MEDIUM", "consistency.e1.regex_missing",
-             "E1: validate_artifact.py 中未找到 upstream_artifact_ids 正则 (BG|JS|UX|FD)-\\d+(?:-\\d+)?",
+             "E1: validate_artifact.py 中未找到 upstream_artifact_ids 正则 (BG|UJ|US|FEA|FL|PD|IX|BR|VL|SM|EX|PRD)-\\d+(?:-\\d+)?",
              field_path="src/stages/003-prd-output/skills/prd-assembly/scripts/validate_artifact.py",
-             expected="校验器源码应包含正则 (BG|JS|UX|FD)-\\d+(?:-\\d+)?",
+             expected="校验器源码应包含正则 (BG|UJ|US|FEA|FL|PD|IX|BR|VL|SM|EX|PRD)-\\d+(?:-\\d+)?",
              actual="未匹配到该正则模式",
              repair_hint="确认 prd-assembly 校验器使用的 upstream 正则与此处期望一致",
              source_ref="consistency_check §E1",

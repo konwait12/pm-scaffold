@@ -1,0 +1,98 @@
+<!--
+产物模板：业务规则
+本模板由 business-rules SKILL.md 驱动。
+待确认 是唯一占位符。
+
+v2 拆分说明：自 function-description.md §3（业务规则）独立。
+-->
+---
+artifact_id: ""
+version: "v0.1"
+status: "draft"
+owner: ""
+business_fact_owner: ""
+goal_decision_owner: ""
+reviewer: ""
+created_at: ""
+updated_at: ""
+confirmed_at: ""
+upstream_artifact_id: ""
+---
+
+# 业务规则
+
+## 0. 预检输入充分度判定
+
+- 上游产物：`待确认`
+- 已确认功能流程数：`待确认`
+- 判定：`待确认`
+
+## 1. 业务规则
+
+> 计算/约束/条件/权限/时序规则，每条可执行、追溯所属 FEA-XXX。
+
+| ID | 规则描述 | 类型 | 触发条件 | 约束/逻辑 | 所属 FEA | 来源 |
+|---|---|---|---|---|---|---|
+| BR-001 | `待确认` | `待确认` | `待确认` | `待确认` | `待确认` | `待确认` |
+
+## 2. 规则→功能追溯矩阵
+
+| BR | 规则描述 | 所属 FEA | 优先级 |
+|---|---|---|---|
+| BR-001 | `待确认` | FEA-XXX | P0/P1/P2 |
+
+## 3. 事实与决定
+
+| ID | 类型 | 内容 | 来源/决策人 | 状态 |
+|---|---|---|---|---|
+| 待确认 | 待确认 | 待确认 | 待确认 | 待确认 |
+
+## 4. 假设、AI 推断、未知与冲突
+
+| ID | 类型 | 内容 | 依据 | 影响 | 责任人 | 处理方式 |
+|---|---|---|---|---|---|---|
+| 待确认 | 待确认 | 待确认 | 待确认 | 待确认 | 待确认 | 待确认 |
+
+## 5. 待确认问题
+
+| ID | 问题 | 结论 |
+|---|---|---|
+| 待确认 | 待确认 | 待确认 |
+
+## Clarifications
+
+| session_id | category | question | ai_preliminary_judgment | options | decision_owner | blocking | deferral_risk | accepted_answer | reflow_target | integrated_at | integrated_by | audit_recheck |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 待补充 | 待补充 | 待补充 | 待补充 | 待补充 | 待补充 | 待补充 | 待补充 | 待补充 | 待补充 | 待补充 | 待补充 | 待补充 |
+
+## 6. 来源追溯
+
+| 来源 ID | 材料/位置 | 关键内容 | 本文落位或排除理由 |
+|---|---|---|---|
+| 待确认 | 待确认 | 待确认 | 待确认 |
+
+## 7. 下游输入摘要
+
+```text
+confirmed_version: 待确认
+business_rule_count: 待确认
+rule_type_distribution: 待确认
+fea_coverage: 待确认
+open_nonblocking_unknowns: 待确认
+source_ids: 待确认
+```
+
+## 8. Constitution Compliance
+
+| 原则 | 状态 | 证据 / 备注 |
+|---|---|---|
+| ① 业务事实分离 | 待确认 | |
+| ② AI 不替业务决定 | 待确认 | |
+| ③ 来源可追溯 | 待确认 | |
+| ④ 冲突显式保留并关闭 | 待确认 | |
+
+## 9. 版本变更摘要
+
+| 版本 | 变更原因 | 主要变化 | 人工确认状态 |
+|---|---|---|---|
+| v0.1 | 初始候选 | 待确认 | 待确认 |

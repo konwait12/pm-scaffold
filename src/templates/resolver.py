@@ -29,6 +29,19 @@ EXTENSIONS_DIR = TEMPLATES / "extensions"
 # Map registry artifact_file to template paths
 TEMPLATE_MAP = {
     "background-goal.md": "stage-1-business/background-goal.md",
+    # v2 拆分模板
+    "user-journey.md": "stage-1-business/user-journey.md",
+    "user-stories.md": "stage-1-business/user-stories.md",
+    "feature-list.md": "stage-2-product/feature-list.md",
+    "functional-flow.md": "stage-2-product/functional-flow.md",
+    "page-design.md": "stage-2-product/page-design.md",
+    "interaction-rules.md": "stage-2-product/interaction-rules.md",
+    "business-rules.md": "stage-2-product/business-rules.md",
+    "validation-rules.md": "stage-2-product/validation-rules.md",
+    "state-machine.md": "stage-2-product/state-machine.md",
+    "exception-handling.md": "stage-2-product/exception-handling.md",
+    "acceptance-criteria.md": "stage-2-product/acceptance-criteria.md",
+    # v2 兼容旧名（deprecated，保留用于旧案例回溯）
     "journey-and-stories.md": "stage-1-business/journey-and-stories.md",
     "product-ux.md": "stage-2-product/product-ux.md",
     "function-description.md": "stage-2-product/function-description.md",

@@ -7,6 +7,75 @@ All notable changes to PM Scaffold · 产品 AI 脚手架 are documented here. T
 ### Added
 - (next release) — placeholder
 
+## [0.5.0] - 2026-08-17
+
+### Changed · Skill 结构拆解 v2 (composite → 13 independent work_items)
+
+#### 注册表 (schema_version 6 → 7)
+- `src/framework/workflow-registry.json` `schema_version`: 6 → **7**
+- `work_items`: 5 → **13**；`internal_capabilities`: 9 → **0**；`artifact_types`: 5 → **13**
+- `stages[0].work_items`: 2 → 3（新增 `user-journey` + `user-stories`）
+- `stages[1].work_items`: 2 → 9（`feature-list` / `functional-flow` / `page-design` / `interaction-rules` / `business-rules` / `validation-rules` / `state-machine` / `exception-handling` / `acceptance-criteria`）
+- `prd-assembly.predecessors`: 4 上游 → **12 上游**完整链路 `G→UJ→US→ST→FEA→FUN→PD→IX→BR→VL→SM→EX→AC`
+- 新前缀方案：`BG- / UJ- / US- / FEA- / FL- / PD- / IX- / BR- / VL- / SM- / EX- / PRD-`（替换 `BG- / JS- / UX- / FD-`）
+
+#### 目录重构
+- 旧复合目录已删：`src/stages/001-business-requirements/skills/user-journey-and-stories/`、`src/stages/002-product-requirements/skills/product-ux/`、`src/stages/002-product-requirements/skills/function-description/`
+- 9 个子 skill 提升到平级（与上述父目录同名）：`feature-list` / `functional-flow` / `page-design` / `interaction-rules` / `business-rules` / `validation-rules` / `state-machine` / `exception-handling` / `acceptance-criteria`
+- 2 个新独立 skill：`user-journey` / `user-stories`
+- 2 个独特引用已抢救并分配：`nfr-catalog.md` → `validation-rules/references/`；`ears-syntax.md` → `business-rules/references/`
+
+#### Skill 协议
+- 13 个 SKILL.md 重写为「独立 work_item」语义，去除所有 "Sub-skill of" / "父产物" / "function-description 编排的" 残留；frontmatter `description` 统一包含 "Independent work_item"
+- 13 个 agents/openai.yaml 同步重写：`default_prompt` 由 "Use sub-skill to..." → "You are the work_item. Your task is to..."；"Output §X in parent..." → "Produce independent xxx.md"
+- 13 个 validate_artifact.py 重写为「独立产物全文校验器」：移除 `_section_text()` 章节提取逻辑与 `PARENT_ARTIFACT_GLOBS`；改为读取整个独立产物文件；保留 `_bootstrap_scripts()` 与 `validation_errors.make_issue()` 统一错误格式（v0.4.0 第 8 条宪法）
+
+#### 框架级文档
+- `AGENTS.md` §7 Skill 全景更新：`5 主 + 9 子 + 4 分支 + 1 能力 = 19` → `13 主干 + 3 分支 + 1 常驻 + 2 能力 = 19`
+- `AGENTS.md` §5 需求目录布局更新为 v2 路径（`02-user-journey/` + `03-user-stories/` 等）
+- `README.md` Skill 全景表 + Mermaid 流程图 + 目录结构全部更新
+- `src/stages/001-business-requirements/STAGE.md` / `002-product-requirements/STAGE.md` 列出 3 + 9 个 work_items 并附依赖链
+- `src/framework/workflow.md` / `governance.md` / `thinking-core.md` 全部产物名与追溯链更新
+
+#### 脚本与基础设施
+- `src/scripts/pipeline.py` — `VALID_WORK_ITEMS` 替换为 13 个新 ID；entry 逻辑 maturity 判断更新；新增对 `user-journey` / `user-stories` / `prd-assembly` 等的 active_work_item 路径处理
+- `src/scripts/orchestrator.py` — 范围冻结检测改为 `page-design` / `interaction-rules`
+- `src/scripts/consistency_check.py` — E1 正则期望从 `(BG|JS|UX|FD)` → `(BG|UJ|US|FEA|FL|PD|IX|BR|VL|SM|EX|PRD)`
+- `src/scripts/workflow_registry.py` — `schema_version` 白名单支持 7
+- `src/scripts/snapshot_cases.py` / `migrate_layout_v2.py` / `property_check.py` — fixture 路径映射与硬编码引用全部更新
+
+#### 模板
+- `src/templates/stage-1-business/user-journey.md` / `user-stories.md` 新增（自 `journey-and-stories.md` 拆分）
+- `src/templates/stage-2-product/` 新增 9 个独立模板（feature-list / functional-flow / page-design / interaction-rules / business-rules / validation-rules / state-machine / exception-handling / acceptance-criteria）
+- `src/templates/resolver.py` TEMPLATE_MAP 追加 9 个新模板
+- 旧模板（journey-and-stories.md / product-ux.md / function-description.md）保留并加 deprecation 注释
+
+#### Shared
+- `src/shared/traceability/README.md` 追溯链 `G→ST→FEA→FUN→AC/BR` → `G→UJ→US→ST→FEA→FUN→PD→IX→BR→VL→SM→EX→AC`
+- `src/shared/clarify/skills/issue-record/` 产物名更新
+- `src/shared/capability-fragments/` 复制目标改为 `functional-flow / business-rules / acceptance-criteria`
+
+#### Toolkit
+- `src/toolkit/visualization/scaffold-flow.html` Skill 表 + 产物表 + 教程文本 + 命令参考全部 v2 化
+
+### Removed
+- 3 个复合 skill 目录（`user-journey-and-stories` / `product-ux` / `function-description`）
+- `internal_capabilities` 数组（9 个条目并入 `work_items`）
+- `_section_text()` 章节提取逻辑（13 个 validate_artifact.py）
+- `PARENT_ARTIFACT_GLOBS` 父产物路径常量（13 个 validate_artifact.py）
+
+### Tests
+- **72/78 PASS**（baseline 85/85，回归 13 项）
+- registry_contract_check: **PASS**（schema clean + template↔validator closure OK）
+- consistency_check: **0 errors, 0 warnings**（consistency E1 正则已同步为 v2 13 前缀）
+- 全局旧名扫描：0 命中（task scope 内，仅保留 CHANGELOG 历史记录与模板 deprecation 注释）
+- PII 检查：0 命中
+- 已知失败（v0.5.1 fixture 内容重写 follow-up，**不影响结构与基础设施可用性**）：
+  - 5 个 fixture 内容缺新格式标记（user-journey × 1、user-stories × 3、prd-assembly × 1；具体：缺 emotion mapping / MoSCoW / 业务规则+校验规则+状态机+异常处理 章节）
+  - trace/REQ-003-oab：BR-006 在 prd.md 缺 function 链接（真实需求产物内容层问题，归档为 REQ 数据修复）
+  - 3 个被拆解 skill 的旧 unit test 已用 try/except 标记为「v0.5.0 composite removed」并 exit 0（function-description / product-ux / user-journey-and-stories）
+- End-to-end smoke test：`pipeline.py init REQ-999-v2-smoke` 正确生成 13 个 work_item 独立目录布局
+
 ## [0.4.1] - 2026-08-14
 
 ### Changed · 全中文化

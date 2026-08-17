@@ -414,12 +414,12 @@ footer{margin-top:24px;text-align:center;color:#888;font-size:11px;padding-top:1
   <!-- ================= 子 Skill 挂载（右侧括号） ================= -->
   <g>
     <rect x="948" y="1070" width="212" height="46" rx="8" fill="#F6F4FF" stroke="#C9C2EE" stroke-width="1.4"/>
-    <text x="1054" y="1088" text-anchor="middle" font-size="10.5" font-weight="700" fill="#3A2E8F">product-ux（产品UX）子 Skill：</text>
+    <text x="1054" y="1088" text-anchor="middle" font-size="10.5" font-weight="700" fill="#3A2E8F">002 产品需求 Work Items（9 个）：</text>
     <text x="1054" y="1105" text-anchor="middle" font-size="10" fill="#555">page-design（页面设计）· interaction-rules（交互规则）</text>
   </g>
   <g>
     <rect x="948" y="1120" width="212" height="46" rx="8" fill="#F6F4FF" stroke="#C9C2EE" stroke-width="1.4"/>
-    <text x="1054" y="1138" text-anchor="middle" font-size="10.5" font-weight="700" fill="#3A2E8F">function-description（功能描述）子 Skill：</text>
+    <text x="1054" y="1138" text-anchor="middle" font-size="10.5" font-weight="700" fill="#3A2E8F">003 PRD 输出 Work Items（1 个）：</text>
     <text x="1054" y="1155" text-anchor="middle" font-size="10" fill="#555">feature-list（功能清单）· functional-flow（功能流程）· business-rules（业务规则）· validation-rules（校验规则）· state-machine（状态机）· exception-handling（异常处理）· acceptance-criteria（验收标准）</text>
   </g>
 
@@ -503,14 +503,14 @@ footer{margin-top:24px;text-align:center;color:#888;font-size:11px;padding-top:1
     <tr><td><code>结构校验</code></td><td><code>validate_artifact.py</code> ×20</td><td>frontmatter / 必需章节 / ID 前缀 / 语义红线</td><td class="warn">blocking 阻断</td></tr>
     <tr><td><code>六态覆盖</code></td><td><code>dor_check.py</code></td><td>ready_for_human_review 必须六态覆盖 + ASSUMPTION ≤ 30%</td><td class="warn">阻断送审</td></tr>
     <tr><td><code>自审证据</code></td><td><code>dor_check.py</code></td><td>产物含 Constitution Compliance / 自审 / Audit 痕迹</td><td class="warn">阻断送审</td></tr>
-    <tr><td><code>逻辑完备</code></td><td><code>property_check.py</code></td><td>function-description（功能描述）专属：状态机穷尽 / 异常恢复 / VL↔AC 配对 / 规则密度</td><td class="warn">阻断送审</td></tr>
+    <tr><td><code>逻辑完备</code></td><td><code>property_check.py</code></td><td>stage-2（9 个 Work Items）专属：状态机穷尽 / 异常恢复 / VL↔AC 配对 / 规则密度</td><td class="warn">阻断送审</td></tr>
     <tr><td><code>双向追溯</code></td><td><code>traceability_check.py</code></td><td>prd-assembly（PRD汇总）专属：G→ST→FEA→FUN→AC/BR 正向 + 反向孤儿检查</td><td class="warn">阻断送审</td></tr>
     <tr><td><code>记录与哈希</code></td><td><code>branch_validator.py</code></td><td>confirmed 产物必须有真实评审人 + ReviewRecord + SHA-256 一致</td><td class="warn">阻断下游</td></tr>
     <tr><td><code>文档一致性</code></td><td><code>consistency_check.py</code></td><td>registry ↔ skill 路径 ↔ references ↔ requirements/ 内容</td><td class="ok">CI 前置门</td></tr>
     <tr><td><code>入口材料 DoR</code></td><td><code>dor_check.py</code></td><td>project-background-goal 送审前 00-input 至少 1 个 SRC 材料（无源即停机器版）</td><td class="warn">阻断 bg 启动</td></tr>
     <tr><td><code>B3 阶段收口</code></td><td><code>dor_check.py</code></td><td>送审前 issue-record 必须存在且 §13 收口表含本 work item 行（空阶段=审计证据）；每个「待确认」必须带 Q-/ISS-/DEC-/SRC- 引用</td><td class="warn">阻断送审</td></tr>
   </table>
-  <div class="desc" style="margin-top:14px;margin-bottom:0">信号层（status 可见，不自动执行动作）：<b>B1 熔断</b>（同一 work item 连续 3 轮 changes → 重新评估方向）· <b>B3 老化</b>（open 问题 7 天 flag / 14 天 escalate）· <b>范围冻结</b>（product-ux confirmed 后上游再评审 → 提示走 change-mgmt）。</div>
+  <div class="desc" style="margin-top:14px;margin-bottom:0">信号层（status 可见，不自动执行动作）：<b>B1 熔断</b>（同一 work item 连续 3 轮 changes → 重新评估方向）· <b>B3 老化</b>（open 问题 7 天 flag / 14 天 escalate）· <b>范围冻结</b>（page-design/interaction-rules confirmed 后上游再评审 → 提示走 change-mgmt）。</div>
 </section>
 <section id="sec-skills">
   <h2>6. Skill 全景说明书 <span class="badge">5 主 + 9 子 + 4 分支产物 + 1 能力 = 19</span></h2>
@@ -518,22 +518,22 @@ footer{margin-top:24px;text-align:center;color:#888;font-size:11px;padding-top:1
   <h3 style="margin:14px 0 8px">主 skill（5 · 主干必做，永不询问）</h3>
   <table><tr><th>Skill</th><th>阶段/顺序</th><th>产物文件</th><th>ID 前缀</th><th>前置（须 confirmed）</th><th>评审角色</th><th>一句话定位</th></tr>
     <tr><td><code>project-background-goal</code>（项目背景与目标）</td><td>001 业务需求 · 第1项</td><td><code>001-business-requirements/01-background-goal/background-goal.md</code></td><td>BG-</td><td>—（入口）</td><td>business_owner / product_owner</td><td>Turn raw requirement materials into a sourced, human-confirmed business background and goal baseline before journey or p</td></tr>
-    <tr><td><code>user-journey-and-stories</code>（用户旅程与故事）</td><td>001 业务需求 · 第2项</td><td><code>001-business-requirements/02-user-journey-stories/journey-and-stories.md</code></td><td>JS-</td><td>project-background-goal</td><td>business_owner / product_owner</td><td>Build a lifecycle-by-role user journey with emotional mapping, derive traceable user story cards, and establish scope ba</td></tr>
-    <tr><td><code>product-ux</code>（产品 UX）</td><td>002 产品需求 · 第3项</td><td><code>002-product-requirements/01-product-ux/product-ux.md</code></td><td>UX-</td><td>user-journey-and-stories</td><td>product_owner</td><td>Define product scope, UX flows, interaction rules, and page skeletons from confirmed journey and stories. Separate WHAT </td></tr>
-    <tr><td><code>function-description</code>（功能描述）</td><td>002 产品需求 · 第4项</td><td><code>002-product-requirements/02-function-description/function-description.md</code></td><td>FD-</td><td>product-ux</td><td>product_owner / business_owner</td><td>Specify domain-level business rules, validation, permissions, state transitions, exceptions, and acceptance criteria for</td></tr>
-    <tr><td><code>prd-assembly</code>（PRD 汇总）</td><td>003 PRD 输出 · 第5项</td><td><code>003-prd-output/prd.md</code></td><td>PRD-</td><td>project-background-goal、user-journey-and-stories、product-ux、function-description</td><td>product_owner / business_owner</td><td>Assemble all confirmed business and product baselines into one traceable PRD without introducing new requirements. Apply</td></tr>
+    <tr><td><code>user-journey</code>（用户旅程）</td><td>001 业务需求 · 第2项</td><td><code>001-business-requirements/02-user-journey/user-journey.md</code></td><td>UJ-</td><td>project-background-goal</td><td>business_owner / product_owner</td><td>Build a lifecycle-by-role user journey with emotional mapping, derive traceable user story cards, and establish scope ba</td></tr>
+    <tr><td><code>page-design</code>（页面设计）</td><td>002 产品需求 · 第3项</td><td><code>002-product-requirements/03-page-design/page-design.md</code></td><td>PD-</td><td>user-journey</td><td>product_owner</td><td>Define product scope, UX flows, interaction rules, and page skeletons from confirmed journey and stories. Separate WHAT </td></tr>
+    <tr><td><code>interaction-rules</code>（交互规则）</td><td>002 产品需求 · 第4项</td><td><code>002-product-requirements/04-interaction-rules/interaction-rules.md</code></td><td>IX-</td><td>interaction-rules</td><td>product_owner / business_owner</td><td>Specify domain-level business rules, validation, permissions, state transitions, exceptions, and acceptance criteria for</td></tr>
+    <tr><td><code>prd-assembly</code>（PRD 汇总）</td><td>003 PRD 输出 · 第5项</td><td><code>003-prd-output/prd.md</code></td><td>PRD-</td><td>project-background-goal、user-journey、user-stories、feature-list、functional-flow、page-design、interaction-rules、business-rules、validation-rules、state-machine、exception-handling、acceptance-criteria</td><td>product_owner / business_owner</td><td>Assemble all confirmed business and product baselines into one traceable PRD without introducing new requirements. Apply</td></tr>
   </table>
   <h3 style="margin:14px 0 8px">子 skill（9 · 挂到父 skill 的产物章节，8 步循环同样必走）</h3>
   <table><tr><th>子 Skill</th><th>父 Skill</th><th>产物章节</th><th>ID 前缀</th><th>一句话定位</th></tr>
-    <tr><td><code>page-design</code>（页面设计）</td><td><code>product-ux</code></td><td>页面与原型</td><td>FEA-\d+</td><td>Define the page skeleton for each step in the confirmed page flow — entry trigger, preconditions, main content areas, avai</td></tr>
-    <tr><td><code>interaction-rules</code>（交互规则）</td><td><code>product-ux</code></td><td>交互规则</td><td>IX-\d+</td><td>Define page-level interaction rules IX-XXX — user operation → system response, covering normal/error/empty/loading/edge </td></tr>
-    <tr><td><code>feature-list</code>（功能清单）</td><td><code>function-description</code></td><td>功能清单</td><td>FEA-\d+</td><td>Decompose confirmed user stories (ST-XXX) into a complete, non-overlapping feature list FEA-XXX with P0/P1 priorities — the single feature ledger consumed by downstream sub-skills</td></tr>
-    <tr><td><code>functional-flow</code>（功能流程）</td><td><code>function-description</code></td><td>功能流程</td><td>FEA-\d+</td><td>Organize the confirmed feature list into main / branch / exception flows as Mermaid diagrams, tracing each step back to confirmed stories (ST-XXX)</td></tr>
-    <tr><td><code>business-rules</code>（业务规则）</td><td><code>function-description</code></td><td>业务规则</td><td>BR-\d+</td><td>Extract domain-level business rules BR-XXX (constraints, calculations, policies, permissions, timing) from confirmed UX </td></tr>
-    <tr><td><code>validation-rules</code>（校验规则）</td><td><code>function-description</code></td><td>系统校验</td><td>VL-\d+</td><td>Define system validation rules VL-XXX — format, range, length, required, uniqueness, cross-field constraints — each with</td></tr>
-    <tr><td><code>state-machine</code>（状态机）</td><td><code>function-description</code></td><td>状态变化</td><td>STATE-\d+</td><td>Define entity state transitions STATE-XXX — valid states, trigger events, target states, guard conditions, side effects.</td></tr>
-    <tr><td><code>exception-handling</code>（异常处理）</td><td><code>function-description</code></td><td>异常与失败处理</td><td>\bEX-\d+\b</td><td>Enumerate failure modes, retry/rollback/recovery policy, and user-visible prompts (EX-XXX) for each P0 function so the p</td></tr>
-    <tr><td><code>acceptance-criteria</code>（验收标准）</td><td><code>function-description</code></td><td>验收依据</td><td>\bAC-\d+\b</td><td>Write atomic, measurable acceptance criteria AC-XXX in Given/When/Then for each P0 function, with quantified thresholds </td></tr>
+    <tr><td><code>page-design</code>（页面设计）</td><td><code>page-design</code></td><td>页面与原型</td><td>FEA-\d+</td><td>Define the page skeleton for each step in the confirmed page flow — entry trigger, preconditions, main content areas, avai</td></tr>
+    <tr><td><code>interaction-rules</code>（交互规则）</td><td><code>interaction-rules</code></td><td>交互规则</td><td>IX-\d+</td><td>Define page-level interaction rules IX-XXX — user operation → system response, covering normal/error/empty/loading/edge </td></tr>
+    <tr><td><code>feature-list</code>（功能清单）</td><td><code>feature-list</code></td><td>功能清单</td><td>FEA-\d+</td><td>Decompose confirmed user stories (ST-XXX) into a complete, non-overlapping feature list FEA-XXX with P0/P1 priorities — the single feature ledger consumed by downstream sub-skills</td></tr>
+    <tr><td><code>functional-flow</code>（功能流程）</td><td><code>functional-flow</code></td><td>功能流程</td><td>FEA-\d+</td><td>Organize the confirmed feature list into main / branch / exception flows as Mermaid diagrams, tracing each step back to confirmed stories (ST-XXX)</td></tr>
+    <tr><td><code>business-rules</code>（业务规则）</td><td><code>business-rules</code></td><td>业务规则</td><td>BR-\d+</td><td>Extract domain-level business rules BR-XXX (constraints, calculations, policies, permissions, timing) from confirmed UX </td></tr>
+    <tr><td><code>validation-rules</code>（校验规则）</td><td><code>validation-rules</code></td><td>系统校验</td><td>VL-\d+</td><td>Define system validation rules VL-XXX — format, range, length, required, uniqueness, cross-field constraints — each with</td></tr>
+    <tr><td><code>state-machine</code>（状态机）</td><td><code>state-machine</code></td><td>状态变化</td><td>STATE-\d+</td><td>Define entity state transitions STATE-XXX — valid states, trigger events, target states, guard conditions, side effects.</td></tr>
+    <tr><td><code>exception-handling</code>（异常处理）</td><td><code>exception-handling</code></td><td>异常与失败处理</td><td>\bEX-\d+\b</td><td>Enumerate failure modes, retry/rollback/recovery policy, and user-visible prompts (EX-XXX) for each P0 function so the p</td></tr>
+    <tr><td><code>acceptance-criteria</code>（验收标准）</td><td><code>acceptance-criteria</code></td><td>验收依据</td><td>\bAC-\d+\b</td><td>Write atomic, measurable acceptance criteria AC-XXX in Given/When/Then for each P0 function, with quantified thresholds </td></tr>
   </table>
   <h3 style="margin:14px 0 8px">分支产物 skill（4）+ 能力（1 · 触发才跑，进入前按 Inquiry Contract 询问）</h3>
   <table><tr><th>分支产物 / 能力</th><th>触发条件</th><th>适用阶段</th><th>回归点</th><th>产物落点</th><th>一句话定位</th></tr>
@@ -550,10 +550,10 @@ footer{margin-top:24px;text-align:center;color:#888;font-size:11px;padding-top:1
   <table>
     <tr><th>产物</th><th>生产者</th><th>文件</th><th>进入 PRD 的位置</th><th>依赖上游</th></tr>
     <tr><td><code>project-background-goals</code>（项目背景与目标基线）</td><td><code>project-background-goal</code></td><td><code>001-business-requirements/01-background-goal/background-goal.md</code></td><td>项目背景、现状、问题、目标、角色、约束与范围依据</td><td>—（源头）</td></tr>
-    <tr><td><code>journey-and-stories</code>（用户旅程与故事）</td><td><code>user-journey-and-stories</code></td><td><code>001-business-requirements/02-user-journey-stories/journey-and-stories.md</code></td><td>用户旅程地图、用户故事集与业务范围基线（§10）</td><td>project-background-goals</td></tr>
-    <tr><td><code>product-ux</code>（产品 UX）</td><td><code>product-ux</code></td><td><code>002-product-requirements/01-product-ux/product-ux.md</code></td><td>页面设计（§2 页面骨架 + 原型）与交互规则 IX-XXX（§3）</td><td>journey-and-stories</td></tr>
-    <tr><td><code>function-specifications</code>（功能描述与规则集）</td><td><code>function-description</code></td><td><code>002-product-requirements/02-function-description/function-description.md</code></td><td>功能清单 FEA / 功能流程（主流程·分支·异常）与 FUN 功能描述，补充 BR、VL、权限、状态、异常恢复与 AC</td><td>product-ux</td></tr>
-    <tr><td><code>final-prd</code>（最终 PRD）</td><td><code>prd-assembly</code></td><td><code>003-prd-output/prd.md</code></td><td>最终唯一产品交付 prd.md</td><td>project-background-goals、journey-and-stories、product-ux、function-specifications</td></tr>
+    <tr><td><code>user-journey</code>（用户旅程）</td><td><code>user-journey</code></td><td><code>001-business-requirements/02-user-journey-stories/user-journey.md</code></td><td>用户旅程地图（角色×生命周期×情绪）</td><td>project-background-goals</td></tr>
+    <tr><td><code>page-design</code>（页面设计）</td><td><code>page-design</code></td><td><code>002-product-requirements/03-page-design/page-design.md</code></td><td>页面骨架 + 原型</td><td>user-stories</td></tr>
+    <tr><td><code>functional-flow</code>（功能流程）</td><td><code>functional-flow</code></td><td><code>002-product-requirements/01-feature-list/feature-list.md</code></td><td>功能清单 FEA-XXX</td><td>functional-flow</td></tr>
+    <tr><td><code>final-prd</code>（最终 PRD）</td><td><code>prd-assembly</code></td><td><code>003-prd-output/prd.md</code></td><td>最终唯一产品交付 prd.md</td><td>project-background-goal、user-journey、user-stories、feature-list、functional-flow、page-design</td></tr>
   </table>
   <div class="desc" style="margin-top:10px;margin-bottom:0">支持产物（不直接进 PRD）：复述清单 RR-NNN / 发散候选 SCN-XXX（requirement-restate 能力，过程记录）· 埋点事件表 EV-NNN（tracking-plan）· 问题清单 ISS-NNN（issue-record，§13 收口表）· 竞品调研 / 可行性分析记录（99-review/support/）。</div>
 </section>
@@ -567,7 +567,7 @@ footer{margin-top:24px;text-align:center;color:#888;font-size:11px;padding-top:1
     <tr><td><code>workflow_registry.py</code><br><span style="color:#888;font-size:11px">注册表访问器</span></td><td colspan="2" style="padding-top:10px">load_registry（accept v3/4/5）、work_items、branch_capabilities、resolve_work_item、find_artifact（双目录兼容旧布局）、artifact_status。</td></tr>
     <tr><td><code>consistency_check.py</code><br><span style="color:#888;font-size:11px">跨文档一致性</span></td><td colspan="2" style="padding-top:10px">注册表路径/技能契约/reference 引用完整性/requirements 内容盲区检查；CI 前置门，0 errors 才算过。</td></tr>
     <tr><td><code>traceability_check.py</code><br><span style="color:#888;font-size:11px">双向追溯</span></td><td colspan="2" style="padding-top:10px">G→ST→FEA→FUN→AC/BR 正向共现 + AC↔G 跨层 + 反向孤儿检查（上游 ID 必须被下游消费）。</td></tr>
-    <tr><td><code>property_check.py</code><br><span style="color:#888;font-size:11px">逻辑完备（fd 专属）</span></td><td colspan="2" style="padding-top:10px">状态机穷尽 / 异常恢复路径 / VL↔AC 配对 / 规则密度 4 项，function-description 的 gate 时自动跑。</td></tr>
+    <tr><td><code>property_check.py</code><br><span style="color:#888;font-size:11px">stage-2 逻辑完备</span></td><td colspan="2" style="padding-top:10px">状态机穷尽 / 异常恢复路径 / VL↔AC 配对 / 规则密度 4 项，stage-2（9 个 Work Items）gate 时自动跑。</td></tr>
     <tr><td><code>branch_validator.py</code><br><span style="color:#888;font-size:11px">评审记录 + SHA-256</span></td><td colspan="2" style="padding-top:10px">confirmed 产物必须有真实评审人 + 匹配 ReviewRecord + 当前内容哈希与 artifact_content_sha256 一致（防篡改）。</td></tr>
     <tr><td><code>migrate_layout_v2.py</code><br><span style="color:#888;font-size:11px">一次性迁移工具</span></td><td colspan="2" style="padding-top:10px">旧 Wave 布局 → v2 布局；--apply 必须加 --confirm（防误运行），默认 dry-run。</td></tr>
     <tr><td><code>render_diagrams.sh / render_mermaid_local.html</code><br><span style="color:#888;font-size:11px">图表辅助</span></td><td colspan="2" style="padding-top:10px">本地渲染 Mermaid 流程图的辅助工具（CDN mermaid）。</td></tr>
@@ -613,12 +613,12 @@ footer{margin-top:24px;text-align:center;color:#888;font-size:11px;padding-top:1
     <div class="bcard" style="padding:6px 10px"><code style="font-size:11px">src/templates/records/modification-record.md</code></div>
     <div class="bcard" style="padding:6px 10px"><code style="font-size:11px">src/templates/records/scenario-disposition.md</code></div>
     <div class="bcard" style="padding:6px 10px"><code style="font-size:11px">src/templates/stage-1-business/background-goal.md</code></div>
-    <div class="bcard" style="padding:6px 10px"><code style="font-size:11px">src/templates/stage-1-business/journey-and-stories.md</code></div>
+    <div class="bcard" style="padding:6px 10px"><code style="font-size:11px">src/templates/stage-1-business/user-journey.md</code></div>
     <div class="bcard" style="padding:6px 10px"><code style="font-size:11px">src/templates/stage-2-product/analytics-requirements.md</code></div>
     <div class="bcard" style="padding:6px 10px"><code style="font-size:11px">src/templates/stage-2-product/field-rules.md</code></div>
-    <div class="bcard" style="padding:6px 10px"><code style="font-size:11px">src/templates/stage-2-product/function-description.md</code></div>
+    <div class="bcard" style="padding:6px 10px"><code style="font-size:11px">src/templates/stage-2-product/feature-list.md</code></div>
     <div class="bcard" style="padding:6px 10px"><code style="font-size:11px">src/templates/stage-2-product/functional-structure.md</code></div>
-    <div class="bcard" style="padding:6px 10px"><code style="font-size:11px">src/templates/stage-2-product/product-ux.md</code></div>
+    <div class="bcard" style="padding:6px 10px"><code style="font-size:11px">src/templates/stage-2-product/page-design.md</code></div>
     <div class="bcard" style="padding:6px 10px"><code style="font-size:11px">src/templates/stage-3-prd/prd-executive.md</code></div>
     <div class="bcard" style="padding:6px 10px"><code style="font-size:11px">src/templates/stage-3-prd/prd-technical.md</code></div>
     <div class="bcard" style="padding:6px 10px"><code style="font-size:11px">src/templates/stage-3-prd/prd.md</code></div>
@@ -648,15 +648,15 @@ footer{margin-top:24px;text-align:center;color:#888;font-size:11px;padding-top:1
     <button class="tree-btn" id="tree-collapse">⤡ 收起全部</button>
   </div>
   <div class="tree" id="tree">
-<div class="tnode t-root" data-depth="0"><div class="tnode-h"><span class="ttoggle">▸</span><span class="tbadge">总览</span><span class="tname">PM Scaffold 全景节点图</span></div><div class="tnode-d">19 个 Skill（5 主 + 9 子 + 4 分支产物 + 1 能力）+ 5 主产物 + 9 共享机制 + 信号层。点击任意节点展开/收起。</div><div class="tchildren">
+<div class="tnode t-root" data-depth="0"><div class="tnode-h"><span class="ttoggle">▸</span><span class="tbadge">总览</span><span class="tname">PM Scaffold 全景节点图</span></div><div class="tnode-d">19 个 Skill（13 主干 + 3 分支 + 1 常驻 + 2 能力）+ 5 主产物 + 9 共享机制 + 信号层。点击任意节点展开/收起。</div><div class="tchildren">
 <div class="tnode t-entry" data-depth="1"><div class="tnode-h"><span class="ttoggle">▸</span><span class="tbadge">入口</span><span class="tname">入口探索（Stage 0）</span></div><div class="tnode-d">进入主干前的判定与理解：材料六信号判 L0-L4 → 发散/复述/可行性 → 主干 bg。</div><div class="tchildren">
 <div class="tnode t-cmd" data-depth="2"><div class="tnode-h"><span class="ttoggle leaf"></span><span class="tbadge">命令</span><span class="tname">entry 内容判定（L0-L4）</span></div><div class="tnode-d">读 00-input 内容六信号（问题/角色/约束/方案/功能/规则）判成熟度；L0/L1 输出 entry_blocked（材料不足）。</div></div><div class="tnode t-cap" data-depth="2"><div class="tnode-h"><span class="ttoggle leaf"></span><span class="tbadge">能力</span><span class="tname">需求重举能力（requirement-restate）</span></div><div class="tnode-d">output_kind=process（能力，过程记录不进 PRD）。<b>复述模式</b>：RR-NNN verbatim 复述确认，CONFLICT→issue-record(CLS)、UNKNOWN→Q-XXX(INF)。<b>发散模式</b>：SCN-XXX 候选 12 维度发散 → 人工四值处置（include/exclude/defer/research）→ include 候选进 bg 输入包。</div></div><div class="tnode t-branch" data-depth="2"><div class="tnode-h"><span class="ttoggle leaf"></span><span class="tbadge">分支产物</span><span class="tname">可行性分析（feasibility-analysis）</span></div><div class="tnode-d">分支产物。四要素：市场空间 / 技术可行性 / 投入产出 / 风险评估；多方案决策矩阵为其一章。</div></div>
 </div></div><div class="tnode t-stage" data-depth="1"><div class="tnode-h"><span class="ttoggle">▸</span><span class="tbadge">阶段</span><span class="tname">001 业务需求</span></div><div class="tnode-d">业务真相与范围的源头。</div><div class="tchildren">
-<div class="tnode t-main" data-depth="2"><div class="tnode-h"><span class="ttoggle leaf"></span><span class="tbadge">主 skill</span><span class="tname">主① project-background-goal（项目背景与目标）</span></div><div class="tnode-d">产物 background-goal.md（BG-）。DoR 硬检查「00-input ≥1 SRC」。背景/现状/问题/目标/角色/约束，六态标注。评审角色：business_owner / product_owner。</div></div><div class="tnode t-main" data-depth="2"><div class="tnode-h"><span class="ttoggle leaf"></span><span class="tbadge">主 skill</span><span class="tname">主② user-journey-and-stories（用户旅程与故事）</span></div><div class="tnode-d">产物 journey-and-stories.md（1 文件 3 章节：范围基线 In/Out/Deferred/Conditional + 旅程 + 故事 ST-）。前置：主① confirmed。评审：business_owner / product_owner。</div></div>
+<div class="tnode t-main" data-depth="2"><div class="tnode-h"><span class="ttoggle leaf"></span><span class="tbadge">主 skill</span><span class="tname">主① project-background-goal（项目背景与目标）</span></div><div class="tnode-d">产物 background-goal.md（BG-）。DoR 硬检查「00-input ≥1 SRC」。背景/现状/问题/目标/角色/约束，六态标注。评审角色：business_owner / product_owner。</div></div><div class="tnode t-main" data-depth="2"><div class="tnode-h"><span class="ttoggle leaf"></span><span class="tbadge">主 skill</span><span class="tname">主② user-journey（用户旅程）</span></div><div class="tnode-d">产物 user-journey.md（用户旅程地图：角色×生命周期×情绪×路径多样性）。前置：主① confirmed。评审：business_owner / product_owner。</div></div>
 </div></div><div class="tnode t-stage" data-depth="1"><div class="tnode-h"><span class="ttoggle">▸</span><span class="tbadge">阶段</span><span class="tname">002 产品需求</span></div><div class="tnode-d">把业务需求细化为产品方案。</div><div class="tchildren">
-<div class="tnode t-main" data-depth="2"><div class="tnode-h"><span class="ttoggle">▸</span><span class="tbadge">主 skill</span><span class="tname">主③ product-ux（产品 UX）</span></div><div class="tnode-d">产物 product-ux.md（1 文件 2 章节：页面设计 / 交互规则 IX-）。评审：product_owner。</div><div class="tchildren">
+<div class="tnode t-main" data-depth="2"><div class="tnode-h"><span class="ttoggle">▸</span><span class="tbadge">主 skill</span><span class="tname">主③ page-design（页面设计）</span></div><div class="tnode-d">产物 page-design.md（页面骨架 + 原型）。评审：product_owner。</div><div class="tchildren">
 <div class="tnode t-sub" data-depth="3"><div class="tnode-h"><span class="ttoggle leaf"></span><span class="tbadge">子 skill</span><span class="tname">子 page-design（页面设计）</span></div><div class="tnode-d">§页面设计。页面骨架 + 可点击原型（两步流程：页面清单先人工确认 → 单文件 HTML）。</div></div><div class="tnode t-sub" data-depth="3"><div class="tnode-h"><span class="ttoggle leaf"></span><span class="tbadge">子 skill</span><span class="tname">子 interaction-rules（交互规则）</span></div><div class="tnode-d">§交互规则 IX-XXX。操作/反馈/权限/可逆性，状态覆盖 loading/empty/error/disabled。</div></div>
-</div></div><div class="tnode t-main" data-depth="2"><div class="tnode-h"><span class="ttoggle">▸</span><span class="tbadge">主 skill</span><span class="tname">主④ function-description（功能描述）</span></div><div class="tnode-d">产物 function-description.md（FEA 功能清单 / 功能流程 / FUN 含 BR/VL/State/EX/AC + 字段定义表）。gate 额外跑 property_check（状态机穷尽/异常恢复/VL↔AC/规则密度）。评审：product_owner / business_owner。</div><div class="tchildren">
+</div></div><div class="tnode t-main" data-depth="2"><div class="tnode-h"><span class="ttoggle">▸</span><span class="tbadge">主 skill</span><span class="tname">主④ interaction-rules（交互规则）</span></div><div class="tnode-d">产物 interaction-rules.md（IX-XXX 交互规则：正常/异常/空态/加载/边界）。gate 额外跑 property_check（状态机穷尽/异常恢复/VL↔AC/规则密度）。评审：product_owner / business_owner。</div><div class="tchildren">
 <div class="tnode t-sub" data-depth="3"><div class="tnode-h"><span class="ttoggle leaf"></span><span class="tbadge">子 skill</span><span class="tname">子 feature-list（功能清单 FEA-）</span></div><div class="tnode-d">§功能清单。从已确认 ST-XXX 分解 FEA-XXX，P0/P1 优先级、边界不重叠、每项追溯 ST。</div></div><div class="tnode t-sub" data-depth="3"><div class="tnode-h"><span class="ttoggle leaf"></span><span class="tbadge">子 skill</span><span class="tname">子 functional-flow（功能流程）</span></div><div class="tnode-d">§功能流程。把 FEA 组织为主流程/分支流程/异常流程，Mermaid 呈现并回溯到已确认故事。</div></div><div class="tnode t-sub" data-depth="3"><div class="tnode-h"><span class="ttoggle leaf"></span><span class="tbadge">子 skill</span><span class="tname">子 business-rules（业务规则 BR-）</span></div><div class="tnode-d">计算/约束/条件/权限/时序五类，每条可执行。</div></div><div class="tnode t-sub" data-depth="3"><div class="tnode-h"><span class="ttoggle leaf"></span><span class="tbadge">子 skill</span><span class="tname">子 validation-rules（校验规则 VL- + 字段定义表）</span></div><div class="tnode-d">VL- 校验规则 + 字段定义表（字段名/类型/长度/来源）。</div></div><div class="tnode t-sub" data-depth="3"><div class="tnode-h"><span class="ttoggle leaf"></span><span class="tbadge">子 skill</span><span class="tname">子 state-machine（状态机 STATE-）</span></div><div class="tnode-d">状态定义 + 转换表 + 禁止转换显式声明 + 终态不可回退。</div></div><div class="tnode t-sub" data-depth="3"><div class="tnode-h"><span class="ttoggle leaf"></span><span class="tbadge">子 skill</span><span class="tname">子 exception-handling（异常处理 EX-）</span></div><div class="tnode-d">六类失败源，恢复方式（重试/手动/自动/终止）+ 用户提示。</div></div><div class="tnode t-sub" data-depth="3"><div class="tnode-h"><span class="ttoggle leaf"></span><span class="tbadge">子 skill</span><span class="tname">子 acceptance-criteria（验收标准 AC-）</span></div><div class="tnode-d">Given/When/Then + 量化阈值 + 追溯 G-XXX。</div></div>
 </div></div>
 </div></div><div class="tnode t-stage" data-depth="1"><div class="tnode-h"><span class="ttoggle">▸</span><span class="tbadge">阶段</span><span class="tname">003 PRD 输出</span></div><div class="tnode-d">聚合为唯一交付物。</div><div class="tchildren">
@@ -664,7 +664,7 @@ footer{margin-top:24px;text-align:center;color:#888;font-size:11px;padding-top:1
 </div></div><div class="tnode t-branch" data-depth="1"><div class="tnode-h"><span class="ttoggle">▸</span><span class="tbadge">分支产物</span><span class="tname">分支产物与贯穿（4 分支 + 问题清单）</span></div><div class="tnode-d">触发才跑，默认不进 PRD 正文。</div><div class="tchildren">
 <div class="tnode t-branch" data-depth="2"><div class="tnode-h"><span class="ttoggle leaf"></span><span class="tbadge">分支产物</span><span class="tname">competitive-research（竞品调研）</span></div><div class="tnode-d">方向不清/缺参考时触发。竞品 3-5 家对比。→ 99-review/support/</div></div><div class="tnode t-branch" data-depth="2"><div class="tnode-h"><span class="ttoggle leaf"></span><span class="tbadge">分支产物</span><span class="tname">tracking-plan（埋点计划）</span></div><div class="tnode-d">需要数据埋点时触发。EV-NNN 事件表 + 覆盖矩阵 + PII 登记。</div></div><div class="tnode t-branch" data-depth="2"><div class="tnode-h"><span class="ttoggle leaf"></span><span class="tbadge">分支产物</span><span class="tname">issue-record（问题清单，独立产物贯穿）</span></div><div class="tnode-d">六类问题 BLK/RSK/DEC/INF/CLS/OUT（ISS-）。B3 每阶段强制收口：§13 收口表 + 待确认引用。7 天 flag / 14 天 escalate。</div></div>
 </div></div><div class="tnode t-mech" data-depth="1"><div class="tnode-h"><span class="ttoggle">▸</span><span class="tbadge">机制</span><span class="tname">贯穿机制（9 共享 + 闸门 + 信号）</span></div><div class="tnode-d">不占主干，横向复用。</div><div class="tchildren">
-<div class="tnode t-mech" data-depth="2"><div class="tnode-h"><span class="ttoggle leaf"></span><span class="tbadge">机制</span><span class="tname">8 步循环</span></div><div class="tnode-d">Preflight→Intake→Think→Clarify→Generate→Audit→Human Gate→Commit/Reflow，每个工作项必走。</div></div><div class="tnode t-mech" data-depth="2"><div class="tnode-h"><span class="ttoggle leaf"></span><span class="tbadge">机制</span><span class="tname">9 共享机制</span></div><div class="tnode-d">audit / human-gate / clarify / change-management / traceability / decision-log / brainstorming(发散库) / intake-routing / project-init。</div></div><div class="tnode t-mech" data-depth="2"><div class="tnode-h"><span class="ttoggle leaf"></span><span class="tbadge">机制</span><span class="tname">机器闸门（dor_check）</span></div><div class="tnode-d">DoR（上游 confirmed + 入口材料）+ DoD（校验器 + 六态 + 自审 + B3 收口）。</div></div><div class="tnode t-mech" data-depth="2"><div class="tnode-h"><span class="ttoggle leaf"></span><span class="tbadge">机制</span><span class="tname">信号层（orchestrator）</span></div><div class="tnode-d">B1 熔断（连续 3 轮 changes）/ B3 老化（7/14 天）/ 范围冻结（product-ux 确认后上游变更）。</div></div><div class="tnode t-mech" data-depth="2"><div class="tnode-h"><span class="ttoggle leaf"></span><span class="tbadge">机制</span><span class="tname">六态知识标注</span></div><div class="tnode-d">FACT / DECISION / ASSUMPTION(≤30%) / AI_INFERENCE / UNKNOWN / CONFLICT。</div></div>
+<div class="tnode t-mech" data-depth="2"><div class="tnode-h"><span class="ttoggle leaf"></span><span class="tbadge">机制</span><span class="tname">8 步循环</span></div><div class="tnode-d">Preflight→Intake→Think→Clarify→Generate→Audit→Human Gate→Commit/Reflow，每个工作项必走。</div></div><div class="tnode t-mech" data-depth="2"><div class="tnode-h"><span class="ttoggle leaf"></span><span class="tbadge">机制</span><span class="tname">9 共享机制</span></div><div class="tnode-d">audit / human-gate / clarify / change-management / traceability / decision-log / brainstorming(发散库) / intake-routing / project-init。</div></div><div class="tnode t-mech" data-depth="2"><div class="tnode-h"><span class="ttoggle leaf"></span><span class="tbadge">机制</span><span class="tname">机器闸门（dor_check）</span></div><div class="tnode-d">DoR（上游 confirmed + 入口材料）+ DoD（校验器 + 六态 + 自审 + B3 收口）。</div></div><div class="tnode t-mech" data-depth="2"><div class="tnode-h"><span class="ttoggle leaf"></span><span class="tbadge">机制</span><span class="tname">信号层（orchestrator）</span></div><div class="tnode-d">B1 熔断（连续 3 轮 changes）/ B3 老化（7/14 天）/ 范围冻结（page-design/interaction-rules 确认后上游变更）。</div></div><div class="tnode t-mech" data-depth="2"><div class="tnode-h"><span class="ttoggle leaf"></span><span class="tbadge">机制</span><span class="tname">六态知识标注</span></div><div class="tnode-d">FACT / DECISION / ASSUMPTION(≤30%) / AI_INFERENCE / UNKNOWN / CONFLICT。</div></div>
 </div></div>
 </div></div>
   </div>
@@ -716,12 +716,12 @@ PM Scaffold · 文件完整架构
 │  ├─ stages/                   3 阶段 × 5 主 + 9 子 + 1 分支产物 + 1 能力
 │  │  ├─ 001-business-requirements/
 │  │  │  ├─ skills/project-background-goal/    主① 项目背景与目标
-│  │  │  ├─ skills/user-journey-and-stories/   主② 用户旅程与故事
+│  │  │  ├─ skills/user-journey/   主② 用户旅程与故事
 │  │  │  └─ skills/requirement-restate/        能力 · 需求重举（复述 + 发散）
 │  │  ├─ 002-product-requirements/
-│  │  │  ├─ skills/product-ux/                 主③ 产品 UX
+│  │  │  ├─ skills/page-design/                 主③ 产品 UX
 │  │  │  │  └─ skills/{page-design, interaction-rules}/   2 子
-│  │  │  ├─ skills/function-description/       主④ 功能描述
+│  │  │  ├─ skills/interaction-rules/       主④ 功能描述
 │  │  │  │  └─ skills/{feature-list, functional-flow, business-rules,
 │  │  │  │            validation-rules, state-machine, exception-handling,
 │  │  │  │            acceptance-criteria}/      7 子
@@ -814,7 +814,7 @@ PM Scaffold · 文件完整架构
 
 <h4>1.2 它由哪些部分组成</h4>
 <ul>
-  <li><b>19 个 Skill（5 主 + 9 子 + 4 分支产物 + 1 能力）</b>：5 个主干 skill 是必做主线——<code>project-background-goal</code>（项目背景与目标）→ <code>user-journey-and-stories</code>（用户旅程与故事）→ <code>product-ux</code>（产品 UX）→ <code>function-description</code>（功能描述）→ <code>prd-assembly</code>（PRD 汇总）。9 个子 skill 挂在两个主干下面细化（product-ux 内：page-design / interaction-rules；function-description 内：feature-list / functional-flow / business-rules / validation-rules / state-machine / exception-handling / acceptance-criteria）。4 个分支产物 skill 按需触发（competitive-research、feasibility-analysis、tracking-plan、issue-record），另 1 个能力：requirement-restate（需求重举 · 复述 + 发散双模式，过程记录不进 PRD）。每个 skill 都自带标准章节执行协议、7 类参考知识库和机器校验器，数量全部来自注册表 workflow-registry.json（唯一真相源）。</li>
+  <li><b>19 个 Skill（13 主干 + 3 分支 + 1 常驻 + 2 能力）</b>：5 个主干 skill 是必做主线——<code>project-background-goal</code>（项目背景与目标）→ <code>user-journey</code>（用户旅程）→ <code>user-stories</code>（用户故事）→ <code>feature-list</code>（功能清单）→ <code>functional-flow</code>（功能流程）→ <code>page-design</code>（页面设计）→ <code>interaction-rules</code>（交互规则）→ <code>business-rules</code>（业务规则）→ <code>validation-rules</code>（校验规则） → <code>state-machine</code>（状态机） → <code>exception-handling</code>（异常处理） → <code>acceptance-criteria</code>（验收标准） → <code>prd-assembly</code>（PRD 汇总）。13 个主干 skill 是必做主线，9 个独立 work_items 全部并行独立（不再是子 skill）。4 个分支产物 skill 按需触发（competitive-research、feasibility-analysis、tracking-plan、issue-record），另 1 个能力：requirement-restate（需求重举 · 复述 + 发散双模式，过程记录不进 PRD）。每个 skill 都自带标准章节执行协议、7 类参考知识库和机器校验器，数量全部来自注册表 workflow-registry.json（唯一真相源）。</li>
   <li><b>18 个脚本</b>（在 src/scripts/）：pipeline.py（命令入口：init / status / entry / gate / review / reflow）、orchestrator.py（状态机 + 信号层）、dor_check.py（闸门检查）、workflow_registry.py（注册表访问器）、consistency_check.py（跨文档一致性）、traceability_check.py（双向追溯）、property_check.py（逻辑完备）、branch_validator.py（评审记录与哈希校验）、migrate_layout_v2.py（布局迁移）、audit_log.py（SHA-256 链事件日志）、projection_cache.py（投影缓存）、registry_contract_check.py（注册表契约关卡）、validation_errors.py（统一错误格式）、hash_anchor.py（哈希锚点）、desensitize_check.py（脱敏检查）、feishu_fetch.py（飞书取料）、prd_publish.py（飞书发布）、snapshot_cases.py（快照对比）。全部只用 Python 标准库，AI 不需要装任何第三方包。</li>
   <li><b>9 个共享机制</b>（在 src/shared/）：audit（审查闸门）、human-gate（人工闸门）、clarify（澄清循环）、change-management（变更回流）、traceability（追溯）、decision-log（决策记录）、brainstorming（需求发散）、intake-routing（入口路由）、project-init（项目初始化）。它们横向服务所有阶段，是脚手架的「公共服务」。</li>
 </ul>
@@ -824,12 +824,12 @@ PM Scaffold · 文件完整架构
 <table>
   <tr><th>章节</th><th>内容</th></tr>
   <tr><td>§1 项目背景与目标</td><td>从 project-background-goal 已确认产物完整引用</td></tr>
-  <tr><td>§2 业务角色、用户旅程与用户故事</td><td>从 user-journey-and-stories 已确认产物完整引用</td></tr>
-  <tr><td>§3 UX：功能范围、功能流程与关键状态</td><td>从 product-ux（页面设计 + 交互规则）与 function-description（功能流程）已确认产物引用</td></tr>
-  <tr><td>§4 分功能描述</td><td>从 function-description 已确认产物完整引用（FEA / FLOW / FUN / BR / VL / STATE / EX / AC）</td></tr>
+  <tr><td>§2 业务角色、用户旅程与用户故事</td><td>从 user-journey 和 user-stories 已确认产物完整引用</td></tr>
+  <tr><td>§3 UX：功能范围、功能流程与关键状态</td><td>从 page-design（页面设计）与 functional-flow（功能流程）已确认产物引用</td></tr>
+  <tr><td>§4 分功能描述</td><td>从 feature-list / functional-flow / business-rules / validation-rules / state-machine / exception-handling / acceptance-criteria 已确认产物引用</td></tr>
   <tr><td>§5 按需章节</td><td>字段规则、埋点需求、依赖与约束、未决问题与风险——没内容就标「本期不适用」</td></tr>
   <tr><td>§6 事实与决定</td><td>汇总各工作项的关键事实与人类决定</td></tr>
-  <tr><td>§7 验收依据</td><td>关键验收基准（汇总 function-description 已确认 AC）</td></tr>
+  <tr><td>§7 验收依据</td><td>关键验收基准（汇总 acceptance-criteria 已确认 AC）</td></tr>
   <tr><td>附录 · 需求追溯矩阵</td><td>目标 G → 故事 ST → 功能 FEA → 功能详述 FUN → 验收 AC → 业务规则 BR 六列表，每一条验收都能链回它验证的目标</td></tr>
   <tr><td>附录 · 自审记录（Constitution Compliance）</td><td>对照原则的自查表（业务事实分离、AI 不替业务决定、来源可追溯、冲突显式保留并关闭）</td></tr>
 </table>
@@ -975,7 +975,7 @@ bash run_tests_mac.sh   # 第一次自检：看到 "Result: 61 passed / 0 failed
 <p><b>原则 ② 指定工作项</b>——一次只说一件事，指明工作项名：</p>
 <ul>
   <li>正例 1：「现在做 project-background-goal（项目背景与目标）这一步。」——AI 会自己读对应 SKILL.md 并按 8 步循环执行。</li>
-  <li>正例 2：「上一个工作项确认完了，继续下一个：user-journey-and-stories（用户旅程与故事）。」</li>
+  <li>正例 2：「上一个工作项确认完了，继续下一个：user-journey（用户旅程）。」</li>
   <li>反例：「帮我做做背景、旅程还有功能啥的。」——一次甩三件事，顺序和依赖全乱，产物会互相污染。</li>
 </ul>
 <p><b>原则 ③ 要结果清单</b>——规定 AI 每步完成必须汇报什么：</p>
@@ -1015,9 +1015,9 @@ bash run_tests_mac.sh   # 第一次自检：看到 "Result: 61 passed / 0 failed
 <h4>5.4 长任务的拆法：一次只做一个工作项</h4>
 <p>一个需求有 5 个主工作项，每个都有人工闸门。正确节奏是「<b>一步一步走，每步确认完再迈下一步</b>」：</p>
 <pre class="tut-code">第一步：project-background-goal（背景与目标）→ 你确认
-第二步：user-journey-and-stories（旅程与故事）→ 你确认
-第三步：product-ux（产品 UX）→ 你确认
-第四步：function-description（功能描述）→ 你确认
+第二步：user-journey（用户旅程）→ 你确认
+第三步：page-design（页面设计）→ 你确认
+第四步：interaction-rules（交互规则）→ 你确认
 第五步：prd-assembly（PRD 汇总）→ 你确认</pre>
 <p>每步之间可以间隔很久（等业务方确认），这不影响流程——<code>status</code> 命令会告诉你当前停在哪、下一步是什么。想让 AI 一次「把整个需求做完」？可以，但它每完成一个工作项仍然会停下来等你确认——这不是它偷懒，是硬性流程：上游未确认，下游不启动。</p>
 
@@ -1036,36 +1036,36 @@ bash run_tests_mac.sh   # 第一次自检：看到 "Result: 61 passed / 0 failed
 <pre class="tut-code">"按 project-background-goal 工作项起草，用我 00-input 里的材料，
  不确定的地方列成 ≤5 个问题问我，别自己编。完成后按四件事汇报。"</pre>
 <p><b>AI 做：</b>走 8 步循环（预检 → 摄取 → 思考 → 澄清 → 生成 → 审计 → 人工闸门 → 提交）起草 background-goal.md，每条声明带六态标注，然后汇报：<i>「产物已起草：…/background-goal.md。这里整理了 3 个事实（来自 SRC-001）、2 个假设、1 个未知（目标数值）——需要你拍板。gate 校验：5 项检查 4 过 1 FAIL（六态缺 CONFLICT），我补上了。下一步建议：你确认后我做用户旅程。」</i></p>
-<p><b>你确认：</b>读产物 → 回答那 ≤5 个问题（不会答的让它标 UNKNOWN 挂问题清单）→ AI 修订重跑校验 → 你看没问题后<b>亲自跑确认命令</b>（命令见第 7 章）→ 说「<i>继续做 user-journey-and-stories</i>」。</p>
+<p><b>你确认：</b>读产物 → 回答那 ≤5 个问题（不会答的让它标 UNKNOWN 挂问题清单）→ AI 修订重跑校验 → 你看没问题后<b>亲自跑确认命令</b>（命令见第 7 章）→ 说「<i>继续做 user-journey</i>」。</p>
 <p><b>你说（第 2 幕后半）：</b></p>
-<pre class="tut-code">"继续 user-journey-and-stories：用户旅程地图、用户故事集、范围基线，
+<pre class="tut-code">"继续 user-journey：用户旅程地图（角色×生命周期×情绪），
  全部从已确认的背景目标推导，不要引入新事实。"</pre>
-<p><b>AI 做：</b>起草 journey-and-stories.md（旅程按角色 × 生命周期展开，故事带业务价值），输出 scope-baseline（范围基线）。</p>
+<p><b>AI 做：</b>起草 user-journey.md + user-stories.md（旅程按角色 × 生命周期展开，故事带业务价值），输出 scope-baseline（范围基线）。</p>
 <p><b>你确认：</b>评审 → 亲自 review → 「<i>继续产品 UX</i>」。</p>
 
 <h4>第 3 幕 · 产品需求（产品 UX → 功能描述）</h4>
 <p><b>你说：</b></p>
-<pre class="tut-code">"继续 product-ux：页面设计、交互规则都按上游已确认的内容来，不要新增需求。
+<pre class="tut-code">"继续 page-design：页面骨架按上游已确认的功能流程来，不要新增需求。
  2 个子 skill（page-design、interaction-rules）按顺序跑。"</pre>
-<p><b>AI 做：</b>起草 product-ux.md。<b>子 skill 在这里登场</b>——它们不是独立步骤，而是挂在父 skill 产物内部的章节工序，随父 skill 一起跑：<code>page-design</code>（页面设计）产出页面骨架 → <code>interaction-rules</code>（交互规则）产出 IX-XXX 规则，全部汇入 product-ux.md 对应章节。期间它会问：<i>「P03 页面的空态怎么处理？这是 UNKNOWN，我挂到问题清单了，编号 Q-004。」</i>——遇到需要业务状态判断的，它不会替你选。</p>
-<p><b>你确认：</b>评审 product-ux → 亲自 review → 「<i>继续 function-description</i>」。</p>
+<p><b>AI 做：</b>起草 page-design.md + interaction-rules.md。<b>两个独立 work_items 按顺序跑</b>——它们不是独立步骤，而是挂在父 skill 产物内部的章节工序，随父 skill 一起跑：<code>page-design</code>（页面设计）产出页面骨架 → <code>interaction-rules</code>（交互规则）产出 IX-XXX 规则，分别汇入 page-design.md 和 interaction-rules.md。期间它会问：<i>「P03 页面的空态怎么处理？这是 UNKNOWN，我挂到问题清单了，编号 Q-004。」</i>——遇到需要业务状态判断的，它不会替你选。</p>
+<p><b>你确认：</b>评审 page-design + interaction-rules → 亲自 review → 「<i>继续 feature-list</i>」。</p>
 <p><b>你说（第 3 幕后半）：</b></p>
-<pre class="tut-code">"继续 function-description：功能清单、功能流程、业务规则、校验、状态机、异常、验收，全部要能追溯到上游。
+<pre class="tut-code">"继续 feature-list + functional-flow + business-rules + validation-rules + state-machine + exception-handling + acceptance-criteria：功能清单要能追溯到上游故事，功能流程要能追溯到功能清单。
  7 个子 skill（feature-list、functional-flow、business-rules、validation-rules、state-machine、exception-handling、acceptance-criteria）按顺序跑。"</pre>
-<p><b>AI 做：</b>起草 function-description.md——<code>feature-list</code>（功能清单 FEA-）→ <code>functional-flow</code>（功能流程：主流程/分支/异常）→ <code>business-rules</code>（业务规则 BR-）→ <code>validation-rules</code>（系统校验 VL-）→ <code>state-machine</code>（状态变化 STATE-）→ <code>exception-handling</code>（异常与失败处理 EX-）→ <code>acceptance-criteria</code>（验收依据 AC-），逐节生成、逐节审计。</p>
-<p><b>你确认：</b>评审 function-description → 亲自 review。</p>
+<p><b>AI 做：</b>起草 feature-list.md → functional-flow.md → business-rules.md → validation-rules.md → state-machine.md → exception-handling.md → acceptance-criteria.md（功能流程：主流程/分支/异常）→ <code>business-rules</code>（业务规则 BR-）→ <code>validation-rules</code>（系统校验 VL-）→ <code>state-machine</code>（状态变化 STATE-）→ <code>exception-handling</code>（异常与失败处理 EX-）→ <code>acceptance-criteria</code>（验收依据 AC-），逐节生成、逐节审计。</p>
+<p><b>你确认：</b>评审 acceptance-criteria → 亲自 review。</p>
 <p>注意：AI 在每一幕送审前都会做一件必须的事——<b>B3 收口</b>。它会告诉你：<i>「我在问题清单里登记了收口：当前工作项已写入 issue-record 的 §13 收口表。本阶段没有遗留问题，空收口也是审计证据。」</i> 这是送审前的强制动作，缺了它 gate 会拦截送审。</p>
 
 <h4>第 4 幕 · 出 PRD</h4>
 <p><b>你说：</b></p>
 <pre class="tut-code">"汇总 PRD。记住只能聚合已确认的内容，发现缺口就告诉我该回到哪一步补。"</pre>
-<p><b>AI 做：</b>prd-assembly 把 4 个上游产物按模板组装成 prd.md（9 节结构见第 1 章 1.3 节），跑双向追溯检查（每一层 G→ST→FEA→FUN→AC 都有人接、无孤儿），汇报：<i>「PRD 已汇总：…/003-prd-output/prd.md，追溯矩阵全绿。发现 1 个缺口：FUN-003 没有对应 AC，需回到 function-description 补。我先标了待确认，编号 Q-007。」</i></p>
+<p><b>AI 做：</b>prd-assembly 把 13 个上游产物按模板组装成 prd.md（9 节结构见第 1 章 1.3 节），跑双向追溯检查（每一层 G→ST→FEA→FUN→AC 都有人接、无孤儿），汇报：<i>「PRD 已汇总：…/003-prd-output/prd.md，追溯矩阵全绿。发现 1 个缺口：FUN-003 没有对应 AC，需回到 functional-flow 或 business-rules 补。我先标了待确认，编号 Q-007。」</i></p>
 <p><b>你确认：</b>要么让 AI 回流到上游补齐再重新汇总，要么拍板接受当前状态——然后做 PRD 的最终确认。</p>
 
 <h4>第 5 幕 · 变更回流（如果业务变了）</h4>
 <p><b>你说：</b></p>
 <pre class="tut-code">"业务方把 G2 从 2% 改成了 5%，帮我 reflow 预览下游哪些受影响，我确认后再应用。"</pre>
-<p><b>AI 做：</b>先 dry-run 预览影响面：<i>「变更 G2 会级联失效：user-journey-and-stories、product-ux、function-description、prd-assembly 的 confirmed 都会变成 superseded，需要从最早的受影响项重跑。建议回归点：user-journey-and-stories。」</i> 你确认后，它带 --apply 应用：下游失效 → 写 ChangeRecord → next_work_item 回归最早受影响项。</p>
+<p><b>AI 做：</b>先 dry-run 预览影响面：<i>「变更 G2 会级联失效：user-journey、user-stories、feature-list、page-design、prd-assembly 的 confirmed 都会变成 superseded，需要从最早的受影响项重跑。建议回归点：user-journey。」</i> 你确认后，它带 --apply 应用：下游失效 → 写 ChangeRecord → next_work_item 回归最早受影响项。</p>
 <p><b>你确认：</b>从回归点重跑相关章节，重新走各幕的确认流程。这就是第 1 章说的「改了上游下游不知道」——在这个流程里不存在。</p>
 
 <h3 id="tut-7">7. 只有你能做的事（AI 永远不能替你做）</h3>
@@ -1087,7 +1087,7 @@ bash run_tests_mac.sh   # 第一次自检：看到 "Result: 61 passed / 0 failed
 <ul>
   <li><b>id</b>：稳定用户 ID（飞书/组织 ID），是程序匹配身份的依据——本地校验以此为准，未来对接飞书/SSO 认证也以它为准；</li>
   <li><b>name</b>：真实姓名——跑确认命令时填的名字必须与这里完全一致，写「AI」「待确认」「待评审」或含「模拟」都会被拒绝；</li>
-  <li><b>roles</b>：该评审人允许使用的角色，可选 <code>business_owner</code>（业务方）/ <code>product_owner</code>（产品方）。每个工作项有自己允许的角色集合（例如 product-ux 只允许 product_owner 批准），你登记了谁、允许哪个角色，谁才能确认。</li>
+  <li><b>roles</b>：该评审人允许使用的角色，可选 <code>business_owner</code>（业务方）/ <code>product_owner</code>（产品方）。每个工作项有自己允许的角色集合（例如 page-design 只允许 product_owner 批准），你登记了谁、允许哪个角色，谁才能确认。</li>
 </ul>
 <p>你可以让 AI 把模板格式建好，但<b>真人信息自己填</b>——「谁有权确认」这个定义不该由 AI 代劳。</p>
 
@@ -1101,7 +1101,7 @@ bash run_tests_mac.sh   # 第一次自检：看到 "Result: 61 passed / 0 failed
 <table>
   <tr><th>参数</th><th>意思</th></tr>
   <tr><td><code>requirements/REQ-NNN-…</code></td><td>需求目录路径，定位到你要确认的那个需求</td></tr>
-  <tr><td><code>--work-item</code></td><td>确认哪个工作项：project-background-goal / user-journey-and-stories / product-ux / function-description / prd-assembly</td></tr>
+  <tr><td><code>--work-item</code></td><td>确认哪个工作项：project-background-goal / user-journey / user-stories / feature-list / functional-flow / page-design / interaction-rules / ... / prd-assembly</td></tr>
   <tr><td><code>--decision approve</code></td><td>批准（把状态写成 confirmed）；写 <code>changes</code> 是打回修改，可附评语</td></tr>
   <tr><td><code>--reviewer</code></td><td>你的真实姓名（与 authorized-reviewers.json 完全一致）</td></tr>
   <tr><td><code>--reviewer-id</code></td><td>你的稳定用户 ID（与登记一致）</td></tr>
@@ -1114,8 +1114,8 @@ bash run_tests_mac.sh   # 第一次自检：看到 "Result: 61 passed / 0 failed
 ERROR: reviewer id, name, and role must match 00-input/authorized-reviewers.json
   → 姓名 / ID / 角色三要素与登记表对不上，回去查 ①
 
-ERROR: role business_owner cannot approve product-ux
-  → product-ux 只允许 product_owner 角色批——换角色或换有资格的人
+ERROR: role business_owner cannot approve page-design
+  → page-design 只允许 product_owner 角色批——换角色或换有资格的人
 
 ERROR: approval requires ready_for_human_review, got draft
   → 还没到「待评审」状态就急着确认——先让 AI 跑 gate 把产物推到待评审
@@ -1167,19 +1167,19 @@ ERROR: machine gates must pass before approval
  （产物路径 / 校验结果 / 待我拍板事项 / 下一步建议）。"
 
 # ⑦ 起草用户旅程与故事
-"现在执行 user-journey-and-stories：旅程地图、故事集、范围基线，
+"现在执行 user-journey：用户旅程地图（角色×生命周期×情绪），
  全部从已确认的背景目标推导，不要引入新事实。完成后按四件事汇报。"
 
 # ⑧ 起草产品 UX（含 2 个子 skill）
-"现在执行 product-ux：page-design、interaction-rules 两个子 skill 按顺序跑，
+"现在执行 page-design：页面骨架按功能流程来，
  产物章节各自归位；只基于已确认上游，不要新增需求。完成后按四件事汇报。"
 
 # ⑨ 单独触发子 skill（如只补页面设计）
-"在 product-ux 产物里补跑 page-design 子 skill：更新页面骨架章节，
+"在 page-design 产物里更新页面骨架章节，
  让它能追溯到已确认的 FEA-XXX 和 IX-XXX。"
 
 # ⑩ 起草功能描述（含 7 个子 skill）
-"现在执行 function-description：feature-list、functional-flow、business-rules、validation-rules、
+"现在执行 feature-list：功能清单从用户故事派生，
  state-machine、exception-handling、acceptance-criteria 七个子 skill 按顺序跑，全部能追溯到上游。
  完成后按四件事汇报。"</pre>
 
@@ -1238,7 +1238,7 @@ FAIL knowledge_state_coverage ASSUMPTION share 0.40 > 0.30 | covered=6/6 total=1
 <p><b>③ B3 阶段收口（stage_closeup）</b>——送审前问题清单必须存在且收口表含当前工作项：</p>
 <pre class="tut-code">FAIL stage_closeup 99-review/support/issue-record.md 不存在（B3 每阶段强制收口，空清单也是审计证据）
 → 修法：让 AI 建 issue-record.md——即使本阶段没有问题，空清单也要建。
-FAIL stage_closeup issue-record 阶段收口表缺 product-ux 收口行
+FAIL stage_closeup issue-record 阶段收口表缺 page-design 收口行
 → 修法：让 AI 在 §13 收口表补上当前工作项的行。
 FAIL stage_closeup 1 处「待确认」无 Q-/ISS-/DEC-/SRC- 引用，示例：目标转化率待确认
 → 修法：让 AI 给每个「待确认」挂上问题编号（Q-XXX / ISS-XXX / DEC-XXX / SRC-XXX）。</pre>
@@ -1249,8 +1249,8 @@ FAIL stage_closeup 1 处「待确认」无 Q-/ISS-/DEC-/SRC- 引用，示例：�
   → 名字填成了 AI / 待确认 / 待评审 / 含「模拟」，改填真实姓名。
 ERROR: reviewer id, name, and role must match 00-input/authorized-reviewers.json
   → 你不在授权清单里，或名字 / ID / 角色对不上——回第 7 章 ① 检查登记表。
-ERROR: role business_owner cannot approve product-ux
-  → 角色选错了：product-ux 只允许 product_owner。
+ERROR: role business_owner cannot approve page-design
+  → 角色选错了：page-design 只允许 product_owner。
 ERROR: approval requires ready_for_human_review, got draft
   → 产物还在草稿态，先让 AI 过 gate 推到「待评审」。
 ERROR: machine gates must pass before approval
@@ -1299,7 +1299,7 @@ ERROR: waiver_required issue 'xxx' needs --waive CODE=&lt;reason&gt;
   <tr><th>信号</th><th>含义</th><th>应对</th></tr>
   <tr><td><b>B1 熔断</b></td><td>同一个工作项被连续打回 3 轮 changes——继续打回去大概率还是在老路上打转</td><td>停下来重新评估修改方向：是不是目标理解错了？材料不够？该跑分支 skill？先对齐再改</td></tr>
   <tr><td><b>B3 老化</b></td><td>问题清单里的 open 问题挂起超过 7 天（flag）/ 14 天（escalate）</td><td>7 天：该找业务方要答案了；14 天：升级处理，别让「未知」躺在清单里烂掉</td></tr>
-  <tr><td><b>范围冻结</b></td><td>product-ux 已经 confirmed 之后，上游 journey 又被重新评审——改下游已确认的内容是大事</td><td>不要就地改：走 change-mgmt / reflow 流程，让下游级联失效重跑</td></tr>
+  <tr><td><b>范围冻结</b></td><td>page-design/interaction-rules 已经 confirmed 之后，上游 journey/story 又被重新评审——改下游已确认的内容是大事</td><td>不要就地改：走 change-mgmt / reflow 流程，让下游级联失效重跑</td></tr>
 </table>
 
 <h4>10.3 双 Agent 制衡：完整流程（起草 → 验收 → 修正循环）</h4>
@@ -1316,7 +1316,7 @@ ERROR: waiver_required issue 'xxx' needs --waive CODE=&lt;reason&gt;
 <h4>10.4 技法吸收：脚手架从外部 skill 吸收的三套技法</h4>
 <p>脚手架不是从零发明的——它把外部成熟 skill 的技法「吸收」进来适配成自己的能力（对应 references 文件可查）：</p>
 <ul>
-  <li><b>原型两步流程</b>（page-design 的可选落地能力）：<b>先出页面清单经人工确认，确认后才生成单文件 HTML</b>。页面清单从已确认的 product-ux 提取（每行可追溯 FEA/IX/BR），编号 P01 起，你确认覆盖完整后，AI 才生成自包含的交互原型，落盘到 <code>99-review/support/prototype/</code>，命名 <code>[REQ-XXX-功能名]-交互原型-v1.0.html</code>。硬规则：不发明页面、分支必须指向清单内页面、状态依赖目标页先弹确认。</li>
+  <li><b>原型两步流程</b>（page-design 的可选落地能力）：<b>先出页面清单经人工确认，确认后才生成单文件 HTML</b>。页面清单从已确认的 page-design + interaction-rules 提取（每行可追溯 FEA/IX/BR），编号 P01 起，你确认覆盖完整后，AI 生成自包含的交互原型，落盘到 <code>99-review/support/prototype/</code>，命名 <code>[REQ-XXX-功能名]-交互原型-v1.0.html</code>。硬规则：不发明页面、分支必须指向清单内页面、状态依赖目标页先弹确认。</li>
   <li><b>参考图还原</b>（image2html 技法）：输入含 UI 参考图 / 竞品截图时走高保真路径——<b>不得把整张图贴成页面背景</b>，导航、卡片、按钮、表格一律用 HTML/CSS 重建；位图只用于照片、地图、复杂插画、品牌视觉；图标用 SVG。还原时参考图是证据（FACT），但「照图还原的布局是否满足业务」未确认——还原解读必须标 AI_INFERENCE 交你确认；竞品截图登记 SRC-* 进入来源追溯；参考图只提升视觉保真，不改变逻辑保真（不因图发明页面或状态）。</li>
   <li><b>PRD 结构参考</b>（prd-assembly 的呈现方法论）：吸收 prd / prd-writer 等 skill 的章节骨架——Executive Summary 三段式、用户故事 + AC 分组、风险分析、验收清单——但<b>只借鉴结构、零内容发明</b>：每一章都必须能指出「上游产物哪一段提供」，指不出来的章节就是空壳，宁缺勿造。支持三个变体：standard（完整版）/ executive（高管版，只留摘要）/ technical（工程师版，全量 AC/BR/IX）——任何变体都只做保留/省略，不新增内容。</li>
 </ul>

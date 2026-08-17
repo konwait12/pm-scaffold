@@ -78,24 +78,27 @@ def loop_signals(req_dir: Path, statuses: dict) -> list[dict]:
                                 "message": f"open 问题超过 7 天，请关注：{line.strip()[:50]}"})
                 break
 
-    # 范围冻结：product-ux confirmed 后上游 journey 被重新评审
-    if statuses.get("product-ux") == "confirmed" and review_dir.is_dir():
-        ux_at = js_at = ""
+    # 范围冻结：page-design / interaction-rules confirmed 后上游 journey/story 被重新评审
+    STAGE2_LATE = {"page-design", "interaction-rules"}
+    if any(statuses.get(wid) == "confirmed" for wid in STAGE2_LATE) and review_dir.is_dir():
+        stage2_at = uj_at = us_at = ""
         for p in sorted(review_dir.glob("review-*.md")):
             text = p.read_text(encoding="utf-8", errors="ignore")
             m_wi = re.search(r"(?m)^- work_item:\s*(\S+)", text)
             m_at = re.search(r"(?m)^- reviewed_at:\s*(\S+)", text)
             if not (m_wi and m_at):
                 continue
-            if m_wi.group(1) == "product-ux":
-                ux_at = m_at.group(1)
-            elif m_wi.group(1) == "user-journey-and-stories":
-                js_at = m_at.group(1)
-        if ux_at and js_at and js_at > ux_at:
+            if m_wi.group(1) in STAGE2_LATE:
+                stage2_at = m_at.group(1)
+            elif m_wi.group(1) == "user-journey":
+                uj_at = m_at.group(1)
+            elif m_wi.group(1) == "user-stories":
+                us_at = m_at.group(1)
+        if stage2_at and ((uj_at and uj_at > stage2_at) or (us_at and us_at > stage2_at)):
             signals.append({
                 "loop": "change",
                 "severity": "flag",
-                "message": "范围冻结：product-ux 确认后 journey 又被评审——变更须走 change-mgmt / reflow",
+                "message": "范围冻结：page-design/interaction-rules 确认后 journey/story 又被评审——变更须走 change-mgmt / reflow",
             })
     return signals
 

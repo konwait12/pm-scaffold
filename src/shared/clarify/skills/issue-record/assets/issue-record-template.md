@@ -117,9 +117,17 @@ confirmed_at: （授权人工 review 后填写）
 | 阶段 | Work Item | 问题数 | 收口日期 | 状态 |
 |---|---|---|---|---|
 | 001-business-requirements | project-background-goal | 0 | 待填写 | open |
-| 001-business-requirements | user-journey-and-stories | 0 | 待填写 | open |
-| 002-product-requirements | product-ux | 0 | 待填写 | open |
-| 002-product-requirements | function-description | 0 | 待填写 | open |
+| 001-business-requirements | user-journey | 0 | 待填写 | open |
+| 001-business-requirements | user-stories | 0 | 待填写 | open |
+| 002-product-requirements | feature-list | 0 | 待填写 | open |
+| 002-product-requirements | functional-flow | 0 | 待填写 | open |
+| 002-product-requirements | page-design | 0 | 待填写 | open |
+| 002-product-requirements | interaction-rules | 0 | 待填写 | open |
+| 002-product-requirements | business-rules | 0 | 待填写 | open |
+| 002-product-requirements | validation-rules | 0 | 待填写 | open |
+| 002-product-requirements | state-machine | 0 | 待填写 | open |
+| 002-product-requirements | exception-handling | 0 | 待填写 | open |
+| 002-product-requirements | acceptance-criteria | 0 | 待填写 | open |
 | 003-prd-output | prd-assembly | 0 | 待填写 | open |
 
 ## 版本变更摘要

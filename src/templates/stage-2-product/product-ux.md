@@ -1,7 +1,8 @@
 <!--
-产物模板：产品 UX（纯 UX：页面设计 + 交互规则）
-product-ux SKILL.md 驱动 · 待确认 是唯一占位符。
-功能清单与功能流程归 function-description，不在此处。
+DEPRECATED（v2 拆分）· 本文件已拆分为：
+  - page-design.md（§2 页面设计）
+  - interaction-rules.md（§3 交互规则）
+本文件保留用于旧案例回溯，新案例请使用上述两个独立模板。
 -->
 ---
 artifact_id: ""

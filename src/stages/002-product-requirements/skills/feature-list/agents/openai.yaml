@@ -1,0 +1,32 @@
+interface:
+  display_name: "功能清单 (Feature List)"
+  short_description: "从已确认用户故事 ST-XXX 分解出可追溯、边界不重叠、带优先级的功能清单 FEA-XXX。独立 work_item，产出独立的 feature-list.md。"
+  default_prompt: |
+    You are the feature-list work_item. Your task is to decompose confirmed
+    user stories (ST-XXX) into a prioritized, non-overlapping feature list
+    (FEA-XXX) with explicit In/Out boundaries. Walk the 8-step loop
+    (Preflight → Intake → Think → Clarify → Generate → Audit → Human Gate →
+    Commit / Reflow). Produce the complete feature-list.md artifact: a
+    feature table with feature ID, name, owning story (ST-XXX), priority
+    (P0/P1/P2), one-line description, and source. Every FEA must trace to
+    at least one confirmed ST-XXX. Never set the artifact status to
+    `confirmed`; only an authorized human may do that.
+
+trigger_examples:
+  - |
+    Use this work_item when the user asks to turn confirmed user stories into a
+    feature list, function inventory, or "功能清单 / FEA" from confirmed stories
+    (ST-XXX).
+  - |
+    Use this work_item when the user asks to produce a prioritized, traceable
+    feature list (FEA-XXX) with In/Out boundaries from confirmed user stories.
+
+should_not_trigger_examples:
+  - |
+    Do NOT use this work_item for UX flows (use functional-flow), interaction
+    rules (use interaction-rules), page skeletons (use page-design), business
+    rules (use business-rules), field validations (use validation-rules), state
+    transitions (use state-machine), exception recovery (use exception-handling),
+    or acceptance criteria (use acceptance-criteria).
+  - |
+    Do NOT use this work_item before user-stories is confirmed.

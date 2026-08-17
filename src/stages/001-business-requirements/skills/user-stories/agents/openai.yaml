@@ -1,0 +1,32 @@
+interface:
+  display_name: "用户故事 (User Stories)"
+  short_description: "从已确认用户旅程转化为规范格式故事卡片、MoSCoW 优先级与范围基线。独立 work_item，产出独立的 user-stories.md。"
+  default_prompt: |
+    You are the user-stories work_item. Your task is to transform the confirmed
+    user-journey artifact into canonical user story cards with MoSCoW priority
+    and scope baseline. Walk the 8-step loop (Preflight → Intake → Think →
+    Clarify → Generate → Audit → Human Gate → Commit / Reflow). Produce the
+    complete user-stories.md artifact: formatted story cards, MoSCoW priority
+    labels, journey → story coverage matrix, and In/Out/Deferred/Conditional
+    scope boundaries. Do not redesign the journey or remap emotions (those belong
+    to user-journey). Never set the artifact status to `confirmed`;
+    only an authorized human may do that.
+
+trigger_examples:
+  - |
+    Use this work_item when the user asks to write user stories, story cards,
+    "用户故事" or "ST-XXX" from a confirmed user journey.
+  - |
+    Use this work_item when the user asks to apply MoSCoW prioritization or
+    establish a scope baseline (In/Out/Deferred) from confirmed journeys.
+
+should_not_trigger_examples:
+  - |
+    Do NOT use this work_item for lifecycle modeling, emotion mapping, or
+    journey path design (use user-journey).
+  - |
+    Do NOT use this work_item before user-journey is confirmed.
+  - |
+    Do NOT use this work_item for feature lists, functional flows, business
+    rules, or acceptance criteria (route to the corresponding downstream
+    work_item).

@@ -26,9 +26,9 @@ import property_check
 
 
 def _fd(br_rows: str, ex_rows: str = "") -> str:
-    """Assemble a minimal function-description snippet with BR / EX tables."""
+    """Assemble a minimal stage-2 artifact snippet with BR / EX tables."""
     parts = [
-        "# function-description 测试",
+        "# stage-2 产物测试",
         "## 3. 业务规则（business-rules 子 skill 产出）",
         "| BR ID | 规则内容 | 类型 | 触发条件 | 预期行为 | 所属功能 | 来源 |",
         "|---|---|---|---|---|---|---|",

@@ -12,16 +12,35 @@
 
 ## 进入条件（Entry）
 
-Stage 001 已确认，且至少一条故事有有效的上游来源。
+Stage 001 已确认，且 `user-stories` work_item 已 confirmed。
 
 ## 工作项（Work Items）
 
-1. `product-ux`
-2. `function-description`
+1. `feature-list`
+2. `functional-flow`
+3. `page-design`
+4. `interaction-rules`
+5. `business-rules`
+6. `validation-rules`
+7. `state-machine`
+8. `exception-handling`
+9. `acceptance-criteria`
 
 ## 必需输出（Required Outputs）
 
-产品范围、功能清单、UX 流程和页面级交互规则，以及包含业务、权限、校验、状态、异常和验收规则的逐功能描述。
+产品范围、功能清单、功能流程、页面布局、交互规则，以及包含业务、权限、校验、状态、异常和验收规则的逐功能描述。
+
+## 执行顺序依赖链（Dependency Chain）
+
+```
+feature-list → functional-flow → page-design → interaction-rules
+                         ↓              ↓
+                  business-rules   validation-rules
+                         ↓              ↓
+                  state-machine → exception-handling
+                                            ↓
+                                    acceptance-criteria
+```
 
 ## 条件支持（Conditional Support）
 

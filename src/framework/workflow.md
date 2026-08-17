@@ -8,12 +8,28 @@
 001 业务需求阶段
   project-background-goal
   → 人工确认
-  user-journey-and-stories
+  user-journey
+  → 人工确认
+  user-stories
   → 人工确认
 002 产品需求阶段
-  product-ux
+  feature-list
   → 人工确认
-  function-description
+  functional-flow
+  → 人工确认
+  page-design
+  → 人工确认
+  interaction-rules
+  → 人工确认
+  business-rules
+  → 人工确认
+  validation-rules
+  → 人工确认
+  state-machine
+  → 人工确认
+  exception-handling
+  → 人工确认
+  acceptance-criteria
   → 人工确认
 003 PRD 汇总阶段
   prd-assembly

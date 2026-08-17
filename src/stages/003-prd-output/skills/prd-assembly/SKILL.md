@@ -1,6 +1,6 @@
 ---
 name: prd-assembly
-description: Assemble all confirmed business and product baselines into one traceable PRD without introducing new requirements. Apply structured review taxonomy and traceability audit.
+description: Assemble all confirmed upstream baselines into one traceable PRD without introducing new requirements. Independent work_item, produces prd.md. Applies structured review taxonomy and traceability audit.
 ---
 
 # PRD 汇总（PRD Assembly）
@@ -13,28 +13,31 @@ description: Assemble all confirmed business and product baselines into one trac
 
 ## 输入与输出（Inputs And Outputs）
 
-**输入**：4 个上游 work item 全部已确认（project-background-goal、user-journey-and-stories、product-ux、function-description）。
+**输入**：12 个上游 work_item 全部已确认，按执行顺序：
+`background-goal.md` → `user-journey.md` → `user-stories.md` → `feature-list.md` → `functional-flow.md` → `page-design.md` → `interaction-rules.md` → `business-rules.md` → `validation-rules.md` → `state-machine.md` → `exception-handling.md` → `acceptance-criteria.md`
+
+正向追溯链：G → UJ → US → ST → FEA → FUN → PD → IX → BR → VL → SM → EX → AC
 
 **输出**：
-- `prd.md`：7 正文节 + 需求追溯矩阵（附录）+ 自审记录（附录）
+- `prd.md`：13 正文节（项目背景与目标 → 用户旅程 → 用户故事 → 功能清单 → 功能流程 → 页面设计 → 交互规则 → 业务规则 → 校验规则 → 状态变化 → 异常处理 → 验收依据 → 附录） + 需求追溯矩阵（附录） + 自审记录（附录）
 - 正向/反向追溯检查、不一致报告、Review taxonomy 结论 → 进 `99-review/` 评审记录，**不写进 prd.md 正文**（由机器在 gate 时产出）
 
-汇总前加载 `references/thinking-framework.md`（→ `thinking-core.md` §1 必用 + §2 检查 + §3 pre-mortem）。审计前加载 `src/shared/audit/review-taxonomy.md`。若上游 `product-ux` 产出了可点击原型，加载 `references/prototype-embedding.md`（§4 分功能详述可嵌入 iframe 切片 + 版本切换器；可选，文本规则仍权威）。
+汇总前加载 `references/thinking-framework.md`（→ `thinking-core.md` §1 必用 + §2 检查 + §3 pre-mortem）。审计前加载 `src/shared/audit/review-taxonomy.md`。若上游产出了可点击原型，加载 `references/prototype-embedding.md`（原型嵌入 iframe 切片 + 版本切换器；可选，文本规则仍权威）。
 
 ## 工作流（Workflow）
 
 ### 1. Preflight
-- "所有 4 个上游产物都由合法的人工评审记录确认了吗？"
+- "所有 12 个上游产物都由合法的人工评审记录确认了吗？"
 - 核验：所有前置产物 `confirmed`，无 simulated/superseded/blocked 基线。
 - **只要任一基线缺失或未确认就 STOP**。路由回最早未确认的 Work Item。
 
 ### 2. Intake
-在不改变知识状态的情况下加载：来源 ID、目标（G1-G5）、角色、生命周期阶段、故事（ST-XXX）、范围基线、功能（FEA-XXX）、UX 流程、页面、交互规则（IX-XXX）、功能描述（FUN-XXX）、业务规则（BR-XXX）、校验（VL-XXX）、状态转移、异常、验收标准（AC-XXX）、决策（DEC-XXX）、假设（AII-XXX）、未知（UNK-XXX）。
+在不改变知识状态的情况下加载：背景目标（G-XXX）、角色、旅程（UJ-XXX）、故事（ST-XXX）、范围基线、功能（FEA-XXX）、功能流程、页面设计（PD-XXX）、交互规则（IX-XXX）、业务规则（BR-XXX）、校验（VL-XXX）、状态转移（SM-XXX）、异常（EX-XXX）、验收标准（AC-XXX）、决策（DEC-XXX）、假设（ASSUMPTION）、未知（UNK-XXX）。
 
 ### 3. Think（跨产物分析）
-- **正向追溯（Forward trace）**：G→ST→FEA→FUN→AC/BR。每条 AC 都追溯到 FUN→FEA→ST→G。无孤儿。
-- **反向追溯（Reverse trace）**：AC→FUN→FEA→ST。没有无上游存在理由的元素。
-- **一致性检查（Consistency check）**：对比四个产物间的术语、范围、优先级、约束、角色、状态与依赖。标记每个不匹配。
+- **正向追溯（Forward trace）**：G→UJ→US→ST→FEA→FUN→PD→IX→BR→VL→SM→EX→AC。每条链路完整，无断裂。
+- **反向追溯（Reverse trace）**：AC→EX→SM→BR→VL→IX→PD→FUN→FEA→ST→US→UJ。没有无上游存在理由的元素。
+- **一致性检查（Consistency check）**：对比 12 个产物间的术语、范围、优先级、约束、角色、状态与依赖。标记每个不匹配。
 - **Pre-Mortem**（thinking-core §2.7）："如果这份 PRD 上线 3 个月后失败，最可能的原因是什么？" → 列出 3-5 个失败场景 → 检查 PRD 是否应对。
 
 ### 4. Clarify
@@ -45,7 +48,8 @@ description: Assemble all confirmed business and product baselines into one trac
 
 ### 5. Generate
 填模板（由 `src/templates/resolver.py prd.md` 解析）。
-正文 7 节：项目背景与目标 → 业务角色/旅程/故事 → UX → 分功能描述 → 按需章节 → 事实与决定 → 验收依据；附录 2 节：需求追溯矩阵、自审记录（Constitution Compliance）。
+正文 13 节：项目背景与目标 → 用户旅程 → 用户故事与范围基线 → 功能清单 → 功能流程 → 页面设计 → 交互规则 → 业务规则 → 校验规则 → 状态变化 → 异常处理 → 验收依据
+附录 2 节：需求追溯矩阵、自审记录（Constitution Compliance）
 正向/反向追溯检查与不一致报告**不写进正文**——它们在 Audit 阶段由机器产出、进 99-review 评审记录。
 
 ### 6. Audit（应用评审分类法）
@@ -124,4 +128,4 @@ description: Assemble all confirmed business and product baselines into one trac
 
 ## 完成标准（Completion）
 
-所有上游基线合法且已确认；每条必需的 G→ST→FEA→FUN→AC/BR 关系显式；没有引入新需求；评审分类法发现已带裁定记录；风险与冲突可见；机器检查（校验器 + 追溯 + branch）通过；且授权的人类显式批准 `prd.md`。
+所有 12 个上游基线合法且已确认；每条必需的 G→UJ→US→ST→FEA→FUN→PD→IX→BR→VL→SM→EX→AC 关系显式；没有引入新需求；评审分类法发现已带裁定记录；风险与冲突可见；机器检查（校验器 + 追溯 + branch）通过；且授权的人类显式批准 `prd.md`。

@@ -20,7 +20,7 @@ description: 跨阶段共享的问题清单 — 集中登记 BLK / RSK / DEC / I
 ## 输入与输出
 
 输入：
-- 任何阶段的产物（background-goal / journey / UX / function-description / PRD）中的"待确认" / UNKNOWN / CONFLICT 标记
+- 任何阶段的产物（background-goal / user-journey / user-stories / feature-list / functional-flow / page-design / interaction-rules / business-rules / validation-rules / state-machine / exception-handling / acceptance-criteria / PRD）中的"待确认" / UNKNOWN / CONFLICT 标记
 - 任何阶段的 Clarify 会话中识别的新问题
 - 业务方 / PM / 干系人主动提出的问题
 
@@ -92,7 +92,7 @@ description: 跨阶段共享的问题清单 — 集中登记 BLK / RSK / DEC / I
 
 ## 示例：充分输入 → 充分输出
 
-**输入**：全流程产物：background-goal 遗留 2 个 UNKNOWN、范围基线 有 1 个边界争议、function-description 发现 1 个合规风险、prd-assembly 发现 1 个待决上线范围.
+**输入**：全流程产物：background-goal 遗留 2 个 UNKNOWN、user-journey 有 1 个边界争议、page-design 发现 1 个合规风险、prd-assembly 发现 1 个待决上线范围.
 **输出**：完整 issue-record.md——
 - BLK-001（ISS-001）：上线范围待决，owner=业务负责人，target_close=本周五。
 - RSK-101（ISS-002）：合规风险（跨境数据），mitigation=法务 review + 分阶段放开。

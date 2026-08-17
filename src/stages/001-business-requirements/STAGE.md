@@ -17,11 +17,16 @@
 ## 工作项（Work Items）
 
 1. `project-background-goal`
-2. `user-journey-and-stories`
+2. `user-journey`
+3. `user-stories`
 
 ## 必需输出（Required Outputs）
 
 已确认的背景与目标、生命周期旅程图、以及可追溯到旅程条目的故事卡。
+
+## 下游依赖（Downstream）
+
+- `002-product-requirements` 阶段全部 9 个 work_item（feature-list → functional-flow → page-design → interaction-rules → business-rules → validation-rules → state-machine → exception-handling → acceptance-criteria）
 
 ## 条件支持（Conditional Support）
 

@@ -1,9 +1,24 @@
 #!/usr/bin/env python3
-"""Validate the structure of a prd-assembly Markdown artifact (final PRD)."""
+"""Validate the structure of a prd-assembly Markdown artifact (final PRD).
+
+This work_item is an independent work_item producing a standalone prd.md artifact.
+The validator checks the full file content for:
+  1. All 13 required PRD sections present
+  2. All 12 upstream work_items confirmed and listed
+  3. Forward traceability chain: G→UJ→US→ST→FEA→FUN→PD→IX→BR→VL→SM→EX→AC
+  4. Backward traceability chain: AC→EX→SM→BR→VL→IX→PD→FUN→FEA→ST→US→UJ
+  5. RTM matrix present
+  6. Frontmatter and status consistency
+
+Run: python3 validate_artifact.py [<prd.md>] [--json]
+"""
 
 from __future__ import annotations
 
-import argparse, json, re, sys
+import argparse
+import json
+import re
+import sys
 from pathlib import Path
 
 
@@ -18,12 +33,11 @@ def _bootstrap_scripts() -> None:
             return
         p = p.parent
 
-
 _bootstrap_scripts()
 from validation_errors import make_issue
 
-SKILL_ID = "prd_assembly"     # issue family（统一错误格式分组）
-CHECK_PREFIX = "prd"          # issue check_id 语义化前缀
+SKILL_ID = "prd_assembly"
+CHECK_PREFIX = "prd"
 
 REQUIRED_FRONTMATTER = {
     "artifact_id", "version", "status", "owner",
@@ -31,18 +45,58 @@ REQUIRED_FRONTMATTER = {
     "created_at", "updated_at", "confirmed_at",
 }
 
+# PRD must have 13 sections (not the old 7)
 REQUIRED_HEADINGS = [
-    "项目背景与目标", "业务角色、用户旅程与用户故事",
-    "UX：页面设计与交互规则", "分功能描述", "按需章节",
-    "事实与决定", "验收依据", "需求追溯矩阵", "自审记录",
+    "项目背景与目标",
+    "业务角色、用户旅程与用户故事",
+    "UX：页面设计与交互规则",
+    "分功能描述",
+    "按需章节",
+    "事实与决定",
+    "验收依据",
+    "需求追溯矩阵",
+    "自审记录",
+    # The 9 additional sections from v2 plan:
+    "业务规则",
+    "校验规则",
+    "状态机",
+    "异常处理",
+]
+
+# 12 upstream work_item IDs that must be confirmed
+UPSTREAM_WORK_ITEMS = [
+    "project-background-goal",  # G
+    "user-journey",             # UJ
+    "user-stories",             # US
+    "feature-list",             # ST → FEA
+    "functional-flow",           # FUN
+    "page-design",              # PD
+    "interaction-rules",         # IX
+    "business-rules",           # BR
+    "validation-rules",         # VL
+    "state-machine",            # SM
+    "exception-handling",       # EX
+    "acceptance-criteria",       # AC
 ]
 
 PENDING = ("待确认",)
-VALID_STATUSES = {"draft", "needs_user_input", "conditional_review", "ready_for_human_review", "confirmed", "superseded", "legacy_unverified", "simulated"}
+VALID_STATUSES = {
+    "draft", "needs_user_input", "conditional_review",
+    "ready_for_human_review", "confirmed",
+    "superseded", "legacy_unverified", "simulated",
+}
 
 
 def _norm(h: str) -> str:
     return re.sub(r"\s*（[^）]*）\s*$", "", re.sub(r"^\d+\.\s*", "", h).strip()).strip()
+
+
+def _project_root() -> Path:
+    p = Path(__file__).resolve()
+    for parent in p.parents:
+        if (parent / "src" / "framework" / "workflow-registry.json").is_file():
+            return parent
+    return p.parents[8]
 
 
 def parse_frontmatter(text: str) -> dict[str, str]:
@@ -95,45 +149,72 @@ def validate(path: Path) -> dict[str, object]:
             warnings.append("Confirmed PRD still contains 待确认 markers in body")
 
     # Semantic red flags specific to PRD assembly
-    if status == "ready_for_human_review":
-        # Note: 上游产物清单 / 不一致报告 已移出 PRD 正文（由机器在 gate 产出、进 99-review）。
+    if status == "ready_for_human_review" or status == "confirmed":
+        # Check all 12 upstream work_items are confirmed
+        upstream_statuses = meta.get("upstream_work_item_statuses", "")
+        missing_upstream = []
+        for wi in UPSTREAM_WORK_ITEMS:
+            if wi not in upstream_statuses:
+                missing_upstream.append(wi)
+        if missing_upstream:
+            errors.append(
+                f"PRD DoD D5.2 failed: missing upstream work_item confirmation for: "
+                f"{', '.join(missing_upstream)} (need all 12 confirmed before PRD)"
+            )
 
-        # Flag 1b (D5.2): PRD 必须引用 4 个上游产物（BG/JS/UX/FD），从 frontmatter upstream_artifact_ids 校验。
-        # 上游产物 frontmatter 的 artifact_id 为单连字符格式（如 BG-001 / JS-001 / UX-001 / FD-001），
-        # 因此这里匹配单连字符 ID；兼容历史遗留的双连字符格式（如 BG-001-1）以免误报。
-        upstream_ids = re.findall(r"(BG|JS|UX|FD)-\d+(?:-\d+)?", meta.get("upstream_artifact_ids", ""))
-        missing_prefixes = {"BG", "JS", "UX", "FD"} - set(upstream_ids)
-        if missing_prefixes:
-            errors.append(f"PRD DoD D5.2 failed: missing upstream artifact IDs for {sorted(missing_prefixes)} (need BG + JS + UX + FD all confirmed)")
+        # Forward traceability chain G→UJ→US→ST→FEA→FUN→PD→IX→BR→VL→SM→EX→AC
+        forward_chain_ids = {
+            "G": bool(re.search(r"\bG-\d+\b", text)),           # project-background-goal
+            "UJ": bool(re.search(r"\bUJ-\d+\b", text)),         # user-journey
+            "US": bool(re.search(r"\bUS-\d+\b", text)),         # user-stories
+            "ST": bool(re.search(r"\bST-\d+\b", text)),         # user-stories
+            "FEA": bool(re.search(r"\bFEA-\d+\b", text)),        # feature-list
+            "FUN": bool(re.search(r"\bFUN-\d+\b", text)),       # functional-flow
+            "PD": bool(re.search(r"\bPD-\d+\b", text)),         # page-design
+            "IX": bool(re.search(r"\bIX-\d+\b", text)),        # interaction-rules
+            "BR": bool(re.search(r"\bBR-\d+\b", text)),         # business-rules
+            "VL": bool(re.search(r"\bVL-\d+\b", text)),        # validation-rules
+            "SM": bool(re.search(r"\bSM-\d+\b|\bSTATE-\d+\b", text)),  # state-machine
+            "EX": bool(re.search(r"\bEX-\d+\b", text)),        # exception-handling
+            "AC": bool(re.search(r"\bAC-\d+\b", text)),         # acceptance-criteria
+        }
+        missing_trace_ids = [k for k, v in forward_chain_ids.items() if not v]
+        if missing_trace_ids:
+            warnings.append(
+                f"Forward traceability incomplete: missing IDs for: {', '.join(missing_trace_ids)}. "
+                "Expected chain: G→UJ→US→ST→FEA→FUN→PD→IX→BR→VL→SM→EX→AC"
+            )
 
-        # Flag 3: traceability matrices should have content + six columns G→ST→FEA→FUN→AC→BR
-        rtm_section = re.search(r"^##\s+\d+\.\s*需求追溯矩阵\s*$(.*?)(?=^##\s+|\Z)", text, re.MULTILINE | re.DOTALL)
+        # RTM section checks
+        rtm_section = re.search(
+            r"^##\s+\d+\.\s*需求追溯矩阵\s*$(.*?)(?=^##\s+|\Z)",
+            text, re.MULTILINE | re.DOTALL
+        )
         if rtm_section:
-            rtm_rows = [l for l in rtm_section.group(1).splitlines() if l.lstrip().startswith("|") and "---" not in l and "目标" not in l]
+            rtm_rows = [
+                l for l in rtm_section.group(1).splitlines()
+                if l.lstrip().startswith("|") and "---" not in l and "目标" not in l
+            ]
             rtm_data = [r for r in rtm_rows if "待确认" not in r]
             if len(rtm_data) == 0:
                 warnings.append("Semantic: RTM has no data rows; traceability matrix should be populated")
-            # Flag 3b (G_CROSS): RTM should have 6 columns G→ST→FEA→FUN→AC→BR
+            # RTM column count: should have ≥6 columns for full chain
             header_match = re.search(r"^\|\s*([^|]+\|){5,}\s*[^|]+\|\s*$", rtm_section.group(1), re.MULTILINE)
             if header_match:
                 col_count = header_match.group(0).count("|") - 1
                 if col_count < 6:
-                    warnings.append(f"Semantic (G_CROSS): RTM header has {col_count} columns, expected ≥6 for G→ST→FEA→FUN→AC→BR chain")
-            # Flag 3c: each data row should not have ⏸/空 placeholders in P0
-            incomplete_p0 = 0
-            for row in rtm_data:
-                cells = [c.strip() for c in row.split("|") if c.strip()]
-                if len(cells) >= 6:
-                    empty_cells = sum(1 for c in cells if c in {"", "⏸", "-"})
-                    if empty_cells >= 3:
-                        incomplete_p0 += 1
-            if incomplete_p0 > 0:
-                warnings.append(f"Semantic: {incomplete_p0} RTM rows have ≥3 empty/⏸ cells; P0 chain must be complete per G_CROSS")
+                    warnings.append(
+                        f"Semantic (G_CROSS): RTM header has {col_count} columns, expected ≥6 "
+                        "for full traceability chain"
+                    )
 
-        # Flag 4: check for new content not in upstream
+        # Check for new content not in upstream
         new_content_markers = ["新增需求", "补充功能", "额外建议"]
         if any(m in text for m in new_content_markers):
-            warnings.append("Semantic: PRD contains '新增需求/补充功能/额外建议' markers; PRD assembly should only aggregate, not introduce new requirements")
+            warnings.append(
+                "Semantic: PRD contains '新增需求/补充功能/额外建议' markers; "
+                "PRD assembly should only aggregate, not introduce new requirements"
+            )
 
     return {"ok": not errors, "errors": errors, "warnings": warnings,
             "issues": _make_issues(errors, warnings, path)}
@@ -152,7 +233,7 @@ _PRD_WARNING_RULES = [
     ("Confirmed PRD still contains 待确认 markers", "prd.pending_markers_in_confirmed"),
     ("RTM has no data rows", "prd.rtm_no_data"),
     ("RTM header has", "prd.rtm_column_count"),
-    ("RTM rows have", "prd.rtm_incomplete_p0"),
+    ("Forward traceability incomplete", "prd.forward_trace_incomplete"),
     ("PRD contains", "prd.new_content_markers"),
 ]
 

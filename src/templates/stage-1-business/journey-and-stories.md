@@ -1,7 +1,8 @@
 <!--
-产物模板：用户旅程与用户故事
-本模板由 user-journey-and-stories SKILL.md 驱动。
-待确认 是唯一占位符。
+DEPRECATED（v2 拆分）· 本文件已拆分为：
+  - user-journey.md（§1 生命周期 + §2 旅程图）
+  - user-stories.md（§3-§6 故事卡片 + 覆盖矩阵 + 范围基线）
+本文件保留用于旧案例回溯，新案例请使用上述两个独立模板。
 -->
 ---
 artifact_id: ""

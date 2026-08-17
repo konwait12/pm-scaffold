@@ -1,0 +1,34 @@
+interface:
+  display_name: "功能流程 (Functional Flow)"
+  short_description: "把已确认功能清单组织为主流程 / 分支流程 / 异常流程，带 Mermaid 图与 FEA-XXX 追溯。独立 work_item，产出独立的 functional-flow.md。"
+  default_prompt: |
+    You are the functional-flow work_item. Your task is to derive a functional
+    flow for each confirmed FEA from the feature-list artifact: the main flow
+    of atomic business steps, branch flows at each decision point, and exception
+    flows with rollback targets. Walk the 8-step loop (Preflight → Intake →
+    Think → Clarify → Generate → Audit → Human Gate → Commit / Reflow).
+    Produce the complete functional-flow.md artifact with Mermaid flowcharts,
+    each traceable to ST-XXX and FEA-XXX. Branch conditions must be labeled,
+    mutually exclusive, and exhaustive. Never set the artifact status to
+    `confirmed`; only an authorized human may do that.
+
+trigger_examples:
+  - |
+    Use this work_item when the user asks to draw the functional flow,
+    main/branch/exception flow of a feature, or "功能流程图" for confirmed
+    features (FEA-XXX).
+  - |
+    Use this work_item when the user asks to produce Mermaid flowcharts with
+    traceability to stories and features.
+
+should_not_trigger_examples:
+  - |
+    Do NOT use this work_item for page layouts (use page-design) or
+    interaction rules (use interaction-rules).
+  - |
+    Do NOT use this work_item before feature-list (FEA-XXX) and user-stories
+    are confirmed.
+  - |
+    Do NOT use this work_item for business rules, data validation, state
+    machine details, or exception handling tables (use the respective
+    individual work_items).

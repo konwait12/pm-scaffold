@@ -1,0 +1,33 @@
+interface:
+  display_name: "状态机 (State Machine)"
+  short_description: "定义实体状态机 STATE-XXX（states × events → target states + guards）。独立 work_item，产出独立的 state-machine.md。"
+  default_prompt: |
+    You are the state-machine work_item. Your task is to enumerate states, events,
+    and target states for each entity in scope from the confirmed business-rules
+    and functional-flow artifacts. Walk the 8-step loop (Preflight → Intake →
+    Think → Clarify → Generate → Audit → Human Gate → Commit / Reflow).
+    Produce the complete state-machine.md artifact: STATE-XXX table with state,
+    event, target, guard, and side-effect columns. Include guards, side effects,
+    and illegal-transition handling. Never set the artifact status to
+    `confirmed`; only an authorized human may do that.
+
+trigger_examples:
+  - |
+    Use this work_item when the user asks to model status transitions,
+    lifecycle states, or "状态机" for an entity from confirmed business
+    rules and functional flows.
+  - |
+    Use this work_item when the user asks to produce a STATE-XXX state table
+    with event → target state transitions and guard conditions.
+
+should_not_trigger_examples:
+  - |
+    Do NOT use this work_item for business rules (use business-rules),
+    validation logic (use validation-rules), or failure recovery (use
+    exception-handling).
+  - |
+    Do NOT use this work_item for read-only entities with no state
+    transitions.
+  - |
+    Do NOT use this work_item before business-rules and functional-flow
+    are confirmed.

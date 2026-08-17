@@ -1,0 +1,35 @@
+interface:
+  display_name: "页面设计 (Page Design)"
+  short_description: "设计每个功能流程步骤的页面骨架：入口、前置条件、内容、操作、下一状态。独立 work_item，产出独立的 page-design.md。"
+  default_prompt: |
+    You are the page-design work_item. Your task is to specify the page skeleton
+    for each step in the confirmed functional-flow artifact: entry trigger,
+    preconditions, main content areas, available actions, and next state. Walk
+    the 8-step loop (Preflight → Intake → Think → Clarify → Generate → Audit
+    → Human Gate → Commit / Reflow). Produce the complete page-design.md
+    artifact, one row per page, every action with an explicit next state.
+    Use ASCII wireframe or reference HTML prototype techniques only as a
+    communication aid. Never set the artifact status to `confirmed`;
+    only an authorized human may do that.
+
+trigger_examples:
+  - |
+    Use this work_item when the user asks to design page structure, page
+    inventory, entry/precondition/action/next-state, or "页面设计" for
+    confirmed functional flows.
+  - |
+    Use this work_item when the user asks to produce a page/step table with
+    FEA traceability from confirmed functional flows.
+
+should_not_trigger_examples:
+  - |
+    Do NOT use this work_item for end-to-end functional flow (use
+    functional-flow) or interaction rules (use interaction-rules).
+  - |
+    Do NOT use this work_item for business rules, data validation, or
+    permission rules (use the respective work_items).
+  - |
+    Do NOT use this work_item before functional-flow is confirmed.
+  - |
+    Do NOT use this work_item for final visual design (use external
+    Figma integration via toolkit/visualization).
