@@ -203,41 +203,123 @@ python3 src/scripts/pipeline.py requirements/REQ-001-my-feature review \
 
 ## 架构全景
 
-### 三阶段 + 13 个 work_item
+### 三阶段 + 13 个 work_item（注册表驱动）
 
 ```mermaid
-flowchart LR
-    classDef stage fill:#e9e5fb,stroke:#654acb,color:#3a2e8f
-    classDef main fill:#fff,stroke:#654acb,color:#3a2e8f
-    classDef gate fill:#fef3c7,stroke:#92580a,color:#92580a
-    classDef final fill:#e6f9ee,stroke:#0f8a4a,color:#0f8a4a
+flowchart TB
+    %% 上游：原始材料
+    IN[/"原始材料<br/>BRD · 纪要 · 邮件 · PPT · 图片"/]:::input
 
-    S001["001 业务需求"]:::stage
-    S002["002 产品需求"]:::stage
-    S003["003 PRD 汇总"]:::stage
+    %% 注册表（唯一真相源）
+    REG["src/framework/workflow-registry.json<br/>schema_version=7 · 13 work_items"]:::registry
 
-    BG["project-background-goal<br/>BG-"]:::main
-    UJ["user-journey<br/>UJ-"]:::main
-    US["user-stories<br/>US-"]:::main
+    %% 三阶段 + 13 work_item
+    subgraph S001["STAGE 001 · 业务需求"]
+        direction LR
+        BG["project-background-goal<br/>BG-"]:::main
+        UJ["user-journey<br/>UJ-"]:::main
+        US["user-stories<br/>US-"]:::main
+    end
 
-    FEA["feature-list<br/>FEA-"]:::main
-    FL["functional-flow<br/>FL-"]:::main
-    PD["page-design<br/>PD-"]:::main
-    IX["interaction-rules<br/>IX-"]:::main
-    BR["business-rules<br/>BR-"]:::main
-    VL["validation-rules<br/>VL-"]:::main
-    SM["state-machine<br/>SM-"]:::main
-    EX["exception-handling<br/>EX-"]:::main
-    AC["acceptance-criteria<br/>AC-"]:::main
+    subgraph S002["STAGE 002 · 产品需求"]
+        direction LR
+        FEA["feature-list<br/>FEA-"]:::main
+        FL["functional-flow<br/>FL-"]:::main
+        PD["page-design<br/>PD-"]:::main
+        IX["interaction-rules<br/>IX-"]:::main
+        BR["business-rules<br/>BR-"]:::main
+        VL["validation-rules<br/>VL-"]:::main
+        SM["state-machine<br/>SM-"]:::main
+        EX["exception-handling<br/>EX-"]:::main
+        AC["acceptance-criteria<br/>AC-"]:::main
+    end
 
-    HG["🟡 Human Gate<br/>机器止步 · 人工拍板"]:::gate
-    PRD["prd-assembly<br/>PRD- · 最终交付"]:::final
+    %% Human Gate 屏障
+    HG{{"🟡 Human Gate<br/>机器止步 · 人工拍板"}}:::gate
 
-    S001 --> BG --> UJ --> US
-    US --> FEA --> FL --> PD --> IX
-    FL --> BR --> VL --> SM --> EX --> AC
-    AC --> HG --> PRD
+    subgraph S003["STAGE 003 · PRD 汇总"]
+        direction LR
+        PRD["prd-assembly<br/>PRD- · 最终交付"]:::final
+    end
+
+    %% 分支 / 常驻 / 能力（按需触发）
+    subgraph BRANCHES["分支 + 常驻 + 能力（按需触发）"]
+        direction LR
+        CR["competitive-research"]:::branch
+        FA["feasibility-analysis"]:::branch
+        TP["tracking-plan"]:::branch
+        IR["issue-record<br/>（常驻）"]:::resident
+        RR["requirement-restate<br/>brainstorming"]:::cap
+    end
+
+    %% 共享机制（横向服务）
+    subgraph SHARED["src/shared/ · 9 个横向复用机制"]
+        direction LR
+        SH1["audit"]:::shared
+        SH2["traceability"]:::shared
+        SH3["human-gate"]:::shared
+        SH4["decision-log"]:::shared
+        SH5["intake-routing"]:::shared
+        SH6["clarify"]:::shared
+        SH7["change-management"]:::shared
+        SH8["project-init"]:::shared
+        SH9["capability-fragments"]:::shared
+    end
+
+    %% 事件溯源（基础设施）
+    subgraph AUDIT["事件溯源（基础设施·v0.4.0）"]
+        direction LR
+        EVT[".audit/events.jsonl<br/>append-only · prev_hash 链"]:::event
+        PROJ[".audit/projection.json<br/>事件折叠派生"]:::event
+    end
+
+    %% 主链路
+    IN --> RR -.按需.-> S001
+    REG -.驱动.-> S001 & S002 & S003 & BRANCHES
+    S001 -- US --> S002
+    S002 -- AC --> HG
+    HG -- "approve" --> S003
+
+    %% 分支常驻接入
+    BRANCHES -.按需注入.- S001 & S002
+
+    %% 共享机制 + 事件溯源 服务主链路
+    SHARED -.服务.-> S001 & S002 & S003
+    EVT --> PROJ -.审计输入.-> SHARED
+
+    %% 样式
+    classDef input fill:#f5f3ff,stroke:#654acb,color:#3a2e8f
+    classDef registry fill:#fff7e6,stroke:#d97706,color:#92400e
+    classDef main fill:#fff,stroke:#654acb,color:#3a2e8f,stroke-width:1.5px
+    classDef branch fill:#fff,stroke:#0f8a4a,color:#0f8a4a
+    classDef resident fill:#fff,stroke:#92580a,color:#92580a,stroke-dasharray:4 2
+    classDef cap fill:#fff,stroke:#6b7280,color:#6b7280
+    classDef gate fill:#fef3c7,stroke:#92580a,color:#92580a,stroke-width:3px
+    classDef final fill:#e6f9ee,stroke:#0f8a4a,color:#0f8a4a,stroke-width:2px
+    classDef shared fill:#faf7ff,stroke:#a78bfa,color:#5b21b6,stroke-width:1px
+    classDef event fill:#1f2937,stroke:#0f172a,color:#f9fafb
+
+    style S001 fill:#f3f0ff,stroke:#654acb,stroke-width:1px,color:#3a2e8f
+    style S002 fill:#f3f0ff,stroke:#654acb,stroke-width:1px,color:#3a2e8f
+    style S003 fill:#f3f0ff,stroke:#654acb,stroke-width:1px,color:#3a2e8f
+    style BRANCHES fill:#f9fafb,stroke:#9ca3af,stroke-width:1px,stroke-dasharray:6 3,color:#6b7280
+    style SHARED fill:#faf7ff,stroke:#a78bfa,stroke-width:1.5px,color:#5b21b6
+    style AUDIT fill:#1f2937,stroke:#0f172a,stroke-width:1.5px,color:#f9fafb
 ```
+
+**图例**：
+
+| 颜色/形状 | 含义 |
+|---|---|
+| 紫色实线框 | 13 主干 work_item |
+| 🟡 黄色厚边框（菱形） | Human Gate（机器止步·人工拍板） |
+| 🟢 绿色实线框 | prd-assembly 最终交付 |
+| 🟢 绿色细线框 | 3 个分支 skill（按需触发） |
+| 🟠 虚线框 | issue-record（常驻贯穿全流程） |
+| 灰色细线框 | 2 个能力 skill（requirement-restate / brainstorming） |
+| 浅紫框 | 9 个共享机制（横向服务） |
+| 深色填充框 | 事件溯源基础设施 |
+| 虚线箭头 | 触发 / 服务 / 驱动（非主链路强依赖） |
 
 ### 8 步执行循环（每个 work_item 必走）
 
