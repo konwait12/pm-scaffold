@@ -254,21 +254,21 @@ footer{margin-top:24px;text-align:center;color:#888;font-size:11px;padding-top:1
   <text x="610" y="305" text-anchor="middle" font-size="12.5" font-weight="700" fill="#92580A">entry 成熟度判定</text>
   <text x="610" y="323" text-anchor="middle" font-size="10.5" fill="#92580A">L0 仅想法 / L1-L4 有材料？</text>
 
-  <!-- L0 branch: requirement-restate（发散模式 · 能力） -->
+  <!-- L0 branch: brainstorming（发散收敛 · 能力） -->
   <line x1="480" y1="310" x2="368" y2="310" stroke="#C9C2EE" stroke-width="1.5" stroke-dasharray="5 4" marker-end="url(#ar-purple)"/>
   <rect x="130" y="268" width="236" height="84" rx="8" fill="#F6F4FF" stroke="#C9C2EE" stroke-width="1.5" stroke-dasharray="5 4"/>
-  <text x="248" y="288" text-anchor="middle" font-size="12" font-weight="700" fill="#3A2E8F">需求重举（发散模式）</text>
-  <text x="248" y="304" text-anchor="middle" font-size="10" fill="#555">候选发散 → 人工处置：</text>
+  <text x="248" y="288" text-anchor="middle" font-size="12" font-weight="700" fill="#3A2E8F">头脑风暴（发散收敛）</text>
+  <text x="248" y="304" text-anchor="middle" font-size="10" fill="#555">12 维度候选 → 人工四值处置：</text>
   <text x="248" y="318" text-anchor="middle" font-size="10" fill="#555">include / exclude / defer / research</text>
   <text x="248" y="332" text-anchor="middle" font-size="10" fill="#555">仅 include 候选进入 bg 输入包</text>
   <text x="424" y="300" font-size="10.5" fill="#654ACB">否（L0）</text>
   <text x="370" y="226" font-size="10" fill="#A23B3B">发散后重新登记</text>
   <path d="M248 268 C248 240 610 240 610 189" fill="none" stroke="#A23B3B" stroke-width="1.4" stroke-dasharray="6 4" marker-end="url(#ar-red)"/>
 
-  <!-- L1-L4 branch: requirement-restate（多源/歧义时触发） -->
+  <!-- L1-L4 branch: requirement-restate（复述确认，多源/歧义时触发） -->
   <line x1="740" y1="310" x2="890" y2="310" stroke="#C9C2EE" stroke-width="1.5" stroke-dasharray="5 4" marker-end="url(#ar-purple)"/>
   <rect x="892" y="268" width="268" height="84" rx="8" fill="#F6F4FF" stroke="#C9C2EE" stroke-width="1.5" stroke-dasharray="5 4"/>
-  <text x="1026" y="288" text-anchor="middle" font-size="12" font-weight="700" fill="#3A2E8F">需求重举（复述模式）</text>
+  <text x="1026" y="288" text-anchor="middle" font-size="12" font-weight="700" fill="#3A2E8F">需求复述（复述确认）</text>
   <text x="1026" y="304" text-anchor="middle" font-size="10" fill="#555">触发：≥2 SRC 多源 / 材料含歧义待确认</text>
   <text x="1026" y="318" text-anchor="middle" font-size="10" fill="#555">CONFLICT → ISS（CLS 类）</text>
   <text x="1026" y="332" text-anchor="middle" font-size="10" fill="#555">UNKNOWN → Q-XXX（INF 类）</text>
@@ -440,7 +440,7 @@ footer{margin-top:24px;text-align:center;color:#888;font-size:11px;padding-top:1
     <text x="280" y="1490" text-anchor="middle" font-size="11.5" font-weight="700" fill="#3A2E8F">4 分支产物 Skill + 1 能力（按触发条件运行）</text>
     <text x="280" y="1510" text-anchor="middle" font-size="10" fill="#555">competitive-research（竞品调研）· feasibility-analysis（可行性分析）</text>
     <text x="280" y="1526" text-anchor="middle" font-size="10" fill="#555">tracking-plan（埋点计划）· issue-record（问题清单）</text>
-    <text x="280" y="1542" text-anchor="middle" font-size="10" fill="#555">requirement-restate（需求重举 · 能力：复述 + 发散）</text>
+    <text x="280" y="1542" text-anchor="middle" font-size="10" fill="#555">requirement-restate（需求复述 · 能力：复述确认 RR-NNN）· brainstorming（发散收敛 · 能力：SCN-XXX）</text>
     <text x="280" y="1558" text-anchor="middle" font-size="10" fill="#888">进入前按 Inquiry Contract 询问</text>
   </g>
   <path d="M300 1470 C300 1430 480 1410 468 1396" fill="none" stroke="#C9C2EE" stroke-width="1.3" stroke-dasharray="5 4" marker-end="url(#ar-purple)"/>
@@ -454,7 +454,7 @@ footer{margin-top:24px;text-align:center;color:#888;font-size:11px;padding-top:1
     <tr><th>命令</th><th>做什么</th><th>关键参数 / 检查</th><th>谁能改状态</th></tr>
     <tr><td><code>init REQ-NNN-topic</code></td><td>从注册表生成需求骨架（目录 + 授权清单 + 来源登记表 + README）</td><td>REQ-\d{3} 命名校验；已存在则拒绝</td><td class="ok">机器（仅骨架）</td></tr>
     <tr><td><code>status</code></td><td>全 work item 状态 + active/next/越级检测 + 信号层</td><td>B1 熔断 · B3 老化 · 范围冻结信号（orchestrator.py）</td><td class="ok">只读</td></tr>
-    <tr><td><code>entry</code></td><td>入口探索：内容六信号判定 L0-L4 + entry_blocked + 分支信号</td><td>问题/角色/约束/方案/功能/规则 六信号；L0→需求重举（发散）、多源/歧义→需求重举（复述）</td><td class="ok">只读</td></tr>
+    <tr><td><code>entry</code></td><td>入口探索：内容六信号判定 L0-L4 + entry_blocked + 分支信号</td><td>问题/角色/约束/方案/功能/规则 六信号；L0→brainstorming（发散收敛）、多源/歧义→requirement-restate（复述确认）</td><td class="ok">只读</td></tr>
     <tr><td><code>gate --work-item X</code></td><td>机器闸门：DoR + DoD + 六态 + 自审 + B3 收口 + property + 追溯 + 哈希</td><td>dor_check / property_check(fd) / traceability(prd) / branch_validator</td><td class="ok">只读</td></tr>
     <tr><td><code>review --decision approve/changes</code></td><td>人工评审唯一入口：真实人名 + 授权清单 + 角色 + 机器闸门全过</td><td>--reviewer / --reviewer-id / --reviewer-role / --waive CODE=reason</td><td class="warn">人工（写 confirmed 的唯一路径 + SHA-256）</td></tr>
     <tr><td><code>reflow [--apply]</code></td><td>变更回流：dry-run 预览 → --apply 级联失效下游 + ChangeRecord（含 DEC-XXX 决策字段）</td><td>下游 confirmed/ready → superseded；next_work_item 回归最早受影响项</td><td class="warn">机器（--apply 时才写）</td></tr>
@@ -537,8 +537,8 @@ footer{margin-top:24px;text-align:center;color:#888;font-size:11px;padding-top:1
     <tr><td>分支</td><td><code>feasibility-analysis</code>（可行性分析）</td><td>进入主干前评估可行性，或 ≥2 实质方案取舍</td><td>001 / 002</td><td><code>99-review/support/</code></td><td>Assess market space / technical feasibility / ROI / risk, produce 做/不做/有条件做 recommendation. ≥2 materially different solutions → §多方案取舍 weighted matrix.</td></tr>
     <tr><td>分支</td><td><code>tracking-plan</code>（埋点计划）</td><td>功能需要数据埋点或追踪计划</td><td>002</td><td><code>99-review/support/</code></td><td>埋点与追踪计划 — 为每个 P0 功能定义事件、属性、触发时机、上报时机、平台、PII 标记与关联指标/目标，产出 <code>tracking-plan.md</code>。</td></tr>
     <tr><td>常驻</td><td><code>issue-record</code>（问题清单）</td><td>任何阶段需求不明确、冲突或存在风险（贯穿全流程）</td><td>001 / 002 / 003</td><td><code>99-review/support/</code></td><td>跨阶段共享的问题清单 — BLK / RSK / DEC / INF / CLS / OUT 六类；B3 每阶段强制收口（§13 收口表）；7 天 flag / 14 天 escalate。</td></tr>
-    <tr><td>能力</td><td><code>requirement-restate</code>（需求重举）</td><td>材料稀疏 / 多源歧义 / L0 仅想法</td><td>001 entry</td><td><code>99-review/support/</code></td><td>output_kind=process · 复述模式（RR-NNN verbatim 复述）+ 发散模式（SCN-XXX 12 维度候选 → 人工四值处置）。过程记录不进 PRD。</td></tr>
-    <tr><td>能力</td><td><code>brainstorming</code>（头脑风暴）</td><td>方案发散 / 候选生成（按需）</td><td>001 / 002</td><td><code>99-review/support/</code></td><td>模式二：发散收敛（替代 v0.4.x 的需求重举·发散模式）。从用户问题触发多视角发散，候选 → 人工收敛。</td></tr>
+    <tr><td>能力</td><td><code>requirement-restate</code>（需求复述）</td><td>多源歧义 / 多源措辞不一致（L1-L4 有来源）</td><td>001 entry</td><td><code>99-review/support/</code></td><td>output_kind=process · 复述模式（RR-NNN verbatim 复述 stakeholder 原话确认）。过程记录不进 PRD。</td></tr>
+    <tr><td>能力</td><td><code>brainstorming</code>（头脑风暴）</td><td>L0 仅想法 / 材料稀疏 / 方案发散</td><td>001 / 002</td><td><code>99-review/support/</code></td><td>发散收敛能力（SCN-XXX 12 维度候选 → 人工四值处置），include 候选综合成输入包进 background-goal。过程记录不进 PRD。</td></tr>
   </table>
 </section>
 <section id="sec-artifacts">
@@ -560,7 +560,13 @@ footer{margin-top:24px;text-align:center;color:#888;font-size:11px;padding-top:1
     <tr><td><code>acceptance-criteria</code></td><td><code>acceptance-criteria</code></td><td><code>002-product-requirements/09-acceptance-criteria/acceptance-criteria.md</code></td><td>验收 AC-XXX + Given/When/Then + 量化阈值 + G-XXX 追溯</td><td>exception-handling, interaction-rules</td></tr>
     <tr><td><code>final-prd</code>（最终 PRD）</td><td><code>prd-assembly</code></td><td><code>003-prd-output/prd.md</code></td><td>最终唯一产品交付 prd.md（v0.5.0: 13 节正文 + 双向追溯链 G→UJ→US→FEA→FL→PD→IX→BR→VL→SM→EX→AC）</td><td>全部 12 上游</td></tr>
   </table>
-  <div class="desc" style="margin-top:10px;margin-bottom:0">支持产物（不直接进 PRD）：复述清单 RR-NNN / 发散候选 SCN-XXX（requirement-restate 能力）· 埋点事件表 EV-NNN（tracking-plan）· 问题清单 ISS-NNN（issue-record，§13 收口表）· 竞品调研 / 可行性分析记录（99-review/support/）。</div>
+  <table>
+    <tr><th>产物 ID</th><th>生产者 skill</th><th>位置</th><th>用途</th></tr>
+    <tr><td><code>requirement-restate.md</code></td><td>requirement-restate</td><td>99-review/support/</td><td>复述清单 RR-NNN（verbatim 复述确认）</td></tr>
+    <tr><td><code>brainstorming-output.md</code></td><td>brainstorming</td><td>99-review/support/</td><td>发散候选 SCN-XXX + 人工处置表</td></tr>
+    <tr><td><code>tracking-plan.md</code></td><td>tracking-plan</td><td>99-review/support/</td><td>埋点事件表 EV-NNN</td></tr>
+    <tr><td><code>issue-record.md</code></td><td>issue-record</td><td>99-review/support/</td><td>问题清单 ISS-NNN（§13 收口表）</td></tr>
+  </table>
 </section>
 <section id="sec-scripts">
   <h2>8. 脚本说明书 <span class="badge">19 个 · 机器循环引擎 + 基础设施</span></h2>
@@ -597,7 +603,7 @@ footer{margin-top:24px;text-align:center;color:#888;font-size:11px;padding-top:1
     <tr><td><code>change-management（变更回流）</code></td><td>变更提案/审批/归档 + reflow 级联失效</td></tr>
     <tr><td><code>traceability（追溯）</code></td><td>跨产物 G→ST→FEA→FUN→AC→BR 追溯链</td></tr>
     <tr><td><code>decision-log（决策记录）</code></td><td>DEC-XXX 结构化决策记录模板</td></tr>
-    <tr><td><code>brainstorming（发散）</code></td><td>候选发散/场景穷举/处置表（需求重举能力 · 发散模式的机制支撑）</td></tr>
+    <tr><td><code>brainstorming（发散）</code></td><td>候选发散/场景穷举/处置表（独立 brainstorming 能力 · SCN-XXX）</td></tr>
     <tr><td><code>intake-routing（入口路由）</code></td><td>L0-L4 成熟度判定 + entry-assessment 六信号</td></tr>
     <tr><td><code>project-init（项目初始化）</code></td><td>一键创建 REQ-DIR 骨架（init 命令的模板源）</td></tr>
   </table>
@@ -640,7 +646,8 @@ footer{margin-top:24px;text-align:center;color:#888;font-size:11px;padding-top:1
     <div class="bcard"><b>feasibility-analysis（可行性分析）</b><div class="trig">触发：进入主干前评估可行性，或 ≥2 实质方案取舍</div><div class="out">产出：可行性报告 + §多方案取舍（DEC-XXX 决策记录）</div></div>
     <div class="bcard"><b>tracking-plan（埋点计划）</b><div class="trig">触发：功能需要数据埋点或追踪计划</div><div class="out">产出：事件表（EV-NNN，链 FUN- + G-）+ PII 登记</div></div>
     <div class="bcard"><b>issue-record（问题清单）</b><div class="trig">触发：任何阶段需求不明确/冲突/风险</div><div class="out">产出：六类问题清单（BLK/RSK/DEC/INF/CLS/OUT）</div></div>
-    <div class="bcard"><b>requirement-restate（需求重举 · 能力）</b><div class="trig">触发：材料稀疏 / 多源歧义 / L0 仅想法（entry 机器信号）</div><div class="out">产出：过程记录（复述清单 RR-NNN / 发散候选 SCN-XXX + 四值处置），仅 include 候选进入 bg 输入包</div></div>
+    <div class="bcard"><b>requirement-restate（需求复述 · 能力）</b><div class="trig">触发：多源歧义 / 多源措辞不一致（L1-L4 有来源）</div><div class="out">产出：过程记录 RR-NNN（verbatim 复述 stakeholder 原话确认）；CONFLICT→ISS、UNKNOWN→Q</div></div>
+    <div class="bcard"><b>brainstorming（头脑风暴 · 能力）</b><div class="trig">触发：L0 仅想法 / 材料稀疏 / 方案发散</div><div class="out">产出：过程记录 SCN-XXX 候选 + 四值处置，仅 include 候选进入 bg 输入包</div></div>
   </div>
 </section>
 
@@ -655,7 +662,7 @@ footer{margin-top:24px;text-align:center;color:#888;font-size:11px;padding-top:1
   <div class="tree" id="tree">
 <div class="tnode t-root" data-depth="0"><div class="tnode-h"><span class="ttoggle">▸</span><span class="tbadge">总览</span><span class="tname">PM Scaffold 全景节点图</span></div><div class="tnode-d">v0.5.0：13 主干 work_item + 3 分支产物 + 1 常驻（issue-record）+ 2 能力 + 13+1 独立产物 + 9 共享机制 + 信号层。点击任意节点展开/收起。</div><div class="tchildren">
 <div class="tnode t-entry" data-depth="1"><div class="tnode-h"><span class="ttoggle">▸</span><span class="tbadge">入口</span><span class="tname">入口探索（Stage 0）</span></div><div class="tnode-d">进入主干前的判定与理解：材料六信号判 L0-L4 → 发散/复述/可行性 → 主干 bg。</div><div class="tchildren">
-<div class="tnode t-cmd" data-depth="2"><div class="tnode-h"><span class="ttoggle leaf"></span><span class="tbadge">命令</span><span class="tname">entry 内容判定（L0-L4）</span></div><div class="tnode-d">读 00-input 内容六信号（问题/角色/约束/方案/功能/规则）判成熟度；L0/L1 输出 entry_blocked（材料不足）。</div></div><div class="tnode t-cap" data-depth="2"><div class="tnode-h"><span class="ttoggle leaf"></span><span class="tbadge">能力</span><span class="tname">需求重举能力（requirement-restate）</span></div><div class="tnode-d">output_kind=process（能力，过程记录不进 PRD）。<b>复述模式</b>：RR-NNN verbatim 复述确认，CONFLICT→issue-record(CLS)、UNKNOWN→Q-XXX(INF)。<b>发散模式</b>：SCN-XXX 候选 12 维度发散 → 人工四值处置（include/exclude/defer/research）→ include 候选进 bg 输入包。</div></div><div class="tnode t-branch" data-depth="2"><div class="tnode-h"><span class="ttoggle leaf"></span><span class="tbadge">分支产物</span><span class="tname">可行性分析（feasibility-analysis）</span></div><div class="tnode-d">分支产物。四要素：市场空间 / 技术可行性 / 投入产出 / 风险评估；多方案决策矩阵为其一章。</div></div>
+<div class="tnode t-cmd" data-depth="2"><div class="tnode-h"><span class="ttoggle leaf"></span><span class="tbadge">命令</span><span class="tname">entry 内容判定（L0-L4）</span></div><div class="tnode-d">读 00-input 内容六信号（问题/角色/约束/方案/功能/规则）判成熟度；L0/L1 输出 entry_blocked（材料不足）。</div></div><div class="tnode t-cap" data-depth="2"><div class="tnode-h"><span class="ttoggle leaf"></span><span class="tbadge">能力</span><span class="tname">需求重举能力（requirement-restate）</span></div><div class="tnode-d">output_kind=process（能力，过程记录不进 PRD）。<b>复述确认</b>：RR-NNN verbatim 复述 stakeholder 原话，多源/歧义时触发；CONFLICT→issue-record(CLS)、UNKNOWN→Q-XXX(INF)。</div></div><div class="tnode t-cap" data-depth="2"><div class="tnode-h"><span class="ttoggle leaf"></span><span class="tbadge">能力</span><span class="tname">发散收敛能力（brainstorming）</span></div><div class="tnode-d">output_kind=process（能力，过程记录不进 PRD）。<b>L0 候选发散</b>：SCN-XXX 12 维度候选 → 人工四值处置（include/exclude/defer/research）→ include 候选进 bg 输入包。</div></div><div class="tnode t-branch" data-depth="2"><div class="tnode-h"><span class="ttoggle leaf"></span><span class="tbadge">分支产物</span><span class="tname">可行性分析（feasibility-analysis）</span></div><div class="tnode-d">分支产物。四要素：市场空间 / 技术可行性 / 投入产出 / 风险评估；多方案决策矩阵为其一章。</div></div>
 </div></div><div class="tnode t-stage" data-depth="1"><div class="tnode-h"><span class="ttoggle">▸</span><span class="tbadge">阶段</span><span class="tname">001 业务需求</span></div><div class="tnode-d">业务真相与范围的源头。</div><div class="tchildren">
 <div class="tnode t-main" data-depth="2"><div class="tnode-h"><span class="ttoggle leaf"></span><span class="tbadge">主 skill</span><span class="tname">主① project-background-goal（项目背景与目标）</span></div><div class="tnode-d">产物 background-goal.md（BG-）。DoR 硬检查「00-input ≥1 SRC」。背景/现状/问题/目标/角色/约束，六态标注。评审角色：business_owner / product_owner。</div></div><div class="tnode t-main" data-depth="2"><div class="tnode-h"><span class="ttoggle leaf"></span><span class="tbadge">主 skill</span><span class="tname">② user-journey + ③ user-stories（v0.5.0 拆分）</span></div><div class="tnode-d">v0.5.0 拆解为两个独立 work_item：<b>user-journey</b>（UJ-）产物 user-journey.md（生命周期×角色×情绪）+ <b>user-stories</b>（US-）产物 user-stories.md（MoSCoW + 范围基线 + 故事 ST-）。前置：主① confirmed。评审：business_owner / product_owner。</div></div>
 </div></div><div class="tnode t-stage" data-depth="1"><div class="tnode-h"><span class="ttoggle">▸</span><span class="tbadge">阶段</span><span class="tname">002 产品需求</span></div><div class="tnode-d">把业务需求细化为产品方案。</div><div class="tchildren">
@@ -723,7 +730,7 @@ PM Scaffold · 文件完整架构
 │  │  │  ├─ project-background-goal/    ① 项目背景与目标
 │  │  │  ├─ user-journey/               ② 用户旅程（v0.5.0 新拆）
 │  │  │  ├─ user-stories/               ③ 用户故事与范围基线（v0.5.0 新拆）
-│  │  │  └─ requirement-restate/        能力 · 需求重举（复述 + 发散）
+│  │  │  └─ requirement-restate/        能力 · 需求复述（复述确认 RR-NNN）
 │  │  ├─ 002-product-requirements/skills/     10 skill（9 work_item + 1 分支）
 │  │  │  ├─ feature-list/               ④ 功能清单（提升自 function-description）
 │  │  │  ├─ functional-flow/            ⑤ 功能流程（提升）
@@ -736,9 +743,10 @@ PM Scaffold · 文件完整架构
 │  │  │  ├─ acceptance-criteria/        ⑫ 验收标准（提升）
 │  │  │  └─ tracking-plan/              分支产物 · 埋点计划
 │  │  └─ 003-prd-output/skills/prd-assembly/   ⑬ PRD 汇总（只聚合不发明 · 12 上游）
-│  ├─ support-skills/           2 支持 skill（按需触发）
+│  ├─ support-skills/           3 支持 skill（按需触发）
 │  │  ├─ competitive-research/  竞品调研
-│  │  └─ feasibility-analysis/  可行性分析（resume→bg）
+│  │  ├─ feasibility-analysis/  可行性分析（resume→bg）
+│  │  └─ brainstorming/          能力 · 发散收敛（SCN-XXX 候选 + 处置）
 │  ├─ shared/                   9 共享机制（横向复用，不占主干）
 │  │  ├─ audit/ human-gate/ clarify/（含 issue-record skill + 收口表）
 │  │  ├─ change-management/ traceability/ decision-log/
@@ -757,7 +765,7 @@ PM Scaffold · 文件完整架构
   <div class="kpi-grid">
     <div class="kpi"><div class="n">72/78</div><div class="l">回归检查（含负例反向断言 + 案例全流程）</div></div>
     <div class="kpi"><div class="n">19</div><div class="l">Skill（13 主干 + 3 分支 + 1 常驻 + 2 能力）</div></div>
-    <div class="kpi"><div class="n">15</div><div class="l">手写 validate_artifact.py（13 主干 + 2 support）</div></div>
+    <div class="kpi"><div class="n">16</div><div class="l">手写 validate_artifact.py（13 主干 + 3 support）</div></div>
     <div class="kpi"><div class="n">0</div><div class="l">一致性错误（consistency_check）</div></div>
     <div class="kpi"><div class="n">8</div><div class="l">案例基线快照（snapshot_cases --check 一致）</div></div>
     <div class="kpi"><div class="n">17</div><div class="l">观察项沉淀（OBS-001~017，2 项已落地）</div></div>
@@ -825,7 +833,7 @@ PM Scaffold · 文件完整架构
 <ul>
   <li><b>19 个 Skill（13 主干 + 3 分支 + 1 常驻 + 2 能力）</b>：13 个主干 work_item 是必做主线——<code>project-background-goal</code>（项目背景与目标）→ <code>user-journey</code>（用户旅程）→ <code>user-stories</code>（用户故事）→ <code>feature-list</code>（功能清单）→ <code>functional-flow</code>（功能流程）→ <code>page-design</code>（页面设计）→ <code>interaction-rules</code>（交互规则）→ <code>business-rules</code>（业务规则）→ <code>validation-rules</code>（字段校验）→ <code>state-machine</code>（状态变化）→ <code>exception-handling</code>（异常处理）→ <code>acceptance-criteria</code>（验收标准）→ <code>prd-assembly</code>（PRD 汇总）。3 个分支产物按需触发（competitive-research、feasibility-analysis、tracking-plan），1 个常驻：issue-record（问题清单），2 个能力：requirement-restate（需求重举）+ brainstorming（头脑风暴）。每个 skill 都自带标准章节执行协议、7 类参考知识库和机器校验器，数量全部来自注册表 workflow-registry.json（唯一真相源）。</li>
   <li><b>18 个脚本</b>（在 src/scripts/）：pipeline.py（命令入口：init / status / entry / gate / review / reflow）、orchestrator.py（状态机 + 信号层）、dor_check.py（闸门检查）、workflow_registry.py（注册表访问器）、consistency_check.py（跨文档一致性）、traceability_check.py（双向追溯）、property_check.py（逻辑完备）、branch_validator.py（评审记录与哈希校验）、migrate_layout_v2.py（布局迁移）、audit_log.py（SHA-256 链事件日志）、projection_cache.py（投影缓存）、registry_contract_check.py（注册表契约关卡）、validation_errors.py（统一错误格式）、hash_anchor.py（哈希锚点）、desensitize_check.py（脱敏检查）、feishu_fetch.py（飞书取料）、prd_publish.py（飞书发布）、snapshot_cases.py（快照对比）。全部只用 Python 标准库，AI 不需要装任何第三方包。</li>
-  <li><b>9 个共享机制</b>（在 src/shared/）：audit（审查闸门）、human-gate（人工闸门）、clarify（澄清循环）、change-management（变更回流）、traceability（追溯）、decision-log（决策记录）、brainstorming（需求发散）、intake-routing（入口路由）、project-init（项目初始化）。它们横向服务所有阶段，是脚手架的「公共服务」。</li>
+  <li><b>9 个共享机制</b>（在 src/shared/）：audit（审查闸门）、human-gate（人工闸门）、clarify（澄清循环）、change-management（变更回流）、traceability（追溯）、decision-log（决策记录）、capability-fragments（能力片段）、intake-routing（入口路由）、project-init（项目初始化）。它们横向服务所有阶段，是脚手架的「公共服务」。（注：brainstorming 现已独立为 001 stage 的能力 skill，不再归入 shared。）</li>
 </ul>
 
 <h4>1.3 最终产出的 prd.md 长什么样</h4>
@@ -1037,7 +1045,7 @@ bash run_tests_mac.sh   # 第一次自检：看到 "Result: 61 passed / 0 failed
 <p><b>你说：</b></p>
 <pre class="tut-code">"帮我初始化一个新需求，编号 REQ-NNN，主题是客户邀约。
  然后把我的材料放进 00-input，跑一下入口判定，告诉我成熟度。"</pre>
-<p><b>AI 做：</b>建好需求骨架目录（含授权清单和来源登记表），把材料登记成 SRC-001、SRC-002…，跑 entry 判定。如果材料只有想法，它会说：<i>「entry 判定结果：L0 仅想法，材料不足。建议先跑需求重举（发散模式）——我把候选列出来，你来处置。」</i></p>
+<p><b>AI 做：</b>建好需求骨架目录（含授权清单和来源登记表），把材料登记成 SRC-001、SRC-002…，跑 entry 判定。如果材料只有想法，它会说：<i>「entry 判定结果：L0 仅想法，材料不足。建议先跑发散收敛（brainstorming）——我把候选列出来，你来处置。」</i></p>
 <p><b>你确认：</b>要么补材料，要么说「<i>好，先发散</i>」——等候选清单出来后，你人工勾选 include（进入需求）/ exclude（排除）/ defer（延后）/ research（待研究）。只有 include 的候选进入背景目标的输入包。</p>
 
 <h4>第 2 幕 · 业务需求（背景目标 → 用户旅程 → 用户故事）</h4>
@@ -1164,11 +1172,11 @@ ERROR: machine gates must pass before approval
 "跑 entry 判定，告诉我当前成熟度（L0-L4）和下一步建议。"
 
 # ④ 发散（L0 仅想法时）
-"材料不够，跑需求重举（发散模式）：把候选列成清单，我来处置
+"材料不够，跑 brainstorming（发散收敛）：把候选列成清单，我来处置
  （include / exclude / defer / research）。"
 
 # ⑤ 复述（多来源 / 术语有歧义时）
-"材料里同一个概念说法不一致，跑需求重举（复述模式），把我的原话逐条复述成清单让我核对。"</pre>
+"材料里同一个概念说法不一致，跑 requirement-restate（复述确认），把我的原话逐条复述成清单让我核对。"</pre>
 
 <h4>8.2 起草与子 skill</h4>
 <pre class="tut-code"># ⑥ 起草项目背景与目标
@@ -1238,7 +1246,7 @@ ERROR: machine gates must pass before approval
 <p><b>① 入口材料不足（entry_material）</b>——第一项工作项送审前必须至少有 1 份 SRC 材料：</p>
 <pre class="tut-code">FAIL entry_material 00-input SRC materials: 0 (need >= 1)
 → 修法：把原始材料（纪要/邮件/PPT）放进 00-input 并登记成 SRC-001 起，
-  或用需求重举（发散模式）发散出候选。没有材料，背景目标就无从谈起。</pre>
+  或用发散收敛（brainstorming）发散出候选。没有材料，背景目标就无从谈起。</pre>
 <p><b>② 六态覆盖不全（knowledge_state_coverage）</b>——送审产物必须六态全出现、假设占比不超 30%：</p>
 <pre class="tut-code">FAIL knowledge_state_coverage missing=FACT,UNKNOWN | covered=4/6 total=12 assumption_ratio=0.25
 → 修法：让 AI 补上缺失的标注——把有依据的标 FACT、把没依据的标 UNKNOWN，
@@ -1299,7 +1307,8 @@ ERROR: waiver_required issue 'xxx' needs --waive CODE=&lt;reason&gt;
   <tr><td><code>feasibility-analysis</code>（可行性分析）</td><td>进入主干前评估可行性（市场/技术/投入产出/风险）</td><td>"进主干前先跑可行性分析，评估市场/技术/投入产出/风险"</td></tr>
   <tr><td><code>tracking-plan</code>（埋点计划）</td><td>功能需要数据埋点或追踪计划</td><td>"这个功能要埋点，跑 tracking-plan 出事件表"</td></tr>
   <tr><td><code>issue-record</code>（问题清单）</td><td>任何阶段需求不明确、冲突或存在风险</td><td>"把这些问题都登记进 issue-record"（AI 也会主动问你「要不要登记」）</td></tr>
-  <tr><td><code>requirement-restate</code>（需求重举 · 能力）</td><td>材料稀疏 / 多源歧义 / L0 仅想法（entry 机器可判定）</td><td>"两个材料说法不一致或材料不够，先跑需求重举（复述/发散）核对"</td></tr>
+  <tr><td><code>requirement-restate</code>（需求重举 · 能力）</td><td>有来源（L1-L4）/ 多源歧义 / 材料待确认</td><td>"两个材料说法不一致，先跑 requirement-restate（复述确认）逐条核对"</td></tr>
+  <tr><td><code>brainstorming</code>（头脑风暴 · 能力）</td><td>L0 仅想法 / 材料稀疏 / 方案发散</td><td>"材料只有一行想法，先跑 brainstorming（发散收敛）把候选列出来处置"</td></tr>
 </table>
 <p>触发前 AI 会问你「要不要跑」——你同意才进。4 个分支产物 skill 的产物：竞品分析（3-5 家）、可行性报告（含 §多方案取舍 DEC-XXX）、埋点事件表 EV-NNN（链 FUN- 与 G-）、问题清单 ISS-NNN（BLK/RSK/DEC/INF/CLS/OUT 六类）；requirement-restate 能力的产物是过程记录（复述清单 RR-NNN 原文 verbatim / 发散候选 SCN-XXX + 四值处置，仅 include 进 bg 输入包）。发布是动作而非 skill：SHA-256 复核由 branch_validator 自动执行。</p>
 

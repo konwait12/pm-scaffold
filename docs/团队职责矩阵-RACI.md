@@ -83,7 +83,7 @@
 
 | 环节 | 对应机制 / Skill | 职责说明 |
 |---|---|---|
-| 1. 需求澄清 | `intake-routing` / `clarify` / `requirement-restate` | ai_agent 起草澄清问题、登记 Q-/ISS-，product_manager 拍板澄清结果；business_owner 提供业务事实答案。 |
+| 1. 需求澄清 | `intake-routing` / `clarify` / `requirement-restate`（有来源多源复述）/ `brainstorming`（L0 稀疏发散） | ai_agent 起草澄清问题、登记 Q-/ISS-，product_manager 拍板澄清结果；business_owner 提供业务事实答案。 |
 | 2. 背景目标 | `project-background-goal` | business_owner 提供业务事实与目标（`business_fact_owner`），product_manager 拍板目标决策（`goal_decision_owner`），ai_agent 起草 BG 产物。 |
 | 3. 用户旅程 | `user-journey` + `user-stories` | ux_designer 主导旅程 / 场景 / 用户故事设计，product_manager 负责范围基线，ai_agent 起草。 |
 | 4. UX 设计 | `page-design` + `interaction-rules`（page-design + interaction-rules） | ux_designer 主导页面设计与交互规则，product_manager 负责 UX 范围，ai_agent 起草。 |
@@ -106,10 +106,11 @@
 | 2 | 跑机器校验（`machine_gate`：dor_check / branch_validator / traceability_check / property_check） | `src/scripts/pipeline.py` `machine_gate()` |
 | 3 | 起草澄清问题、登记 Q-/ISS-/DEC-/SRC- 引用 | `src/shared/clarify/`；`src/framework/governance.md`（Stage Closeout） |
 | 4 | 起草变更提案与影响评估（downstream impact） | `src/shared/change-management/proposal-template.md` |
-| 5 | 需求重举（发散 / 复述）候选生成 | `src/stages/001-business-requirements/skills/requirement-restate/` |
-| 6 | 引用并校准能力片段（capability-fragment） | `src/shared/capability-fragments/README.md` |
-| 7 | 执行 `reflow`（机器翻转下游为 `superseded`，语义上代表人工发起的变更） | `src/scripts/pipeline.py`（reflow 动作） |
-| 8 | 执行发布（`src/scripts/prd_publish.py` 飞书发布脚本，仅发布已确认 PRD） | `src/scripts/prd_publish.py` |
+| 5 | 需求发散（brainstorming）候选生成 | `src/support-skills/brainstorming/` |
+| 6 | 需求复述（requirement-restate）复述确认（RR-NNN verbatim） | `src/stages/001-business-requirements/skills/requirement-restate/` |
+| 7 | 引用并校准能力片段（capability-fragment） | `src/shared/capability-fragments/README.md` |
+| 8 | 执行 `reflow`（机器翻转下游为 `superseded`，语义上代表人工发起的变更） | `src/scripts/pipeline.py`（reflow 动作） |
+| 9 | 执行发布（`src/scripts/prd_publish.py` 飞书发布脚本，仅发布已确认 PRD） | `src/scripts/prd_publish.py` |
 
 ### 4.2 必须人审什么（AI 不可做）
 

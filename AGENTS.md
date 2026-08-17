@@ -91,7 +91,7 @@ requirements/REQ-NNN-topic/
 
 一个 artifact 原地演进；快照与评审/变更记录保存历史，不创建竞争的「最终版」副本。
 
-**入口探索序列**（进入 project-background-goal 前）：`entry` 判定 L0-L4（内容六信号）→ L0 先 `requirement-restate`（需求重举·发散模式）→ 多源/歧义时（需求重举·复述模式）→ 主干 bg（DoR 硬检查 ≥1 个 SRC 材料）。
+**入口探索序列**（进入 project-background-goal 前）：`entry` 判定 L0-L4（内容六信号）→ L0 无源材料先 `brainstorming`（发散收敛·SCN-XXX 候选）→ 多源/歧义时 `requirement-restate`（复述确认·RR-NNN）→ 材料充分直接主干 bg（DoR 硬检查 ≥1 个 SRC 材料）。
 
 **B3 每阶段强制收口**：任何 work item 送审 `ready_for_human_review` 前，`99-review/support/issue-record.md` 必须存在且 §13 收口表含该 work item 行（空阶段也落行）；产物每个「待确认」必须带 Q-/ISS-/DEC-/SRC- 引用。dor_check 硬检查，缺失即阻断送审。
 
@@ -142,8 +142,8 @@ python3 src/scripts/consistency_check.py
 **常驻 skill（1，始终监控）**
 `issue-record`（问题清单）
 
-**能力 skill（2，按需调用）**
-`requirement-restate`（需求重举能力：复述+发散，过程记录）、`prd-assembly`（PRD 汇总能力）
+**能力 skill（2+，按需调用）**
+`requirement-restate`（需求重举能力：复述确认，过程记录，RR-NNN）、`brainstorming`（发散收敛能力：L0 候选生成，过程记录，SCN-XXX）、`prd-assembly`（PRD 汇总能力）
 
 每个 skill 的权威行为见各自的 `SKILL.md`（含 8 步 Thinking Prompts、Anti-Patterns、示例、Load References、Completion 清单）。
 
@@ -164,7 +164,7 @@ python3 src/scripts/consistency_check.py
 src/framework/       宪法、契约、思考核心、注册表（先读这里）
 src/stages/          3 阶段 × 5 主 skill + 9 子 skill
 src/shared/          9 个共享机制（审计/澄清/变更/闸门/追溯等）
-src/support-skills/  5 support capabilities：competitive-research / feasibility-analysis 在此；requirement-restate / tracking-plan 在 stages；issue-record 在 shared/clarify
+src/support-skills/  support capabilities：competitive-research / feasibility-analysis / brainstorming（发散收敛）在此；requirement-restate / tracking-plan 在 stages；issue-record 在 shared/clarify（物理=逻辑统一：跨阶段能力归位 support-skills / shared）
 src/scripts/         pipeline / orchestrator / dor_check / branch_validator / audit_log / projection_cache / registry_contract_check / validation_errors（后四项为 v0.4.0 Harness 借鉴基础设施）
 src/templates/       18 个产物模板 + resolver
 src/toolkit/         工具使用指南（Figma / Mermaid / lark-cli）

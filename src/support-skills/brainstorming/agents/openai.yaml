@@ -1,0 +1,29 @@
+interface:
+  display_name: "发散收敛 (Brainstorming)"
+  short_description: "从一行想法按 12 维度发散候选、交人工四值处置，仅 include 候选进入输入包 / Expand a thin idea into candidates across 12 dimensions, get human disposition, write only included candidates back."
+  default_prompt: |
+    Use the brainstorming Skill to expand a thin / L0 idea into a set of
+    candidates across the 12 scenario dimensions, cluster-and-dedupe them
+    into SCN-XXX rows, and mark every candidate AI_INFERENCE. Build the
+    8-column human disposition table; leave Human Disposition for the human
+    (include / exclude / defer / research). Only included candidates are
+    composed into a ≥50-char input package written to project-background-goal.
+    Never treat the divergent candidates as confirmed facts. Never set the
+    artifact status to `confirmed`; only the business owner may dispose.
+
+trigger_examples:
+  - |
+    Use this Skill when the ask exists only as a thin one-line idea at L0,
+    when input material is sparse, or when a stakeholder needs a divergence
+    pass before requirements can be converged.
+  - |
+    Use this Skill when a solution direction is unclear and candidates must
+    be generated across scenarios for a human to triage.
+
+should_not_trigger_examples:
+  - |
+    Do NOT use this Skill to confirm whether a restated ask matches the
+    stakeholder's words — that is requirement-restate's job.
+  - |
+    Do NOT use this Skill to design fields, define journeys, or resolve
+    source conflicts. Diverge only.

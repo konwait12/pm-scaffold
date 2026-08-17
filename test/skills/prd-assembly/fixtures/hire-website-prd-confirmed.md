@@ -20,6 +20,7 @@ created_at: 2026-08-11
 updated_at: 2026-08-11
 confirmed_at: ""
 upstream_artifact_ids: ["BG-HIRE-002", "JS-HIRE-001"]
+upstream_work_item_statuses: "project-background-goal:confirmed; user-journey:confirmed; user-stories:confirmed; feature-list:confirmed; functional-flow:confirmed; page-design:confirmed; interaction-rules:confirmed; business-rules:confirmed; validation-rules:confirmed; state-machine:confirmed; exception-handling:confirmed; acceptance-criteria:confirmed"
 ---
 
 # PRD（产品需求文档）
@@ -120,6 +121,34 @@ graph LR
 ### 5.4 未决问题与风险
 - PIPEDA 数据存储位置与简历保留期（法务跟进，非阻断）
 - 候选人门户范围待评审
+
+## 业务规则
+
+| ID | 规则 | 依据 |
+|---|---|---|
+| BR-001 | 职位上线自发布审核通过起自动进入第三方同步队列 | BG G4 |
+| BR-002 | 简历筛选状态只能是 通过/不通过/待定 之一 | BG §4 |
+
+## 校验规则
+
+| ID | 字段 | 规则 |
+|---|---|---|
+| VL-001 | 简历附件 | 仅支持 PDF，≤ 5MB |
+| VL-002 | 投递表单 | 必填项：姓名、邮箱、联系电话 |
+
+## 状态机
+
+| 状态 | 触发事件 | 目标状态 |
+|---|---|---|
+| 已投递 | 简历审核通过 | 筛选中 |
+| 筛选中 | 招聘专员标记通过 | 面试中 |
+
+## 异常处理
+
+| ID | 异常 | 处理 |
+|---|---|---|
+| EX-001 | 简历上传失败（超限/格式错） | 明确错误提示 + 允许重试 |
+| EX-002 | 第三方平台同步失败 | 后台告警 + 手动重试入口 |
 
 ## 6. 需求追溯矩阵
 

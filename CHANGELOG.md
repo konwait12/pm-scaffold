@@ -7,6 +7,27 @@ All notable changes to PM Scaffold · 产品 AI 脚手架 are documented here. T
 ### Added
 - (next release) — placeholder
 
+## [0.5.1] - 2026-08-17
+
+### Changed · requirement-restate 拆分为「复述 + 发散」两个独立能力
+
+#### 拆分动机
+- `requirement-restate`（收敛器：L1-L4 有来源，verbatim 复述确认）与 `brainstorming`（发散器：L0 稀疏，12 维候选 + 人工四值处置）场景互补不重合，按能力边界拆分为两个 `output_kind=process` 的能力 skill。
+
+#### 注册表 / 路由
+- `src/framework/workflow-registry.json`：`requirement-restate` 收窄为单模式复述；新增 `brainstorming`（`applicable_stages` 001+002，`resume_work_item=project-background-goal`）。
+- `src/scripts/pipeline.py`：入口路由 L0→`brainstorming`、多源/歧义→`requirement-restate`。
+
+#### 目录 / 校验
+- 新增 `src/support-skills/brainstorming/`（SKILL + 7 references + validator，校验 SCN-XXX 候选表 + 人工处置表，禁 `confirmed`）。
+- **物理=逻辑归位**：brainstorming（跨阶段 001+002）从 `src/stages/001-business-requirements/skills/` 归位到 `src/support-skills/brainstorming/`，与 competitive-research / feasibility-analysis 同级（跨阶段能力归位 support-skills；`workflow-registry.json` 的 `skill_path` 一并更新）。
+- `requirement-restate/` 移除模式二内容；`validate_artifact.py` 移除 SCN-XXX 发散检查。
+- 删除已废弃的 `src/shared/brainstorming/` 目录。
+- `registry_contract_check.py` / `consistency_check.py` 均通过。
+
+#### 文档同步
+- `AGENTS.md` / `governance.md` / `TOOLKIT.md` / `docs/团队职责矩阵-RACI.md` / `docs/ARCHITECTURE.md` / `src/toolkit/visualization/scaffold-flow.html` 双模式残留清理，入口探索序列更新为「发散→复述→主干」。
+
 ## [0.5.0] - 2026-08-17
 
 ### Changed · Skill 结构拆解 v2 (composite → 13 independent work_items)

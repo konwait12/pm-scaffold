@@ -513,11 +513,25 @@
     },
     {
       "id": "requirement-restate",
-      "name": "需求重举（复述 + 发散，能力）",
+      "name": "需求重举（复述确认，单模式能力）",
       "skill_path": "src/stages/001-business-requirements/skills/requirement-restate",
-      "trigger": "材料稀疏 / 多源歧义 / L0 仅想法",
+      "trigger": "有来源（L1-L4）/多源歧义/材料待确认",
       "applicable_stages": [
         "001-business-requirements"
+      ],
+      "output_location": "99-review/support/",
+      "resume_work_item": "project-background-goal",
+      "responsible_role": "business_owner",
+      "output_kind": "process"
+    },
+    {
+      "id": "brainstorming",
+      "name": "发散收敛（头脑风暴，单模式能力）",
+      "skill_path": "src/support-skills/brainstorming",
+      "trigger": "L0 仅想法 / 材料稀疏 / 方案发散",
+      "applicable_stages": [
+        "001-business-requirements",
+        "002-product-requirements"
       ],
       "output_location": "99-review/support/",
       "resume_work_item": "project-background-goal",

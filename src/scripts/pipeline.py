@@ -124,7 +124,7 @@ def entry_branch_signals(req_dir: Path) -> list[dict]:
         text += p.read_text(encoding="utf-8", errors="ignore") + "\n"
     out: list[dict] = []
     if not src_files:
-        out.append({"id": "requirement-restate", "signal": "L0 无源材料，建议需求重举（发散模式）", "auto_detect": False})
+        out.append({"id": "brainstorming", "signal": "L0 无源材料，建议发散收敛（头脑风暴）", "auto_detect": False})
     if len(src_files) >= 2:
         out.append({"id": "requirement-restate", "signal": "多源材料（≥2 SRC），建议需求复述确认", "auto_detect": False})
     elif any(k in text for k in ("歧义", "不一致", "待确认", "待定", "可能", "也许")):
@@ -617,12 +617,12 @@ def main() -> int:
             else:
                 maturity, entry = f"L1 有 {src_count} 份原始材料（内容信号 {sum(sig.values())}/6）", "Stage 1 (project-background-goal)"
         else:
-            maturity, entry = "L0 仅想法", "需求重举（发散模式）→ Stage 1"
+            maturity, entry = "L0 仅想法", "发散收敛（brainstorming）→ Stage 1"
 
         entry_blocked = None
         if not result["invalid_active_items"] and confirmed_count == 0 and not result["work_items"].get("project-background-goal") in ACTIVE:
             if src_count == 0:
-                entry_blocked = "L0 材料不足：先需求重举（发散模式）或补充材料，再进入 Stage 1"
+                entry_blocked = "L0 材料不足：先发散收敛（brainstorming）或补充材料，再进入 Stage 1"
             elif sum(entry_content_signals(args.req_dir).values()) < 2:
                 entry_blocked = "L1 材料稀疏：建议补料或 requirement-restate（需求复述）确认理解"
 

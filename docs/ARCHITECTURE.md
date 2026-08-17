@@ -38,8 +38,8 @@ flowchart TB
     end
 
     subgraph SU["分支层 (4 branch-skills + 1 capability)"]
-        SU1["competitive-research / feasibility-analysis"]
-        SU2["tracking-plan / issue-record / requirement-restate(能力)"]
+        SU1["competitive-research / feasibility-analysis / brainstorming(能力)"]
+        SU2["tracking-plan / issue-record / requirement-restate"]
         SU3["tracking-plan / issue-record"]
     end
 
@@ -135,7 +135,7 @@ v0.4.0 起，脚手架引入 Harness 风格的事件溯源基础设施，作为 
 | 工作流注册 | `src/framework/workflow-registry.json` |
 | 5 主 Skill | `src/stages/{001,002,003}-*/skills/*/` |
 | 9 子 Skill | `src/stages/002-product-requirements/skills/{feature-list (et al.),page-design + interaction-rules}/skills/*/` |
-| 4 分支产物 + 1 能力 | `src/support-skills/*/`（竞品/可行性）+ `src/stages/*/skills/{requirement-restate,tracking-plan}/` + `src/shared/clarify/skills/issue-record/` |
+| 分支产物 + 2 能力 | `src/support-skills/*/`（竞品/可行性/头脑风暴）+ `src/stages/*/skills/{requirement-restate,tracking-plan}/` + `src/shared/clarify/skills/issue-record/` |
 | 9 共享模块 | `src/shared/{audit,human-gate,clarify,...}/` |
 | 26 产物模板 | `src/templates/stage-{1,2,3}-*/` + `src/templates/{support,others,records}/` |
 | 12 核心脚本 | `src/scripts/{orchestrator,pipeline,workflow_registry,consistency_check,traceability_check,dor_check,property_check,branch_validator}.py` + `audit_log.py`（事件溯源 append-only 日志 + hash 链）+ `projection_cache.py`（投影缓存派生视图）+ `registry_contract_check.py`（注册表契约硬化 Phase 0 首项）+ `validation_errors.py`（统一错误格式 make_issue 8+ 字段） |

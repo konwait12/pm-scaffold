@@ -70,7 +70,8 @@ Clarify（澄清）与 reflow（回流）是当前 Work Item 内部的状态，�
 
 - `competitive-research`：当需要外部证据时，以业务或功能模式运行。
 - `feasibility-analysis`：在进入主干之前，评估市场 / 技术 / 成本 / 风险维度的可行性；多方案权衡作为一个章节处理。
-- `requirement-restate`：当输入稀疏、来源冲突或 L0 仅停留在想法层面时，提供需求重举能力（复述 + 发散）。
+- `requirement-restate`：当输入有可追溯来源（L1-L4）、多源措辞不一致或需「我们真的同意了吗」检查位时，提供需求复述确认（RR-NNN verbatim 复述）。
+- `brainstorming`：当输入只停留在 L0 一行想法 / 材料稀疏 / 需要方案发散时，按 12 场景维度发散 SCN-XXX 候选并交人工四值处置，include 候选综合成输入包。
 - `tracking-plan`：当某个功能需要度量数据时，提供数据追踪 / 埋点（instrumentation）计划。
 - `issue-record`：跨阶段的问题清单；任何 Work Item 送审前必须先完成 B3 收口。
 

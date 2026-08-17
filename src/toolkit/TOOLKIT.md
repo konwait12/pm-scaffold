@@ -244,7 +244,7 @@
 ## 九、按 PM 工作流场景速查
 
 ### "我刚收到一封需求邮件"
-→ Gmail MCP 读邮件 → 需求重举（发散） → entry-router 判定起点 → `project-background-goal`
+→ Gmail MCP 读邮件 → 需求复述（requirement-restate，邮件是有来源的输入） → entry-router 判定起点 → `project-background-goal`
 
 ### "我要画用户旅程图给业务方看"
 → `user-journey` + `user-stories` 产出旅程数据 → Figma generate_diagram (journey map) → lark-cli 同步到飞书

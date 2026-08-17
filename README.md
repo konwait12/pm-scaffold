@@ -713,9 +713,10 @@ src/
 │   ├── clarify/                     # 缺口澄清 + issue-record
 │   ├── change-management/           # 变更级联失效
 │   └── capability-fragments/        # 可复用功能片段
-├── support-skills/                  # 3 个分支产物
+├── support-skills/                  # 分支产物 + 发散收敛能力
 │   ├── competitive-research/
-│   └── feasibility-analysis/
+│   ├── feasibility-analysis/
+│   └── brainstorming/                # 发散收敛能力（L0 候选 SCN-XXX）
 ├── scripts/                          # 18 个注册表驱动脚本
 └── templates/                        # 14 个产物模板 + resolver
 

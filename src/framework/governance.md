@@ -51,7 +51,7 @@ Every Skill must trigger a structured inquiry when ANY of these conditions occur
 | Class | Definition | PRD Treatment |
 |---|---|---|
 | **Main Trunk**（13 work_items） | `project-background-goal` / `user-journey` / `user-stories` / `feature-list` / `functional-flow` / `page-design` / `interaction-rules` / `business-rules` / `validation-rules` / `state-machine` / `exception-handling` / `acceptance-criteria` / `prd-assembly` | **Required, no inquiry.** Trunk content goes into the corresponding fixed PRD section without asking. |
-| **Branch / Optional**（3 触发才跑） | shared mechanisms (clarify, change-management, decision-log, intake-routing, project-init, human-gate, audit, traceability), optional support skills (competitive-research, feasibility-analysis, tracking-plan, requirement-restate 能力, ...) | **Inquiry required.** Every branch entry triggers the inquiry template. Default behavior per artifact (see table below). |
+| **Branch / Optional**（3 触发才跑） | shared mechanisms (clarify, change-management, decision-log, intake-routing, project-init, human-gate, audit, traceability), optional support skills (competitive-research, feasibility-analysis, tracking-plan, requirement-restate / brainstorming 能力, ...) | **Inquiry required.** Every branch entry triggers the inquiry template. Default behavior per artifact (see table below). |
 
 > 例外：`issue-record`（跨阶段问题清单）虽由 shared clarify 机制产出，但已从「可选分支」提升为**每个案例必备的稳定产物**（见下文「Issue Record — 每个案例必备的稳定产物」），不再走 inquiry 可选流程。
 
@@ -76,6 +76,7 @@ The main trunk is **non-negotiable** because the PRD cannot exist without backgr
 | `prd-assembly` | Trunk §13-§14 | Required (§13-§14) | None | — |
 | `tracking-plan` | Branch (optional) | Optional (§5.2 埋点) | Inquiry at Skill entry + prd-assembly §5 | Verbatim event table in §5.2 if user accepts |
 | `requirement-restate` | Branch (能力) | Default NOT in PRD | Inquiry at Skill entry | User can attach RR-XXX provenance to §0 |
+| `brainstorming` | Branch (能力) | Default NOT in PRD | Inquiry at Skill entry | Include 候选综合成输入包进入 project-background-goal；不进 PRD |
 | **`issue-record`** | **每个案例必备**（非可选） | Default NOT in PRD | 无（强制产出，无需询问） | User can expose risk summary in §13 / §14 if visibility is needed |
 | `competitive-research` | Branch (support) | Optional (supporting evidence) | Inquiry at Skill entry | User can attach comparison table to §0 or as appendix |
 | `feasibility-analysis` | Branch (support) | Optional (supporting evidence) | Inquiry at Skill entry | User can attach trade-off analysis to §0 or as appendix |
@@ -110,9 +111,9 @@ PRD-only scope and "no fixed PRD template" are both constitutional principles. T
 进入第一个主干 work item 之前，入口按以下序列探索（机器信号由 `pipeline.py entry` 输出）：
 
 1. **材料判定**：`00-input/` 的内容信号（问题陈述 / 受影响角色 / 约束 / 产品级方案 / 功能清单 / 业务规则 六信号）判定 L0-L4；L0/L1 输出 `entry_blocked`（材料不足）。
-2. **需求重举（发散模式）**：L0 触发。候选发散 → 人工处置（include/exclude/defer/research）→ 仅 include 候选进入 project-background-goal 输入包。
-3. **需求重举（复述模式）**：多源（≥2 SRC）或材料含歧义/待确认标记时触发。CONFLICT 路由 issue-record（CLS），UNKNOWN 路由 Q-XXX（INF）。
-4. **project-background-goal 主干**：DoR 硬检查「00-input 至少 1 个 SRC 材料」（无源即停的机器版）。需求重举能力与 feasibility-analysis 的 `resume_work_item` 均为 project-background-goal。
+2. **发散收敛（brainstorming）**：L0 触发。候选发散 → 人工处置（include/exclude/defer/research）→ 仅 include 候选进入 project-background-goal 输入包。
+3. **需求复述（requirement-restate）**：多源（≥2 SRC）或材料含歧义/待确认标记时触发。CONFLICT 路由 issue-record（CLS），UNKNOWN 路由 Q-XXX（INF）。
+4. **project-background-goal 主干**：DoR 硬检查「00-input 至少 1 个 SRC 材料」（无源即停的机器版）。requirement-restate / brainstorming 与 feasibility-analysis 的 `resume_work_item` 均为 project-background-goal。
 
 ## Stage Closeout（B3 每阶段强制收口）
 
