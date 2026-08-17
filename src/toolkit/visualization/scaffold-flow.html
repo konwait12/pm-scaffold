@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=1280">
-<title>PM Scaffold · 产品 AI 脚手架 · 项目驾驶舱 · 程序流程总图 v0.4.0</title>
+<title>PM Scaffold · 产品 AI 脚手架 · 项目驾驶舱 · 程序流程总图 v0.5.0</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 html,body{background:#F7F6F5;font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Microsoft YaHei","Noto Sans CJK SC",sans-serif;color:#0A0A0A;line-height:1.6}
@@ -165,7 +165,7 @@ footer{margin-top:24px;text-align:center;color:#888;font-size:11px;padding-top:1
 <div class="layout">
 <nav class="sidebar" id="sidebar">
   <div class="side-title">PM Scaffold 驾驶舱</div>
-  <div class="side-sub">v0.4.0 · 19 Skill · 84/84</div>
+  <div class="side-sub">v0.5.0 · 13 work_items · 72/78</div>
   <button class="tut-btn" id="tut-open">📖 新手教程 · 从这里开始</button>
     <a href="#sec-flow" class="nav-item" data-target="sec-flow"><span class="nav-n">01</span>主程序流程图</a>
     <a href="#sec-cmd" class="nav-item" data-target="sec-cmd"><span class="nav-n">02</span>命令全集</a>
@@ -185,11 +185,11 @@ footer{margin-top:24px;text-align:center;color:#888;font-size:11px;padding-top:1
 <div class="content">
 <header>
   <h1>PM Scaffold · 产品 AI 脚手架 · 项目驾驶舱 · 程序流程总图</h1>
-  <div class="sub">一个需求的完整程序流程：从「新需求输入」到「交付人工确认的 prd.md」——每个判断、每条线、每个回路都有明确条件 · v0.4.0</div>
+  <div class="sub">一个需求的完整程序流程：从「新需求输入」到「交付人工确认的 prd.md」——每个判断、每条线、每个回路都有明确条件 · v0.5.0</div>
   <div class="tags">
-    <span class="tag green">● 75/75 测试绿</span>
+    <span class="tag green">● 72/78 测试绿</span>
     <span class="tag">3 阶段</span>
-    <span class="tag">19 Skill（5 主 + 9 子 + 4 分支产物 + 1 能力）</span>
+    <span class="tag">19 Skill（13 主干 + 3 分支 + 1 常驻 + 2 能力）</span>
     <span class="tag">9 共享模块</span>
     <span class="tag amber">Loop 闭环：级联失效 / 双向追溯 / 防篡改</span>
     <span class="tag">飞书闭环：取料 → 生成 → 发布</span>
@@ -752,12 +752,12 @@ PM Scaffold · 文件完整架构
   </pre>
 </section>
 <section id="sec-kpi">
-  <h2>13. 测试与质量基线 <span class="badge">75/75</span></h2>
-  <div class="desc">run_tests_mac.sh 由注册表驱动：5 主 + 9 子 + 4 分支产物 + 1 能力校验器全量语法检查与 fixture 验证；<b>violation 负例反向断言</b>——故意违规样本必须被校验器拒绝，否则 FAIL。</div>
+  <h2>13. 测试与质量基线 <span class="badge">72/78</span></h2>
+  <div class="desc">run_tests_mac.sh 由注册表驱动：13 work_item + 3 分支 + 1 常驻 + 2 能力校验器全量语法检查与 fixture 验证；<b>violation 负例反向断言</b>——故意违规样本必须被校验器拒绝，否则 FAIL。6 项 fixture/REQ 内容重写为 v0.5.1 follow-up（不影响结构与基础设施）。</div>
   <div class="kpi-grid">
-    <div class="kpi"><div class="n">75/75</div><div class="l">回归检查（含负例反向断言 + 3 案例全流程）</div></div>
-    <div class="kpi"><div class="n">19</div><div class="l">Skill（5 主 + 9 子 + 4 分支产物 + 1 能力）</div></div>
-    <div class="kpi"><div class="n">19</div><div class="l">手写 validate_artifact.py</div></div>
+    <div class="kpi"><div class="n">72/78</div><div class="l">回归检查（含负例反向断言 + 案例全流程）</div></div>
+    <div class="kpi"><div class="n">19</div><div class="l">Skill（13 主干 + 3 分支 + 1 常驻 + 2 能力）</div></div>
+    <div class="kpi"><div class="n">15</div><div class="l">手写 validate_artifact.py（13 主干 + 2 support）</div></div>
     <div class="kpi"><div class="n">0</div><div class="l">一致性错误（consistency_check）</div></div>
     <div class="kpi"><div class="n">8</div><div class="l">案例基线快照（snapshot_cases --check 一致）</div></div>
     <div class="kpi"><div class="n">17</div><div class="l">观察项沉淀（OBS-001~017，2 项已落地）</div></div>
@@ -774,7 +774,7 @@ PM Scaffold · 文件完整架构
   </table>
 </section>
 <footer>
-  PM Scaffold · v0.4.0 · 本图与 src/framework/workflow-registry.json 同源——registry 是唯一机器真相，本图仅作人类可读视图。测试数与 Skill 数以 <code>bash run_tests_mac.sh</code> 与 registry 实测为准。飞书链路以 lark-cli 实测为准。
+  PM Scaffold · v0.5.0 · 本图与 src/framework/workflow-registry.json 同源——registry 是唯一机器真相，本图仅作人类可读视图。测试数与 Skill 数以 <code>bash run_tests_mac.sh</code> 与 registry 实测为准。飞书链路以 lark-cli 实测为准。
 </footer>
 </div>
 </div>
