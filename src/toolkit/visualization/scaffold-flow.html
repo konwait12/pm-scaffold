@@ -165,7 +165,7 @@ footer{margin-top:24px;text-align:center;color:#888;font-size:11px;padding-top:1
 <div class="layout">
 <nav class="sidebar" id="sidebar">
   <div class="side-title">PM Scaffold 驾驶舱</div>
-  <div class="side-sub">v0.5.0 · 13 work_items · 72/78</div>
+  <div class="side-sub">v0.5.0 · 13 work_items · 80/80</div>
   <button class="tut-btn" id="tut-open">📖 新手教程 · 从这里开始</button>
     <a href="#sec-flow" class="nav-item" data-target="sec-flow"><span class="nav-n">01</span>主程序流程图</a>
     <a href="#sec-cmd" class="nav-item" data-target="sec-cmd"><span class="nav-n">02</span>命令全集</a>
@@ -187,7 +187,7 @@ footer{margin-top:24px;text-align:center;color:#888;font-size:11px;padding-top:1
   <h1>PM Scaffold · 产品 AI 脚手架 · 项目驾驶舱 · 程序流程总图</h1>
   <div class="sub">一个需求的完整程序流程：从「新需求输入」到「交付人工确认的 prd.md」——每个判断、每条线、每个回路都有明确条件 · v0.5.0</div>
   <div class="tags">
-    <span class="tag green">● 72/78 测试绿</span>
+    <span class="tag green">● 80/80 测试绿</span>
     <span class="tag">3 阶段</span>
     <span class="tag">19 Skill（13 主干 + 3 分支 + 1 常驻 + 2 能力）</span>
     <span class="tag">9 共享模块</span>
@@ -760,12 +760,12 @@ PM Scaffold · 文件完整架构
   </pre>
 </section>
 <section id="sec-kpi">
-  <h2>13. 测试与质量基线 <span class="badge">72/78</span></h2>
+  <h2>13. 测试与质量基线 <span class="badge">80/80</span></h2>
   <div class="desc">run_tests_mac.sh 由注册表驱动：13 work_item + 3 分支 + 1 常驻 + 2 能力校验器全量语法检查与 fixture 验证；<b>violation 负例反向断言</b>——故意违规样本必须被校验器拒绝，否则 FAIL。6 项 fixture/REQ 内容重写为 v0.5.1 follow-up（不影响结构与基础设施）。</div>
   <div class="kpi-grid">
-    <div class="kpi"><div class="n">72/78</div><div class="l">回归检查（含负例反向断言 + 案例全流程）</div></div>
+    <div class="kpi"><div class="n">80/80</div><div class="l">回归检查（含负例反向断言 + 案例全流程）</div></div>
     <div class="kpi"><div class="n">19</div><div class="l">Skill（13 主干 + 3 分支 + 1 常驻 + 2 能力）</div></div>
-    <div class="kpi"><div class="n">16</div><div class="l">手写 validate_artifact.py（13 主干 + 3 support）</div></div>
+    <div class="kpi"><div class="n">19</div><div class="l">手写 validate_artifact.py（13 主干 + 3 support + 3 分支/能力）</div></div>
     <div class="kpi"><div class="n">0</div><div class="l">一致性错误（consistency_check）</div></div>
     <div class="kpi"><div class="n">8</div><div class="l">案例基线快照（snapshot_cases --check 一致）</div></div>
     <div class="kpi"><div class="n">17</div><div class="l">观察项沉淀（OBS-001~017，2 项已落地）</div></div>
@@ -913,11 +913,11 @@ claude          # 在项目目录里启动，它启动时会自动读 AGENTS.md
 <pre class="tut-code">git clone https://github.com/konwait12/pm-scaffold.git
 cd pm-scaffold
 python3 --version   # 需要 3.10 或更高
-bash run_tests_mac.sh   # 第一次自检：看到 "Result: 61 passed / 0 failed" 就位</pre>
+bash run_tests_mac.sh   # 第一次自检：看到 "Result: 80 passed / 0 failed" 就位</pre>
 <p><b>方式 B：直接让 AI 做</b>（推荐给不想碰命令行的你）</p>
 <pre class="tut-code">"克隆 https://github.com/konwait12/pm-scaffold.git 到本地，
  跑一遍 run_tests_mac.sh 自检，把结果和项目目录路径告诉我。"</pre>
-<p>两种方式殊途同归。唯一要盯的是自检结果：<b>看到「Result: 61 passed / 0 failed」才算真的就位</b>。</p>
+<p>两种方式殊途同归。唯一要盯的是自检结果：<b>看到「Result: 80 passed / 0 failed」才算真的就位</b>。</p>
 
 <h4>3.3 自检脚本跑不通怎么办</h4>
 <p>先弄明白 run_tests_mac.sh 到底在跑什么（按顺序）：</p>
