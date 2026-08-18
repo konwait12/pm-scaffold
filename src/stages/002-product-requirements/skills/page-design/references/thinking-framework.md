@@ -30,15 +30,15 @@
 
 ## 5. Traceability lens（可追溯透镜）
 
-**提问：** 这个页面属于哪个 `FEA-\d+`？对应 `functional-flow`（功能流程）中的哪一步、上游哪个故事？删除它有没有依据？
+**提问：** 这个页面属于哪个 `FEA-\d+`？对应 `functional-flow.md`（功能流程）中的哪一步、上游哪个故事？删除它有没有依据？
 
-**反模式：** 凭空新增未在 `functional-flow`（功能流程）出现的页面，或把同一功能的多个页面按"屏幕数"机械拆分；任何页面都必须能向上追溯到功能、流程、故事，否则就是范围蔓延。
+**反模式：** 凭空新增未在 `functional-flow.md`（功能流程）出现的页面，或把同一功能的多个页面按"屏幕数"机械拆分；任何页面都必须能向上追溯到功能、流程、故事，否则就是范围蔓延。
 
 ---
 
 ## Low-Density Degradation Mode
 
-当上游 `functional-flow`（功能流程）步骤缺失或只有一个模糊页面概念、没有任何流程材料时（见 `SKILL.md` §1 Preflight 判定），五个领域透镜无法产生有效工作。
+当上游 `functional-flow.md`（功能流程）步骤缺失或只有一个模糊页面概念、没有任何流程材料时（见 `SKILL.md` §1 Preflight 判定），五个领域透镜无法产生有效工作。
 
 ```text
 low-density input → skip 5-lens ideation
@@ -78,4 +78,4 @@ Degradation triggers（任一即触发）:
 
 ## 表达层技法（可选加载）
 
-当 P0 流程 ≥ 3 页、涉及状态分支、或需要多方评审时，加载 `references/prototype-techniques.md`（吸收自 interactive-demo-factory / flow2demo），把页面骨架转成可点击 HTML 原型。**文本规则（§2.1 表格）是权威，原型是 UX 的落地产物，不替代文本；忠于输入，不发明页面与状态。**
+当 P0 流程 ≥ 3 页、涉及状态分支、或需要多方评审时，加载 `references/prototype-techniques.md`（吸收自 interactive-demo-factory / flow2demo），把页面骨架转成可点击 HTML 原型。**文本规则（页面与步骤描述表格）是权威，原型是 UX 的落地产物，不替代文本；忠于输入，不发明页面与状态。**

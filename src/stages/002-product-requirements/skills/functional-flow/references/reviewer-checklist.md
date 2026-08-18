@@ -1,6 +1,6 @@
 # 人类审查清单 · 功能流程（functional-flow）
 
-> 本清单给 **PM/产品负责人/业务方** 在审查 AI 产出的 `function-description.md` §功能流程（主流程 / 分支流程 / 异常流程）时使用。
+> 本清单给 **PM/产品负责人/业务方** 在审查 AI 产出的独立产物 `functional-flow.md`（主流程 / 分支流程 / 异常流程）时使用。
 > 不是给 AI 看的（AI 看 `audit-checklist.md`）。
 > 每条 = "是 / 否 / 不适用"，有"否"则进入 Revision 修改确认。
 

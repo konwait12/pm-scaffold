@@ -1,11 +1,11 @@
 # Audit Checklist · functional-flow
 
-自查对象：父制品 `function-description.md` 的 `## 功能流程` 章节（主流程 / 分支流程 / 异常流程）。
+自查对象：独立产物 `functional-flow.md` 的 `## 功能流程` 章节（主流程 / 分支流程 / 异常流程）。
 自查时机：Generate 完成后、提交人工评审前。逐项勾选，存在未通过项需先修复或挂起并说明。
 
 ## 1. Structural Gate（结构门）
 
-- [ ] 父制品中存在 `## 功能流程` 章节，标题带编号前缀（`## 2.`）被 `_norm` 归一化后仍可匹配。
+- [ ] 独立产物中存在 `## 功能流程` 章节，标题带编号前缀（`## 2.`）被 `_norm` 归一化后仍可匹配。
 - [ ] 章节中至少存在一个 `FEA-XXX` 标识符；每个 P0 功能均有对应的功能流程。
 - [ ] 每个流程内嵌 `FEA-XXX` 与 `ST-XXX` 引用，能回溯到上游功能与故事。
 - [ ] Mermaid 代码块语法正确（` ```mermaid `），渲染无报错。
@@ -24,10 +24,10 @@
 
 ## 3. Boundary Gate（边界门）
 
-- [ ] 未泄漏 `IX-XXX` 交互规则细节（交互规则归 product-ux / interaction-rules）。
-- [ ] 未包含 `BR` / `VL` / `AC` 等业务规则、校验规则、验收标准（归本父级对应子技能）。
+- [ ] 未泄漏 `IX-XXX` 交互规则细节（交互规则归 interaction-rules）。
+- [ ] 未包含 `BR` / `VL` / `AC` 等业务规则、校验规则、验收标准（归对应 work_item）。
 - [ ] 未展开 `STATE-XXX` 状态机明细（归 state-machine）或 `EX-XXX` 异常处理明细（归 exception-handling）。
-- [ ] 未包含页面布局、视觉样式、组件级设计（归 product-ux / page-design）。
+- [ ] 未包含页面布局、视觉样式、组件级设计（归 page-design）。
 - [ ] 未包含模块边界划分、系统架构、API 或数据库设计决策。
 - [ ] 未把下游功能/规则问题擅自定稿；涉及范围变更时仅标记为待确认。
 

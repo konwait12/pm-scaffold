@@ -1,12 +1,12 @@
 # Audit Checklist · page-design
 
-对 `product-ux` 制品 §2「页面设计」进行提交前自查。从下游逐项检查，任何一项不通过都先修正再提交。
+对独立产物 `page-design.md` 的 §页面设计 进行提交前自查。从下游逐项检查，任何一项不通过都先修正再提交。
 
 ## 1. Structural Gate（结构闸口）
 
-- [ ] 父制品中存在 `## 2. 页面设计` 段落（或同级规范化的 `页面设计` 标题）。
-- [ ] 段落中的每一行页面条目都归属某个 `FEA-\d+` 功能，所属功能列不为空且可追溯到 function-description 的 feature-list 功能清单。
-- [ ] 页面条目来自 `functional-flow` 输出的功能流程，没有凭空新增的孤儿页面。
+- [ ] 独立产物中存在 `## 页面设计` 段落（或同级规范化的 `页面设计` 标题）。
+- [ ] 段落中的每一行页面条目都归属某个 `FEA-\d+` 功能，所属功能列不为空且可追溯到 `feature-list.md` 功能清单。
+- [ ] 页面条目来自 `functional-flow.md` 输出的功能流程，没有凭空新增的孤儿页面。
 - [ ] 运行 `scripts/validate_artifact.py` 能通过，或至少能解释每个 ERROR 与 WARNING 的处置。
 
 ## 2. Content Gate（内容闸口）
@@ -16,14 +16,14 @@
 - [ ] 每个操作都定义了明确的下一状态（含"停留本页"或"退出流程"等显式结果），没有悬空箭头。
 - [ ] 入口写明触发条件（用户行为、外部事件、跳转来源），前置条件写明进入该页面时必须已满足的状态或数据。
 - [ ] 主要内容只描述"页面上有什么"（信息区块、列表、表单字段、确认信息），不描述视觉细节。
-- [ ] 功能流程中出现的所有页面/步骤在此都有条目，数量与 `functional-flow` 对齐。
+- [ ] 功能流程中出现的所有页面/步骤在此都有条目，数量与 `functional-flow.md` 对齐。
 - [ ] P0 流程相关的页面覆盖正常、备选、异常、失败、超时、取消、恢复等已识别路径，不只画主路径。
 
 ## 3. Boundary Gate（边界闸口）
 
 - [ ] 未描述视觉设计（颜色、字体、间距、组件样式、视觉层级）——那是原型/前端的事。
-- [ ] 未写交互微细节（动效、悬停、滚动行为、弹窗出现方式）——那是 `interaction-rules`（IX）的事。
-- [ ] 未写业务规则、校验规则、状态机细项、验收标准——那是 `function-description`（BR/VL/AC）的事。
+- [ ] 未写交互微细节（动效、悬停、滚动行为、弹窗出现方式）——那是 `interaction-rules.md`（IX）的事。
+- [ ] 未写业务规则、校验规则、状态机细项、验收标准——那是 business-rules / validation-rules / state-machine / acceptance-criteria（BR/VL/AC）的事。
 - [ ] 未出现数据库表结构、API 设计、架构设计、权限策略细节。
 - [ ] 未出现 `IX-`、`BR-`、`VL-`、`AC-` 前缀的规则编号（除引用外不在此生产）。
 
@@ -33,7 +33,7 @@
 - [ ] 不确定的内容标注了知识状态标签（`FACT` / `DECISION` / `AI_INFERENCE` / `UNKNOWN`），而不是把推断写得像事实。
 - [ ] 入口、前置条件、下一状态之间没有逻辑矛盾（例如下一状态引用了不存在或未定义的页面）。
 - [ ] 对同一功能的多页面拆分有明确判断依据，不是简单按"屏幕"切页。
-- [ ] 若删除了某个页面，能在 `functional-flow` 功能流程和上游故事中找到对应依据。
+- [ ] 若删除了某个页面，能在 `functional-flow.md` 功能流程和上游故事中找到对应依据。
 
 ## 5. Quality Lenses
 
@@ -50,9 +50,9 @@
 ## 7. Human Gate（人工闸口）
 
 - [ ] 没有遗留 `待确认` / `TBD` 占位符的列（若有，已归入"待确认问题"段落并在提交前向产品澄清）。
-- [ ] 已与 `functional-flow` 功能流程、feature-list 功能清单交叉核对过页面名称与 FEA 编号一致。
+- [ ] 已与 `functional-flow.md` 功能流程、`feature-list.md` 功能清单交叉核对过页面名称与 FEA 编号一致。
 - [ ] 页面数量、操作、下一状态已由产品/业务确认，尤其是 P0 主路径。
-- [ ] 本人（Page Design 子技能执行者）确认本段落可独立支撑 `product-ux` 的评审，无需 AI 现场解释。
+- [ ] 本人（Page Design work_item 执行者）确认本段落可独立支撑 `page-design.md` 的评审，无需 AI 现场解释。
 
 ## Audit Report Shape
 
@@ -65,5 +65,5 @@ blocking_questions
 nonblocking_unknowns
 decisions_required
 traceability_gaps        # 无 FEA/流程追溯的页面
-downstream_risks         # 对 interaction-rules / function-description 的影响
+downstream_risks         # 对 interaction-rules / PRD 汇总的影响
 ```

@@ -1,8 +1,8 @@
 # Acceptance Criteria · 验收标准
 
-> **Sub-skill of** [`function-description`](../SKILL.md)
+> **独立 work_item**（002 · 12，位于 exception-handling 之后）
 > **输出章节**：§AC（Given/When/Then + 量化阈值）
-> **执行顺序**：5 / 5（**最后执行**，覆盖前 4 个 sub-skill）
+> **执行顺序**：5 / 5（**最后执行**，覆盖前 4 个规则类 work_item）
 
 ## 用途
 
@@ -10,7 +10,7 @@
 
 ## 输入
 
-- 前 4 个 sub-skill 的全部章节（BR / VL / State / Exception）
+- 前 4 个规则类 work_item 的全部章节（BR / VL / State / Exception）
 - `project-background-goal` 中的 G-X 目标（用于量化阈值）
 
 ## 输出
@@ -20,7 +20,7 @@
 | 字段 | 说明 |
 |---|---|
 | ID | AC-001, AC-002, ... |
-| 适用功能 | FUN-XXX |
+| 适用功能 | FEA-XXX |
 | Given | 前置条件（EARS） |
 | When | 触发动作（EARS） |
 | Then | 期望结果（含量化阈值） |
@@ -31,7 +31,7 @@
 
 - 看到 "验收标准" / "AC" / "Given When Then" / "完成定义" → 触发
 - 看到 "测试用例" / "测试脚本" → **不触发**（AC 是契约，测试用例由 QA 编写）
-- 看到 "字段校验" / "状态机" → **不触发**（走前 4 个 sub-skill）
+- 看到 "字段校验" / "状态机" → **不触发**（走前 4 个规则类 work_item）
 
 ## 关键约束
 

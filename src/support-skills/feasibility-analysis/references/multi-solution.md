@@ -38,7 +38,7 @@
     ↓
 7. 人工选择 → 记录 DEC-XXX（决策人 + 理由 + 日期）
     ↓
-8. 选中方案回流：`project-background-goal` §5 目标 / §8 边界、`product-ux` §1 范围基线、`function-description` §2 功能描述
+8. 选中方案回流：`project-background-goal` §5 目标 / §8 边界、`feature-list` 功能清单、`functional-flow` 功能流程
 ```
 
 ## 输出

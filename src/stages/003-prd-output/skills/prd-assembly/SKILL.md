@@ -16,7 +16,7 @@ description: Assemble all confirmed upstream baselines into one traceable PRD wi
 **输入**：12 个上游 work_item 全部已确认，按执行顺序：
 `background-goal.md` → `user-journey.md` → `user-stories.md` → `feature-list.md` → `functional-flow.md` → `page-design.md` → `interaction-rules.md` → `business-rules.md` → `validation-rules.md` → `state-machine.md` → `exception-handling.md` → `acceptance-criteria.md`
 
-正向追溯链：G → UJ → US → ST → FEA → FUN → PD → IX → BR → VL → SM → EX → AC
+正向追溯链：G → UJ → US → FEA → FL → PD → IX → BR → VL → SM → EX → AC
 
 **输出**：
 - `prd.md`：13 正文节（项目背景与目标 → 用户旅程 → 用户故事 → 功能清单 → 功能流程 → 页面设计 → 交互规则 → 业务规则 → 校验规则 → 状态变化 → 异常处理 → 验收依据 → 附录） + 需求追溯矩阵（附录） + 自审记录（附录）
@@ -35,8 +35,8 @@ description: Assemble all confirmed upstream baselines into one traceable PRD wi
 在不改变知识状态的情况下加载：背景目标（G-XXX）、角色、旅程（UJ-XXX）、故事（ST-XXX）、范围基线、功能（FEA-XXX）、功能流程、页面设计（PD-XXX）、交互规则（IX-XXX）、业务规则（BR-XXX）、校验（VL-XXX）、状态转移（SM-XXX）、异常（EX-XXX）、验收标准（AC-XXX）、决策（DEC-XXX）、假设（ASSUMPTION）、未知（UNK-XXX）。
 
 ### 3. Think（跨产物分析）
-- **正向追溯（Forward trace）**：G→UJ→US→ST→FEA→FUN→PD→IX→BR→VL→SM→EX→AC。每条链路完整，无断裂。
-- **反向追溯（Reverse trace）**：AC→EX→SM→BR→VL→IX→PD→FUN→FEA→ST→US→UJ。没有无上游存在理由的元素。
+- **正向追溯（Forward trace）**：G→UJ→US→FEA→FL→PD→IX→BR→VL→SM→EX→AC。每条链路完整，无断裂。
+- **反向追溯（Reverse trace）**：AC→EX→SM→BR→VL→IX→PD→FL→FEA→US→UJ。没有无上游存在理由的元素。
 - **一致性检查（Consistency check）**：对比 12 个产物间的术语、范围、优先级、约束、角色、状态与依赖。标记每个不匹配。
 - **Pre-Mortem**（thinking-core §2.7）："如果这份 PRD 上线 3 个月后失败，最可能的原因是什么？" → 列出 3-5 个失败场景 → 检查 PRD 是否应对。
 
@@ -125,7 +125,16 @@ description: Assemble all confirmed upstream baselines into one traceable PRD wi
 | `references/reviewer-checklist.md` | 人工评审清单（Human Gate 用） | Human Gate 前 |
 | `references/source-handling.md` | 来源处理规则（SRC-* 登记与引用） | Intake/来源处理时 |
 | `references/thinking-framework.md` | 思考透镜（Common Core + 领域 lens，必读） | 每次任务开始（必读） |
+| `references/prd-scoring-rubric.md` | PRD 评分卡（10 分制，advisory 参考工具） | Human Gate 前自检（按需，advisory） |
+| `references/review-engine-5step.md` | 统一评分引擎 5 步流水线（fetch/inspect/deep_check/scoring/decision + 按来源切换规则集） | Human Gate 前结构化自评（按需，advisory） |
+| `references/downstream-handoff.md` | 下游交接三视角（设计/研发/测试各自先看/产出/缺口）+ 产品边界红线 | Generate 附录/交接清单时（按需） |
+| `references/structure-9q.md` | PRD 结构 9 问最小判断 + 章节职责路由 | Generate 前后结构自查（按需） |
+| `references/grill-me.md` | 对抗复审（签发前人工一道 + 四阶段 grill + 结构/一致性/幻觉三维自检） | Human Gate 前对抗复审时（按需） |
+| `references/iteration-pattern.md` | 迭代双 case 变更文档（有基线 delta / 无基线自包含 + chg 日志块） | 收到增量变更需生成变更记录时（按需） |
+| `references/adr-and-sourcing.md` | ADR 内联模板 + Sourcing 6 级标注 + Handoff Context + 决策预注册四象限 + 坏消息公式 | Intake 来源登记 / Human Gate 沟通时（按需） |
+| `references/competitor-three-state.md` | 竞品矩阵三态（行选择即分析，权重/出处/结论列） | 范围取舍需竞品依据时（按需） |
+| `references/domain-mapping-hint.md` | PRD 信号→领域候选映射提示（仅交接提示，不做 DDD 设计） | 下游研发开始领域建模时（按需） |
 
 ## 完成标准（Completion）
 
-所有 12 个上游基线合法且已确认；每条必需的 G→UJ→US→ST→FEA→FUN→PD→IX→BR→VL→SM→EX→AC 关系显式；没有引入新需求；评审分类法发现已带裁定记录；风险与冲突可见；机器检查（校验器 + 追溯 + branch）通过；且授权的人类显式批准 `prd.md`。
+所有 12 个上游基线合法且已确认；每条必需的 G→UJ→US→FEA→FL→PD→IX→BR→VL→SM→EX→AC 关系显式；没有引入新需求；评审分类法发现已带裁定记录；风险与冲突可见；机器检查（校验器 + 追溯 + branch）通过；且授权的人类显式批准 `prd.md`。

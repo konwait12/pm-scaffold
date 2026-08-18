@@ -27,7 +27,7 @@
 - [ ] 竞品功能结论是否明确标了 `AI_INFERENCE`？有没有被当成已确认事实？
 
 ## 可追溯性
-- [ ] 结论能否被 `user-journey-and-stories` / `product-ux` 直接使用（目标 ID + 差异化方向）？
+- [ ] 结论能否被 `user-journey` / `user-stories` / `feature-list` 直接使用（目标 ID + 差异化方向）？
 - [ ] 竞品信息是当前状态吗？检索日期是否足够近？竞品近期有没有重大改版？
 
 ## 最终判断

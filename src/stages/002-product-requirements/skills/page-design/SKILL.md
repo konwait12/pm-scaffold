@@ -99,6 +99,11 @@ Present: 页面清单、每页的入口/前置/操作/下一状态、所有标 `
 | `references/reviewer-checklist.md` | 人工评审清单（Human Gate 用） | Human Gate 前 |
 | `references/source-handling.md` | 上游追溯规则（FEA-/ST-/SRC- 引用） | Intake/追溯时 |
 | `references/thinking-framework.md` | 思考透镜（Common Core + 页面领域 lens，必读） | 每次任务开始（必读） |
+| `references/information-architecture.md` | 信息架构图技法（页面层级+导航关系 Mermaid） | Generate 架构图时（按需） |
+| `references/tob-dimension-matcher.md` | ToB 维度匹配技法（四类维度库映射 + 阶段 0.5 三步编排） | 页面设计前置分析 to B 产品时（按需） |
+| `references/ui-copywriting-rules.md` | UI 文案规范技法（5 原则 + 9 场景检查清单） | 写页面文案/按钮/提示语时（按需） |
+| `references/high-freq-missing-10.md` | 高频遗漏 10 项技法（评审前逐项核验缺项） | 页面骨架定稿/评审前（按需） |
+| `references/architecture-diagram-craft.md` | 架构图绘制技法（模块组成图分区结构 + 8 项自校验） | Generate 产品全景/模块组成图时（按需） |
 
 ## 完成标准
 

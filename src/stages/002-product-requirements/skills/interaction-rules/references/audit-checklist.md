@@ -4,8 +4,8 @@
 
 ## 1. Structural Gate
 
-- [ ] 父工件 `product-ux.md` 存在且为 `confirmed` 版本（或处于本 Skill 可写的候选阶段）
-- [ ] 父工件中存在 §3 交互规则 章节
+- [ ] 上游 `page-design.md` / `functional-flow.md` 存在且为 `confirmed` 版本（或处于本 work_item 可写的候选阶段）
+- [ ] 独立产物 `interaction-rules.md` 中存在 §交互规则 章节
 - [ ] 章节内至少存在一个 `IX-` 标识符
 - [ ] IX 编号连续且唯一（IX-001、IX-002、…），无跳号或重复
 - [ ] 表格表头与模板一致：ID、规则描述、触发条件、系统响应、适用页面/功能、来源
@@ -24,9 +24,9 @@
 
 ## 3. Boundary Gate
 
-- [ ] 不含数据校验逻辑（格式/正则/唯一/范围）——此类归 function-description `VL-*`
-- [ ] 不含业务计算（公式/合计/均值/折扣）——此类归 function-description `BR-*`
-- [ ] 不含权限规则（如「仅管理员可操作」）——此类归 function-description
+- [ ] 不含数据校验逻辑（格式/正则/唯一/范围）——此类归 validation-rules `VL-*`
+- [ ] 不含业务计算（公式/合计/均值/折扣）——此类归 business-rules `BR-*`
+- [ ] 不含权限规则（如「仅管理员可操作」）——此类归 business-rules
 - [ ] 不含验收标准（`AC-*`）
 - [ ] 不含架构、API、数据库、测试用例等实现细节
 - [ ] 不重复/不替换 functional-flow 功能流程的跨页面流程描述
@@ -53,16 +53,29 @@
 
 ## 6. Requirement Quality Gate（29148 特化）
 
-每条 IX 按单条需求的九特征抽查：可验证（响应可写判据）、无歧义（触发唯一）、单一（一条一个交互）、必要（删掉丢反馈）、一致（适用页面存在于 §2 页面设计）。"响应模糊"（如"给出合理提示"）为阻断项：要么改为具体动作/状态，要么 `needs_user_input`。
+每条 IX 按单条需求的九特征抽查：可验证（响应可写判据）、无歧义（触发唯一）、单一（一条一个交互）、必要（删掉丢反馈）、一致（适用页面存在于 page-design.md §页面设计）。"响应模糊"（如"给出合理提示"）为阻断项：要么改为具体动作/状态，要么 `needs_user_input`。
 
 ## 7. Human Gate
 
-- [ ] `python3 scripts/validate_artifact.py <product-ux.md> --json` 返回 `"ok": true`
+- [ ] `python3 scripts/validate_artifact.py <interaction-rules.md> --json` 返回 `"ok": true`
 - [ ] 所有阻塞性待确认问题均已澄清
 - [ ] 剩余「待确认」项均为有意的非阻塞项，并注明责任人
 - [ ] 无 AI 替业务方做决定的内容（优先级、取舍均来自上游确认）
-- [ ] 规则边界清晰，下游 function-description 可无障碍消费
+- [ ] 规则边界清晰，下游 work_item（business-rules / validation-rules）可无障碍消费
 - [ ] 产物可独立用于产品方案评审，无需 AI 现场解释
+
+## 6. 新批次审计项（2026-08 第二轮吸收，advisory）
+
+### 6.1 UI 文案最终自检 5 问（来源 product-copywriting，复用 `../page-design/references/ui-copywriting-rules.md`）
+- [ ] 外行能看懂（无机器话/术语堆砌）？
+- [ ] 用户知道下一步做什么（现状 + 下一步）？
+- [ ] 没有拒绝用户、不给退路（破坏性操作有确认与取消）？
+- [ ] 能否更短（简洁、格式规范）？
+- [ ] 9 场景覆盖：错误异常/表单输入/按钮/弹窗/空状态/加载/成功反馈/权限请求/破坏性操作确认，均有❌✅对照过？
+
+### 6.2 高频遗漏检查（来源 incremental-prd-collaboration，复用 `../page-design/references/high-freq-missing-10.md`）
+- [ ] 10 项逐项过：页面标题/副标题/主按钮文案/倒计时/输入限制/可点击条件/成功失败异常状态/自动处理 vs 强拦截/账号限制与会话有效性/阻断文案与报错文案
+- [ ] 主流程之外覆盖了异常/边界/空状态/权限流程
 
 ## Audit Report Shape
 
@@ -75,5 +88,5 @@ blocking_questions
 nonblocking_unknowns
 decisions_required
 traceability_gaps        # 无适用页面的孤儿规则
-downstream_risks         # 对 function-description / PRD 汇总的影响
+downstream_risks         # 对 PRD 汇总的影响
 ```

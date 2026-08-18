@@ -33,7 +33,7 @@
 | 1 | `src/framework/workflow-registry.json` | 阶段 / Skill / 产物的**唯一机器真相源**，一切路径以此为准，不要硬编码 |
 | 2 | `src/framework/constitution.md` | 8 条硬宪法，违反任何一条 = 缺陷 |
 | 3 | `src/framework/workflow.md` | 每个 Work Item 必走的 8 步循环 |
-| 4 | `src/framework/thinking-core.md` | 17 个思考透镜，§1 的 6 个核心透镜每次必用 |
+| 4 | `src/framework/thinking-core.md` | 共享思想引导层：§1 的 6 个核心透镜每次必用 + §2 校验层 + §3 发散决策层 + §5 表达层技法注册（外部 skill 精华已按 A/B/C 三档注入，见 `docs/new-skills-integration-plan.md`） |
 | 5 | `src/framework/contracts.md` | 知识状态标注 + 确认不变式；含 AuditEvent / ProjectionCache / ValidatorIssue / RegistryContract 等扩展 Shared Records 契约（v0.4.0 Harness 借鉴） |
 
 之后读当前需求的 `STAGE.md` 和对应 Skill 的 `SKILL.md`。
@@ -162,7 +162,7 @@ python3 src/scripts/consistency_check.py
 
 ```text
 src/framework/       宪法、契约、思考核心、注册表（先读这里）
-src/stages/          3 阶段 × 5 主 skill + 9 子 skill
+src/stages/          3 阶段 × 13 主干 work_item（+ 分支/常驻/能力共 19 skill）
 src/shared/          9 个共享机制（审计/澄清/变更/闸门/追溯等）
 src/support-skills/  support capabilities：competitive-research / feasibility-analysis / brainstorming（发散收敛）在此；requirement-restate / tracking-plan 在 stages；issue-record 在 shared/clarify（物理=逻辑统一：跨阶段能力归位 support-skills / shared）
 src/scripts/         pipeline / orchestrator / dor_check / branch_validator / audit_log / projection_cache / registry_contract_check / validation_errors（后四项为 v0.4.0 Harness 借鉴基础设施）

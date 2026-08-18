@@ -1,3 +1,4 @@
+<!-- ⚠️ 已由 src/templates/stage-2-product/exception-handling.md 取代，本文件仅作历史参考 -->
 <!-- exception-handling output · auto-generated from sub-skill -->
 ---
 parent_artifact: FD-{REQ}

@@ -34,7 +34,7 @@
 
 ## 领域透镜 E：可追溯性与知识状态（可追溯）
 
-- 每条 VL-XXX 是否追溯到已确认的 `FUN-XXX` → `FEA-XXX` / `ST-XXX` / `BR-XXX`？
+- 每条 VL-XXX 是否追溯到已确认的 `FEA-XXX` → `ST-XXX` / `BR-XXX`？
 - 值域是业务事实（`FACT`）、已定的策略（`DECISION`）、我的推断（`AI_INFERENCE`）还是未知（`UNKNOWN`）？
 - 推断或未知的值域是挂在 待确认问题 登记表上，还是写成既成事实？
 

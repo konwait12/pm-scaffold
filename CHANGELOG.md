@@ -2,6 +2,36 @@
 
 All notable changes to PM Scaffold · 产品 AI 脚手架 are documented here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project adheres to [Semantic Versioning](https://semver.org/).
 
+## [0.6.0] - 2026-08-18
+
+### Added · 外部 PRD/PM Skill 精华整合（两轮 + 薄弱补厚，95 注入点）
+
+#### 整合背景
+- 评估 48 个团队/市场 PRD/PM skill（第一轮 13 个 + 第二轮 35 个新下载），提炼精华按「A 思想层 / B 参考文档层 / C 审计层」注入既有 19 skill，**不新增业务阶段、不触碰注册表/主干 8 步/模板 frontmatter/校验器**（零改动红线，E3_drift 未触发）。
+
+#### A 档 · 思想层（18 项）
+- `thinking-core.md`：§2 校验层 +6 透镜（业务语言/证据追溯/成本门禁/置信度标注/事实假设判断三态/出口闸门两问）；§3 发散决策层 +8 透镜（grill 对抗/反例扫描/预死亡分析/假设验证四维/naysayer 三阶段/决策预注册/西瓜防御/二阶效应）；§5 表达层技法注册 +4（溯源标注三级/反合理化对照/独立成文/认知透镜附录 §5.1）。
+- `workflow.md`：同步「新批次技法与透镜」引用段。
+
+#### B 档 · 参考文档层（64 个技法文件，全部 ≥80 行且登记加载表）
+- 第一轮 13：功能五要素/交互五段式/UML 用例/数据字典/RBAC 矩阵/泳道状态机/字段决策清单/确认信号/MRC 门禁/业务约束五分类/信息架构/AI 策略四要素/价值复杂度矩阵等。
+- 第二轮 42：14 维缺口扫描/事实台账五分型/访谈五步/合规关键词库/V1 边界/7 维评分/替代方案五路径/两阶段竞品对标/竞品参考库/ST×SWOT 定位/干系人方格/JTBD 护城河/规则决策表/AI 任务分类/ToB 维度库/UI 文案 5 原则 9 场景/高频遗漏 10 项/架构图分区/交叉引用校验/AI 兜底/AI 评估 4 维/5 步评分引擎/下游交接三视角/grill-me/迭代双 case/ADR+Sourcing 6 级/竞品三态矩阵/领域映射提示/研发评审 13 项/北极星+好指标 4 标准等。
+- 第三轮补厚 9（薄弱 skill）：user-journey（journey-matrix-and-mot）/issue-record（issue-communication-and-escalation）/functional-flow（flow-coverage-check）/state-machine（state-machine-completeness）/acceptance-criteria（ac-selfcheck）/tracking-plan（tracking-event-spec）/exception-handling（exception-grade-and-recovery）/feature-list（feature-priority-quant）/interaction-rules（interaction-feedback-rules）。
+
+#### C 档 · 审计层（13 项）
+- `review-taxonomy.md` 标签 7→12：新增 [CommercializationGap]/[HarddownRule]/[P0P1P2Misgraded]/[QualityGate]/[ScoreMatrix]/[AntiPattern]。
+- 6 个 audit-checklist 追加（prd-assembly §7/§6.2、interaction-rules §6、acceptance-criteria §7、feasibility-analysis §6、acceptance-criteria 验收可验证性对照等）。
+
+#### 文档同步
+- `skills/pm-scaffold/SKILL.md` 重写为 v0.6.0（13 work_item/19 skill/95 注入点说明）。
+- `AGENTS.md` / `README.md` / `thinking-core.md` 清理 v0.4.x 旧结构残留（"5 主 + 9 子"、"17 个思考透镜"）。
+- `docs/new-skills-integration-plan.md`：新批次 35 skill 全量评估表 + 69 点映射 + M1-M6 里程碑。
+- `src/toolkit/visualization/scaffold-flow.html`：升级 v0.6.0，新增第 15 节「Skill 精华整合（两轮 · 95 注入点）」，技法落位分布表补全 64 个文件。
+- **拆分残留全面清理（v0.5.0 技术债）**：8 个 002 README 的 "Sub-skill of function-description/product-ux" 旧父子结构 → 独立 work_item 描述；70+ references 文本旧结构引用（FUN-XXX→FEA-XXX、父文档→独立产物、product-ux→page-design/interaction-rules、user-journey-and-stories→user-journey/user-stories）→ 当前结构；tracking-plan/feasibility-analysis/competitive-research/requirement-restate SKILL.md 与 prd-assembly 追溯链（FUN→FL）修复；9 个 skill 内 templates/*-output.md 标注「已由 stage-2-product 取代，仅作历史参考」（tracking-plan 模板更新为新结构）；capability-fragments 片段 FEA 化（来源案例历史编号保留）。
+
+#### 验证
+- `run_tests_mac.sh` 84 passed / 0 failed（registry_contract_check E3_drift 首关 fail-loud 绿灯）；`consistency_check.py` 0 errors；悬空引用扫描 0（310 项全通）；红线零触碰。
+
 ## [Unreleased]
 
 ### Added

@@ -1,6 +1,6 @@
 # Validation Rules · 字段校验规则
 
-> **Sub-skill of** [`function-description`](../SKILL.md)
+> **独立 work_item**（002 · 9，位于 business-rules 之后）
 > **输出章节**：§VL（field-level + cross-field checks）
 > **执行顺序**：2 / 5
 
@@ -11,7 +11,7 @@
 ## 输入
 
 - `business-rules` 的 §BR 表格（已 confirmed）
-- `product-ux` 中页面与字段定义
+- `page-design` 中页面与字段定义
 
 ## 输出
 

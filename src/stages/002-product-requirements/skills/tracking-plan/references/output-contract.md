@@ -5,13 +5,13 @@
 | 状态 | 含义 | 下游使用 |
 |---|---|---|
 | `draft` | 初始收集 | 否 |
-| `ready_for_sub_skill_review` | 覆盖矩阵已通；待 function-description 编排审 | 否 |
-| `confirmed` | 由授权人接受（随 function-description 一起） | 是 |
+| `ready_for_sub_skill_review` | 覆盖矩阵已通；待编排层（上游 work_item）审 | 否 |
+| `confirmed` | 由授权人接受（随编排层一起） | 是 |
 
 ## 版本规则（Version Rules）
 
-- 起 `v0.1`；随 function-description 版本同步。
-- 子 Skill 阶段不写 `confirmed`，由 function-description 父 Skill 一起签发。
+- 起 `v0.1`；随编排层版本同步。
+- work_item 阶段不写 `confirmed`，由编排层（上游 work_item）一起签发。
 
 ## 必需章节（Required Sections）
 
@@ -20,7 +20,7 @@
 | 1 | 元数据 | Yes |
 | 2 | 事件清单（EV-XXX） | Yes |
 | 3 | 事件属性字典 | Yes |
-| 4 | 覆盖矩阵（每 FUN-XXX ≥1 must_track） | Yes |
+| 4 | 覆盖矩阵（每 FEA-XXX ≥1 must_track） | Yes |
 | 5 | 指标映射（event → G-X → metric） | Yes |
 | 6 | PII 与数据保留 | Yes |
 | 7 | 待确认问题 | Yes |
@@ -33,7 +33,7 @@
 | `EV-NNN` | Yes | 单调递增 |
 | `event_name` | Yes | snake_case，verb_noun 模式 |
 | `event_type` | Yes | `page_view` / `click` / `submit` / `exposure` / `success` / `error` / `custom` |
-| `fun` | Yes | FUN-XXX |
+| `fun` | Yes | FEA-XXX |
 | `ix` | Optional | IX-XXX |
 | `br` | Optional | BR-XXX |
 | `trigger_condition` | Yes | 何时触发 |
@@ -56,8 +56,8 @@
 
 ## 覆盖硬约束（Coverage Hard Constraints）
 
-- 每个 P0 FUN-XXX 至少 1 个 `must_track` 事件
-- 每个事件都有 FUN-XXX 和 G-X 引用
+- 每个 P0 FEA-XXX 至少 1 个 `must_track` 事件
+- 每个事件都有 FEA-XXX 和 G-X 引用
 - 同名事件必须合并（不允许 `click_btn` 和 `button_click` 并存）
 - PII 事件必须填 `notes` 写保留期
 

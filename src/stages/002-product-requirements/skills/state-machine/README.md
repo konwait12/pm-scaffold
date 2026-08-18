@@ -1,6 +1,6 @@
 # State Machine · 状态机
 
-> **Sub-skill of** [`function-description`](../SKILL.md)
+> **独立 work_item**（002 · 10，位于 validation-rules 之后）
 > **输出章节**：§State（states × events → target states + guards）
 > **执行顺序**：3 / 5
 
@@ -11,7 +11,7 @@
 ## 输入
 
 - `business-rules` 的 §BR（提供状态迁移的业务约束）
-- `product-ux` 的状态定义与页面流
+- `page-design` / `interaction-rules` 的状态定义与页面流
 
 ## 输出
 

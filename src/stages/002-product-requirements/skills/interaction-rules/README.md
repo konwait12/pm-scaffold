@@ -1,7 +1,7 @@
 # Interaction Rules · 交互规则
 
-> **Sub-skill of** [`product-ux`](../SKILL.md)
-> **输出章节**：父级 `product-ux.md` §3 交互规则 IX-XXX
+> **独立 work_item**（002 · 7，位于 page-design 之后）
+> **输出章节**：§3 交互规则 IX-XXX
 > **执行顺序**：3 / 3（最后生成，约束前两层）
 
 ## 用途
@@ -10,7 +10,7 @@
 
 ## 输入
 
-- `functional-flow`（function-description）的 confirmed 功能流程（§2.1 主流程 / §2.2 分支流程 / §2.3 异常流程）
+- `functional-flow` 的 confirmed 功能流程（§2.1 主流程 / §2.2 分支流程 / §2.3 异常流程）
 - `page-design` 的 confirmed 页面清单（§2 页面设计，含操作列）
 
 ## 产物
@@ -29,7 +29,7 @@
 ## 触发判断
 
 - 看到 "交互规则" / "IX" / "输入约束" / "反馈时机" / "可访问性" / "a11y" → 触发
-- 看到 "功能流程" → **不触发**（走 `functional-flow`，在 function-description）
+- 看到 "功能流程" → **不触发**（走 `functional-flow`）
 - 看到 "页面设计" / "组件" → **不触发**（走 `page-design`）
 
 ## 关键约束
@@ -37,7 +37,7 @@
 - 每条 IX 必须引用具体页面 + FEA；无孤儿规则
 - 每条满足「触发条件 → 系统响应」，响应具体可测（无"合理提示"类模糊词）
 - 状态覆盖 loading/empty/error/disabled/timeout；反馈明确成功/失败/加载中三态
-- 不写数据校验（VL）、业务计算（BR）、权限规则、验收标准（AC）——命中即移交 function-description
+- 不写数据校验（VL）、业务计算（BR）、权限规则、验收标准（AC）——命中即移交对应规则类 work_item
 - 不写视觉细节（颜色、间距）—— 用 token
 
 ## 执行循环

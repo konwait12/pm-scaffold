@@ -1,3 +1,4 @@
+<!-- ⚠️ 已由 src/templates/stage-2-product/validation-rules.md 取代，本文件仅作历史参考 -->
 <!-- validation-rules output · auto-generated from sub-skill -->
 ---
 parent_artifact: FD-{REQ}

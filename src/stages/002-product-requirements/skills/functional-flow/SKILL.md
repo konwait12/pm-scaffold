@@ -102,6 +102,8 @@ Present: 每个 FEA 的主/支/异常流程摘要、已覆盖的路径、分支�
 | `references/reviewer-checklist.md` | 人工评审清单（Human Gate 用） | Human Gate 前 |
 | `references/source-handling.md` | 上游追溯规则（FEA-/ST-/SRC- 引用） | Intake/追溯时 |
 | `references/thinking-framework.md` | 思考透镜（Common Core + 功能流程领域 lens，必读） | 每次任务开始（必读） |
+| `references/functional-spec-five-elements.md` | 功能说明五要素技法（前置/实现逻辑/核心字段含状态生命周期/数据校验/后置） | Generate 功能详述时（按需） |
+| `references/flow-coverage-check.md` | 流程覆盖度检查技法（5 类流程覆盖 / 决策节点挂 BR-XXX / 步骤追溯 FEA-ST / Mermaid 分区规范 / to B 审批流示例） | Generate 画完流程自查或 Audit 前（按需） |
 
 ## 完成标准
 

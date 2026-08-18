@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PM 脚手架 · Skill 密度与 PRD 输出质量评估（2026-08-18）</title>
+<style>
+  :root{
+    --bg:#ffffff; --ink:#1f2933; --muted:#5b6770; --line:#e3e8ee;
+    --card:#f7f9fb; --accent:#2563eb; --good:#15803d; --warn:#b45309; --bad:#b91c1c;
+    --chip:#eef2f7;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC"," Microsoft YaHei",sans-serif;
+    color:var(--ink);background:var(--bg);line-height:1.65;font-size:14px}
+  .wrap{max-width:1180px;margin:0 auto;padding:28px 24px 60px}
+  h1{font-size:24px;margin:0 0 4px}
+  h2{font-size:19px;margin:34px 0 12px;padding-bottom:6px;border-bottom:2px solid var(--line)}
+  h3{font-size:15px;margin:20px 0 8px;color:var(--accent)}
+  .sub{color:var(--muted);font-size:13px;margin:0 0 6px}
+  .callout{border-left:4px solid var(--accent);background:var(--card);padding:14px 16px;border-radius:0 8px 8px 0;margin:14px 0}
+  .callout.bad{border-color:var(--bad);background:#fdf3f3}
+  .callout.good{border-color:var(--good);background:#f1f9f3}
+  .callout.warn{border-color:var(--warn);background:#fdf7ee}
+  table{border-collapse:collapse;width:100%;margin:12px 0;font-size:13px}
+  th,td{border:1px solid var(--line);padding:7px 9px;text-align:left;vertical-align:top}
+  th{background:var(--card);font-weight:600}
+  tr:nth-child(even) td{background:#fcfdfe}
+  .score{font-weight:700;text-align:center;width:54px}
+  .s9{color:var(--good)} .s8{color:var(--good)} .s7{color:var(--accent)} .s6{color:var(--warn)}
+  .tag{display:inline-block;background:var(--chip);border-radius:6px;padding:1px 8px;font-size:12px;margin:1px 2px}
+  .t-mod{color:#1d4ed8} .t-den{color:#b45309} .t-sp{color:#15803d}
+  .pill{font-size:11px;padding:1px 7px;border-radius:10px;color:#fff;font-weight:600}
+  .p0{background:var(--bad)} .p1{background:var(--warn)} .p2{background:#64748b}
+  code{background:#eef2f7;padding:1px 5px;border-radius:4px;font-size:12px}
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin:14px 0}
+  .stat{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 14px}
+  .stat b{display:block;font-size:22px;color:var(--accent)}
+  .stat span{color:var(--muted);font-size:12px}
+  .foot{color:var(--muted);font-size:12px;margin-top:30px;border-top:1px solid var(--line);padding-top:12px}
+  ul{margin:8px 0 8px 18px} li{margin:4px 0}
+  .bar{height:8px;background:var(--line);border-radius:4px;overflow:hidden;display:inline-block;width:90px;vertical-align:middle}
+  .bar i{display:block;height:100%;background:var(--accent)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<h1>PM 脚手架 · Skill 指令密度与 PRD 输出质量评估</h1>
+<p class="sub">评估日期 2026-08-18 ｜ 范围：<code>src/</code> 下 19 个 SKILL.md + <code>requirements/</code> 下 8 份 PRD ｜ 方法：逐文件通读 + 产物结构核验 + <code>consistency_check.py</code> 实跑</p>
+
+<div class="callout bad">
+<b>一句话结论：</b>Skill 指令层本身质量良好（均分 7.3/10，无稀疏、无过度密集到不可执行），但<b>脚手架发生了"骨架已变、产物未变"的脱节</b>——注册表现在定义 13 个精细 work item，而 8 份真实 PRD 全部建立在旧的「UX + FD 双包」4 产物模型上，导致新架构<b>零份端到端已验证 PRD</b>，且 <code>consistency_check</code> 仍 0 错误通过、未捕获该脱节。
+</div>
+
+<div class="grid">
+  <div class="stat"><b>19</b><span>Skill 文件（13 主干 + 3 支持 + 1 问题清单 + 2 能力）</span></div>
+  <div class="stat"><b>7.3</b><span>Skill 质量均分（1–10）</span></div>
+  <div class="stat"><b>8</b><span>真实 PRD 产物（其中 2 份为 simulated 存根）</span></div>
+  <div class="stat"><b>0</b><span>反映新 13-item 架构的已验证 PRD</span></div>
+  <div class="stat"><b>0</b><span>consistency_check 错误（未捕获脱节）</span></div>
+</div>
+
+<h2>一、最关键的发现：架构脱节（优先级高于单 Skill 密度）</h2>
+<p>本次"巨大变化"主要落在 <code>workflow-registry.json</code>（schema v7）：把产品需求阶段拆成 <b>9 个精细 work item</b>（feature-list / functional-flow / page-design / interaction-rules / business-rules / validation-rules / state-machine / exception-handling / acceptance-criteria），各自产出独立产物文件与 <code>FEA-/FL-/PD-/IX-/BR-/VL-/STATE-/EX-/AC-</code> 前缀。</p>
+<p>但 <b>运行时产物完全没有跟进</b>。证据：</p>
+<table>
+<tr><th>验证项</th><th>注册表/文档预期</th><th>实际产物（8 份需求一致）</th><th>判定</th></tr>
+<tr><td>产品需求阶段目录</td><td>9 个精细子目录（<code>01-feature-list</code>…<code>09-acceptance-criteria</code>）</td><td>仅 <code>01-product-ux</code> + <code>02-function-description</code> 两个包</td><td class="s6">❌ 脱节</td></tr>
+<tr><td>PRD 上游产物</td><td>12 个 work item 产物</td><td><code>upstream_artifact_ids: [BG-001, JS-001, UX-001, FD-001]</code>（仅 4 个）</td><td class="s6">❌ 脱节</td></tr>
+<tr><td>产物 ID 前缀</td><td><code>FEA-/STATE-/G-XXX</code></td><td><code>FUN-/SM-/product-ux/function-description</code>（每份 PRD 命中 21–39 次）</td><td class="s6">❌ 旧命名</td></tr>
+<tr><td>PRD 引用词汇</td><td><code>user-stories</code> / <code>interaction-rules</code></td><td><code>user-journey-and-stories</code> / <code>product-ux</code></td><td class="s6">❌ legacy</td></tr>
+<tr><td>一致性检查</td><td>应捕获骨架不一致</td><td><code>0 errors, 0 warnings</code></td><td class="s6">❌ 漏检</td></tr>
+</table>
+<div class="callout warn"><b>含义：</b>Skill 指令描述了一套 13 步精细流程，但所有 PRD 是<b>旧 4 包模型</b>下的产物。因此：① 新架构自身<b>没有被任何真实需求验证过</b>；② 评估"PRD 输出质量"须分两层——<b>单份写作质量高</b>，但<b>语料不代表当前脚手架</b>。</div>
+
+<h2>二、PRD 输出质量（按层评估）</h2>
+<h3>2.1 单份 PRD 的写作质量：高</h3>
+<table>
+<tr><th>需求</th><th>行/字节</th><th>status</th><th>reviewer</th><th>质量判定</th></tr>
+<tr><td>REQ-001-rsvp</td><td>161 / 10.0K</td><td>confirmed</td><td>Ayan（真实）</td><td class="s8">优：知识态标注、GWT 量化验收、追溯矩阵完整</td></tr>
+<tr><td>REQ-002-wecom</td><td>125 / 6.8K</td><td>confirmed</td><td>Ayan（真实）</td><td class="s8">优</td></tr>
+<tr><td>REQ-004-showmp</td><td>168 / 12.4K</td><td>confirmed</td><td>Ayan（真实）</td><td class="s8">优</td></tr>
+<tr><td>REQ-003-oab</td><td>172 / 12.6K</td><td>ready_for_human_review</td><td>待确认</td><td class="s7">良（诚实未冒充确认）</td></tr>
+<tr><td>REQ-005-wfj-mpes</td><td>186 / 15.8K</td><td>ready_for_human_review</td><td>待确认</td><td class="s7">良：且自曝缺口 UNK-003（G 编号未在背景定义）</td></tr>
+<tr><td>REQ-006-service-account</td><td>151 / 10.7K</td><td>ready_for_human_review</td><td>待确认</td><td class="s7">良</td></tr>
+<tr><td>REQ-007-insidemp</td><td>139 / 8.4K</td><td>simulated</td><td>测试评审</td><td class="s6">⚠ 模拟态存根</td></tr>
+<tr><td>REQ-008-bae</td><td>15 / 0.3K</td><td>simulated</td><td>测试评审</td><td class="s6">⚠ 空壳（仅 frontmatter）</td></tr>
+</table>
+<ul>
+<li><b>亮点（真功夫）：</b>已确认 PRD 由真人（Ayan）通过 <code>pipeline.py review --decision approve</code> 落 <code>confirmed</code> + SHA-256 ReviewRecord，未出现"AI 伪造确认"；知识状态（FACT/DECISION/ASSUMPTION/AI_INFERENCE/UNKNOWN/CONFLICT）逐条标注；验收标准用 Given/When/Then + 量化阈值（如"转化率 47%→60%"、"≤3s"）；追溯矩阵 G→ST→FEA→FUN→AC→BR 闭环；CONFLICT/UNKNOWN 显式保留并挂 ISS-/Q- 引用。</li>
+<li><b>风险：</b>REQ-007 / REQ-008 为 <code>simulated</code>、reviewer="测试评审"——属你此前要求清除的"伪造验证迹象"。REQ-008 仅 15 行，是空壳。</li>
+</ul>
+
+<h3>2.2 语料代表性：脱节（见第一节）</h3>
+<p>所有真实 PRD 都建立在旧 4 包模型上，无法作为"新 13-item 架构已可用"的证据。这正是之前评估指出的"文档脱节"风险的现实化。</p>
+
+<h2>三、每个 Skill 的指令密度与质量评分</h2>
+<p class="sub">密度判定：<span class="tag t-sp">适中</span> = 信息量匹配、可执行；<span class="tag t-den">偏密</span> = 独有内容多、略重；<span class="tag t-mod">模板壳</span> = 约 70% 为共享骨架、独有信号被稀释。注：19 个文件行数 101–131 高度均匀，是模板壳直接证据，无一个真正"sparse"。</p>
+<table>
+<tr><th>#</th><th>Skill</th><th>类型</th><th>行</th><th>分</th><th>密度</th><th>主要问题 / 信息缺口</th><th>改进建议</th></tr>
+<tr><td>1</td><td>issue-record</td><td>常驻</td><td>124</td><td class="score s8">8</td><td><span class="tag t-sp">适中</span></td><td>§13 阶段收口表 vs 模板声明 §1–§12 范围矛盾；B3 句重复</td><td>统一模板章节编号；共享句收敛</td></tr>
+<tr><td>2</td><td>project-background-goal</td><td>主干</td><td>104</td><td class="score s8">8</td><td><span class="tag t-mod">模板壳</span></td><td>G-XXX 目标 ID 未在本 Skill 显式定义（由下游反推）；boilerplate 高</td><td>本 Skill 显式定义 G-XXX；去重复</td></tr>
+<tr><td>3</td><td>requirement-restate</td><td>能力</td><td>118</td><td class="score s7">7</td><td><span class="tag t-mod">模板壳</span></td><td>legacy 命名 <code>user-journey-and-stories</code>；与 brainstorming 高度同构</td><td>对齐注册表名；与 brainstorming 去重</td></tr>
+<tr><td>4</td><td>user-journey</td><td>主干</td><td>109</td><td class="score s7">7</td><td><span class="tag t-mod">模板壳</span></td><td>独有内容仅约 25%；情绪曲线反模式是亮点</td><td>去重复；保留反模式</td></tr>
+<tr><td>5</td><td>user-stories</td><td>主干</td><td>109</td><td class="score s7">7</td><td><span class="tag t-mod">模板壳</span></td><td>注册表前缀 <code>US-</code> vs 内部 <code>ST-XXX</code> 双命名冲突</td><td>统一 ID 前缀（US-/ST- 二选一）</td></tr>
+<tr><td>6</td><td>feature-list</td><td>主干</td><td>104</td><td class="score s7">7</td><td><span class="tag t-mod">模板壳</span></td><td>WHAT-only 边界清晰；6 透镜/状态句/B3 全重复</td><td>共享规则单点化</td></tr>
+<tr><td>7</td><td>functional-flow</td><td>主干</td><td>108</td><td class="score s7">7</td><td><span class="tag t-mod">模板壳</span></td><td>注册表前缀 <code>FL-</code> 在本 Skill 几乎不出现</td><td>强化 FL- 使用或删前缀</td></tr>
+<tr><td>8</td><td>interaction-rules</td><td>主干</td><td>104</td><td class="score s7">7</td><td><span class="tag t-mod">模板壳</span></td><td>5 状态覆盖 + 规则书写格式引用是亮点</td><td>去重复</td></tr>
+<tr><td>9</td><td>page-design</td><td>主干</td><td>105</td><td class="score s7">7</td><td><span class="tag t-mod">模板壳</span></td><td>禁止视觉样式边界清晰</td><td>去重复</td></tr>
+<tr><td>10</td><td>business-rules</td><td>主干</td><td>104</td><td class="score s8">8</td><td><span class="tag t-den">偏密</span></td><td>EARS 句式强制 + 公式级反模式，是最可执行样例</td><td>保留；去 boilerplate</td></tr>
+<tr><td>11</td><td>validation-rules</td><td>主干</td><td>107</td><td class="score s8">8</td><td><span class="tag t-den">偏密</span></td><td>regex 示例 + NFR 分类，差异化质量高</td><td>保留；去 boilerplate</td></tr>
+<tr><td>12</td><td>state-machine</td><td>主干</td><td>104</td><td class="score s7">7</td><td><span class="tag t-mod">模板壳</span></td><td>本 Skill/注册表用 <code>STATE-</code>，prd-assembly 用 <code>SM-</code> 冲突</td><td>统一 STATE-/SM-</td></tr>
+<tr><td>13</td><td>exception-handling</td><td>主干</td><td>103</td><td class="score s7">7</td><td><span class="tag t-mod">模板壳</span></td><td>六类失败源枚举具体</td><td>去重复</td></tr>
+<tr><td>14</td><td>acceptance-criteria</td><td>主干</td><td>101</td><td class="score s8">8</td><td><span class="tag t-den">偏密</span></td><td>GWT + 量化阈值 + G-XXX 追溯，格式约束最硬</td><td>保留；最短文件却最密，可借鉴其密度</td></tr>
+<tr><td>15</td><td>tracking-plan</td><td>支持</td><td>113</td><td class="score s6">6</td><td><span class="tag t-mod">模板壳</span></td><td><b>幽灵父 Skill</b> <code>function-description</code>（注册表无此 work item）；前缀 <code>FUN-/G-X</code> 冲突；缺 B3 收口句</td><td>父 Skill 改 <code>feature-list</code>；补 B3；统一前缀</td></tr>
+<tr><td>16</td><td>prd-assembly</td><td>主干</td><td>131</td><td class="score s8">8</td><td><span class="tag t-den">偏密</span></td><td>评审分类法+追溯+分支校验，最不模板壳；但 <code>SM-/FUN-</code> 漂移</td><td>统一前缀；保留其 Think 自成体系写法</td></tr>
+<tr><td>17</td><td>brainstorming</td><td>能力</td><td>116</td><td class="score s7">7</td><td><span class="tag t-mod">模板壳</span></td><td>12 维度发散是真实价值；与 restate 同构</td><td>与 restate 去重</td></tr>
+<tr><td>18</td><td>competitive-research</td><td>支持</td><td>106</td><td class="score s7">7</td><td><span class="tag t-mod">模板壳</span></td><td>legacy <code>product-ux/user-journey-and-stories</code>；缺标准 issue-record 句</td><td>对齐命名；补标准句</td></tr>
+<tr><td>19</td><td>feasibility-analysis</td><td>支持</td><td>114</td><td class="score s8">8</td><td><span class="tag t-den">偏密</span></td><td>四维度+加权矩阵+敏感度，领域逻辑最扎实；legacy 词汇</td><td>对齐命名；保留领域逻辑</td></tr>
+</table>
+
+<h2>四、跨 Skill 密度分布与冗余分析</h2>
+<p>密度结论（回答"过高/过低"）：<b>没有过低的（无稀疏泛化），也没有高到不可执行的</b>。真正的问题是<b>重复内容制造的"伪密度"</b>——同一段规则被复制 16–18 次，边际信息被稀释：</p>
+<table>
+<tr><th>重复指令片段</th><th>出现次数</th><th>应归属</th></tr>
+<tr><td>6 思考透镜（First Principles…Reverse Validation）内联</td><td>18 / 19</td><td>本已在 <code>thinking-core.md</code>，应只引用</td></tr>
+<tr><td><code>Load References</code> 表（7 行同构）</td><td>19 / 19</td><td>可抽到共享片段</td></tr>
+<tr><td>状态句"draft/needs_user_input 绝不 confirmed"</td><td>17 / 19</td><td><code>contracts.md</code> 已定义</td></tr>
+<tr><td>"待确认/冲突→主动询问登记 issue-record"</td><td>~16 / 19</td><td>共享澄清机制</td></tr>
+<tr><td>"B3 收口：确认 issue-record §13"</td><td>16 / 19（tracking-plan 缺失）</td><td>共享</td></tr>
+<tr><td>"只有 pipeline.py review 可写 confirmed"</td><td>~16 / 19</td><td>共享</td></tr>
+</table>
+<div class="callout">估算：每个产品类 Skill 约 <b>25–30% 为独有内容，70–75% 为共享骨架</b>。模板化是双刃剑——结构一致、AI 易遵循，但也造成"看起来密、实际边际低"的观感，且 tracking-plan 因漏抄 B3 句反而破坏了一致性。</div>
+
+<h2>五、优先级最高的优化方向</h2>
+<table>
+<tr><th>优先级</th><th>方向</th><th>具体动作</th><th>为什么先做的理由</th></tr>
+<tr><td><span class="pill p0">P0</span></td><td>对齐产物与注册表</td><td>二选一：① 用新 13-item 架构重新跑通至少 1 份需求（REQ-001）生成端到端 PRD；② 若 UX+FD 双包才是真实运行时，回改 registry + AGENTS.md + 9 个子 Skill 匹配。</td><td>当前新架构零验证 PRD；不解决则整个脚手架的"巨大变化"无证据支撑、不可信。</td></tr>
+<tr><td><span class="pill p1"></span></td><td>消除词汇漂移</td><td>统一：<code>product-ux→page-design+interaction-rules</code>、<code>function-description→feature-list 等</code>、<code>FUN-→FEA-/FL-/BR-…</code>、<code>SM-↔STATE-</code>、<code>G-X↔G-XXX</code>、<code>US-↔ST-</code>；修 tracking-plan 的幽灵父 <code>function-description</code>。</td><td>跨 Skill/产物命名打架，直接降低 AI 遵循准确率与可追溯性。</td></tr>
+<tr><td><span class="pill p1"></span></td><td>收敛共享 boilerplate</td><td>6 透镜、状态句、issue-record/pipeline/B3 句收口到 <code>contracts.md</code>/<code>thinking-framework.md</code> 单点定义，各 Skill 只引用。</td><td>砍掉 ~70% 重复，提升真实指令密度，消除 tracking-plan 漏句类一致性断裂。</td></tr>
+<tr><td><span class="pill p2"></span></td><td>硬化一致性检查</td><td>给 <code>consistency_check.py</code> 加规则：每个需求产物目录须匹配 registry work_items；PRD <code>upstream_artifact_ids</code> ⊆ registry predecessors；SKILL.md 引用父 Skill 须存在于 registry。</td><td>当前 0 错误却漏检架构脱节——正好踩中项目自称要防的"文档脱节"。</td></tr>
+<tr><td><span class="pill p2"></span></td><td>清理模拟存根</td><td>REQ-007 / REQ-008（<code>simulated</code>，reviewer="测试评审"）明确标记为 test-only 或删除，符合此前"干净项目"要求。</td><td>避免伪造验证迹象回流。</td></tr>
+</table>
+
+<div class="callout good"><b>正向结论：</b>Skill 层与 PRD 写作层的能力是扎实的——流程闭环、知识状态标注、反模式+示例级格式约束、真实人工闸门都到位。团队不需要"重写 Skill"，而需要<b>对齐（架构/词汇）+ 去重（boilerplate）+ 硬化校验（consistency_check）</b>。把这三项做完，脚手架的"巨大变化"才真正落地为可验证的交付。</div>
+
+<h2 class="foot">方法学与边界</h2>
+<p class="foot">① 19 个 SKILL.md 全部通读并交叉核验引用路径；② 3 份 PRD 全文精读（REQ-001/005/008），8 份 status 与旧前缀全量统计；③ 8 个需求产物目录结构全量核验；④ <code>consistency_check.py</code> 实跑。Skill 评分由通读给出，feature-list 与本报告 PRD 样本经本人二次核验，与其余 18 项结论一致。本评估仅覆盖"指令密度 + PRD 输出质量"两维，未对 <code>src/scripts/</code> 运行时逐命令做功能回归。REQ-008 等 simulated 态按 test-only 对待。</p>
+
+</div>
+</body>
+</html>

@@ -1,13 +1,13 @@
 # Output Contract · page-design
 
-本子 Skill 产出父级 `product-ux.md` 的 **§2 页面设计**（§2.1 页面与步骤描述 + §2.2 HTML 原型）。不产出独立产物；所有内容直接写入父产物对应章节。
+本 work_item 产出独立产物 `page-design.md`，包含 **§页面设计**（页面与步骤描述 + HTML 原型）。
 
 ## ID 契约
 
 | ID 类型 | 格式 | 规则 |
 |---|---|---|
-| 页面/步骤 | `PG-XXX` | 每个页面一行；命名与 `functional-flow` 功能流程步骤、上游故事一致；不凭空新增 |
-| 功能 | `FEA-XXX` | 每行"所属功能"必须引用 function-description 的 feature-list 已登记的 FEA |
+| 页面/步骤 | `PG-XXX` | 每个页面一行；命名与 `functional-flow.md` 功能流程步骤、上游故事一致；不凭空新增 |
+| 功能 | `FEA-XXX` | 每行"所属功能"必须引用 `feature-list.md` 已登记的 FEA |
 | 操作 | `ACT-XXX`（可选） | 页面内操作可编号，便于交互规则 `IX-*` 引用触发元素 |
 | 冲突 | `CONFLICT-XXX` | 页面清单与流程/范围矛盾时显式保留，交人工裁决 |
 
@@ -41,16 +41,16 @@
 
 ## Required Section Content
 
-父产物 `## 2. 页面设计` 下：
+独立产物 `page-design.md` 的 `## 页面设计` 下：
 
-- `### 2.1 页面与步骤描述`：每行七列——页面/步骤、所属功能、入口、前置条件、主要内容、操作、下一状态。所有 `functional-flow` 功能流程步骤都有行；无孤儿页面。
-- `### 2.2 HTML 原型`：仅当需要沟通载体时勾选并填原型位置（`99-review/support/prototype/`）。**原型是沟通辅助，不替代 §2.1 文本。**
+- `### 页面与步骤描述`：每行七列——页面/步骤、所属功能、入口、前置条件、主要内容、操作、下一状态。所有 `functional-flow.md` 功能流程步骤都有行；无孤儿页面。
+- `### HTML 原型`：仅当需要沟通载体时勾选并填原型位置（`99-review/support/prototype/`）。**原型是沟通辅助，不替代页面与步骤描述文本。**
 
 若某页面内容未确认，写 `待确认` 并关联问题/未知 ID；**不删除行、不跳过流程步骤**。
 
 ## Downstream Handoff
 
-向 interaction-rules 与 function-description 传递：
+向 interaction-rules 与 PRD 汇总传递：
 
 ```text
 confirmed_version
@@ -67,4 +67,4 @@ source_ids                # FEA-XXX / ST-XXX / SRC-*
 
 ## Clarifications Session Contract
 
-沿用父产物 `## Clarifications` 表，一行一个 Session（`CL-NNN`），字段与父级一致。`reflow_target` 必须指向本子 Skill 影响的章节（`§2.1` / `§2.2`）。`audit_recheck` 为最后填写字段；若 `fail`，状态回退 `needs_user_input` 并开新一轮 Session。
+沿用独立产物 `page-design.md` 的 `## Clarifications` 表，一行一个 Session（`CL-NNN`），字段与产物其余章节一致。`reflow_target` 必须指向本 work_item 影响的章节（`§页面设计`）。`audit_recheck` 为最后填写字段；若 `fail`，状态回退 `needs_user_input` 并开新一轮 Session。

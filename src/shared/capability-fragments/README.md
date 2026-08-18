@@ -23,7 +23,7 @@
 
 ### 2. 怎么用（复制到 functional-flow / business-rules / acceptance-criteria）
 
-1. 将片段中 `FUN-XXX` 改为目标产物实际 FUN 编号（如 FUN-009）。
+1. 将片段中 `FEA-XXX` 改为目标产物实际 FEA 编号（如 FEA-009）。
 2. BR/AC/EX ID 改为目标产物内单调递增编号（如 BR-018 起顺延），避免与既有行冲突。
 3. 「来源」列保留 `capability-fragments/<file>` 路径，并可追加原始 SRC 追溯（如 `SRC-001 B03`）。
 4. 按目标案例 BRD 校准细则：字符上限、默认值、范围声明、模板文案、知识状态（FACT/DECISION/UNKNOWN）。

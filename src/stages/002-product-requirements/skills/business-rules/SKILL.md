@@ -98,6 +98,9 @@ Present 候选业务规则表、证据摘要（每条规则由哪个故事/流�
 | `references/reviewer-checklist.md` | 人工评审清单（Human Gate 用） | Human Gate 前 |
 | `references/source-handling.md` | 来源处理规则（SRC-* 登记与引用） | Intake/来源处理时 |
 | `references/thinking-framework.md` | 思考透镜（Common Core + 领域 lens，必读） | 每次任务开始（必读） |
+| `references/rbac-permission-matrix.md` | RBAC 权限矩阵技法（角色×资源×操作，to B 权限差异） | Generate 权限规则时（按需） |
+| `references/rule-decision-table.md` | 规则决策表技法（多条件判定结构化 + 完备性 6 项检查） | Generate 多条件组合规则时（按需） |
+| `references/ai-task-types.md` | AI 任务类型技法（6 分类 + 输入输出定义 + 评估要点） | Generate AI/算法类功能规则时（按需） |
 
 ## 完成标准
 

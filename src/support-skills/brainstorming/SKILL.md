@@ -110,6 +110,9 @@ Load `references/thinking-framework.md`（Common Core + 12 维度发散 lens）b
 | `references/source-handling.md` | 来源处理规则（SRC-* 登记与引用） | Intake/来源处理时 |
 | `references/thinking-framework.md` | 思考透镜（Common Core + 12 维度发散 lens，必读） | 每次任务开始（必读） |
 | `references/visual-companion.md` | 可选 viz 模式（仅全景发散 / 处置呈现时选用，纯增强不阻塞） | 全景发散 / Human Gate 呈现时（可选） |
+| `references/compliance-keywords.md` | 合规/安全风险关键词库（位置/UGC/金融等候选风险提示） | SCN 候选涉及敏感关键词时（按需） |
+| `references/v1-boundary.md` | V1 边界定义（必须 ≤3 个 + 三分类 + 轻量/中等/完整门槛） | 候选收敛定范围时（按需） |
+| `references/mode-dispatch.md` | 三模式快速分流 + 5 类最小信息提取 + 定向补问 | Preflight 判断任务形态时（按需） |
 
 ## 完成标准（Completion）
 

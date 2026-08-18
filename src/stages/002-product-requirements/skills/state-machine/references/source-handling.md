@@ -1,10 +1,10 @@
 # Source Handling · state-machine
 
-状态机产出的来源处理：从上游 §业务规则（BR-XXX）、`product-ux` 状态定义与流程、以及故事（ST-XXX）中提取状态语义时，如何登记、引用、裁决来源。
+状态机产出的来源处理：从上游 §业务规则（BR-XXX）、`functional-flow.md` 流程与 `page-design.md` 状态定义、以及故事（ST-XXX）中提取状态语义时，如何登记、引用、裁决来源。
 
 ## Source Register
 
-为每条状态/转移登记来源，并在父文档「来源追溯」中维护：
+为每条状态/转移登记来源，并在独立产物 `state-machine.md` 的「来源追溯」章节中维护：
 
 ```text
 source_id
@@ -63,5 +63,5 @@ notes
 ## Mapping To STATE Rows
 
 - 转移表的 `来源` 列填 `BR-XXX` / `IX-XXX`（上游确认的 artifact），不是材料 SRC-ID。
-- 材料 SRC-ID 走父文档「来源追溯」表，保证材料 → 规则/流程 → 状态机 三级链路可查。
+- 材料 SRC-ID 走 `state-machine.md` 的「来源追溯」表，保证材料 → 规则/流程 → 状态机 三级链路可查。
 - 上游 BR 或流程被改动后，同步检查所有引用该来源的 STATE-XXX 是否需要回流。

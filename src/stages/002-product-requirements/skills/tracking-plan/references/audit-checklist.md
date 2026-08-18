@@ -4,12 +4,12 @@
 
 - 所有必需标题存在（§1-§8 + `## Constitution Compliance`）。
 - 每个事件都有稳定 ID（`EV-NNN`）、`event_name`、`event_type`、FUN/IX/BR 引用、触发条件、属性、上报时机、平台、指标、目标与优先级。
-- 每个事件都链接到某个 FUN-XXX 与某个 G-X——无孤儿事件。
+- 每个事件都链接到某个 FEA-XXX 与某个 G-X——无孤儿事件。
 - 实质性主张引用上游产物 ID。阻断性问题被显式标记。
 
 ## 覆盖闸门（Coverage Gate）
 
-- 每个 P0 FUN-XXX 至少有一个 `must_track` 事件（覆盖矩阵硬约束）。
+- 每个 P0 FEA-XXX 至少有一个 `must_track` 事件（覆盖矩阵硬约束）。
 - 在 `ready_for_sub_skill_review` 时，覆盖矩阵状态列对 P0 功能不显示 `⚠️ 待补`。
 - 每个上线后必须可度量的 G-X 都有验证它所需的事件 + 属性。
 
@@ -44,7 +44,7 @@
 
 仅当剩余未知项非阻断、有负责人且包含延期风险时，才设置为 `conditional_review`。
 
-仅当所有其他闸门通过时，才设置为 `ready_for_sub_skill_review`。绝不设置 `confirmed`；只有 metric/data owner 加 function-description 父 Skill 可以设置。
+仅当所有其他闸门通过时，才设置为 `ready_for_sub_skill_review`。绝不设置 `confirmed`；只有 metric/data owner 加编排层（feature-list 等已确认上游）可以设置。
 
 ## 审计报告形态（Audit Report Shape）
 

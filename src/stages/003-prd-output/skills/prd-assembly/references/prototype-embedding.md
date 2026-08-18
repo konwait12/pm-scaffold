@@ -1,11 +1,11 @@
 # PRD 原型嵌入技法参考（Prototype Embedding）
 
 > 来源吸收：Trae `agile-pm-workflow` skill 的 PRD 内嵌原型技法（iframe 沙盒切片 + focus 沙盒锁定 + 版本切换器），经适配作为 prd-assembly 的可选增强。
-> 定位：PRD 是唯一交付物，文本规则是权威；本技法让 PRD 的「分功能详述」章节内嵌可交互原型切片，提升沟通与评审效率。**可选启用**：仅当上游 product-ux 已产出可点击原型（见 page-design 的 `prototype-techniques.md`）时使用。
+> 定位：PRD 是唯一交付物，文本规则是权威；本技法让 PRD 的「分功能详述」章节内嵌可交互原型切片，提升沟通与评审效率。**可选启用**：仅当上游 page-design 已产出可点击原型（见 page-design 的 `prototype-techniques.md`）时使用。
 
 ## 1. 适用条件
 
-- 上游 `product-ux` 已产出可点击 HTML 原型（`prototype/index.html`）。
+- 上游 `page-design` 已产出可点击 HTML 原型（`prototype/index.html`）。
 - PRD 分功能详述（§4）需要向业务/开发/测试直观展示交互。
 - 满足其一即建议启用：流程 ≥ 3 页、涉及状态分支、需要多方评审。
 
@@ -21,11 +21,11 @@
 
 ### 2.2 iframe 嵌入规范
 
-每个功能模块（FEA/FUN）的详述区嵌入对应原型切片：
+每个功能模块（FEA-XXX）的详述区嵌入对应原型切片：
 
 ```html
 <div class="feature-module">
-  <h3>功能：{FUN 名称}</h3>
+  <h3>功能：{FEA 名称}</h3>
   <div class="feature-content" style="display:flex; gap:20px;">
     <div class="logic-rules" style="flex:1;">
       <h4>交互流程图</h4>

@@ -103,6 +103,9 @@ description: Transform confirmed user journey into story cards with MoSCoW prior
 | `references/reviewer-checklist.md` | 人工评审清单（Human Gate 用） | Human Gate 前 |
 | `references/source-handling.md` | 来源处理规则（SRC-* 登记与引用） | Intake/来源处理时 |
 | `references/thinking-framework.md` | 思考透镜（Common Core + 领域 lens，必读） | 每次任务开始（必读） |
+| `references/use-case-spec-template.md` | UML 用例规格技法（参与者/前置后置/基本流/备选流/业务规则/数据说明） | Generate 用例规格时（按需） |
+| `references/job-story-and-moat.md` | JTBD 三层动机 + 竞争替代护城河矩阵 + Job Story 范式 + 出口闸门两问 | Generate 故事动机/优先级时（按需） |
+| `references/scenario-5elements.md` | 情景五要素（罗列/标题/描述/痛点快点/功能启发）驱动故事写法 | Generate 故事候选/场景上下文时（按需） |
 
 ## 完成标准（Completion）
 

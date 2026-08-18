@@ -1,3 +1,4 @@
+<!-- ⚠️ 已由 src/templates/stage-2-product/page-design.md 取代，本文件仅作历史参考 -->
 <!-- page-design output · auto-generated from sub-skill -->
 ---
 parent_artifact: UX-{REQ}

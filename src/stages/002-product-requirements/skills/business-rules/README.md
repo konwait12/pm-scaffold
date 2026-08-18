@@ -1,16 +1,16 @@
 # Business Rules · 业务规则
 
-> **Sub-skill of** [`function-description`](../SKILL.md)
+> **独立 work_item**（002 · 8，位于 feature-list / functional-flow / page-design / interaction-rules 之后）
 > **输出章节**：§BR（domain rules table）
 > **执行顺序**：1 / 5（首个执行，建立规则底座）
 
 ## 用途
 
-把 `product-ux` 中已确认的 FEA-XXX 翻译为**领域级业务规则**：约束、计算公式、策略。BR 是后续 §VL（字段校验）、§State（状态机）、§Exception（异常）、§AC（验收）的基础。
+把 `feature-list` 中已确认的 FEA-XXX 翻译为**领域级业务规则**：约束、计算公式、策略。BR 是后续 §VL（字段校验）、§State（状态机）、§Exception（异常）、§AC（验收）的基础。
 
 ## 输入
 
-- `product-ux` 的 confirmed artifact（包含 FEA-XXX 与 UX 步骤）
+- `feature-list` 的 confirmed artifact（包含 FEA-XXX 与优先级）
 - `project-background-goal` 的事实与决定（提供合规与业务策略上下文）
 
 ## 输出

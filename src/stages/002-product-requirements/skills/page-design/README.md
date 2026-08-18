@@ -1,17 +1,17 @@
 # Page Design · 页面设计
 
-> **Sub-skill of** [`product-ux`](../SKILL.md)
-> **输出章节**：父级 `product-ux.md` §2 页面设计（§2.1 页面与步骤描述 + §2.2 HTML 原型）
+> **独立 work_item**（002 · 6，位于 functional-flow 之后）
+> **输出章节**：§2 页面设计（§2.1 页面与步骤描述 + §2.2 HTML 原型）
 > **执行顺序**：2 / 3
 
 ## 用途
 
-为 `functional-flow`（function-description 的功能流程）中的每个页面/步骤指定**入口、前置条件、主要内容、操作、下一状态**的骨架。让 dev 能据此构建 UI 结构，让 interaction-rules 能在其上定义交互反馈。
+为 `functional-flow` 的功能流程中的每个页面/步骤指定**入口、前置条件、主要内容、操作、下一状态**的骨架。让 dev 能据此构建 UI 结构，让 interaction-rules 能在其上定义交互反馈。
 
 ## 输入
 
-- `functional-flow`（function-description）的 confirmed 功能流程（§2.1 主流程 / §2.2 分支流程 / §2.3 异常流程，含页面/步骤）
-- `function-description` 的 `feature-list` 功能清单（FEA-XXX）
+- `functional-flow` 的 confirmed 功能流程（§2.1 主流程 / §2.2 分支流程 / §2.3 异常流程，含页面/步骤）
+- `feature-list` 的功能清单（FEA-XXX）
 
 ## 产物
 
@@ -23,7 +23,7 @@
 ## 触发判断
 
 - 看到 "页面设计" / "页面结构" / "页面清单" / "入口/前置条件" → 触发
-- 看到 "功能流程" / "流程图" → **不触发**（走 `functional-flow`，在 function-description）
+- 看到 "功能流程" / "流程图" → **不触发**（走 `functional-flow`）
 - 看到 "交互规则" → **不触发**（走 `interaction-rules`）
 
 ## 关键约束

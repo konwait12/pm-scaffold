@@ -1,10 +1,10 @@
 # Source Handling · feature-list
 
-功能清单产出的来源处理：从已确认 `user-journey-and-stories`（ST-XXX）与范围基线中分解功能时，如何登记、引用、裁决来源。
+功能清单产出的来源处理：从已确认 `user-stories.md`（ST-XXX）与范围基线中分解功能时，如何登记、引用、裁决来源。
 
 ## Source Register
 
-为每个功能登记来源，并在父文档「来源追溯」中维护：
+为每个功能登记来源，并在独立产物 `feature-list.md` 的「来源追溯」章节中维护：
 
 ```text
 source_id
@@ -63,5 +63,5 @@ notes
 ## Mapping To FEA Rows
 
 - 功能行的 `所属故事 ST` / `来源` 列填 `ST-XXX`（上游确认的 artifact），不是材料 SRC-ID。
-- 材料 SRC-ID 走父文档「来源追溯」表，保证材料 → 故事 → 功能三级链路可查。
+- 材料 SRC-ID 走 `feature-list.md` 的「来源追溯」表，保证材料 → 故事 → 功能三级链路可查。
 - 上游故事被改动后，同步检查所有引用该故事的 FEA-XXX 是否需要回流。

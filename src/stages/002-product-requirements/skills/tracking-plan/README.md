@@ -1,6 +1,6 @@
 # tracking-plan（埋点需求分析）
 
-002 阶段 · function-description 的子 Skill · 列出每个 P0 功能的事件、属性、触发时机、上报时机、平台与关联指标。
+002 阶段 · 分支 skill（独立 work_item）· 列出每个 P0 功能的事件、属性、触发时机、上报时机、平台与关联指标。
 
 ## 用途
 
@@ -34,7 +34,7 @@ business-rules (BR)
 | 1 | 元数据 | 起草时 |
 | 2 | 事件清单（EV-XXX） | Generate 后 |
 | 3 | 事件属性字典 | Generate 后 |
-| 4 | 覆盖矩阵（每 FUN-XXX ≥1 must_track） | Audit 前 |
+| 4 | 覆盖矩阵（每 FEA-XXX ≥1 must_track） | Audit 前 |
 | 5 | 指标映射（event → G-X → metric） | Generate 后 |
 | 6 | PII 与数据保留 | Generate 后 |
 | 7 | 待确认问题 | Audit 前 |
@@ -45,7 +45,7 @@ business-rules (BR)
 - `event_name` 强制 snake_case verb_noun（如 `checkout_submit_click`）
 - `priority` 二选一：`must_track` / `nice_to_track`
 - `pii_flag` 四档：`false` / `quasi` / `true` / `sensitive`
-- 每个 P0 FUN-XXX 至少 1 个 `must_track`（覆盖矩阵硬约束）
+- 每个 P0 FEA-XXX 至少 1 个 `must_track`（覆盖矩阵硬约束）
 
 ## 验证
 

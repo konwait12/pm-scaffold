@@ -1,28 +1,28 @@
 # 可点击原型技法参考（Prototype Techniques）
 
 > 来源吸收：Trae `interactive-demo-factory` 与 `flow2demo` 两个 skill 的成熟技法，以及用户自制 skill `pm-phase-4.5-prototype` 的「先出页面清单经人工确认、再生成单文件 HTML」分步流程，经适配后作为 page-design 的可选落地能力。
-> 定位：page-design 产出页面骨架文本（§2 表格）是权威；本文档提供"把文字需求（页面骨架 + 交互/业务规则）转成可点击 HTML 原型"的技法，原型是 UX 的落地产物（UX 与原型一体），不是替代文本规则。
+> 定位：page-design 产出页面骨架文本（页面与步骤描述表格）是权威；本文档提供"把文字需求（页面骨架 + 交互/业务规则）转成可点击 HTML 原型"的技法，原型是 UX 的落地产物（UX 与原型一体），不是替代文本规则。
 > 触发：当 P0 功能流程 ≥ 3 页、或涉及状态分支、或需要利益相关方评审视觉/交互时，生成可点击原型。**分两步走：先出页面清单经人工确认，确认后才生成单文件 HTML**；主流程与全部分支场景（含异常/边界态）都要覆盖。
 
 ## 1. 输入映射（pm-scaffold 语境）
 
-> pm-phase-4.5-prototype 读取独立阶段文档（docs/2-用户故事、docs/3-用户旅程、docs/4-功能设计）；在 pm-scaffold 中，这些输入一律取自**已确认的上游产物**（product-ux.md 及下游功能设计），不读外部文档路径。
+> pm-phase-4.5-prototype 读取独立阶段文档（docs/2-用户故事、docs/3-用户旅程、docs/4-功能设计）；在 pm-scaffold 中，这些输入一律取自**已确认的上游产物**（page-design.md / interaction-rules.md 及下游功能设计），不读外部文档路径。
 
 | 外部 skill 输入 | pm-scaffold 对应产物 | 说明 |
 |---|---|---|
 | 用户故事（US） | ST-XXX 故事（confirmed） | 页面动机与目标用户 |
-| 用户旅程 | functional-flow（function-description）功能流程 §2.1 主流程 / §2.2 分支流程 / §2.3 异常流程 | 页面顺序、入口边与分支 |
-| 交互规则（IR） | interaction-rules 的 IX-XXX | 交互分支、弹窗、状态切换 |
-| 业务规则（BR） | function-description 的 BR-XXX / VL-XXX / AC-XXX | 状态判定与分支去向 |
-| 页面清单 | page-design §2.1 表格 | 原型页面节点，不发明页面 |
+| 用户旅程 | functional-flow.md 功能流程（主流程 / 分支流程 / 异常流程） | 页面顺序、入口边与分支 |
+| 交互规则（IR） | interaction-rules.md 的 IX-XXX | 交互分支、弹窗、状态切换 |
+| 业务规则（BR） | business-rules / validation-rules / acceptance-criteria 的 BR-XXX / VL-XXX / AC-XXX | 状态判定与分支去向 |
+| 页面清单 | page-design.md 页面与步骤描述表格 | 原型页面节点，不发明页面 |
 
-> **上游未 confirmed，不启动原型**：页面清单以 §2.1 为准；若 §2.1 缺失或未确认，先回流 page-design 补齐，不在原型阶段补页。
+> **上游未 confirmed，不启动原型**：页面清单以 page-design.md 页面与步骤描述为准；若其缺失或未确认，先回流 page-design 补齐，不在原型阶段补页。
 
 ## 2. 输入与保真度
 
 | 输入 | 必需 | 可接受格式 | 对产出的影响 |
 |---|---|---|---|
-| 页面清单 | ✅ | TXT / JSON / MD 列表 / Mermaid 节点 | 定义页面节点（page-design §2.1 表格可直接提供） |
+| 页面清单 | ✅ | TXT / JSON / MD 列表 / Mermaid 节点 | 定义页面节点（page-design.md 页面与步骤描述表格可直接提供） |
 | 流程描述 | ✅ | Mermaid / ASCII / 纯文本 / PDF / 图片 | 添加决策分支、状态机、跳转边 |
 | UI 参考图 | ⭕ | PNG / JPG / Sketch / Figma 截图 | 升级为高保真布局 |
 | 设计 token | ⭕ | CSS / JSON / Tailwind config | 覆盖默认品牌 |
@@ -34,8 +34,8 @@
 > 吸收自 pm-phase-4.5-prototype：先让页面清单经人工确认，再生成 HTML。页面清单是人工对"原型覆盖什么"的批准，没有这个确认就不写 HTML。
 
 **Step 1 提取与页面清单确认**
-1. **读需求**：从上游 product-ux.md 提取页面（§2.1）、功能清单（function-description 的 feature-list 产出 FEA-XXX）、交互规则（IX-XXX）、业务规则（function-description 的 BR/VL/AC-XXX）。
-2. **出页面清单**：按表格列出待生成页面，每行可追溯到 FEA-XXX 与 §2.1 行；编号 P01 起。
+1. **读需求**：从上游 page-design.md 提取页面（页面与步骤描述）、功能清单（feature-list.md 产出 FEA-XXX）、交互规则（interaction-rules.md 的 IX-XXX）、业务规则（business-rules / validation-rules / acceptance-criteria 的 BR/VL/AC-XXX）。
+2. **出页面清单**：按表格列出待生成页面，每行可追溯到 FEA-XXX 与 page-design.md 页面与步骤描述行；编号 P01 起。
 
 | 页面编号 | 页面名称 | 涉及 FEA | 涉及 IX | 涉及 BR | 状态 |
 |---|---|---|---|---|---|
@@ -76,8 +76,8 @@ requirements/REQ-XXX/99-review/support/prototype/
 
 ## 6. 生成与验证流程
 
-1. **解析输入**：从 product-ux.md §2.1 提取页面清单；从 function-description 的 feature-list 功能清单取 FEA-XXX；从 interaction-rules 的 IX 与 function-description 的 BR/VL/AC 提取分支与状态判定；冲突（分支指向不存在页面）先报告。
-2. **出页面清单并确认**：按 §3 Step 1 生成清单表格（涉及 FEA/IX/BR），与 §2.1 一一对应；等待人工确认后才进入生成。
+1. **解析输入**：从 page-design.md 页面与步骤描述 提取页面清单；从 feature-list.md 功能清单取 FEA-XXX；从 interaction-rules.md 的 IX 与 business-rules / validation-rules / acceptance-criteria 的 BR/VL/AC 提取分支与状态判定；冲突（分支指向不存在页面）先报告。
+2. **出页面清单并确认**：按 §3 Step 1 生成清单表格（涉及 FEA/IX/BR），与 page-design.md 页面与步骤描述一一对应；等待人工确认后才进入生成。
 3. **构建页面图**：`pages[]` 数组，每页含 id、name、category（entry/auth/detail/success/error）、所属 FEA。
 4. **重建 HTML**：不要用整页截图当背景图；导航、文本、卡片、按钮、列表用 HTML/CSS 重建；复杂图片（照片/地图/插画/品牌视觉）才用裁剪图。
 5. **连接点击**：真实元素可点击；状态依赖目标页先弹确认弹窗；多入口有演示入口页。
@@ -87,7 +87,7 @@ requirements/REQ-XXX/99-review/support/prototype/
 ## 7. 边界（Do Not）
 
 - 不生成生产代码（无真实数据库/后端调用）。
-- 不替代 page-design §2 文本规则——原型是沟通工具，文本规则是权威。
+- 不替代 page-design.md 文本规则——原型是沟通工具，文本规则是权威。
 - 不替业务方选择默认状态——状态依赖必须弹窗询问或显式标注 `待确认`。
 - 视觉细节（动效、配色微调）不是本步骤目标，除非人工明确要求高保真。
 - 原型只在 `99-review/support/prototype/` 落盘，不散落到工作区或项目其它路径。
@@ -95,7 +95,7 @@ requirements/REQ-XXX/99-review/support/prototype/
 ## 8. 质量自检清单
 
 - [ ] 页面清单先经人工确认，确认后才生成 HTML
-- [ ] 页面清单与 page-design §2.1 一一对应，无发明页面
+- [ ] 页面清单与 page-design.md 页面与步骤描述一一对应，无发明页面
 - [ ] 每个分支目的地存在于页面清单
 - [ ] 主流程可完整走通
 - [ ] 全部分支场景（正常/异常/边界/超时/取消/恢复）可演示
@@ -118,3 +118,27 @@ requirements/REQ-XXX/99-review/support/prototype/
 3. **结构真实与可交互**：交互感元素（按钮、标签页、表行、入口卡片）保持为真实可交互元素（结构可点，即使无需真实行为）；字段多的表格允许横向滚动容器 + 关键操作列 sticky，动作链接直接可见，不藏省略号。
 4. **标注义务**：参考图是证据（FACT），但「照着还原的布局是否满足业务需求」未确认——还原区域与解读必须标 **AI_INFERENCE**，随原型交人工确认；竞品截图登记 SRC-* 进入来源追溯；还原中缺失/存疑处标 `待确认`。
 5. **保真度边界**：参考图还原只提升视觉保真，不改变逻辑保真——页面清单以经人工确认的清单（§3 Step 1）为准，分支与状态判定以 BR/VL/AC 为准，不因参考图发明页面或状态。
+
+## 10. B 端 SaaS 审美自检（to B）
+
+> 来源吸收：PRD to Prototype skillhub 的"审美自检清单 + PC 端 SaaS 风格指引"，经适配后作为 to B 原型的视觉质量参考。仅当 page-design 生成 to B SaaS 原型时按需加载，不设全局闸门。
+
+### 10.1 PC 端 SaaS 风格指引
+
+| 维度 | 规范 |
+|---|---|
+| 布局 | Sidebar（导航）+ Header（用户/通知）+ Content 主区，三栏结构 |
+| 色彩 | 中性色（Slate/Zinc）为主，品牌色仅用于 CTA 与关键操作，不大面积铺色 |
+| 排版 | rem 单位，正文行高 ≥ 1.6，字号层级清晰（h1/h2/body/caption） |
+| 质感 | 多层柔和阴影、大圆角（8-12px），避免硬边与高饱和 |
+| 表格 | dense 模式，字段多时横向滚动 + 关键操作列 sticky，不藏省略号 |
+
+### 10.2 审美自检清单
+
+- [ ] 视觉接近 2025 现代 SaaS 产品，非过时后台样式
+- [ ] 中文完整性（无缺字/乱码/英文漏翻）
+- [ ] 数据表格可滚动 + 操作列 sticky
+- [ ] 权限/角色依赖页弹状态确认（业务语言命名，见 §4 规则 3）
+- [ ] 无调试/规则/路由面板泄漏进主 demo
+- [ ] 品牌色仅 CTA，中性色为主
+- [ ] 真实元素可点击，不只侧边栏

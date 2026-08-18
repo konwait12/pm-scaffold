@@ -61,9 +61,9 @@ PRD 汇总步骤的 Clarify Session 聚焦于解决聚合期间发现的不一�
 
 **模板**：
 ```
-功能 FUN-{xxx}「{function_name}」缺少非功能性需求。该功能涉及 {concern}（如个人信息处理/实时性要求），建议补充 NFR-{category}。
+功能 FEA-{xxx}「{function_name}」缺少非功能性需求。该功能涉及 {concern}（如个人信息处理/实时性要求），建议补充 NFR-{category}。
 - AI 初步判断：至少需要 {minimum_nfr}
-- 选项：A. 回到 `function-description` 补充 NFR（走变更回流） B. 在 PRD 中标注为已知缺口 C. 不需要（说明理由）
+- 选项：A. 回到上游独立产物（feature-list / functional-flow）补充 NFR（走变更回流） B. 在 PRD 中标注为已知缺口 C. 不需要（说明理由）
 - 影响：缺少 NFR 可能导致 {impact}
 - 回写位置：§9 不一致报告
 ```

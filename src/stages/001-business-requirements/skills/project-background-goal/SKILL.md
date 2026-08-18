@@ -98,6 +98,12 @@ description: Turn raw requirement materials into a sourced, human-confirmed busi
 | `references/reviewer-checklist.md` | 人工评审清单（Human Gate 用） | Human Gate 前 |
 | `references/source-handling.md` | 来源处理规则（SRC-* 登记与引用） | Intake/来源处理时 |
 | `references/thinking-framework.md` | 思考透镜（Common Core + 领域 lens，必读） | 每次任务开始（必读） |
+| `references/business-constraint-taxonomy.md` | 业务约束五分类技法（合规/时间/预算/组织/历史） | Generate 约束章节时（按需） |
+| `references/value-complexity-matrix.md` | 价值复杂度矩阵 + 北极星指标 | Generate 目标优先级时（按需） |
+| `references/positioning-stxswot.md` | 定位 ST×SWOT 交叉复合矩阵 + 定位声明五要素 | Generate 市场/目标章节时（按需） |
+| `references/stakeholder-power-interest.md` | 干系人权力×利益方格（四象限处理策略 + 沟通计划模板） | Generate 角色/干系人章节时（按需） |
+| `references/stakeholder-4class.md` | 干系人 4 类分类 + 高/中/低优先级 + 原始需求四维分析 | Generate 角色章节/立项分析时（按需） |
+| `references/planning-report.md` | 对齐汇报 4 要素 + 风险预案表 + 避坑检查清单 10 项 | 立项汇报/送审对齐时（按需） |
 
 ## 完成标准（Completion）
 

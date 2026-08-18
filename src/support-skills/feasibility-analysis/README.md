@@ -16,7 +16,7 @@
 
 ## 输入
 
-- 已 `confirmed` 的具体产品级方案（`product-ux` / `function-description`）或明确的可行性评估请求
+- 已 `confirmed` 的具体产品级方案（`feature-list` / `functional-flow` / `page-design` 等）或明确的可行性评估请求
 - 上游证据：background-goal、成本 / 约束 / 合规输入
 - 明确命名的决策人（decision-owner）
 

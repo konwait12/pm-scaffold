@@ -1,6 +1,6 @@
 # Output Contract · feature-list
 
-产出父级 `function-description.md` 产物的 §功能清单 章节（registry `output_section`: 功能清单）。输出格式必须匹配 `src/templates/stage-2-product/function-description.md` 中对应的表格。
+产出独立产物 `feature-list.md` 的 §功能清单 章节（registry `output_section`: 功能清单）。输出格式必须匹配 `src/templates/stage-2-product/feature-list.md` 中对应的表格。
 
 ## ID 契约
 
@@ -31,7 +31,7 @@
 | `confirmed` | 授权人工明确批准此版本 | Yes |
 | `superseded` | 更新的已确认基线替代本版本 | No |
 
-> 子 skill 永远不能向父产物写入 `confirmed`。只有 `pipeline.py review --decision approve` 可以。因此校验器的状态白名单排除 `confirmed`。
+> 独立 work_item 永远不能自行向产物写入 `confirmed`。只有 `pipeline.py review --decision approve` 可以。因此校验器的状态白名单排除 `confirmed`。
 
 ## 版本规则
 
@@ -53,7 +53,7 @@
 
 ## 必需章节
 
-对 §功能清单 区块使用 `src/templates/stage-2-product/function-description.md` 中的所有标题（功能规格概览、功能清单、待确认问题、来源追溯）。若某功能无已确认内容，写 `待确认` 并关联问题或未知 ID；不要删除标题。
+对 §功能清单 区块使用 `src/templates/stage-2-product/feature-list.md` 中的所有标题（功能规格概览、功能清单、待确认问题、来源追溯）。若某功能无已确认内容，写 `待确认` 并关联问题或未知 ID；不要删除标题。
 
 > 占位符 `待确认` 保留在中文 PRD 约定中。译者可在纯英文产物中使用 `[NEEDS CLARIFICATION]`，只要校验器识别两种形式。
 
@@ -66,7 +66,7 @@
 
 ## 下游交接
 
-为下游子 skill 输出一份紧凑交接：
+为下游 work_item 输出一份紧凑交接：
 
 ```text
 confirmed_features          # FEA-XXX list
@@ -77,11 +77,11 @@ open_nonblocking_unknowns
 source_ids
 ```
 
-不要在本交接中创建 UX 流程（→ `function-description`/`functional-flow`）、交互规则（→ `interaction-rules`）、页面骨架（→ `page-design`）、业务规则（→ `business-rules`）、字段校验（→ `validation-rules`）、状态表（→ `state-machine`）、异常路径（→ `exception-handling`）或验收依据（→ `acceptance-criteria`）。
+不要在本交接中创建 UX 流程（→ `functional-flow`）、交互规则（→ `interaction-rules`）、页面骨架（→ `page-design`）、业务规则（→ `business-rules`）、字段校验（→ `validation-rules`）、状态表（→ `state-machine`）、异常路径（→ `exception-handling`）或验收依据（→ `acceptance-criteria`）。
 
 ## 澄清会话契约
 
-每个 Clarify Session 在父产物的 `## Clarifications` 章节记录为一行结构化数据。每个 Session 一行，按 session id 排序：
+每个 Clarify Session 在独立产物 `feature-list.md` 的 `## Clarifications` 章节记录为一行结构化数据。每个 Session 一行，按 session id 排序：
 
 | Field | Meaning | Example |
 |---|---|---|

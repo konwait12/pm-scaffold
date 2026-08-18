@@ -1,15 +1,15 @@
 # Output Contract · exception-handling
 
-## Position In Parent
+## Position In Artifact
 
-Produces the `#### 异常与失败处理` subsection of each `FUN-XXX` block in the parent `function-description.md` §2 分功能详述.
-Output format must match the table in `src/templates/stage-2-product/function-description.md`（在模板列基础上增加 ID 与来源列以保证追溯）。
+Produces the `#### 异常与失败处理` subsection of each `FEA-XXX` block in the independent `exception-handling.md`.
+Output format must match the table in `src/templates/stage-2-product/exception-handling.md`（在模板列基础上增加 ID 与来源列以保证追溯）。
 
 ## EX-XXX Row Contract
 
 | 列 | 要求 |
 |---|---|
-| ID | `EX-XXX`，全局唯一、编号连续（EX-001…），挂在所属 `FUN-XXX` 下，不与 BR-/VL-/ST-/AC-/IX- 混淆 |
+| ID | `EX-XXX`，全局唯一、编号连续（EX-001…），挂在所属 `FEA-XXX` 下，不与 BR-/VL-/ST-/AC-/IX- 混淆 |
 | 场景 | 该失败的短名（网络超时 / 余额不足 / 并发冲突…），与该函数真实职责一致 |
 | 触发条件 | 可判真伪，能写进自动化测试分支；一行一个事实，不与系统行为混写 |
 | 系统行为 | 失败发生后系统做什么（拦截 / 降级 / 回滚 / 阻断）；禁止空白 |
@@ -20,7 +20,7 @@ Output format must match the table in `src/templates/stage-2-product/function-de
 ## ID And Prefix Rules
 
 - 保持 `EX-` 前缀；不与 `BR-` / `VL-` / `ST-` / `AC-` / `IX-` 混淆。
-- 每条 `EX-XXX` 必须挂在某个 `FUN-XXX` 下，无游离孤儿异常。
+- 每条 `EX-XXX` 必须挂在某个 `FEA-XXX` 下，无游离孤儿异常。
 - 与已确认的 `BR` 异常分支 / `ST` 异常路径建立关联（关联 BR / 关联状态迁移），下游 `AC` 才能覆盖验证。
 - 无跳号、无重复；一条 EX 只描述一种失败，多个失败拆成多行。
 

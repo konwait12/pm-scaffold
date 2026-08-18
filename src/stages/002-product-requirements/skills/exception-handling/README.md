@@ -1,6 +1,6 @@
 # Exception Handling · 异常处理
 
-> **Sub-skill of** [`function-description`](../SKILL.md)
+> **独立 work_item**（002 · 11，位于 state-machine 之后）
 > **输出章节**：§Exception（failure modes + user-visible recovery）
 > **执行顺序**：4 / 5
 

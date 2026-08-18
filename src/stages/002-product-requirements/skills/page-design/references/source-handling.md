@@ -1,17 +1,17 @@
 # Source Handling · page-design
 
-本子 Skill 消费的是**已确认的上游产物**而非原始材料。因此"来源"指：上游 `functional-flow`（function-description）功能流程（§2.1 主流程 / §2.2 分支流程 / §2.3 异常流程）、`feature-list`（function-description）功能清单、`user-journey-and-stories` 故事，以及更早的 `SRC-*` 原始来源。
+本 work_item 消费的是**已确认的上游产物**而非原始材料。因此"来源"指：上游 `functional-flow.md` 功能流程（主流程 / 分支流程 / 异常流程）、`feature-list.md` 功能清单、`user-stories.md` 故事，以及更早的 `SRC-*` 原始来源。
 
 ## Upstream Register
 
 进入 Generate 前登记上游引用：
 
 ```text
-page_id            # PG-XXX，本子 Skill 生成的页面行 ID
-flow_step          # 来自 functional-flow（function-description）功能流程的步骤（页面挂在哪个步骤上）
-feature_id         # FEA-XXX，来自 function-description 的 feature-list
+page_id            # PG-XXX，本 work_item 生成的页面行 ID
+flow_step          # 来自 functional-flow.md 功能流程的步骤（页面挂在哪个步骤上）
+feature_id         # FEA-XXX，来自 feature-list.md 功能清单
 story_id           # ST-XXX，页面追溯的故事
-upstream_version   # functional-flow / 上游产物的 confirmed 版本
+upstream_version   # functional-flow.md / 上游产物的 confirmed 版本
 source_ids         # 透传上游故事引用的原始 SRC-*
 ```
 
@@ -34,7 +34,7 @@ source_ids         # 透传上游故事引用的原始 SRC-*
 - 标 `CONFLICT-XXX` 并停止：若该冲突改变 P0 页面清单或主路径，交给产品负责人裁决。
 - **绝不静默选择更方便的方案。**
 
-上游产物的版本关系：`functional-flow` 功能流程为 `confirmed` 才有权作为页面输入；`superseded` 版本的流程不采用，除非确认的变更记录明确沿用。
+上游产物的版本关系：`functional-flow.md` 功能流程为 `confirmed` 才有权作为页面输入；`superseded` 版本的流程不采用，除非确认的变更记录明确沿用。
 
 ## Research Boundary
 
@@ -48,6 +48,6 @@ source_ids         # 透传上游故事引用的原始 SRC-*
 - 从会议纪要中的页面描述，区分"确认过的页面"与"讨论中的页面"。
 - 从多版本设计稿提取页面时，保留版本与页次，注明后版是否覆盖前版。
 
-## Traceability Table（父产物 §9）
+## Traceability Table（独立产物 §来源追溯）
 
-每个页面的落位填入父产物 `## 9. 来源追溯`：来源 ID、材料/位置、关键内容、本文落位或排除理由。七列中的内容与来源的对应关系要在 §9 中可查。
+每个页面的落位填入独立产物 `page-design.md` 的 `## 来源追溯`：来源 ID、材料/位置、关键内容、本文落位或排除理由。七列中的内容与来源的对应关系要在 §来源追溯 中可查。

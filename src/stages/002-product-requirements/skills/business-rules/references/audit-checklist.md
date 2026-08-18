@@ -1,16 +1,16 @@
 # Audit Checklist · business-rules
 
-每次提交给父级 function-description 前自审。先跑确定性校验器，再逐条过本清单。
+每次提交 business-rules.md 产物前自审。先跑确定性校验器，再逐条过本清单。
 
 ## Structural Gate
 
-- [ ] 父文档 `function-description.md` 中存在 `## 2. 分功能详述` 章节，且业务规则表位于各 `FUN-XXX` 块内的「业务规则」小节
+- [ ] 独立产物 `business-rules.md` 中包含「业务规则」章节，且每条 `BR-XXX` 都引用某个 `FEA-XXX`
 - [ ] 至少存在一条 `BR-\d+` 标识，无「待确认」占位 ID
 - [ ] BR ID 全局唯一、编号连续（BR-001、BR-002…），无跳号、无重复
-- [ ] 每条 `BR-XXX` 都挂在某个 `FUN-XXX` 之下，没有游离在函数块之外的孤儿规则
+- [ ] 每条 `BR-XXX` 都引用某个 `FEA-XXX`，没有游离于所有功能之外的孤儿规则
 - [ ] 规则表头列与模板一致：`ID | 规则描述 | 类型 | 触发条件 | 约束/逻辑 | 来源`
 - [ ] 元数据含 artifact ID、version、status、owner、reviewer、日期或 `待确认` / `TBD`
-- [ ] `python3 scripts/validate_artifact.py <function-description.md> --json` 返回 `"ok": true`
+- [ ] `python3 scripts/validate_artifact.py <business-rules.md> --json` 返回 `"ok": true`
 
 ## Source Coverage Gate
 
@@ -21,7 +21,7 @@
 
 ## Content Gate（内容门）
 
-- [ ] 每个 P0 `FUN-XXX` 至少有一条 `BR-XXX`；P1 函数按需覆盖，无遗漏也无空壳占位
+- [ ] 每个 P0 `FEA-XXX` 至少有一条 `BR-XXX`；P1 功能按需覆盖，无遗漏也无空壳占位
 - [ ] 每条规则能回答"系统必须计算什么 / 强制什么"，是可直接执行的领域逻辑，而非泛泛描述
 - [ ] 每条规则的六列字段全部填写，`触发条件` 与 `约束/逻辑` 没有留空或写「待确认」
 - [ ] `类型` 已按 计算 / 约束 / 条件 / 权限 / 时序 正确归类，无「其他」「待确认」等模糊分类
@@ -39,16 +39,16 @@
 - [ ] 未把异常、失败、重试、超时、回滚处理写成业务规则（→ exception-handling）
 - [ ] 未写可测验收用例（→ acceptance-criteria `AC-XXX`）
 - [ ] 未引入架构、API、数据库表结构、测试实现细节等实现层内容
-- [ ] 与交互规则 `IX-XXX` 的内容无重复定义，领域策略只落在本子技能
+- [ ] 与交互规则 `IX-XXX` 的内容无重复定义，领域策略只落在本 work_item
 
 ## Semantic Gate（语义门）
 
 - [ ] 从上游推断、而非来源明确写明的规则，已标注 `AI_INFERENCE`，未冒充 `FACT`
 - [ ] 来源确认过的规则标注 `FACT` 或 `DECISION`，并有出处
-- [ ] 无法确认的约束标注 `UNKNOWN` 并登记到父文档「待确认问题」，不静默编造
+- [ ] 无法确认的约束标注 `UNKNOWN` 并登记到 business-rules.md「待确认问题」，不静默编造
 - [ ] 触发条件与约束/逻辑足够具体，开发者无需追问即可实现
 - [ ] 规则存在性可反向追溯：每条 BR 都能回答"它支撑哪个功能/故事/目标"
-- [ ] 规则总量与函数量级匹配——函数多而规则为零，或规则大量冗余重复，都是危险信号
+- [ ] 规则总量与功能量级匹配——功能多而规则为零，或规则大量冗余重复，都是危险信号
 
 ## Quality Lenses
 
@@ -79,9 +79,9 @@
 
 - [ ] 阻塞性确认项（影响规则定义的关键约束）均已有明确答案，非阻塞项已注明原因
 - [ ] 无 `待确认` 残留在已确认的规则行内；仍有占位的内容已降级为 `UNKNOWN` 并给出负责人
-- [ ] 下游子技能（validation-rules / state-machine / exception-handling）可无歧义地消费本产出
-- [ ] 与父级编排约定一致（按 `P0 FUN` 驱动、先于其他规则类子技能产出），无越权写入
-- [ ] 本子技能产出已同步回父文档 §业务规则 小节，且未改动其他小节
+- [ ] 下游 work_item（validation-rules / state-machine / exception-handling）可无歧义地消费本产出
+- [ ] 与编排约定一致（按 `P0 FEA` 驱动、先于其他规则类 work_item 产出），无越权写入
+- [ ] 本 work_item 产出已写入独立产物 `business-rules.md`，且未改动其他 work_item 产物
 
 ## Audit Report Shape
 

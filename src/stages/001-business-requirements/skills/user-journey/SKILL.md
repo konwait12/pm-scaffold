@@ -7,7 +7,7 @@ description: Build a lifecycle-by-role user journey map — lifecycle model, rol
 
 ## 目的与边界（Purpose And Boundary）
 
-通过角色视角绘制用户完成生命周期目标所经历的路程/阶段，识别每个阶段的行为、触点、痛点与情绪波动，并将痛点转化为机会。输出独立的 `user-journey.md`，不填充任何父产物的章节。
+通过角色视角绘制用户完成生命周期目标所经历的路程/阶段，识别每个阶段的行为、触点、痛点与情绪波动，并将痛点转化为机会。输出独立的 `user-journey.md`，不填充任何其他产物的章节。
 
 **Do not** 编写用户故事卡片（→ `user-stories`）、建立范围基线（→ `user-stories`）、设计功能清单（→ `feature-list`）、定义页面或交互（→ `page-design`/`interaction-rules`）。本 skill 只绘制"用户如何经历这段旅程"——行为与情绪的客观映射。
 
@@ -103,6 +103,7 @@ description: Build a lifecycle-by-role user journey map — lifecycle model, rol
 | `references/reviewer-checklist.md` | 人工评审清单（Human Gate 用） | Human Gate 前 |
 | `references/source-handling.md` | 来源处理规则（SRC-* 登记与引用） | Intake/来源处理时 |
 | `references/thinking-framework.md` | 思考透镜（Common Core + 领域 lens，必读） | 每次任务开始（必读） |
+| `references/journey-matrix-and-mot.md` | 旅程矩阵与关键时刻技法（角色×阶段 MECE 矩阵 / 情绪曲线 MOT / 触点矩阵 / 痛点→机会） | 多角色多阶段旅程或定位 MOT 时（按需） |
 
 ## 完成标准（Completion）
 

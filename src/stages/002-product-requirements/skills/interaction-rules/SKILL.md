@@ -98,6 +98,10 @@ Present: 按层分组的 IX 规则清单（入口/身份、核心操作、反馈
 | `references/rule-writing-format.md` | 交互规则书写格式（段落式，必读） | 写任何规则前 |
 | `references/source-handling.md` | 上游追溯规则（FEA-/PG-/SRC- 引用） | Intake/追溯时 |
 | `references/thinking-framework.md` | 思考透镜（Common Core + 交互规则领域 lens，必读） | 每次任务开始（必读） |
+| `references/flow-five-stage.md` | 交互流程五段式技法（触发/执行中/成功/失败/边界条件） | Generate 交互流程时（按需） |
+| `../page-design/references/ui-copywriting-rules.md` | 复用 UI 文案规范技法（5 原则 + 9 场景检查清单） | 写交互反馈/提示文案时（按需，跨 skill 复用） |
+| `../page-design/references/high-freq-missing-10.md` | 复用高频遗漏 10 项技法（评审前逐项核验缺项） | 交互规则定稿/评审前（按需，跨 skill 复用） |
+| `references/interaction-feedback-rules.md` | 交互反馈规范技法（四态反馈 + 防重复提交 + 破坏性两档确认 + 权限不足三问 + 表单 5 态示例） | Generate 反馈类 IX 规则 / Audit 前核对反馈完备性时（按需） |
 
 ## 完成标准
 

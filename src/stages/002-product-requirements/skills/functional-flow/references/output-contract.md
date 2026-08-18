@@ -1,12 +1,12 @@
 # Output Contract · functional-flow
 
-本子 Skill 产出父级 `function-description.md` 的 **§功能流程** 章节（主流程 / 分支流程 / 异常流程）。不产出独立产物；所有内容直接写入父产物对应章节。
+本 work_item 产出独立产物 `functional-flow.md`，包含 **§功能流程**（主流程 / 分支流程 / 异常流程）。
 
 ## ID 契约
 
 | ID 类型 | 格式 | 规则 |
 |---|---|---|
-| 功能 | `FEA-XXX` | 每个流程必须归属父级功能清单已登记的 FEA；不得引入清单之外的孤儿功能 |
+| 功能 | `FEA-XXX` | 每个流程必须归属 `feature-list.md` 功能清单已登记的 FEA；不得引入清单之外的孤儿功能 |
 | 故事 | `ST-XXX` | 流程的每个步骤必须可回溯到已确认的用户故事；无法回溯的步骤标 `AI_INFERENCE` |
 | 步骤 | `FL-XXX`（图内节点） | 图内业务步骤/状态节点可编号，命名与功能清单、故事原文一致，不自造术语 |
 | 冲突 | `CONFLICT-XXX` | 上游范围与流程表达矛盾时显式保留，交人工裁决 |
@@ -41,7 +41,7 @@
 
 ## Required Section Content
 
-父产物 `## 功能流程` 下，按功能组织：
+独立产物 `functional-flow.md` 的 `## 功能流程` 下，按功能组织：
 
 - **主流程**：每个 P0 FEA ≥1 张 Mermaid 图，覆盖 起点 → 业务步骤序列 → 决策 → 出口/终止。
 - **分支流程**：以文本/表列出每个决策点的分支条件，条件须标注、互斥、可穷举。
@@ -62,7 +62,7 @@ source_ids           # FEA-XXX / ST-XXX / SRC-*
 
 ## Downstream Handoff
 
-向 business-rules / state-machine / exception-handling 等下游子技能传递：
+向 business-rules / state-machine / exception-handling 等下游 work_item 传递：
 
 ```text
 confirmed_version
@@ -79,4 +79,4 @@ source_ids                # ST-XXX / FEA-XXX / SRC-*
 
 ## Clarifications Session Contract
 
-沿用父产物 `## Clarifications` 表，一行一个 Session（`CL-NNN`），字段与父级一致。`reflow_target` 必须指向本子 Skill 影响的章节（`§功能流程`）。`audit_recheck` 为最后填写字段；若 `fail`，状态回退 `needs_user_input` 并开新一轮 Session。
+沿用独立产物 `functional-flow.md` 的 `## Clarifications` 表，一行一个 Session（`CL-NNN`），字段与产物其余章节一致。`reflow_target` 必须指向本 work_item 影响的章节（`§功能流程`）。`audit_recheck` 为最后填写字段；若 `fail`，状态回退 `needs_user_input` 并开新一轮 Session。

@@ -26,7 +26,7 @@ description: 跨阶段共享的问题清单 — 集中登记 BLK / RSK / DEC / I
 
 输出：`issue-record.md`（项目级过程记录，`99-review/support/` 下，跨阶段共享），用模板 `assets/issue-record-template.md`（§1-§12），含按类别（BLK/RSK/DEC/INF/CLS/OUT）与状态分组的表。
 
-分析前加载 `references/thinking-framework.md`（其中引用 `src/framework/thinking-core.md` §1 必用透镜 + 领域 lens）。起草前加载 `references/output-contract.md`。移交前加载 `references/audit-checklist.md` 和 `references/reviewer-checklist.md`。在 Intake 登记 SRC-* 时加载 `references/source-handling.md`。评审前运行 `scripts/validate_artifact.py <artifact> --json`。
+分析前加载 `references/thinking-framework.md`（其中引用 `src/framework/thinking-core.md` §1 必用透镜 + 领域 lens）。起草前加载 `references/output-contract.md`。移交前加载 `references/audit-checklist.md` 和 `references/reviewer-checklist.md`。在 Intake 登记 SRC-* 时加载 `references/source-handling.md`。在 Clarify 识别确认信号 / 跑 MRC 门禁时按需加载 `src/shared/clarify/references/confirmation-signal-technique.md`（见 `thinking-core.md §5` MRC 门禁/确认信号技法）。评审前运行 `scripts/validate_artifact.py <artifact> --json`。
 
 ## 思考提示（按阶段）
 
@@ -118,6 +118,8 @@ description: 跨阶段共享的问题清单 — 集中登记 BLK / RSK / DEC / I
 | `references/reviewer-checklist.md` | 人工评审清单（Human Gate 用） | Human Gate 前 |
 | `references/source-handling.md` | 来源处理规则（SRC-* 登记与引用） | Intake/来源处理时 |
 | `references/thinking-framework.md` | 思考透镜（Common Core + 领域 lens，必读） | 每次任务开始（必读） |
+| `src/shared/clarify/references/confirmation-signal-technique.md` | MRC 门禁与确认信号技法（白/灰/黑信号识别，Clarify 收敛） | Clarify 识别确认信号 / 跑门禁时（按需） |
+| `references/issue-communication-and-escalation.md` | 问题沟通与升级技法（坏消息公式 / 冲突 4 模式 / 风险分级与 7-14 天升级阈值 / 四象限复盘 / Human Gate 呈现模板） | 通报坏消息、识别冲突、判断升级或 Human Gate 前（按需） |
 
 ## 完成标准
 

@@ -1,24 +1,24 @@
 # Output Contract · acceptance-criteria
 
-## Position In Parent
+## Position In Artifact
 
-Produces the `#### 验收依据` subsection of each `FUN-XXX` block in the parent `function-description.md` §2 分功能详述.
-Output format must match the table in `src/templates/stage-2-product/function-description.md`。
+Produces the `## 1. 验收标准` section of the standalone `acceptance-criteria.md`, with each `AC-XXX` row referencing a `FEA-XXX`.
+Output format must match the table in `src/templates/stage-2-product/acceptance-criteria.md`。
 
 ## AC-XXX Row Contract
 
 | 列 | 要求 |
 |---|---|
-| ID | `AC-XXX`，全局唯一、编号连续（AC-001…），挂在所属 `FUN-XXX` 下，不与 BR-/VL-/ST-/EX-/IX- 混淆 |
+| ID | `AC-XXX`，全局唯一、编号连续（AC-001…），引用所属 `FEA-XXX`，不与 BR-/VL-/ST-/EX-/IX- 混淆 |
 | 验收标准 | Given（前置条件）→ when（动作/事件）→ then（可观测结果）三段式，缺一不可 |
 | 量化阈值 | 可量化的结果必须有具体阈值（≤ 2 秒 / ≥ 99.9% / 0 元），可回溯 `G-XXX` |
 | 来源目标 | Stage 1 目标 `G-XXX` ID；无对应目标标 `待确认` 或 `UNKNOWN` |
-| 优先级 | 与该 FUN 优先级一致（P0 高优），无 P0 全部低优、P1 反而高优的错位 |
+| 优先级 | 与该 FEA 优先级一致（P0 高优），无 P0 全部低优、P1 反而高优的错位 |
 
 ## ID And Prefix Rules
 
 - 保持 `AC-` 前缀；不与 `BR-` / `VL-` / `ST-` / `EX-` / `IX-` 混淆。
-- 每条 `AC-XXX` 挂在某个 `FUN-XXX` 下；全局唯一、无跳号。
+- 每条 `AC-XXX` 引用某个 `FEA-XXX`；全局唯一、无跳号。
 - 一条 AC = 一个行为（原子）；多个 when/then 拆成多条，让失败时能精准定位到是哪一步不满足。
 
 ## Knowledge-State Labels
@@ -37,11 +37,11 @@ Output format must match the table in `src/templates/stage-2-product/function-de
 - 状态机：`draft → needs_user_input / conditional_review → ready_for_human_review → confirmed`；`confirmed` 只能由 `pipeline.py review --decision approve` 产生，AI 不得设置。
 - 起始候选 `v0.1`；人工要求修订则 `v0.2`、`v0.3`；首个确认基线 `v1.0`。
 - 无确认内容写 `待确认` 并链接到问题/未知 ID，不删除列。
-- 无法量化的验收降级为 `UNKNOWN` 并登记到父文档「待确认问题」，不静默编造阈值。
+- 无法量化的验收降级为 `UNKNOWN` 并登记到 acceptance-criteria.md「待确认问题」，不静默编造阈值。
 
 ## Downstream Handoff
 
-按函数输出紧凑 handoff：
+按功能输出紧凑 handoff：
 
 ```text
 confirmed_function_ids

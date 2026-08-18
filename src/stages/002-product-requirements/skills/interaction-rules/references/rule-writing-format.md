@@ -8,8 +8,8 @@
 > **IR 呈现 BR 的结果，BR 定义 IR 的依据，埋点记录两者的全过程。**
 
 - 交互规则（IX）描述「用户做什么 → 系统怎么反馈 → 异常怎么提示 → 边界怎么处理」，站在**用户视角**。
-- 业务规则（BR/VL，属于 function-description）描述「输入什么 → 怎么判断 → 输出什么 → 错了怎么办」，站在**系统视角**。
-- 两者必须分离：IX 只写页面层；一旦命中数据校验 / 计算 / 权限 / 状态机判定，移交给 function-description。
+- 业务规则（BR/VL，属于 business-rules / validation-rules）描述「输入什么 → 怎么判断 → 输出什么 → 错了怎么办」，站在**系统视角**。
+- 两者必须分离：IX 只写页面层；一旦命中数据校验 / 计算 / 权限 / 状态机判定，移交给对应的下游 work_item（business-rules / validation-rules / state-machine）。
 
 ## 2. 段落式格式（默认，不用表格）
 
@@ -60,7 +60,7 @@
 
 ## 3. 强制要素（每条 IX 必须覆盖）
 
-1. **规则 ID**：全局唯一，`IX-001` 递增，与 `page-design` 页面、`functional-flow` 功能流程步骤关联。
+1. **规则 ID**：全局唯一，`IX-001` 递增，与 `page-design.md` 页面、`functional-flow.md` 功能流程步骤关联。
 2. **用户状态**：描述触发时的用户状态（已登录 / 未登录 / 已注册 / 特定角色）。
 3. **用户操作**：具体动作（点击、长按、滑动、输入）。
 4. **系统反馈**：操作后的确定响应（页面跳转、弹窗、toast、状态变化）。
@@ -83,15 +83,15 @@
 - [ ] 边界情况至少考虑：快速重复操作、网络异常、前后台切换、多端登录
 - [ ] 加载状态、空状态、错误状态有明确设计
 - [ ] 段落式表达，无表格分列
-- [ ] 无领域层内容泄漏（命中校验/计算/权限 → 移交 function-description）
+- [ ] 无领域层内容泄漏（命中校验/计算/权限 → 移交 business-rules / validation-rules / state-machine）
 - [ ] 每条例句可直接实现、可直接测试（无「合理提示」「适当反馈」类模糊词）
 
-## 6. 与 function-description 的关联示例
+## 6. 与 business-rules / validation-rules 的关联示例
 
 同一场景下，IX 写页面层、BR 写领域层，二者通过 ID 关联：
 
 ```markdown
-### Interaction Rules（本子 Skill）
+### Interaction Rules（本 work_item）
 **IX-002：点击图片搜索图标**
 - 认证用户点击图片搜索图标，将会触发图片识别搜索
 - IF agreementAccepted=true，跳过协议卡片，直接进入相机预览
@@ -100,7 +100,7 @@
 ```
 
 ```markdown
-### Business Rules（function-description，非本子 Skill）
+### Business Rules（business-rules / validation-rules，非本 work_item）
 **BR-001：入口可见性规则**
 - 输入：用户身份（来自 session）
 - 判断：用户是否为认证用户 → 是则显示图片搜索图标，否则隐藏

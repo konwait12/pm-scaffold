@@ -95,6 +95,8 @@ description: 为每个 P0 功能以 Given/When/Then 编写原子、可测量的�
 | `references/reviewer-checklist.md` | 人工评审清单（Human Gate 用） | Human Gate 前 |
 | `references/source-handling.md` | 来源处理规则（SRC-* 登记与引用） | Intake/来源处理时 |
 | `references/thinking-framework.md` | 思考透镜（Common Core + 领域 lens，必读） | 每次任务开始（必读） |
+| `references/ai-eval-dimensions.md` | AI 模型评估技法（4 维度评估表 + 评测集设计 + 验收判据写法） | Generate AI/算法类功能验收标准时（按需） |
+| `references/ac-selfcheck.md` | 验收标准自检技法（GWT 完整性/阈值量化/4 类覆盖/可构造输入/追溯/deep_check 纪律） | Generate 完 AC 后/Audit 前逐条自检时（按需） |
 
 ## 完成标准
 

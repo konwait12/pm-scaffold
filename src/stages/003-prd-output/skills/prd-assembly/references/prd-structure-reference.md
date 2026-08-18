@@ -10,7 +10,7 @@
 
 - 本文件只解决「已有内容怎么摆、怎么裁」；**不解决「缺什么内容」**——缺内容时不得自行补齐。
 - 缺内容 → 路由回最早受影响的 work item（Preflight/Clarify 已覆盖），或标 `待确认`（UNK-XXX / Q- 引用）。
-- 外部 skill 的「直接访谈用户 → 直接写 PRD」行为（discovery 提问、起草 schema、生成草稿）**不属于本项目**：本项目的访谈与生成发生在上游 4 个 work item，prd-assembly 只做聚合 + 审计。
+- 外部 skill 的「直接访谈用户 → 直接写 PRD」行为（discovery 提问、起草 schema、生成草稿）**不属于本项目**：本项目的访谈与生成发生在上游 12 个独立 work_item，prd-assembly 只做聚合 + 审计。
 
 ---
 
@@ -19,7 +19,7 @@
 | 来源 | 吸收的骨架 | 不吸收的 |
 |---|---|---|
 | `prd` skill（5 节 Strict Schema） | Executive Summary（问题/方案/成功标准三段式）、User Stories + Acceptance Criteria + Non-Goals 分组、Technical Specifications（架构/集成点/安全）、Risks & Roadmap（分阶段+技术风险） | 主动向用户访谈（Phase 1-2）、直接起草 schema 内容 |
-| `prd-writer` skill（5 节框架 + IR/BR 规范） | Problem Statement（现状/痛点/业务影响）、Requirements 三分法（功能/技术/设计）、Implementation（依赖/时间线/资源）、Risks and Mitigations、IR/BR 编号与分支覆盖自检 | 编写新 IR/BR（那是 function-description 的职责） |
+| `prd-writer` skill（5 节框架 + IR/BR 规范） | Problem Statement（现状/痛点/业务影响）、Requirements 三分法（功能/技术/设计）、Implementation（依赖/时间线/资源）、Risks and Mitigations、IR/BR 编号与分支覆盖自检 | 编写新 IR/BR（那是上游独立产物 interaction-rules / business-rules 的职责） |
 
 吸收原则：**结构可借鉴，内容零发明**。外部 skill 的每个章节在本项目中都必须能指出「上游产物哪一段提供」，指不出来的章节就是空壳，宁缺勿造。
 
@@ -40,16 +40,16 @@
 外部写法：`As a [user], I want to [action] so that [benefit].` 句式 + 每条故事附 Acceptance Criteria 清单。
 
 **聚合视图**：
-- 用户故事 ← `§2 业务角色、用户旅程与用户故事`（user-journey-and-stories）**verbatim**，保留 ST-XXX 编号。
+- 用户故事 ← `user-journey` / `user-stories`（两个独立产物）**verbatim**，保留 UJ-XXX / ST-XXX 编号。
 - 句式不做「统一改写」：上游已确认的句式是业务事实，prd-assembly 只搬不改；如需统一风格属上游 work item 的 reflow，不在此处做。
-- 验收标准 ← AC-XXX（function-description / acceptance-criteria 子 skill 产物）verbatim 挂到对应 ST。
+- 验收标准 ← AC-XXX（独立产物 acceptance-criteria）verbatim 挂到对应 ST。
 
 ### 2.3 技术规格段（工程师版核心）
 外部写法：Architecture Overview → Integration Points → Security & Privacy（或功能/技术/设计三分法）。
 
 **聚合视图（本项目只聚合、不设计）**：
 - 本脚手架交付物是 `prd.md`，**不产出技术架构设计**。技术规格段只能呈现**上游已确认的技术约束**：
-  - 技术依赖 / 集成约束 ← function-description 的 FUN-* 描述与 DEC-XXX 决定中的技术内容；
+  - 技术依赖 / 集成约束 ← feature-list / functional-flow 的 FEA-* 描述与 DEC-XXX 决定中的技术内容；
   - 安全与隐私 ← 上游已明确的合规约束（如有），无则留空或待确认，不自行添加；
   - 禁止写「建议采用 XX 架构 / 推荐 XX 数据库」——那属于 Overreach（review-taxonomy 标签）。
 - 工程师版裁剪：聚焦 §2 故事 + §4 分功能 + 全部 AC/BR/IX + §6 追溯矩阵，省略高管叙述与背景渲染。
@@ -67,7 +67,7 @@
 
 **聚合视图**：
 - 验收清单 = AC-XXX 集合，verbatim，逐条可追溯到 FUN→FEA→ST→G。
-- 若上游 AC 出现含糊表述（如「搜索要快」），prd-assembly **不得代写具体阈值**（如「200ms」）：标 [Gap] 或待确认，路由回 function-description。可量化是上游的写作标准，不是 assembly 的改写权。
+- 若上游 AC 出现含糊表述（如「搜索要快」），prd-assembly **不得代写具体阈值**（如「200ms」）：标 [Gap] 或待确认，路由回 acceptance-criteria。可量化是上游的写作标准，不是 assembly 的改写权。
 
 ---
 
@@ -76,9 +76,9 @@
 | PRD 章节（output-contract §0-§12） | 内容来源 | 外部 skill 对应章节 |
 |---|---|---|
 | §1 项目背景与目标 | project-background-goal verbatim | Problem Statement |
-| §2 角色、旅程与故事 | user-journey-and-stories verbatim | User Stories + Acceptance Criteria |
-| §3 UX 范围/流程/状态 | product-ux verbatim | User Experience & Functionality |
-| §4 分功能描述（FUN/BR/IX/VL/AC） | function-description verbatim | Requirements + IR/BR 规范 |
+| §2 用户旅程与用户故事 | user-journey / user-stories verbatim | User Stories + Acceptance Criteria |
+| §3 功能流程与页面状态 | functional-flow / page-design / interaction-rules / state-machine verbatim | User Experience & Functionality |
+| §4 分功能描述（FEA/BR/IX/VL/EX/AC） | feature-list / functional-flow / business-rules / interaction-rules / validation-rules / exception-handling / acceptance-criteria verbatim | Requirements + IR/BR 规范 |
 | §5 按需章节（字段/埋点/依赖/未决） | 上游非空才落章 | Implementation（依赖部分） |
 | §6 追溯矩阵 G→ST→FEA→FUN→AC/BR | 机器生成（traceability_check） | — |
 | §7/§8 正反向追溯检查 | 机器生成 | — |
@@ -93,7 +93,7 @@
 
 - 含糊词信号：读到「快速 / 易用 / 现代 / 直观」且非上游原文引用的场景 → 不得展开成具体指标；记 [Gap] / 待确认。
 - IR/BR 一致性自检（源自 prd-writer 的评审 checklist，作审计视角复用）：IX 是否覆盖 BR 的全部错误码？异常/边界是否齐全（快速重复操作、网络异常、多端登录）？加载/空/错误三态是否有明确设计？→ 只用于 `§9 不一致报告` 打标，不用于补写。
-- 编号纪律：SRC-/ST-/FEA-/FUN-/BR-/IX-/VL-/AC-/DEC-/UNK- 全部保留原文，杜绝漂移（[Dangling] 即缺陷）。
+- 编号纪律：SRC-/BG-/UJ-/US-/ST-/FEA-/FL-/PD-/IX-/BR-/VL-/SM-/EX-/AC-/DEC-/UNK- 全部保留原文，杜绝漂移（[Dangling] 即缺陷）。
 - 待定项统一挂 `UNK-XXX` / Q- 引用，不写裸 TBD（外部 skill 的 "label as TBD" 在本项目落地为 UNK 体系）。
 
 ---

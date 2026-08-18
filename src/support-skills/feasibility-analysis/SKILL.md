@@ -15,7 +15,7 @@ description: 评估一个具体的产品级方案在四个维度上是否可行�
 
 ## 输入与输出
 
-输入：一个具体的产品级方案（来自 `product-ux` 或 `function-description`）或显式的可行性决策请求、上游证据（background-goal、成本/约束/合规输入）、以及一个指定的 decision-owner。如果决策会改变已确认的范围、成本、合规或风险姿态，停止在 `needs_user_input`，直到识别出决策 owner。
+输入：一个具体的产品级方案（来自已确认的 `feature-list` / `functional-flow` 等 002 产物）或显式的可行性决策请求、上游证据（background-goal、成本/约束/合规输入）、以及一个指定的 decision-owner。如果决策会改变已确认的范围、成本、合规或风险姿态，停止在 `needs_user_input`，直到识别出决策 owner。
 
 输出：单一的 `feasibility-report.md`，使用 `src/templates/support/feasibility-report.md` 中的模板——市场空间 / 技术可行性 / 投入产出 / 风险评估 / §多方案取舍（≥2 实质方案时）/ 结论（做/不做/有条件做）。§多方案取舍 章节（若存在）使用 `src/templates/support/solution-comparison.md` 的多方案对比模板作为其章节结构；它嵌入在报告中，绝不作为独立产物产出。
 
@@ -87,7 +87,7 @@ description: 评估一个具体的产品级方案在四个维度上是否可行�
 
 ## 示例：充分输入 → 充分输出
 
-**输入**：具体产品方案已存在（`function-description`）、成本/约束输入已登记、决策 owner 已指定。决策：订单通知模块自研 vs 外购（带多方案取舍的可行性）。
+**输入**：具体产品方案已存在（`feature-list` / `functional-flow`）、成本/约束输入已登记、决策 owner 已指定。决策：订单通知模块自研 vs 外购（带多方案取舍的可行性）。
 **输出**：完整 `feasibility-report.md`——市场空间（目标用户量 100 万，可比渗透率 30%，理论空间）→ 技术可行性（微信模板消息已验证兼容）→ 投入产出（自研 2 人×4 周 ≈ ¥X vs 外采年费 ¥Y，回本周期）→ 风险评估（供应商锁定：高/中 → 应对：退出条款）→ §多方案取舍（权重在打分前定义：业务匹配 5、用户影响 4、成本 4、时间 3、技术风险 3、可逆性 2；自研 86 vs 外采 65；AI 推荐 自研，MEDIUM 置信度；敏感度：时间权重 3→5 翻转）→ 结论：有条件做（自研，条件：2 周内确认技术栈）; 人工决策记录 DEC-001 → 状态 `ready_for_human_review`.
 
 ## 示例：稀疏输入 → 降级输出
@@ -108,6 +108,12 @@ description: 评估一个具体的产品级方案在四个维度上是否可行�
 | `references/anti-patterns.md` | AI 常见反模式（可行性分析特有，写产物时对照规避） | Generate 时对照 |
 | `references/audit-checklist.md` | Audit 自审清单 | Audit 前 |
 | `references/reviewer-checklist.md` | 人工评审清单（Human Gate 用） | Human Gate 前 |
+| `references/scoring-7d.md` | 7 维度 100 分制评分模型（权重 + 0-5 锚点 + 置信度 + 硬性降级 9 条） | 打分阶段（按需） |
+| `references/idea-filtering.md` | Idea Filtering 市场重复性检查（6 类替代方案 + Build/Buy/Partner/Integrate/Abandon） | 新产品/自研方案评估前（按需） |
+| `references/ai-product-check.md` | AI 产品专项 6 检查 + 行业模板（必要性与人机闭环） | 评估对象含 AI 能力时（按需） |
+| `references/review-threshold-7d.md` | 研发评审 7 维度可行性门槛（放行/补充后放行/降级试点/暂缓） | PRD 即将排期评估时（按需） |
+| `references/threshold-tier.md` | 三档门槛评估（轻量/中等/完整成本与产物深度） | Preflight/Intake 成本范围不清时（按需） |
+| `references/rtm-and-market-sizing.md` | RTM 需求追溯矩阵 + TAM/SAM/SOM 市场分析表 + PM-T1~T8 管理表格 | §市场空间 量化/结论可追溯校验时（按需） |
 
 ## 完成标准
 

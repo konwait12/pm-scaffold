@@ -27,7 +27,7 @@ Use these as reference when generating a new question in a Clarify Session. See 
 
 - "这次竞品调研是定整个会员体系的定位，还是只定'积分规则'这一个功能怎么做？"
 - "调研结论要支撑哪个决策——要不要做会员等级、还是等级怎么分档？"
-- "调研后下一步是 user-journey 还是 product-ux？这决定我把竞品分析写到什么粒度。"
+- "调研后下一步是 user-journey 还是 feature-list？这决定我把竞品分析写到什么粒度。"
 
 **Common traps**:
 

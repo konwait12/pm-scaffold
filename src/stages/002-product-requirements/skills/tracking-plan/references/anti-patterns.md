@@ -35,11 +35,11 @@
 - **修复**：四档 pii_flag（false/quasi/true/sensitive）+ 保留期 + 加密/哈希/访问控制
 
 ## AP7：发明上游未确认的功能
-- **表现**：上游 function-description 未 confirmed，AI 自己推断功能并为其造事件
+- **表现**：上游 feature-list 未 confirmed，AI 自己推断功能并为其造事件
 - **为什么有害**：事件合约建立在虚构功能上，上游一变全部作废
-- **修复**：上游未 confirmed 就 STOP；只对已确认的 FUN-XXX/IX-XXX/BR-XXX 提取事件
+- **修复**：上游未 confirmed 就 STOP；只对已确认的 FEA-XXX/IX-XXX/BR-XXX 提取事件
 
 ## AP8：覆盖缺口被掩盖
 - **表现**：P0 功能没有 must_track 事件，AI 用"补一句待补"掩盖而不上升为阻塞
 - **为什么有害**：上线后该功能无信号，无法证明是否生效
-- **修复**：覆盖矩阵硬约束——每个 P0 FUN-XXX ≥1 must_track；缺口即阻塞项，交 metric_owner 裁决
+- **修复**：覆盖矩阵硬约束——每个 P0 FEA-XXX ≥1 must_track；缺口即阻塞项，交 metric_owner 裁决

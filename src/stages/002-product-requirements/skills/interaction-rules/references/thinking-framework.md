@@ -2,7 +2,7 @@
 
 > **Common Core（必用）**：先应用 `src/framework/thinking-core.md` §1 的 6 个通用 lens（第一性原理 / 系统思考 / 对抗性审查 / 逆向验证 / 确认偏误防御 / 知识边界认知），再应用本文件领域透镜；Audit 前应用 `thinking-core.md` §2 校验层（事前验尸 / 空杯视角 / 可测试性 / 结论先行 / 读者视角）。只记录改变候选内容的发现，不重复粘贴分析。
 
-从 page-design 的页面出发，逐元素推导页面层交互规则（IX-*）的思考透镜。保持页面层：只写「用户操作 → 系统响应」，业务逻辑一律下沉到 function-description。
+从 page-design.md 的页面出发，逐元素推导页面层交互规则（IX-*）的思考透镜。保持页面层：只写「用户操作 → 系统响应」，业务逻辑一律下沉到对应的下游 work_item（business-rules / validation-rules / state-machine）。
 
 ## Lens 1：触发-响应（Trigger-Response）
 
@@ -24,11 +24,11 @@
 
 **问题**：这条规则是「页面层交互」，还是「业务逻辑 / 数据校验 / 权限 / 计算」？
 
-逐条自问是否属于以下下沉项，命中即移交给 function-description：
-- 数据校验（格式/正则/唯一/范围）→ `VL-*`
-- 业务计算（合计/均值/折扣/状态判定依据）→ `BR-*`
-- 权限规则（如「仅管理员可操作」）→ function-description
-- 验收标准 → `AC-*`
+逐条自问是否属于以下下沉项，命中即移交给对应的下游 work_item：
+- 数据校验（格式/正则/唯一/范围）→ validation-rules `VL-*`
+- 业务计算（合计/均值/折扣/状态判定依据）→ business-rules `BR-*`
+- 权限规则（如「仅管理员可操作」）→ business-rules
+- 验收标准 → acceptance-criteria `AC-*`
 
 **反模式**：把「密码必须 8 位以上」「库存不足时不允许下单」「仅 VIP 可见」这类领域规则揉进 IX 规则，造成页面层与业务层边界污染。
 
@@ -90,4 +90,4 @@ Degradation triggers（任一即触发）:
 
 ## 表达层技法（可选加载）
 
-产出 IX-XXX 规则时，加载 `references/rule-writing-format.md`（使用标准交互规则书写格式），使用**段落式表达**（用户状态 + 动作 → 系统响应，IF/ELSE 分支，异常与边界）而非表格分列。**IR 呈现 BR 的结果、BR 定义 IR 的依据**；命中数据校验/计算/权限即移交 function-description。
+产出 IX-XXX 规则时，加载 `references/rule-writing-format.md`（使用标准交互规则书写格式），使用**段落式表达**（用户状态 + 动作 → 系统响应，IF/ELSE 分支，异常与边界）而非表格分列。**IR 呈现 BR 的结果、BR 定义 IR 的依据**；命中数据校验/计算/权限即移交给对应的下游 work_item（business-rules / validation-rules）。

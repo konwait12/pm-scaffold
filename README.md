@@ -682,7 +682,7 @@ src/
 │   ├── workflow-registry.json       # 唯一真相源（schema_version=7, 13 work_items）
 │   ├── constitution.md               # 8 条硬宪法
 │   ├── workflow.md                   # 8 步循环
-│   ├── thinking-core.md              # 17 个思考透镜
+│   ├── thinking-core.md              # 共享思想核心（6 核心透镜 + 校验层 + 发散决策层 + 技法注册）
 │   └── contracts.md                  # Shared Records 契约
 ├── stages/                          # 3 阶段 × 13 work_item + 1 常驻 + 1 能力
 │   ├── 001-business-requirements/skills/

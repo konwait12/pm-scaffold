@@ -75,4 +75,15 @@ Clarify（澄清）与 reflow（回流）是当前 Work Item 内部的状态，�
 - `tracking-plan`：当某个功能需要度量数据时，提供数据追踪 / 埋点（instrumentation）计划。
 - `issue-record`：跨阶段的问题清单；任何 Work Item 送审前必须先完成 B3 收口。
 
+### to B 技法（Thinking Core §5 登记，按需加载）
+
+以下技法注册在 `src/framework/thinking-core.md §5`，落位于对应 skill 的 `references/`，由 SKILL.md 按需加载，不设全局闸门、不新增业务阶段：功能说明五要素、交互流程五段式、UML 用例规格、数据字典、RBAC 权限矩阵、泳道图+状态机、MRC 门禁/确认信号、信息架构图、AI 策略四要素。to B 场景（角色权限、审批流、商业化链路）优先触发；参见 `thinking-core.md §3` 的双重逻辑校验与商业化合规透镜。
+
+### 新批次技法与透镜（Thinking Core §2/§3/§5 登记，2026-08 第二轮吸收）
+
+- **§2 校验层新增 6 透镜**（Audit / Human Gate 前按需）：业务语言、证据追溯、成本门禁、置信度标注、事实假设判断三态、出口闸门两问。
+- **§3 发散决策层新增 8 透镜**（方案评估 / 需求评审挑用）：grill 对抗、反例扫描、预死亡分析、假设验证四维、naysayer 三阶段、决策预注册、西瓜防御、二阶效应。
+- **§5 表达层新增技法**：溯源标注三级、反合理化 6 项对照、独立成文 5 段式（`competitive-research/references/synthesis-craft.md`）、认知透镜附录（产品四层结构 + 苏格拉底 5 提问）。
+- **技法文件落位**：调研期（juloko 14 维缺口扫描/事实台账、incremental 访谈五步）→ `requirement-restate`；合规关键词/V1 边界/三模式分流 → `brainstorming`；7 维评分/替代方案/反例/AI 专项 → `feasibility-analysis`；两阶段对标/竞品参考库/拆解三法 → `competitive-research`；ST×SWOT/干系人方格 → `project-background-goal`；JTBD/情景五要素 → `user-stories`；规则决策表/AI 任务分类 → `business-rules`；ToB 维度库/UI 文案/高频遗漏/架构图 → `page-design`；交叉引用校验 → `validation-rules`；AI 兜底 → `exception-handling`；AI 评估维度 → `acceptance-criteria`；5 步评分引擎/下游交接/grill-me/ADR/领域映射提示/研发评审 13 项/北极星指标 → `prd-assembly` / `feature-list` / `tracking-plan`。
+
 可视化仍是 toolkit 的一项能力。只有 Work Item 契约显式要求流程表示时，才需要它。

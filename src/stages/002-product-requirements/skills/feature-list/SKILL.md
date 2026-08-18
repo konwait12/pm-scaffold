@@ -7,9 +7,9 @@ description: 功能清单——从已确认的用户故事（ST-XXX）分解出�
 
 ## 目的与边界
 
-把已确认的用户故事（ST-XXX）分解为产品必须交付的完整功能清单（FEA-XXX）——这是下游所有独立子 skill 消费的唯一功能总账。每个 FEA-XXX 必须追溯 ≥1 个已确认的 ST-XXX，必须有清晰、互不重叠的功能边界，必须标注 P0/P1 优先级。
+把已确认的用户故事（ST-XXX）分解为产品必须交付的完整功能清单（FEA-XXX）——这是下游所有独立 work_item 消费的唯一功能总账。每个 FEA-XXX 必须追溯 ≥1 个已确认的 ST-XXX，必须有清晰、互不重叠的功能边界，必须标注 P0/P1 优先级。
 
-**Do not** 设计功能流程（→ `functional-flow`）、交互规则（→ `interaction-rules`）、页面骨架或原型（→ `page-design`）、领域业务规则（→ `business-rules`）、字段校验（→ `validation-rules`）、状态机（→ `state-machine`）、异常与失败处理（→ `exception-handling`）、验收依据（→ `acceptance-criteria`）。功能清单只命名「做什么（WHAT）」；行为细节由其他子 skill 定义。
+**Do not** 设计功能流程（→ `functional-flow`）、交互规则（→ `interaction-rules`）、页面骨架或原型（→ `page-design`）、领域业务规则（→ `business-rules`）、字段校验（→ `validation-rules`）、状态机（→ `state-machine`）、异常与失败处理（→ `exception-handling`）、验收依据（→ `acceptance-criteria`）。功能清单只命名「做什么（WHAT）」；行为细节由其他独立 work_item 定义。
 
 ## 输入与输出
 
@@ -98,6 +98,9 @@ Present 候选功能清单、证据摘要（每条功能由哪个故事支撑）
 | `references/reviewer-checklist.md` | 人工评审清单（Human Gate 用） | Human Gate 前 |
 | `references/source-handling.md` | 来源处理规则（SRC-* 登记与引用） | Intake/来源处理时 |
 | `references/thinking-framework.md` | 思考透镜（Common Core + 领域 lens，必读） | 每次任务开始（必读） |
+| `references/ai-strategy-four-elements.md` | AI 策略四要素技法（输入信号/模型逻辑/输出形式/兜底规则） | Generate AI 功能时（按需） |
+| `references/dev-review-prd-standard-13.md` | 研发评审版 PRD 硬标准 13 项（达标判据 + 反模式 8 条） | Generate FEA 信息密度对照 / Human Gate 前（按需） |
+| `references/feature-priority-quant.md` | 功能优先级量化技法（RICE 评分锚点表 + MoSCoW→P0/P1/P2 映射 + 伪精确反模式 + 8 功能评分示例） | Generate 定 P0/P1/P2 或裁决优先级冲突时（按需） |
 
 ## 完成标准
 

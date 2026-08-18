@@ -97,6 +97,9 @@ Present：候选 EX 行、证据摘要（哪些来源支撑每个失败场景）
 | `references/reviewer-checklist.md` | 人工评审清单（Human Gate 用） | Human Gate 前 |
 | `references/source-handling.md` | 来源处理规则（SRC-* 登记与引用） | Intake/来源处理时 |
 | `references/thinking-framework.md` | 思考透镜（Common Core + 领域 lens，必读） | 每次任务开始（必读） |
+| `references/exception-and-tracking.md` | 异常与埋点技法（异常二分类+埋点事件表） | Generate 异常/埋点时（按需） |
+| `references/ai-fallback.md` | AI 兜底策略技法（格式异常/低置信/幻觉/安全合规 4 类兜底） | Generate AI 输出异常时（按需） |
+| `references/exception-grade-and-recovery.md` | 异常分级与恢复策略技法（CRITICAL/HIGH/MEDIUM/LOW 四级 + 5 策略矩阵 + 三元一致性 + 支付 4 例） | Generate EX 定级/选恢复策略时（按需） |
 
 ## 完成标准
 

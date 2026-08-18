@@ -101,6 +101,9 @@ Present 候选校验规则表、证据摘要（每条 VL 由哪个字段/BR 支�
 | `references/reviewer-checklist.md` | 人工评审清单（Human Gate 用） | Human Gate 前 |
 | `references/source-handling.md` | 来源处理规则（SRC-* 登记与引用） | Intake/来源处理时 |
 | `references/thinking-framework.md` | 思考透镜（Common Core + 领域 lens，必读） | 每次任务开始（必读） |
+| `references/data-dictionary-pattern.md` | 数据字典技法（字段类型/状态枚举对齐 STATE-XXX） | Generate 字段定义时（按需） |
+| `references/field-decision-checklist.md` | 字段决策清单技法（AI 推断显式化/拍板） | Generate 字段决策时（按需） |
+| `references/cross-ref-check.md` | 交叉引用一致性技法（字段三元组 + 引用完整性 + 状态机三元检查） | Draft 后/Audit 前一致性自检时（按需） |
 
 ## 完成标准
 

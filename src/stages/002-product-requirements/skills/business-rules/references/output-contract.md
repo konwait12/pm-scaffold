@@ -1,11 +1,11 @@
 # Output Contract · business-rules
 
-产出父级 `function-description.md` 产物的 §业务规则 章节（registry `output_section`: 业务规则）。输出格式必须匹配 `src/templates/stage-2-product/function-description.md` 中对应的表格。
+产出独立产物 `business-rules.md` 的 §业务规则 章节（registry `output_section`: 业务规则）。输出格式必须匹配 `src/templates/stage-2-product/business-rules.md` 中对应的表格。
 
 ## ID 契约
 
 - 每个规则行携带稳定 ID `BR-XXX`（BR-001、BR-002、…），全局唯一、零填充、无空缺、无重复。
-- 每条 BR-XXX 恰好挂接在父产物的一个 `FUN-XXX` 区块下——功能区块之外无孤儿规则。
+- 每条 BR-XXX 恰好引用一个已确认的 `FEA-XXX`——功能之外无孤儿规则。
 - 每条 BR-XXX 的 `来源` 引用一个已确认的 `ST-XXX` 或 `FEA-XXX`。
 - 规则移除后 ID 永不复用（补空会破坏审计历史）。
 
@@ -40,7 +40,7 @@
 
 ## 必需章节
 
-对 §业务规则 区块使用 `src/templates/stage-2-product/function-description.md` 中的所有标题（规则索引、分功能详述、规则冲突检查、事实与决定、待确认问题、来源追溯）。若某规则无已确认内容，写 `待确认` 并关联问题或未知 ID；不要删除标题。
+对 §业务规则 区块使用 `src/templates/stage-2-product/business-rules.md` 中的所有标题（业务规则、规则→功能追溯矩阵、事实与决定、待确认问题、来源追溯）。若某规则无已确认内容，写 `待确认` 并关联问题或未知 ID；不要删除标题。
 
 > 占位符 `待确认` 保留在中文 PRD 约定中。译者可在纯英文产物中使用 `[NEEDS CLARIFICATION]`，只要校验器识别两种形式。
 
@@ -59,7 +59,7 @@
 
 ## 下游交接
 
-为下游子 skill 输出一份紧凑交接：
+为下游 work_item 输出一份紧凑交接：
 
 ```text
 confirmed_rules            # BR-XXX 列表
@@ -75,7 +75,7 @@ source_ids
 
 ## 澄清会话契约
 
-每个 Clarify Session 在父产物的 `## Clarifications` 章节记录为一行结构化数据。每个 Session 一行，按 session id 排序：
+每个 Clarify Session 在 business-rules.md 的 `## Clarifications` 章节记录为一行结构化数据。每个 Session 一行，按 session id 排序：
 
 | Field | Meaning | Example |
 |---|---|---|

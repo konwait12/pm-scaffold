@@ -1,7 +1,7 @@
 # Functional Flow · 功能流程
 
-> **Sub-skill of** [`function-description`](../SKILL.md)
-> **输出章节**：父级 `function-description.md` §功能流程（主流程 / 分支流程 / 异常流程）
+> **独立 work_item**（002 · 5，位于 feature-list 之后）
+> **输出章节**：§功能流程（主流程 / 分支流程 / 异常流程）
 > **执行顺序**：2 / 7（在功能清单之后、业务规则之前生成流程结构）
 
 ## 用途
@@ -10,8 +10,8 @@
 
 ## 输入
 
-- `user-journey-and-stories` 的 confirmed artifact（含 ST-XXX 用户故事、范围基线）
-- 父级 `function-description` §1 功能规格概览（FEA-XXX 与 P0/P1/P2 优先级）
+- `user-journey` / `user-stories` 的 confirmed artifact（含 ST-XXX 用户故事、范围基线）
+- `feature-list` 的 §功能清单（FEA-XXX 与 P0/P1/P2 优先级）
 
 ## 产物
 
@@ -24,9 +24,9 @@
 ## 触发判断
 
 - 看到 "功能流程" / "业务流程图" / "主流程 分支 异常" / "流程步骤" / "流程图" → 触发
-- 看到 "页面设计" / "组件" → **不触发**（走 `product-ux` 下的 `page-design`）
+- 看到 "页面设计" / "组件" → **不触发**（走 `page-design`）
 - 看到 "交互规则" / "输入约束" → **不触发**（走 `interaction-rules`）
-- 看到 "业务规则" / "校验" / "状态机" / "异常处理明细" → **不触发**（走对应子技能）
+- 看到 "业务规则" / "校验" / "状态机" / "异常处理明细" → **不触发**（走对应规则类 work_item）
 
 ## 关键约束
 

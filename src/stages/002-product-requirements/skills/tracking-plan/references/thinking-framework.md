@@ -31,8 +31,8 @@
 
 ## 覆盖 vs 噪声（Coverage vs Noise）
 
-- 每个 P0 FUN-XXX 是否至少有一个 `must_track` 事件？
-- 有没有孤儿事件（无 FUN-XXX、无 G-X）？
+- 每个 P0 FEA-XXX 是否至少有一个 `must_track` 事件？
+- 有没有孤儿事件（无 FEA-XXX、无 G-X）？
 - 事件清单是否免于"全量追踪"噪声——即没有指标、目标或决策用途的事件？
 - 重复项是否被合并到一个一致的 `event_name` 下？
 
@@ -52,7 +52,7 @@
 
 ## 低密度降级模式（Low-Density Degradation Mode）
 
-当上游未确认（function-description FUN-XXX 或其规则缺失）或追踪需求只是一句不带资格的单句时，上述透镜无法做有意义的工作。切换为降级模式：
+当上游未确认（feature-list 的 FEA-XXX 或其规则缺失）或追踪需求只是一句不带资格的单句时，上述透镜无法做有意义的工作。切换为降级模式：
 
 ```text
 low-density / upstream-not-confirmed input → skip lens ideation
@@ -66,7 +66,7 @@ low-density / upstream-not-confirmed input → skip lens ideation
 
 降级触发条件（满足任一即可）：
 
-- function-description（FUN-XXX）或其上游规则未确认
+- feature-list（FEA-XXX）或其上游规则未确认
 - 没有要映射事件的目标（G-X）
 - 用户只说"为 X 加埋点"，没有指标、平台或触发上下文
 

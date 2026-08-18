@@ -4,7 +4,7 @@
 
 ## Source Register
 
-为每条校验登记来源，并在父文档「来源追溯」中维护：
+为每条校验登记来源，并在 validation-rules.md「来源追溯」中维护：
 
 ```text
 source_id
@@ -63,5 +63,5 @@ notes
 ## Mapping To VL Rows
 
 - VL 行的 `来源` 列填 `BR-XXX` / 字段定义（F-XXX）（上游确认的 artifact），不是材料 SRC-ID。
-- 材料 SRC-ID 走父文档「来源追溯」表，保证材料 → 字段/BR → 校验 三级链路可查。
+- 材料 SRC-ID 走 validation-rules.md「来源追溯」表，保证材料 → 字段/BR → 校验 三级链路可查。
 - 上游字段定义或 BR 被改动后，同步检查所有引用该来源的 VL-XXX 是否需要回流。

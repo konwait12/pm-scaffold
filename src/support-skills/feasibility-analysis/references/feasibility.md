@@ -1,7 +1,7 @@
 # 可行性分析模式（Feasibility Analysis）
 
 > feasibility-analysis 的主线模式。当技术、合规、资源约束对项目可行性提出疑问时，评估市场空间、技术可行性、投入产出与风险，产出 做 / 不做 / 有条件做 的推荐。
-> 仅在已存在产品级方案后触发（`product-ux` 或 `function-description`），不属于每个项目必做。
+> 仅在已存在产品级方案后触发（`feature-list` / `functional-flow` / `page-design` 等独立产物），不属于每个项目必做。
 
 ## 触发条件（任一即可）
 
@@ -35,7 +35,7 @@
     ↓
 5. 输出推荐：做 / 不做 / 有条件做（注明条件）
     ↓
-6. 结论回流：`project-background-goal` §7 约束、`product-ux` §1.3 假设
+6. 结论回流：`project-background-goal` §7 约束、上游相关产物的假设章节（如 `page-design` / `interaction-rules`）
 ```
 
 ## 输出

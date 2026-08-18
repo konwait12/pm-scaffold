@@ -7,9 +7,9 @@ description: 当业务方案不清晰且缺少参考时进行竞品分析。使�
 
 ## 目的与边界
 
-当产品方向缺少参考——"竞品是怎么做的？""是否存在市场标准？""我们如何差异化？"——本 skill 系统性地分析竞品，并综合出可供产品决策采取行动的洞见。产物是 `competitive-analysis.md`，由 `user-journey-and-stories`、`product-ux` 或 `function-description` 消费。
+当产品方向缺少参考——"竞品是怎么做的？""是否存在市场标准？""我们如何差异化？"——本 skill 系统性地分析竞品，并综合出可供产品决策采取行动的洞见。产物是 `competitive-analysis.md`，由 `user-journey` / `user-stories`、`page-design` / `interaction-rules` 或 `feature-list` 等下游消费。
 
-**不要**在不理解竞品语境的情况下照搬竞品功能、把调研发现当作已确认的事实呈现、替代 user-journey 或 product-ux 的工作，或在没有差异化分析的情况下得出"我们应该照做竞品 X 的做法"的结论。竞品在其市场上的成功，若无证据不会自动迁移到我们的市场。
+**不要**在不理解竞品语境的情况下照搬竞品功能、把调研发现当作已确认的事实呈现、替代 user-journey 或 page-design 的工作，或在没有差异化分析的情况下得出"我们应该照做竞品 X 的做法"的结论。竞品在其市场上的成功，若无证据不会自动迁移到我们的市场。
 
 ## 输入与输出
 
@@ -55,7 +55,7 @@ description: 当业务方案不清晰且缺少参考时进行竞品分析。使�
 - **完整性（Completeness）**：所有选中的竞品都覆盖了吗？所有重大结论都有来源吗？有"So What"吗？
 - **确认偏误（Confirmation Bias）**：我是否主动搜索了反证，还是只挑支持性的证据？
 - **来源保真（Source Fidelity）**：每条结论都能追溯到 SRC-ID 吗？`FACT` 和 `AI_INFERENCE` 是否区分清晰？
-- **下游可用性（Downstream Usability）**：user-journey-and-stories / product-ux 能否无需重新调研就接上？
+- **下游可用性（Downstream Usability）**：user-journey / user-stories 与 feature-list 能否无需重新调研就接上？
 - 运行 `scripts/validate_artifact.py <artifact> --json`。修复所有错误。警告 → 记入审计备注。
 
 ### 7. Human Gate（人工关卡）
@@ -100,6 +100,11 @@ description: 当业务方案不清晰且缺少参考时进行竞品分析。使�
 | `references/reviewer-checklist.md` | 人工评审清单（Human Gate 用） | Human Gate 前 |
 | `references/source-handling.md` | 来源处理规则（SRC-* 登记与引用） | Intake/来源处理时 |
 | `references/thinking-framework.md` | 思考透镜（Common Core + 竞品领域 lens，必读） | 每次任务开始（必读） |
+| `references/two-stage-check.md` | 两阶段对标与 token 成本门禁（stage1 默认执行、stage2 须用户确认） | Generate 对标结论时（按需） |
+| `references/competitor-refs-pattern.md` | 竞品参考库四字段结构（主链接/alt_urls/search_keywords/screenshot） | Preflight 取竞品清单时（按需） |
+| `references/link-validation.md` | 链接验证三层降级机制（主链接→alt_urls→search_keywords） | 来源核验/链接检查时（按需） |
+| `references/synthesis-craft.md` | 综合分析五段式技法（速读/设计逻辑/增长壁垒/演进推演/犀利洞察） | Generate §4 So What 综合时（按需） |
+| `references/competitor-teardown.md` | 竞品拆解技法（菜单/流程/重要操作三法 + 竞品 3 类分类） | 单品深度拆解时（按需） |
 
 ## 完成标准
 

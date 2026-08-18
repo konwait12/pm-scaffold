@@ -1,11 +1,11 @@
 # Output Contract · state-machine
 
-产出父级 `function-description.md` 产物的 §状态变化 章节（registry `output_section`: 状态变化）。输出格式必须匹配 `src/templates/stage-2-product/function-description.md` 中对应的表格。
+产出独立产物 `state-machine.md` 的 §状态变化 章节（registry `output_section`: 状态变化）。输出格式必须匹配 `src/templates/stage-2-product/state-machine.md` 中对应的表格。
 
 ## ID 契约
 
 - 每个状态定义行与每条转移行都携带稳定 ID `STATE-XXX`（STATE-001、STATE-002、…），全局唯一、零填充、无空缺、无重复，绝不与 `BR-XXX`（业务规则）或 `ST-XXX`（用户故事）混淆。
-- 每个 STATE-XXX 恰好挂接在父产物的一个 `FUN-XXX` 区块下——无孤儿转移。
+- 每个 STATE-XXX 恰好挂接在独立产物的一个 `FEA-XXX` 区块下——无孤儿转移。
 - 每条转移行的 `来源` 引用一个已确认的 `BR-XXX` / `IX-XXX` / 故事声明。
 - 状态或转移移除后 ID 永不复用（补空会破坏审计历史）。
 
@@ -40,15 +40,15 @@
 
 ## 必需章节
 
-对 §状态变化 区块使用 `src/templates/stage-2-product/function-description.md` 中的所有标题（状态定义、状态转移表、状态机图 Mermaid、状态完备性检查、事实与决定、待确认问题）。若某状态或转移无已确认内容，写 `待确认` 并关联问题或未知 ID；不要删除标题。
+对 §状态变化 区块使用 `src/templates/stage-2-product/state-machine.md` 中的所有标题（状态定义、状态转移表、状态机图 Mermaid、状态完备性检查、事实与决定、待确认问题）。若某状态或转移无已确认内容，写 `待确认` 并关联问题或未知 ID；不要删除标题。
 
 > 占位符 `待确认` 保留在中文 PRD 约定中。译者可在纯英文产物中使用 `[NEEDS CLARIFICATION]`，只要校验器识别两种形式。
 
 ## 状态定义行结构
 
-| 状态 ID | 状态名称 | 所属功能 (FUN) | 描述 | 进入条件 | 退出条件 |
+| 状态 ID | 状态名称 | 所属功能 (FEA) | 描述 | 进入条件 | 退出条件 |
 |---|---|---|---|---|---|
-| STATE-XXX | unique, consistent name | FUN-XXX | one-line meaning | decidable condition | decidable condition |
+| STATE-XXX | unique, consistent name | FEA-XXX | one-line meaning | decidable condition | decidable condition |
 
 ## 转移行结构
 
@@ -67,7 +67,7 @@
 
 ## 下游交接
 
-为下游子 skill 输出一份紧凑交接：
+为下游 work_item 输出一份紧凑交接：
 
 ```text
 confirmed_states            # STATE-XXX 列表（按实体）
@@ -84,7 +84,7 @@ source_ids
 
 ## 澄清会话契约
 
-每个 Clarify Session 在父产物的 `## Clarifications` 章节记录为一行结构化数据。每个 Session 一行，按 session id 排序：
+每个 Clarify Session 在独立产物 `state-machine.md` 的 `## Clarifications` 章节记录为一行结构化数据。每个 Session 一行，按 session id 排序：
 
 | Field | Meaning | Example |
 |---|---|---|

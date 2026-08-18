@@ -1,11 +1,11 @@
 # Output Contract · validation-rules
 
-产出父级 `function-description.md` 产物的 §系统校验 章节（registry `output_section`: 系统校验）。输出格式必须匹配 `src/templates/stage-2-product/function-description.md` 中对应的表格。
+产出独立产物 `validation-rules.md` 的 §系统校验 章节（registry `output_section`: 系统校验）。输出格式必须匹配 `src/templates/stage-2-product/validation-rules.md` 中对应的表格。
 
 ## ID 契约
 
 - 每个校验行携带稳定 ID `VL-XXX`（VL-001、VL-002、…），全局唯一、零填充、无空缺、无重复，绝不与 `BR-XXX` 混淆。
-- 每条 VL-XXX 恰好挂接在父产物的一个 `FUN-XXX` 区块下——功能区块之外无全局堆叠。
+- 每条 VL-XXX 恰好引用一个已确认的 `FEA-XXX`——功能之外无全局堆叠。
 - 每条 VL-XXX 的 `来源` 引用一个已确认的 `BR-XXX` / `FEA-XXX` / 字段定义（F-XXX）。
 - 检查移除后 ID 永不复用（补空会破坏审计历史）。
 
@@ -40,7 +40,7 @@
 
 ## 必需章节
 
-对 §系统校验 区块使用 `src/templates/stage-2-product/function-description.md` 中的所有标题（校验索引、分功能详述、校验覆盖检查、事实与决定、待确认问题）。若某检查无已确认内容，写 `待确认` 并关联问题或未知 ID；不要删除标题。
+对 §系统校验 区块使用 `src/templates/stage-2-product/validation-rules.md` 中的所有标题（系统校验、字段定义表、校验→业务规则追溯、事实与决定、待确认问题）。若某检查无已确认内容，写 `待确认` 并关联问题或未知 ID；不要删除标题。
 
 > 占位符 `待确认` 保留在中文 PRD 约定中。译者可在纯英文产物中使用 `[NEEDS CLARIFICATION]`，只要校验器识别两种形式。
 
@@ -52,14 +52,14 @@
 
 ## 字段定义表 (Field Definition Table)
 
-按需产出（P1 按需），并入老版「字段规则说明」（字段名称、类型、长度、校验规则、来源）；同域合并到本 Skill。当上游 product-ux 的字段定义需要补充实现级字段契约时，在 §系统校验 内产出 `字段定义表` 小节。字段级校验逻辑由 VL-XXX 承担，本表只登记字段契约，不重复撰写校验表达式。
+按需产出（P1 按需），并入老版「字段规则说明」（字段名称、类型、长度、校验规则、来源）；同域合并到本 Skill。当上游 `page-design.md` / `interaction-rules.md` 的字段定义需要补充实现级字段契约时，在 §系统校验 内产出 `字段定义表` 小节。字段级校验逻辑由 VL-XXX 承担，本表只登记字段契约，不重复撰写校验表达式。
 
 | 字段 ID | 字段名 | 类型 | 长度/范围 | 必填 | 来源（上游 IX/FUN） | 关联校验 VL-XXX |
 |---|---|---|---|---|---|---|
-| F-XXX | field name | string/int/... | length or value domain | 是/否 | IX-XXX / FUN-XXX | VL-XXX |
+| F-XXX | field name | string/int/... | length or value domain | 是/否 | IX-XXX / FEA-XXX | VL-XXX |
 
 - 每个 `F-XXX` 全局唯一、零填充，不得与 `BR-XXX` / `VL-XXX` 混淆。
-- `来源（上游 IX/FUN）` 必须引用上游已确认的 interaction-rules（IX-XXX）或 function-description（FUN-XXX）。
+- `来源（上游 IX/FEA）` 必须引用上游已确认的 interaction-rules（IX-XXX）或 feature-list（FEA-XXX）。
 - 每个 F-XXX 至少关联一个 VL-XXX；未定义校验的字段在 `校验覆盖检查` 中标 ⚠️。
 - 表头缺「字段名/类型」或字段无来源引用时，`validate_artifact.py` 仅记 warning（不阻塞），由人工评审把关。
 
@@ -72,7 +72,7 @@
 
 ## 下游交接
 
-为下游子 skill 输出一份紧凑交接：
+为下游 work_item 输出一份紧凑交接：
 
 ```text
 confirmed_checks           # VL-XXX 列表
@@ -88,7 +88,7 @@ source_ids
 
 ## 澄清会话契约
 
-每个 Clarify Session 在父产物的 `## Clarifications` 章节记录为一行结构化数据。每个 Session 一行，按 session id 排序：
+每个 Clarify Session 在 validation-rules.md 的 `## Clarifications` 章节记录为一行结构化数据。每个 Session 一行，按 session id 排序：
 
 | Field | Meaning | Example |
 |---|---|---|

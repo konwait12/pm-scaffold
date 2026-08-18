@@ -15,7 +15,7 @@ description: 需求复述能力（单模式，RR-NNN）：用 stakeholder 原话
 
 **Do not**：不发明业务事实、不替 stakeholder / 负责人做处置决定、不把 AI 推断当已确认需求、不让过程记录本身到达 `confirmed`。本 skill 不在此解决冲突（只标记并路由到 issue-record）。
 
-**PRD 归宿**：❌ **永远不进 PRD 正文**。本 skill 是分析过程（Analysis Process），产物是过程记录。复述确认通过后：重述通过的需求行进入 `project-background-goal` 和 `user-journey-and-stories` 草案；CONFLICT → `issue-record` ISS-XXX（CLS 类别）；UNKNOWN → `issue-record` Q-XXX（INF 类别）。`requirement-restate.md` 过程记录本身永远不进入 prd.md 正文。
+**PRD 归宿**：❌ **永远不进 PRD 正文**。本 skill 是分析过程（Analysis Process），产物是过程记录。复述确认通过后：重述通过的需求行进入 `project-background-goal` 和 `user-journey` / `user-stories` 草案；CONFLICT → `issue-record` ISS-XXX（CLS 类别）；UNKNOWN → `issue-record` Q-XXX（INF 类别）。`requirement-restate.md` 过程记录本身永远不进入 prd.md 正文。
 
 **本 Skill 属于 Branch**（参见 `src/framework/governance.md` §Human-In-The-Loop Inquiry Contract）。`prd-assembly` 进入 §0 上游清单时会**主动询问**"要不要在 §0 标注 requirement-restate 来源链"——若 stakeholder 显式要求可追溯到 restate，则 §0 加一行 RR-XXX 摘要；否则不出现。触发条件：原始需求被多团队/多语言/多源转述、多源术语不一致、误读代价高（合规/法律/昂贵构建）、需要正式的"我们真的同意了吗"检查位、新 stakeholder 加入需重新锚定、材料稀疏到无法进入主干（L0，此时交给 brainstorming skill）。
 
@@ -110,6 +110,10 @@ Load `references/thinking-framework.md`（Common Core + 需求复述 lens）befo
 | `references/reviewer-checklist.md` | 人工评审清单（Human Gate 用） | Human Gate 前 |
 | `references/source-handling.md` | 来源处理规则（SRC-* 登记与引用） | Intake/来源处理时 |
 | `references/thinking-framework.md` | 思考透镜（Common Core + 需求复述 lens，必读） | 每次任务开始（必读） |
+| `src/shared/clarify/references/confirmation-signal-technique.md` | MRC 门禁与确认信号技法（白/灰/黑信号识别，复述确认收敛） | Clarify 识别复述确认信号时（按需） |
+| `references/gap-checklist-14d.md` | 14 维度缺口扫描清单（结构性遗漏检测，P0/P1/P2 定级） | Intake 后 RR 定稿前扫描时（按需） |
+| `references/fact-ledger.md` | 事实台账五分型 F/D/A/W/O + 三色标注 + 来源可信度仲裁链 | Intake 多源素材/冲突仲裁时（按需） |
+| `references/interview-synthesis.md` | 访谈五步提炼法 + 问题措辞 5 铁律（口语化描述转结构化需求） | 处理访谈原话/生成 Clarify 问题时（按需） |
 
 ## 完成标准（Completion）
 

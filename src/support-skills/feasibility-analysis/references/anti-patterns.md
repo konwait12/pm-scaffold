@@ -17,7 +17,7 @@
 ## AP3：评估缺乏具体方案对象
 - **表现**：PM 说"评估一下做会员体系可不可行"，AI 直接给"可行"
 - **为什么有害**：任何系统都能做出来，没有具体产品方案（范围/形态/架构约束）的可行性等于没说
-- **修复**：先有产品级方案（product-ux / function-description）再评估；缺失则标 `needs_user_input`
+- **修复**：先有产品级方案（feature-list / functional-flow / page-design 等）再评估；缺失则标 `needs_user_input`
 
 ## AP4：把估算当事实写死
 - **表现**：AI 估算研发成本 ¥X，未经确认直接写成事实，且不带来源

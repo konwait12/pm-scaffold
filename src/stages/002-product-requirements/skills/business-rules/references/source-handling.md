@@ -1,10 +1,10 @@
 # Source Handling · business-rules
 
-业务规则产出的来源处理：从上游 `product-ux`（FEA-XXX + UX 步骤）与 `user-journey-and-stories`（ST-XXX）中提取规则时，如何登记、引用、裁决来源。
+业务规则产出的来源处理：从上游 `page-design.md` / `interaction-rules.md`（FEA-XXX + PD/IX 步骤）与 `user-journey.md` / `user-stories.md`（ST-XXX）中提取规则时，如何登记、引用、裁决来源。
 
 ## Source Register
 
-为每条规则登记来源，并在父文档「来源追溯」中维护：
+为每条规则登记来源，并在 business-rules.md「来源追溯」中维护：
 
 ```text
 source_id
@@ -63,5 +63,5 @@ notes
 ## Mapping To BR Rows
 
 - 规则行的 `来源` 列填 `ST-XXX` / `FEA-XXX`（上游确认的 artifact），不是材料 SRC-ID。
-- 材料 SRC-ID 走父文档「来源追溯」表，保证材料 → 故事/UX → 规则三级链路可查。
+- 材料 SRC-ID 走 business-rules.md「来源追溯」表，保证材料 → 故事/UX → 规则三级链路可查。
 - 规则内容被上游改动后，同步检查所有引用该来源的 BR-XXX 是否需要回流。

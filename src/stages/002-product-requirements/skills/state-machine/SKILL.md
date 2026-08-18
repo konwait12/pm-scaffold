@@ -98,6 +98,8 @@ Present 候选状态变化表、证据摘要（每条转移由哪个故事/BR �
 | `references/reviewer-checklist.md` | 人工评审清单（Human Gate 用） | Human Gate 前 |
 | `references/source-handling.md` | 来源处理规则（SRC-* 登记与引用） | Intake/来源处理时 |
 | `references/thinking-framework.md` | 思考透镜（Common Core + 领域 lens，必读） | 每次任务开始（必读） |
+| `references/swimlane-state-technique.md` | 泳道图+状态机技法（角色泳道可视化，to B 多角色流转） | Generate 状态机时（按需） |
+| `references/state-machine-completeness.md` | 状态机完备性检查技法（6 检查 + 三元一致性 + 状态×角色权限矩阵 + 迁移表模板） | Generate 状态机草稿后/Audit 前（按需） |
 
 ## 完成标准
 
