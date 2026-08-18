@@ -72,6 +72,17 @@ Rules:
 - `exclude` / `defer` / `research` 候选一律**不**写回输入包。
 - 写回后，work item 在 `project-background-goal` 恢复（registry `resume_work_item`）。
 
+## YAGNI 削减契约（YAGNI Trim Contract）
+
+在聚类去重后、写回前，候选经过一步**需求目标过滤**（AI 初判、人工拍板，方法见 `references/thinking-framework.md` §YAGNI 削减）。
+
+Rules：
+
+- AI **只给初判**，最终 `include/exclude/defer/research` 始终由 business_owner 人工填写在处置表的 `Human Disposition` 列。
+- 被初判为 `exclude` / `defer` 的候选**不删除**，仍保留在候选表与处置表（供人工复核），只是更可能被排掉。
+- 每条削减初判的理由必须落到处置表 `Reason` 列或候选 Evidence 中，禁止"想砍就砍"无凭据。
+- 目的校准：`input_package` 只承接 **include** 候选，写入内容聚焦本需求目标，不把发散所有产物全量带下游。
+
 ## Human Responsibilities（人工责任）
 
 - **business_owner（业务负责人）**：处置每个候选（`include` / `exclude` / `defer` / `research`），确认写回目标。

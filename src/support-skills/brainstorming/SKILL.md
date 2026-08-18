@@ -36,6 +36,7 @@ Load `references/thinking-framework.md`（Common Core + 12 维度发散 lens）b
 
 ### 1. Preflight
 - 确认触发：L0 / 稀疏 → 发散收敛；多源歧义 → 复述（requirement-restate）；材料充分 → 直接进入 `project-background-goal`。
+- **需求三路径分类**（AI 初判、人工可覆盖，见 `references/thinking-framework.md` §三路径分类）：轻量澄清（范围小 → 短发散）／标准发散（常规 L0/稀疏 → 现有 12 维全流程）／全景发散（跨模块·多系统·多角色 → 全 12 维 + 分段呈现 + 可选 viz）。判定路径在开跑时口头宣告，供人工覆盖。
 - 确认负责处置的人工（business_owner）与证据边界。评估成熟度：L0（无源）→ 稀疏（单行 + 少量材料）。
 - **如果想法为空或无法识别负责人工 → 返回路由回执并在 `needs_user_input` 停下。**
 
@@ -52,11 +53,12 @@ Load `references/thinking-framework.md`（Common Core + 12 维度发散 lens）b
 - 额外：**12 维度发散 lens**（lifecycle/roles/normal-alternate-exception-failure-timeout/permission/data condition/handoff/dependency/cancellation/retry/rollback/change-recovery/constraint，见 `references/thinking-framework.md`）→ 聚类去重后每个独立想法得稳定 ID `SCN-XXX`。
 
 ### 4. Clarify
-- 批量提问带 AI 初判 + 证据 + 选项 + 影响 + owner + blocking flag；答案会实质改变候选集或处置选项时 **STOP at `needs_user_input`**。Limit ≤5 questions per session，按影响排序。
+- **对话式逐问**（吸收自超能力启发范式）：**优先一次一问、选择题优先**（2-4 个互斥选项 + 「其他」），仅确有多个独立缺口时批量；每题带 AI 初判 + 证据 + 选项 + 影响 + owner + blocking flag；答案会实质改变候选集或处置选项时 **STOP at `needs_user_input`**。Limit ≤5 questions per session，按影响排序。
 - 遇到「待确认 / 信息缺口」信号：主动询问是否登记 `issue-record`（问题清单）并更新 §13 收口表；送审前 dor_check 会硬检查收口与引用。
 - **当答案会实质改变候选集或处置选项时，停在 `needs_user_input`**。
 
 ### 5. Generate
+- 聚类去重后、写回前做 **YAGNI 削减**（见 `references/thinking-framework.md` §YAGNI 削减）：把"对本需求目标无贡献 / 成本高收益低"的候选划入 `exclude`/`defer`（Reason 注明）；AI 仅初判，最终处置仍由人工拍板。
 - 填 `src/templates/others/brainstorming-output.md`。填 SCN 候选表（全 `AI_INFERENCE`，每条含 Evidence 与 Impact）→ 8 列人工处置表（Disposition 留给人工）→ Include 项写回 → 收敛后输入包（≥50 字）。状态：使用 `draft`、`needs_user_input` 或 `conditional_review`——记录本身**永不** `confirmed`。
 
 ### 6. Audit
@@ -67,7 +69,7 @@ Load `references/thinking-framework.md`（Common Core + 12 维度发散 lens）b
 - **B3 收口**：确认 issue-record 的 §13 收口表已更新本 skill 行（问题数 / 收口日期 / 状态；空阶段也落行）。
 
 ### 7. Human Gate
-- 发散覆盖摘要（哪些维度产出什么）、候选表（证据+影响）、每条候选的推荐处置、deferral risks。**只有负责人工（business_owner）可以处置**每个候选（`include` / `exclude` / `defer` / `research`）。写回批准会创建带 SHA-256 的 ReviewRecord。
+- 发散覆盖摘要（哪些维度产出什么）、候选表（证据+影响）、每条候选的推荐处置、deferral risks。**呈现候选摘要后必须显式 `stop` 等人工处置，不得边展示边写回**（对齐 approval-gate 硬纪律）。**只有负责人工（business_owner）可以处置**每个候选（`include` / `exclude` / `defer` / `research`）。写回批准会创建带 SHA-256 的 ReviewRecord。
 
 ### 8. Commit / Reflow
 - Write back **only `include` candidates** 综合为 ≥50 字充分输入，写入 `project-background-goal` 输入包，然后返回当前 Work Item。处置不完整或出现实质新想法 → 从 Preflight 重新进入本 skill，不补丁下游；写回后出现矛盾 → 重新进入而非静默修订目标产物。
@@ -107,6 +109,7 @@ Load `references/thinking-framework.md`（Common Core + 12 维度发散 lens）b
 | `references/reviewer-checklist.md` | 人工评审清单（Human Gate 用） | Human Gate 前 |
 | `references/source-handling.md` | 来源处理规则（SRC-* 登记与引用） | Intake/来源处理时 |
 | `references/thinking-framework.md` | 思考透镜（Common Core + 12 维度发散 lens，必读） | 每次任务开始（必读） |
+| `references/visual-companion.md` | 可选 viz 模式（仅全景发散 / 处置呈现时选用，纯增强不阻塞） | 全景发散 / Human Gate 呈现时（可选） |
 
 ## 完成标准（Completion）
 
