@@ -64,6 +64,61 @@ def _project_root() -> Path:
     return p.parents[8]
 
 
+# ── C3 收紧：逐行挂接 / 内容 / 来源（借鉴点三：先逐行、后全文）────
+FUN_ID_RE = re.compile(r"\bFUN-\d+\b")
+SECTION_FUN_RE = re.compile(r"^#{1,6}\s*FUN-\d+\b")
+REF_SOURCE_RE = re.compile(
+    r"\b(?:BR|ST|FEA|VL|EX|AC|IX|FD|FUN|SRC|STATE|US|BG|PD|PRD)-\d+\b"
+)
+
+
+def _c3_line_checks(text: str, pid_re: object, kind: str) -> tuple[list[str], list[str]]:
+    """逐行收紧：以目标 ID 为首列的行必须 (1) 带真实内容 (2) 挂接 FUN-XXX
+    (3) 存在来源/依据引用。返回 (errors, warnings)。"""
+    errors: list[str] = []
+    warnings: list[str] = []
+    section_fun: str | None = None
+    for line in text.splitlines():
+        ls = line.strip()
+        mh = SECTION_FUN_RE.match(ls)
+        if mh:
+            section_fun = FUN_ID_RE.search(ls).group(0)
+            continue
+        if not ls.startswith("|"):
+            continue
+        cells = [c.strip() for c in ls.strip("|").split("|")]
+        if not cells or not cells[0]:
+            continue
+        first = re.sub(r"[*_`]", "", cells[0])
+        idm = pid_re.search(first)
+        if not idm or first != idm.group(0):
+            continue  # 首列不是目标 ID，跳过（如 转移矩阵 / 待确认 等引用表）
+        rid = idm.group(0)
+        # (1) 内容完整性：去除引用标记后仍应留有实质语句
+        body = "".join(REF_SOURCE_RE.sub("", c) for c in cells[1:])
+        body_clean = body.replace(" ", "").replace("-", "")
+        if len(body_clean) < 4:
+            errors.append(
+                f"{rid} carries no {kind} content: the row only holds the identifier "
+                "and reference cells; fill in a real statement."
+            )
+            continue
+        # (2) FUN 挂接：行内有 FUN-XXX 或正处于 FUN-XXX 区块
+        if not FUN_ID_RE.search(ls) and section_fun is None:
+            errors.append(
+                f"{rid} is orphan: not attached to any FUN-XXX "
+                "(no '所属 FUN' cell and not under a '#### FUN-XXX' section)."
+            )
+            continue
+        # (3) 转移来源（warning）
+        if not REF_SOURCE_RE.search(ls):
+            warnings.append(
+                f"{rid} lacks a source trace on its row; each state/transition "
+                "should reference an upstream BR-XXX / IX-XXX / story."
+            )
+    return errors, warnings
+
+
 def parse_frontmatter(text: str) -> dict[str, str]:
     text = re.sub(r"^<!--.*?-->\s*", "", text, flags=re.DOTALL)
     m = re.match(r"\A---\s*\n(.*?)\n---\s*\n", text, re.DOTALL)
@@ -194,6 +249,11 @@ def validate(path: Path) -> dict[str, object]:
             "Must include State × Event → Target State. "
             "Add states, events, and target state transitions."
         )
+
+    # 逐行内容 / FUN 挂接 / 转移来源（C3 收紧）
+    line_errors, line_warnings = _c3_line_checks(text, STATE_ID_RE, "state/transition")
+    errors.extend(line_errors)
+    warnings.extend(line_warnings)
 
     # Knowledge-state tags
     if not any(tag in text for tag in ("FACT", "DECISION", "AI_INFERENCE", "UNKNOWN")):
