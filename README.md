@@ -731,11 +731,14 @@ requirements/                         # 运行时生成（gitignore）
 | registry contract | 1 | ✅ PASS |
 | consistency | 1 | ✅ 0 errors 0 warnings |
 | desensitize | 1 | ✅ PASS |
-| work_item fixtures | 19 | ⚠ 14 PASS / 5 FAIL（v0.5.1 内容重写 follow-up） |
-| branch-skill fixtures | 5 | ✅ PASS |
-| 单元测试（`test/scripts/`） | 10 | ⚠ 8 PASS / 2 FAIL（v0.5.1 适配 follow-up） |
-| REQ 状态/记录/追溯 | 24 | ⚠ 23 PASS / 1 FAIL（REQ-003 trace 内容修复） |
-| **总计** | **78** | **72 PASS / 6 FAIL（v0.5.1 follow-up）** |
+| work_item fixtures（002 阶段 9 个 + 其他 8 个 + negative 8 个） | 25 | ✅ PASS |
+| branch-skill fixtures | 6 | ✅ PASS |
+| branch-validator | 6 | ✅ PASS |
+| 单元测试（`test/scripts/`） | 10 | ✅ PASS |
+| user-journey/stories | 6 | ✅ PASS |
+| 001 阶段 fixtures | 6 | ✅ PASS |
+| REQ 状态/记录/追溯 | 22 | ✅ PASS |
+| **总计** | **84** | **✅ 84 PASS / 0 FAIL** |
 
 ### 版本历史
 
