@@ -169,7 +169,7 @@ def validate(path: Path) -> dict[str, object]:
         # The E1 consistency check looks for `(BG|UJ|US|FEA|FL|PD|IX|BR|VL|SM|EX|PRD)-\d+(?:-\d+)?`
         # in source code, so keep the literal pattern below (capturing group, no \b anchors).
         UPSTREAM_ID_PATTERN = re.compile(
-            r"(BG|UJ|US|FEA|FL|PD|IX|BR|VL|SM|EX|AC|PRD)-\d+(?:-\d+)?"
+            r"(BG|UJ|US|FEA|FL|PD|IX|BR|VL|STATE|EX|AC|PRD)-\d+(?:-\d+)?"
         )
         forward_chain_ids = {
             "G": bool(re.search(r"\bG-\d+\b", text)),           # project-background-goal
@@ -224,6 +224,22 @@ def validate(path: Path) -> dict[str, object]:
                 "PRD assembly should only aggregate, not introduce new requirements"
             )
 
+        # Content-density gate: PRD must EMBED upstream content, not point to it.
+        # Aggregation contract requires §1-§4/§6/§7 + BR/VL/SM/EX/AC tables to be
+        # fully verbose-embedded. A single-line pointer like "详见 FD-001" delegates
+        # content upstream, leaving the PRD thin and non-self-contained → FAIL.
+        pointer_refs = re.findall(
+            r"(?:详见|内容见)\s*[`\[]?\s*[A-Za-z][A-Za-z0-9_\-]{0,40}", text
+        )
+        if pointer_refs:
+            uniq = list(dict.fromkeys(pointer_refs))
+            errors.append(
+                "Content-density gate failed: PRD delegates content via upstream "
+                f"pointers ({', '.join(uniq[:6])}) instead of embedding it verbatim. "
+                "Embed the full BR/VL/SM/EX/AC tables and story cards; do not write "
+                "'详见 XX-XXX' pointers."
+            )
+
     return {"ok": not errors, "errors": errors, "warnings": warnings,
             "issues": _make_issues(errors, warnings, path)}
 
@@ -235,6 +251,7 @@ _PRD_ERROR_RULES = [
     ("No RTM", "prd.missing_rtm"),
     ("Confirmed artifact has unresolved confirmation fields:", "prd.unresolved_confirmation"),
     ("PRD DoD D5.2 failed:", "prd.d52_missing_upstream"),
+    ("Content-density gate failed:", "prd.pointer_only_content"),
 ]
 
 _PRD_WARNING_RULES = [

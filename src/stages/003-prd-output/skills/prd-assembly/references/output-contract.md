@@ -25,11 +25,12 @@
 - 变更记录 → frontmatter version/updated_at + CHANGELOG
 
 ## 聚合规则（Aggregation Rules）
-- 逐字复制上游内容，绝不转述
-- 保留全部 ID（SRC-*、ST-*、FEA-*、FUN-*、BR-*、AC-*）
-- PRD 中无新需求
-- 不静默解决不一致
-- 条件章节（§5.1、§5.2）仅在上游有非空内容时才落章
+- **内嵌完整内容，不写指针**：§1-§4 与 §6、§7 及其中的 BR/VL/SM/EX/AC/字段表必须**逐字内嵌上游全文**（数据表整表搬运进 PRD），禁止用「详见 XX-XXX」「内容见 XX-XXX」一类的单行指针替代内容。下游消费方应能**只读 prd.md** 就拿到全部规则，无需再去翻上游文件。
+- 逐字复制上游内容，绝不转述、不概括删减、不润色成改变含义。
+- 保留全部 ID（SRC-*、ST-*、FEA-*、FUN-*、BR-*、AC-*），杜绝漂移。
+- PRD 中无新需求。
+- 不静默解决不一致。
+- 条件章节（§5.1、§5.2）仅在上游有非空内容时才落章；上游无内容时标注「本期不适用」，**不得以「详见 XX-XXX」指针了事**。
 
 ## RTM 格式（RTM Format）
 | Goal (G) | Story (ST) | Feature (FEA) | Function (FUN) | Acceptance (AC) | Business Rule (BR) |
