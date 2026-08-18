@@ -246,7 +246,7 @@
       "skill_path": "src/stages/002-product-requirements/skills/state-machine",
       "artifact_dir": "002-product-requirements/07-state-machine",
       "artifact_file": "state-machine.md",
-      "artifact_prefix": "SM-",
+      "artifact_prefix": "STATE-",
       "required_outputs": [
         "state-machine"
       ],

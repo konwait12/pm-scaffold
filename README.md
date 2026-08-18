@@ -648,7 +648,7 @@ AI 试图把 frontmatter 的 `status` 设为 `confirmed`。**这是 v0.4.0 第 1
 
 ### `consistency_check: 1 warning (consistency.e1.regex_missing)`
 
-`prd-assembly/scripts/validate_artifact.py` 中 `UPSTREAM_ID_PATTERN` 必须匹配 `(BG|UJ|US|FEA|FL|PD|IX|BR|VL|SM|EX|AC|PRD)-\d+(?:-\d+)?`。
+`prd-assembly/scripts/validate_artifact.py` 中 `UPSTREAM_ID_PATTERN` 必须匹配 `(BG|UJ|US|FEA|FL|PD|IX|BR|VL|STATE|EX|AC|PRD)-\d+(?:-\d+)?`。
 
 ### `registry contract: FAIL`
 

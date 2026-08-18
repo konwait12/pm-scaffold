@@ -430,12 +430,12 @@ def check_upstream_artifact_ids_contract(issues: list[dict[str, Any]]) -> None:
         return
 
     vtext = validator.read_text(encoding="utf-8")
-    vm = re.search(r"\(BG\|UJ\|US\|FEA\|FL\|PD\|IX\|BR\|VL\|SM\|EX\|AC\|PRD\)-\\d\+\(\?:-\\d\+\)\?", vtext)
+    vm = re.search(r"\(BG\|UJ\|US\|FEA\|FL\|PD\|IX\|BR\|VL\|STATE\|EX\|AC\|PRD\)-\\d\+\(\?:-\\d\+\)\?", vtext)
     if not vm:
         _add(issues, "MEDIUM", "consistency.e1.regex_missing",
-             "E1: validate_artifact.py 中未找到 upstream_artifact_ids 正则 (BG|UJ|US|FEA|FL|PD|IX|BR|VL|SM|EX|AC|PRD)-\\d+(?:-\\d+)?",
+             "E1: validate_artifact.py 中未找到 upstream_artifact_ids 正则 (BG|UJ|US|FEA|FL|PD|IX|BR|VL|STATE|EX|AC|PRD)-\\d+(?:-\\d+)?",
              field_path="src/stages/003-prd-output/skills/prd-assembly/scripts/validate_artifact.py",
-             expected="校验器源码应包含正则 (BG|UJ|US|FEA|FL|PD|IX|BR|VL|SM|EX|AC|PRD)-\\d+(?:-\\d+)?",
+             expected="校验器源码应包含正则 (BG|UJ|US|FEA|FL|PD|IX|BR|VL|STATE|EX|AC|PRD)-\\d+(?:-\\d+)?",
              actual="未匹配到该正则模式",
              repair_hint="确认 prd-assembly 校验器使用的 upstream 正则与此处期望一致",
              source_ref="consistency_check §E1",

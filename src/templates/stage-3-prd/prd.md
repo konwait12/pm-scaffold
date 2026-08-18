@@ -44,25 +44,25 @@ This PRD is a living source of truth — not a static document. When consuming t
 
 ## 1. 项目背景与目标
 
-（从 `project-background-goal` 已确认产物完整引用）
+（内嵌 `project-background-goal` 已确认产物完整全文，逐字搬运、不写「详见 XX-XXX」指针；含业务背景/目标/KPI/约束，缺则标 `待确认`）
 
 `待确认`
 
 ## 2. 业务角色、用户旅程与用户故事
 
-（从 `user-journey` + `user-stories` 已确认产物完整引用）
+（内嵌 `user-journey` + `user-stories` 已确认产物完整全文：生命周期表、用户旅程图、全部用户故事卡片 ST-XXX verbatim 逐字搬运，不写指针）
 
 `待确认`
 
 ## 3. UX：页面设计与交互规则
 
-（从 `page-design` + `interaction-rules` 已确认产物完整引用）
+（内嵌 `page-design` + `interaction-rules` 已确认产物完整全文：页面清单与全部交互规则 IX-XXX 逐条内嵌，不写指针）
 
 `待确认`
 
 ## 4. 分功能描述
 
-（从 `feature-list` / `functional-flow` / `business-rules` / `validation-rules` / `state-machine` / `exception-handling` / `acceptance-criteria` 已确认产物完整引用）
+（内嵌 `feature-list` / `functional-flow` / `business-rules` / `validation-rules` / `state-machine` / `exception-handling` / `acceptance-criteria` 已确认产物完整全文：功能清单 FEA-*、流程、业务规则 BR-*、校验 VL-*、状态机 SM-*/*STATE-*、异常 EX-*、验收 AC-* 数据表**整表内嵌**，逐字搬运、不写「详见 XX-XXX」指针）
 
 `待确认`
 
@@ -70,11 +70,11 @@ This PRD is a living source of truth — not a static document. When consuming t
 
 ### 5.1 字段规则
 
-（从 `feature-list` / `functional-flow` / `business-rules` / `validation-rules` / `state-machine` / `exception-handling` / `acceptance-criteria` 的字段定义表引用，如无内容标注"本期不适用"）
+（内嵌 `feature-list` / `functional-flow` / `business-rules` / `validation-rules` / `state-machine` / `exception-handling` / `acceptance-criteria` 的字段定义表整表；如无内容标注"本期不适用"，不以指针了事）
 
 ### 5.2 埋点需求分析
 
-（从 `tracking-plan` 分支产物引用，如无内容标注"本期不适用"）
+（内嵌 `tracking-plan` 分支产物的埋点/事件表整表；如无内容标注"本期不适用"，不以指针了事）
 
 ### 5.3 依赖与约束
 
@@ -102,13 +102,13 @@ This PRD is a living source of truth — not a static document. When consuming t
 
 ## 6. 事实与决定
 
-（汇总各工作事项 的关键事实与人类决定）
+（内嵌各 work item 已确认的关键事实与人类决定整表：FCT-* / DEC-* 逐条 verbatim、保留 ID 与来源，不写指针）
 
 `待确认`
 
 ## 7. 验收依据
 
-（汇总各工作事项 的验收标准，作为研发/测试的验收基线）
+（内嵌各 work item 的 AC-* 验收标准整表，作为研发/测试的验收基线，逐字搬运、不写指针）
 
 `待确认`
 

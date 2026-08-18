@@ -69,7 +69,7 @@ confirmed_at: 2026-08-12
 - 必须位于 Markdown 文件最顶端
 - 紧跟在 HTML 注释（`<!-- -->`）之后
 - 字段顺序按 §1 表格顺序排列
-- 数组字段用 YAML 列表语法：`upstream_artifact_ids: ["BG-001", "UJ-001", "US-001", "FEA-001", "FL-001", "PD-001", "IX-001", "BR-001", "VL-001", "SM-001", "EX-001", "AC-001"]`
+- 数组字段用 YAML 列表语法：`upstream_artifact_ids: ["BG-001", "UJ-001", "US-001", "FEA-001", "FL-001", "PD-001", "IX-001", "BR-001", "VL-001", "STATE-001", "EX-001", "AC-001"]`
 - 字符串字段值建议加双引号：`artifact_id: "BG-<example>-v1"`
 
 **示例**：
