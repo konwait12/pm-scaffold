@@ -12,13 +12,13 @@ upstream_artifact_id: FD-INVITE-001
 
 ## 埋点需求分析
 
-> 本节由 `tracking-plan` 子 Skill 生成，属于 function-description §3.x 埋点层。
-> 上游：function-description (FUN-XXX) + product-ux (IX-XXX) + business-rules (BR-XXX)
+> 本产物由独立 `tracking-plan` 支持能力生成，服务于已确认的功能流程、交互规则和业务规则。
+> 上游：functional-flow (FUN-XXX) + interaction-rules (IX-XXX) + business-rules (BR-XXX)
 
 ### 1. 元数据
 
 - 关联需求：REQ-001
-- 关联 function-description：FD-INVITE-001
+- 关联 functional-flow：FUN-INVITE-001
 - 关联上游：FUN-001 / FUN-002 / FUN-003 / IX-101 / IX-102 / IX-201 / IX-301 / BR-101
 - 评审版本：v0.1
 

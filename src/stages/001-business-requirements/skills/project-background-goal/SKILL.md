@@ -53,9 +53,10 @@ description: Turn raw requirement materials into a sourced, human-confirmed busi
 - **完整性（Completeness）**：所有来源都体现了？所有角色都识别了？所有约束都列出了？
 - **第一性原理**：我是否不小心写成了方案而不是问题？
 - **来源保真度（Source Fidelity）**：每条主张是否都能追溯到一条来源陈述？
-- **下游可用性**：journey-and-stories 能否无需重新调研就直接接续？
+- **下游可用性**：user-journey 能否无需重新调研就直接接续？
 - 运行 `scripts/validate_artifact.py <artifact> --json`。修复所有错误。警告 → 记录进 audit notes。
 - **B3 收口**：确认 issue-record 的 §13 阶段收口表已更新本 work item 行（问题数 / 收口日期 / 状态；空阶段也落行）。
+- 对 FACT、DECISION、ASSUMPTION 与 AI_INFERENCE 逐条执行四维证据检查（来源、规模、匹配、方向），见 `src/shared/audit/evidence-four-dimension-check.md`。
 
 ### 7. Human Gate
 呈现：候选摘要、证据摘要（每条主张由哪些来源支撑）、未知项及其影响、所需决策、审计结果、变更摘要。
@@ -104,6 +105,8 @@ description: Turn raw requirement materials into a sourced, human-confirmed busi
 | `references/stakeholder-power-interest.md` | 干系人权力×利益方格（四象限处理策略 + 沟通计划模板） | Generate 角色/干系人章节时（按需） |
 | `references/stakeholder-4class.md` | 干系人 4 类分类 + 高/中/低优先级 + 原始需求四维分析 | Generate 角色章节/立项分析时（按需） |
 | `references/planning-report.md` | 对齐汇报 4 要素 + 风险预案表 + 避坑检查清单 10 项 | 立项汇报/送审对齐时（按需） |
+| `references/background-4elements.md` | 背景四要素（用户+场景+问题+量化数据）写作指引 + 达标示例 | Generate 背景/目标章节、Audit/评审核对背景完整性时（按需） |
+| `src/shared/audit/evidence-four-dimension-check.md` | FACT 证据的来源/规模/匹配/方向检查 | Intake、Audit 与 Human Gate 前（必查） |
 
 ## 完成标准（Completion）
 

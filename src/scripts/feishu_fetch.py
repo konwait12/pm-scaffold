@@ -45,18 +45,135 @@ KNOWN_EMPTY_BLOCKS = ('whiteboard', 'grid', 'synced_reference', 'img')
 DEFAULT_FEISHU_DOMAIN = 'ccegroup.feishu.cn'
 
 
-def run_lark_fetch(token: str) -> dict:
-    """调用 lark-cli 读取文档，返回解析后的 JSON。"""
+def run_lark_fetch(token: str, scope: str = 'full', doc_format: str = 'markdown',
+                   max_depth: int | None = None, start_block_id: str | None = None,
+                   detail: str | None = None, fmt: str = 'json') -> dict | str:
+    """调用 lark-cli docs +fetch 读取文档。
+
+    身份认证由 Trae Lark 插件外部注入托管，不传 --as / --profile。
+    - scope='full' (默认) + fmt='json' + doc_format='markdown'：返回 dict（向后兼容）
+    - scope='outline'：返回 pretty XML 字符串（仅大纲，不写正文）
+    - scope='section'：需传 start_block_id，返回 dict
+    - scope='full' + doc_format='xml' + detail='with-ids'：返回含 block_id 的 XML dict
+      （供 extract_sheets / extract_tables 抽内嵌资源）
+    """
     cmd = ['lark-cli', 'docs', '+fetch', '--doc', token,
-           '--doc-format', 'markdown', '--scope', 'full']
+           '--doc-format', doc_format, '--scope', scope, '--format', fmt]
+    if max_depth is not None:
+        cmd += ['--max-depth', str(max_depth)]
+    if start_block_id:
+        cmd += ['--start-block-id', start_block_id]
+    if detail:
+        cmd += ['--detail', detail]
     proc = subprocess.run(cmd, capture_output=True, text=True, timeout=120,
                           encoding="utf-8", errors="replace")
     if proc.returncode != 0:
         raise RuntimeError(f'lark-cli 失败: {proc.stderr[:500]}')
-    try:
-        return json.loads(proc.stdout)
-    except json.JSONDecodeError as exc:
-        raise RuntimeError(f'lark-cli 输出非 JSON: {exc}\n{proc.stdout[:300]}') from exc
+    if fmt == 'json':
+        try:
+            return json.loads(proc.stdout)
+        except json.JSONDecodeError as exc:
+            raise RuntimeError(f'lark-cli 输出非 JSON: {exc}\n{proc.stdout[:300]}') from exc
+    return proc.stdout
+
+
+def extract_sheets(content: str) -> list[tuple[str, str, str]]:
+    """从抓取内容里抽 <sheet> 节点三元组，返回 [(block_id, sheet_id, token)]。
+
+    属性名（实测 lark-cli XML 输出）：id / sheet-id / token，属性顺序不固定；
+    markdown 输出里 sheet 节点不含 id，block_id 返回空串。
+    """
+    matches: list[tuple[str, str, str]] = []
+    for m in re.finditer(r'<sheet\b[^>]*>', content):
+        tag = m.group(0)
+        bid = re.search(r'\bid="([^"]+)"', tag)
+        sid = re.search(r'\bsheet-id="([^"]+)"', tag)
+        tok = re.search(r'\btoken="([^"]+)"', tag)
+        if sid and tok:
+            matches.append((bid.group(1) if bid else '', sid.group(1), tok.group(1)))
+    return matches
+
+
+def extract_tables(content: str) -> list[tuple[str, str]]:
+    """从 XML 内容里抽 <table id="...">...</table> 节点，返回 [(block_id, table_xml)]。"""
+    matches: list[tuple[str, str]] = []
+    for m in re.finditer(r'<table\b[^>]*\bid="([^"]+)"[^>]*>(.*?)</table>',
+                         content, re.DOTALL):
+        matches.append((m.group(1), m.group(0)))
+    return matches
+
+
+def table_xml_to_csv(tbl_xml: str) -> str:
+    """<table> DocxXML → CSV 字符串（含表头行）。"""
+    import csv as _csv
+    import io as _io
+    rows = re.findall(r'<tr[^>]*>(.*?)</tr>', tbl_xml, re.DOTALL)
+    if not rows:
+        return ''
+    buf = _io.StringIO()
+    writer = _csv.writer(buf)
+    for r in rows:
+        cells = re.findall(r'<td[^>]*>(.*?)</td>', r, re.DOTALL)
+        cleaned = []
+        for c in cells:
+            t = re.sub(r'<br\s*/?>', ' ', c)
+            t = re.sub(r'<[/!]?[a-zA-Z][^>]*>', '', t)
+            t = html.unescape(t).strip()
+            cleaned.append(t)
+        writer.writerow(cleaned)
+    return buf.getvalue().rstrip('\n') + '\n'
+
+
+def fetch_sheet_csv(token: str, sheet_id: str, range_str: str = 'A1:Z200') -> str:
+    """调 lark-cli sheets +csv-get 拉一个 sheet 的 CSV 字符串。"""
+    cmd = ['lark-cli', 'sheets', '+csv-get',
+           '--spreadsheet-token', token, '--sheet-id', sheet_id,
+           '--range', range_str, '--include-row-prefix=false',
+           '--format', 'json']
+    proc = subprocess.run(cmd, capture_output=True, text=True, timeout=120,
+                          encoding="utf-8", errors="replace")
+    if proc.returncode != 0:
+        raise RuntimeError(f'lark-cli sheets +csv-get 失败: {proc.stderr[:500]}')
+    data = json.loads(proc.stdout)
+    if not data.get('ok'):
+        raise RuntimeError(f"csv-get 返回 ok=false: {data}")
+    return data.get('data', {}).get('annotated_csv', '')
+
+
+def route_embedded_resources(content: str, base_dir: Path) -> tuple[int, int, list[str]]:
+    """扫描 XML 内容里的内嵌 <sheet>/<table>，落盘到 base_dir/sheets|tables/。
+
+    返回 (sheet_count, table_count, paths)。
+    """
+    paths: list[str] = []
+    sheets = extract_sheets(content)
+    tables = extract_tables(content)
+
+    if sheets:
+        sheets_dir = base_dir / 'sheets'
+        sheets_dir.mkdir(parents=True, exist_ok=True)
+        for _block_id, sheet_id, token in sheets:
+            try:
+                csv_text = fetch_sheet_csv(token, sheet_id)
+            except RuntimeError as exc:
+                print(f'  ⚠ sheet {sheet_id} 拉取失败: {exc}', file=sys.stderr)
+                continue
+            target = sheets_dir / f'{sheet_id}.csv'
+            target.write_text(csv_text, encoding='utf-8')
+            paths.append(str(target))
+
+    if tables:
+        tables_dir = base_dir / 'tables'
+        tables_dir.mkdir(parents=True, exist_ok=True)
+        for block_id, tbl_xml in tables:
+            csv_text = table_xml_to_csv(tbl_xml)
+            if not csv_text.strip():
+                continue
+            target = tables_dir / f'{block_id}.csv'
+            target.write_text(csv_text, encoding='utf-8')
+            paths.append(str(target))
+
+    return len(sheets), len(tables), paths
 
 
 def cell_text(cell: str) -> str:
@@ -180,25 +297,80 @@ def main() -> int:
     parser.add_argument('--src-title', default='飞书需求文档', help='材料标题')
     parser.add_argument('--feishu-domain', default=DEFAULT_FEISHU_DOMAIN,
                         help=f'飞书域名（默认 {DEFAULT_FEISHU_DOMAIN}）')
+    parser.add_argument('--scope', choices=('full', 'outline', 'section'),
+                        default='full',
+                        help='抓取范围：full=整文（默认）｜outline=仅大纲（heading+block_id）｜'
+                             'section=按 --start-block-id 切片')
+    parser.add_argument('--max-depth', type=int, default=3,
+                        help='outline heading 层级上限（仅 --scope outline 用，默认 3）')
+    parser.add_argument('--start-block-id', default=None,
+                        help='section 切片锚点 block_id（仅 --scope section 必填）')
     args = parser.parse_args()
     if not args.register and args.register_dir is not None:
         parser.error('--register-dir requires --register')
+    if args.scope == 'section' and not args.start_block_id:
+        parser.error('--scope section requires --start-block-id')
 
     token = args.token.rsplit('/', 1)[-1]
-    result = run_lark_fetch(token)
-    if not result.get('ok'):
-        print(f"提取失败: {result.get('error', '未知错误')}", file=sys.stderr)
+    out = Path(args.output)
+    out.parent.mkdir(parents=True, exist_ok=True)
+
+    # ── E2E-019：outline 模式只写大纲 sidecar，不写正文 ──────────────
+    if args.scope == 'outline':
+        outline_text = run_lark_fetch(token, scope='outline', doc_format='xml',
+                                     max_depth=args.max_depth, detail='with-ids',
+                                     fmt='pretty')
+        if not isinstance(outline_text, str):
+            print('提取失败: outline 模式期望 pretty 文本输出', file=sys.stderr)
+            return 1
+        outline_md = (f'# {args.src_title} 大纲（{args.src_id}）\n\n'
+                      f'> 来源：飞书文档（doc-id: {token}），经 lark-cli --scope outline 提取。\n'
+                      f'> 提取日期：{date.today().isoformat()}；max-depth={args.max_depth}。\n\n'
+                      f'```xml\n{outline_text}\n```\n')
+        outline_path = out.with_suffix(out.suffix + '.outline.md') if out.suffix \
+            else Path(str(out) + '.outline.md')
+        outline_path.write_text(outline_md, encoding='utf-8')
+        heading_count = len(re.findall(r'<h[1-6]\b', outline_text))
+        block_id_count = len(re.findall(r'\bid="[^"]+"', outline_text))
+        print(f'✅ outline 已写入 {outline_path}'
+              f'（heading {heading_count} 条，block_id {block_id_count} 个）')
+        return 0
+
+    # ── full / section 模式：抓 markdown → 清洗 → 落盘 ──────────────
+    if args.scope == 'section':
+        result = run_lark_fetch(token, scope='section',
+                                start_block_id=args.start_block_id)
+    else:
+        result = run_lark_fetch(token)
+    if not isinstance(result, dict) or not result.get('ok'):
+        print(f"提取失败: {result.get('error', '未知错误') if isinstance(result, dict) else '返回非 dict'}",
+              file=sys.stderr)
         return 1
     content = result['data']['document']['content']
 
     text, warnings = sanitize(content)
-    out = Path(args.output)
-    out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(build_header(args.src_id, args.src_title, token) + text, encoding='utf-8')
 
-    print(f'✅ 已写入 {out}（{len(text)} 字符）')
+    print(f'✅ 已写入 {out}（{len(text)} 字符，scope={args.scope}）')
     for w in warnings:
         print(f'  ⚠ {w}')
+
+    # ── E2E-020：full 模式额外抓 XML，路由内嵌 sheet/table ──────────
+    if args.scope == 'full':
+        try:
+            xml_result = run_lark_fetch(token, scope='full', doc_format='xml',
+                                        detail='with-ids', fmt='json')
+        except RuntimeError as exc:
+            print(f'  ⚠ 内嵌资源 XML 抓取失败（跳过 sheet/table 路由）: {exc}',
+                  file=sys.stderr)
+            xml_result = None
+        if isinstance(xml_result, dict) and xml_result.get('ok'):
+            xml_content = xml_result['data']['document']['content']
+            sheet_n, table_n, paths = route_embedded_resources(xml_content, out.parent)
+            print(f'  📎 发现内嵌 sheet {sheet_n} 个 / table {table_n} 个；'
+                  f'落盘 {len(paths)} 个 CSV')
+            for p in paths:
+                print(f'     - {p}')
 
     if args.register:
         requirements_parent = find_requirements_parent(out)

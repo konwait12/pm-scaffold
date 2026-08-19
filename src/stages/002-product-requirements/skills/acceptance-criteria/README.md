@@ -51,4 +51,4 @@
 - `references/source-handling.md` · 来源处理规则
 - `references/thinking-framework.md` · 思考框架
 - `scripts/validate_artifact.py` · 产物校验
-- `templates/acceptance-criteria-output.md` · 输出模板
+- `src/templates/stage-2-product/acceptance-criteria.md` · 输出模板

@@ -14,12 +14,10 @@ validate_module = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(validate_module)
 
 
-def test_template_passes():
-    """Template file itself should pass structural validation."""
-    template = Path(__file__).resolve().parent.parent.parent.parent / "src/templates/stage-3-prd/prd.md"
-    result = validate_module.validate(template)
-    assert result["ok"], f"Template should pass: {result.get('errors')}"
-    print("✅ test_template_passes")
+def test_positive_fixture_passes():
+    fixture = Path(__file__).resolve().parent / "fixtures/hire-website-prd-confirmed.md"
+    result = validate_module.validate(fixture)
+    assert result["ok"], result.get("errors")
 
 
 def test_missing_contract_fails():
@@ -37,7 +35,7 @@ def test_missing_contract_fails():
 
 
 def test_violation_fixture_emits_d52_error():
-    """Violation fixture should fail D5.2 (missing upstream UX-/FD-)."""
+    """Violation fixture should fail D5.2 (missing upstream current IDs)."""
     fixture = Path(__file__).resolve().parent / "fixtures/prd-violation-missing-upstream.md"
     if not fixture.exists():
         print("⚠️  test_violation_fixture_emits_d52_error: fixture missing, skipped")
@@ -56,9 +54,10 @@ def test_pointer_gate_fails():
     )
     headings = [
         "## 1. 项目背景与目标", "## 2. 业务角色、用户旅程与用户故事",
-        "## 3. UX：页面设计与交互规则", "## 4. 分功能描述", "## 5. 按需章节",
-        "## 6. 事实与决定", "## 7. 验收依据", "## 需求追溯矩阵", "## 自审记录",
-        "## 业务规则", "## 校验规则", "## 状态机", "## 异常处理",
+        "## 2. 用户旅程", "## 3. 用户故事与范围基线", "## 4. 功能清单",
+        "## 5. 功能流程", "## 6. 页面设计", "## 7. 交互规则", "## 8. 业务规则",
+        "## 9. 校验规则", "## 10. 状态变化", "## 11. 异常处理", "## 12. 验收依据",
+        "## 需求追溯矩阵", "## 自审记录",
     ]
     fm = (
         "---\nartifact_id: PRD-T\nversion: v0.1\nstatus: ready_for_human_review\n"
@@ -82,10 +81,10 @@ def test_pointer_gate_fails():
 
 
 if __name__ == "__main__":
-    import sys, traceback
+    import sys
     failed = []
     for fn_name in [
-        "test_template_passes",
+        "test_positive_fixture_passes",
         "test_missing_contract_fails",
         "test_violation_fixture_emits_d52_error",
         "test_pointer_gate_fails",
@@ -96,12 +95,7 @@ if __name__ == "__main__":
         try:
             fn()
         except Exception as exc:
-            # v2 decomposition: many assertions reference OLD validator error
-            # messages (e.g. "Missing required section"). New validators
-            # validate whole-file independently. The assertion language needs
-            # update in v0.5.0 (see Obsidian Vault Project_001/00-plan).
             failed.append((fn_name, str(exc)[:200]))
-            print(f"⚠ {fn_name}: assertion needs v0.5.0 update ({type(exc).__name__}: {str(exc)[:120]})")
+            print(f"FAIL {fn_name}: {type(exc).__name__}: {str(exc)[:120]}")
     if failed:
-        print(f"\nv2 note: {len(failed)} test assertion(s) marked for v0.5.0 update")
-    sys.exit(0)  # always pass; pending v0.5.0 fixture/assertion rewrite
+        sys.exit(1)

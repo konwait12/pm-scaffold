@@ -174,7 +174,14 @@ def _parse_frontmatter_fields(template_text: str) -> set[str]:
         foo: true
         ---
     returns {"artifact_id", "status", "foo"}.
+
+    Templates may open with an optional ``<!-- ... -->`` comment block before
+    the YAML header (see ``resolver.py`` outputs). Strip it first so the
+    frontmatter fields are actually parsed — otherwise the E3_drift closure
+    check silently skips every commented template and the validator-vs-template
+    contract red line is never enforced.
     """
+    template_text = re.sub(r"^<!--.*?-->\s*", "", template_text, flags=re.DOTALL)
     m = re.match(r"---\s*\n(.*?)\n---", template_text, re.DOTALL)
     if not m:
         return set()

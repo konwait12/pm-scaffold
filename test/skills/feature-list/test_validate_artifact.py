@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Unit tests for feature-list validate_artifact.py (sub-skill of function-description)."""
+"""Unit tests for the independent feature-list work item validator."""
 
 import sys
 import tempfile
@@ -93,7 +93,7 @@ def test_missing_section_rejected():
     try:
         result = validate_module.validate(tmp)
         assert not result["ok"], "Should fail: missing 功能清单 section"
-        assert any("Missing required section" in e for e in result["errors"]), result["errors"]
+        assert any("No FEA-" in e for e in result["errors"]), result["errors"]
         print("✅ test_missing_section_rejected")
     finally:
         tmp.unlink()
@@ -101,7 +101,7 @@ def test_missing_section_rejected():
 
 
 if __name__ == "__main__":
-    import sys, traceback
+    import sys
     failed = []
     for fn_name in [
         "test_positive_fixture_passes",
@@ -115,12 +115,7 @@ if __name__ == "__main__":
         try:
             fn()
         except Exception as exc:
-            # v2 decomposition: many assertions reference OLD validator error
-            # messages (e.g. "Missing required section"). New validators
-            # validate whole-file independently. The assertion language needs
-            # update in v0.5.0 (see Obsidian Vault Project_001/00-plan).
             failed.append((fn_name, str(exc)[:200]))
-            print(f"⚠ {fn_name}: assertion needs v0.5.0 update ({type(exc).__name__}: {str(exc)[:120]})")
+            print(f"FAIL {fn_name}: {type(exc).__name__}: {str(exc)[:120]}")
     if failed:
-        print(f"\nv2 note: {len(failed)} test assertion(s) marked for v0.5.0 update")
-    sys.exit(0)  # always pass; pending v0.5.0 fixture/assertion rewrite
+        sys.exit(1)

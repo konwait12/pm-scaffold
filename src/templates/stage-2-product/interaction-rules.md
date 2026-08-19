@@ -51,11 +51,13 @@ upstream_artifact_id: ""
 
 | 状态类型 | 是否覆盖 | 对应 IX 规则 | 备注 |
 |---|---|---|---|
-| 正常态 (normal) | 待确认 | 待确认 | |
 | 加载态 (loading) | 待确认 | 待确认 | |
 | 空态 (empty) | 待确认 | 待确认 | |
 | 错误态 (error) | 待确认 | 待确认 | |
-| 边界态 (edge) | 待确认 | 待确认 | |
+| 禁用态 (disabled) | 待确认 | 待确认 | |
+| 超时态 (timeout) | 待确认 | 待确认 | |
+
+> 备注：本状态覆盖集合与 interaction-rules 校验器 `scripts/validate_artifact.py`（`_five_states_coverage`）保持一致：loading/empty/error/disabled/timeout。起草时按该集合逐态核对，避免与校验器脱节。
 
 ## 3. 事实与决定
 

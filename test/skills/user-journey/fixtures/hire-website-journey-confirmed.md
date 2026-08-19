@@ -3,9 +3,9 @@
 v1.0 confirmed · 基于上游 BG-HIRE-002 (confirmed v1.0)
 本文件通过 validate_artifact.py 校验。
 
-⚠️ Fixture 声明：本文件是 user-journey-and-stories skill 的回归演示样本，非 REQ-001 真实需求产物。
+⚠️ Fixture 声明：本文件是 user-journey skill 的回归演示样本，非 REQ-001 真实需求产物。
 REQ-001 实际只完成 `project-background-goal`（`requirements/REQ-001-hire-website/001-business-requirements/01-background-goal/`）；
-本 fixture 仅用于校验 user-journey-and-stories validator 的结构与语义红线，不代表 REQ-001 已跑通 `user-journey-and-stories`。
+本 fixture 仅用于校验 user-journey validator 的结构与语义红线，不代表 REQ-001 已跑通 `user-journey`。
 -->
 
 ---

@@ -48,25 +48,67 @@ This PRD is a living source of truth — not a static document. When consuming t
 
 `待确认`
 
-## 2. 业务角色、用户旅程与用户故事
+## 2. 用户旅程
 
 （内嵌 `user-journey` + `user-stories` 已确认产物完整全文：生命周期表、用户旅程图、全部用户故事卡片 ST-XXX verbatim 逐字搬运，不写指针）
 
 `待确认`
 
-## 3. UX：页面设计与交互规则
+## 3. 用户故事与范围基线
+
+（内嵌 `user-stories` 已确认产物完整全文：故事卡片、MoSCoW、In/Out/Deferred/Conditional 范围基线）
+
+`待确认`
+
+## 4. 功能清单
+
+（内嵌 `feature-list` 已确认产物完整全文：FEA-XXX 功能总账与 ST-XXX 追溯）
+
+`待确认`
+
+## 5. 功能流程
+
+（内嵌 `functional-flow` 已确认产物完整全文：主流程、分支、异常路径与 FUN-XXX 节点）
+
+`待确认`
+
+## 6. 页面设计
 
 （内嵌 `page-design` + `interaction-rules` 已确认产物完整全文：页面清单与全部交互规则 IX-XXX 逐条内嵌，不写指针）
 
 `待确认`
 
-## 4. 分功能描述
+## 7. 交互规则
+
+（内嵌 `interaction-rules` 已确认产物完整全文：IX-XXX 与 loading/empty/error/disabled/timeout 状态）
+
+`待确认`
+
+## 8. 业务规则
 
 （内嵌 `feature-list` / `functional-flow` / `business-rules` / `validation-rules` / `state-machine` / `exception-handling` / `acceptance-criteria` 已确认产物完整全文：功能清单 FEA-*、流程、业务规则 BR-*、校验 VL-*、状态机 SM-*/*STATE-*、异常 EX-*、验收 AC-* 数据表**整表内嵌**，逐字搬运、不写「详见 XX-XXX」指针）
 
 `待确认`
 
-## 5. 按需章节
+## 9. 校验规则
+
+（内嵌 `validation-rules` 已确认产物完整全文：VL-XXX 字段与跨字段约束）
+
+`待确认`
+
+## 10. 状态变化
+
+（内嵌 `state-machine` 已确认产物完整全文：状态、触发、守卫和副作用）
+
+`待确认`
+
+## 11. 异常处理
+
+（内嵌 `exception-handling` 已确认产物完整全文：EX-XXX 分级、恢复与人工升级）
+
+`待确认`
+
+## 12. 按需章节
 
 ### 5.1 字段规则
 
@@ -100,13 +142,13 @@ This PRD is a living source of truth — not a static document. When consuming t
 |---|---|
 | 待补充 | 待补充 |
 
-## 6. 事实与决定
+## 13. 事实与决定
 
 （内嵌各 work item 已确认的关键事实与人类决定整表：FCT-* / DEC-* 逐条 verbatim、保留 ID 与来源，不写指针）
 
 `待确认`
 
-## 7. 验收依据
+## 14. 验收依据
 
 （内嵌各 work item 的 AC-* 验收标准整表，作为研发/测试的验收基线，逐字搬运、不写指针）
 

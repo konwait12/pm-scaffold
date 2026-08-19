@@ -101,8 +101,8 @@
 |---|---|
 | **定义** | `prd.md` frontmatter 的扩展字段，列出 PRD 引用的上游产物 ID，用于 RTM 正反向追溯。**必须使用上游产物 `artifact_id` 的原始格式**（单连字符，如 `BG-001`），不得加版本后缀（统一约定）。 |
 | **出现位置** | `src/templates/_frontmatter-schema.md` §3（扩展字段）；`src/stages/003-prd-output/skills/prd-assembly/scripts/validate_artifact.py`（DoR 校验正则）；`src/scripts/consistency_check.py`（`check_upstream_artifact_ids_contract`）。 |
-| **相关校验器** | `src/stages/003-prd-output/skills/prd-assembly/scripts/validate_artifact.py`（正则 `(BG|JS|UX|FD)-\d+(?:-\d+)?`）；`src/scripts/consistency_check.py`（模板 ↔ 校验器约定一致性）。 |
-| **示例** | `upstream_artifact_ids: ["BG-001", "UJ/US-001", "UX-001", "FD-001"]`。 |
+| **相关校验器** | `src/stages/003-prd-output/skills/prd-assembly/scripts/validate_artifact.py`（当前前缀由注册表的 `artifact_prefix` 定义）；`src/scripts/consistency_check.py`（模板 ↔ 校验器约定一致性）。 |
+| **示例** | `upstream_artifact_ids: ["BG-001", "UJ-001", "US-001", "FEA-001", "FL-001", "PD-001"]`。 |
 
 ### 2.10 rule_density（规则密度）
 

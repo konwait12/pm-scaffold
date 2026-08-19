@@ -46,4 +46,4 @@
 - `references/output-contract.md` · §VL 输出契约
 - `references/thinking-framework.md` · 思考框架
 - `scripts/validate_artifact.py` · 产物校验
-- `templates/validation-rules-output.md` · 输出模板
+- `src/templates/stage-2-product/validation-rules.md` · 输出模板

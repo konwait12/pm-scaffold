@@ -3,7 +3,7 @@
 
 tracking-plan is a Branch skill whose output is an independent artifact
 (`99-review/support/tracking-plan.md` under each requirement dir), not a
-section of the parent function-description. This validator checks that the
+independent tracking-plan artifact. This validator checks that the
 §埋点需求分析 section is present and that expected ID prefixes exist.
 
 Copy template from `src/shared/audit/subskill-validator-template.py`.
@@ -44,12 +44,91 @@ REQUIRED_REFS = (r"FUN-\d+", r"G\d+")  # every event must link to a FUN and a G
 # tracking-plan is a Branch skill (see src/framework/workflow-registry.json
 # support_capabilities.tracking-plan): its output is an INDEPENDENT artifact
 # written to `99-review/support/tracking-plan.md` under each requirement dir —
-# NOT a section of the parent function-description. The default target must
+# NOT a section of another work item. The default target must
 # therefore point at that branch artifact location, not at the
-# function-description template (which has no §埋点需求分析 section and would
+# core product templates (which have no §埋点需求分析 section and would
 # FAIL by misjudgment). Callers may still override via the CLI positional arg
 # or the PM_PARENT_ARTIFACT env var.
 # ─────────────────────────────────────────────────────────
+
+# ── Frontmatter contract (per src/templates/_frontmatter-schema.md) ──
+# Every field the branch template `templates/tracking-plan-output.md` declares
+# must be referenced by this validator (registry_contract_check E3_drift closure).
+# Branch artifacts may legitimately carry empty metadata while in draft, so a
+# missing/empty field is a WARNING, not a hard ERROR — the only hard error is a
+# `status: confirmed` written by an AI (constitution red line; confirmed is set
+# solely by `pipeline.py review --decision approve`).
+FRONTMATTER_FIELDS = {
+    "artifact_id": "全局唯一产物 ID",
+    "version": "语义化版本",
+    "status": "产物状态（见 _frontmatter-schema.md §2 枚举）",
+    "owner": "产物负责人",
+    "business_fact_owner": "业务事实负责人",
+    "goal_decision_owner": "目标/决策负责人",
+    "reviewer": "授权人工 review 人",
+    "created_at": "首次创建日期",
+    "updated_at": "最后更新日期",
+    "confirmed_at": "人工确认日期（仅 confirmed 填写）",
+    "upstream_artifact_id": "上游产物 ID",
+}
+VALID_STATUSES = {
+    "draft", "needs_user_input", "conditional_review",
+    "ready_for_human_review", "superseded", "legacy_unverified", "simulated",
+}
+
+
+def parse_frontmatter(text: str) -> dict[str, str]:
+    """Parse the YAML frontmatter header into a {field: value} dict.
+
+    Allows an optional leading HTML comment block before the header (the
+    template and generated artifacts both open with a `<!-- ... -->` note).
+    Returns {} when no frontmatter is present.
+    """
+    body = re.sub(r"^<!--.*?-->\s*", "", text, flags=re.DOTALL)
+    m = re.match(r"\A---\s*\n(.*?)\n---\s*\n", body, re.DOTALL)
+    if not m:
+        return {}
+    meta: dict[str, str] = {}
+    for line in m.group(1).splitlines():
+        line = line.split("#", 1)[0].rstrip()
+        if ":" not in line:
+            continue
+        key, _, value = line.partition(":")
+        key = key.strip()
+        if key:
+            meta[key] = value.strip().strip('"').strip("'")
+    return meta
+
+
+def _check_frontmatter(text: str, errors: list[str], warnings: list[str]) -> None:
+    """Validate frontmatter metadata per `_frontmatter-schema.md`.
+
+    Missing/empty core fields are advisory (branch artifacts stay draftable);
+    an AI-written `status: confirmed` is the one blocking violation.
+    """
+    meta = parse_frontmatter(text)
+    if not meta:
+        warnings.append("No frontmatter found; artifact status and metadata cannot be verified")
+        return
+    status = meta.get("status")
+    if status == "confirmed":
+        errors.append(
+            "status 'confirmed' is not allowed for this work_item output; "
+            "only pipeline.py review --decision approve may set confirmed"
+        )
+    elif status and status not in VALID_STATUSES:
+        warnings.append(
+            f"Unrecognized status '{status}' (not in standard whitelist); "
+            "check the frontmatter 'status' field"
+        )
+    for field, purpose in FRONTMATTER_FIELDS.items():
+        if field == "status":
+            continue  # status handled above with stricter semantics
+        if not meta.get(field):
+            warnings.append(
+                f"Frontmatter field '{field}' ({purpose}) is empty or missing; "
+                "fill it in before sending the artifact for confirmed review"
+            )
 
 
 def _default_artifact() -> Path | None:
@@ -176,6 +255,9 @@ def validate(path: Path) -> dict:
         return _make_result(path, [f"File not found: {path}"], [])
 
     text = path.read_text(encoding="utf-8")
+
+    # Frontmatter metadata contract (per src/templates/_frontmatter-schema.md)
+    _check_frontmatter(text, errors, warnings)
 
     # Section must exist (accept H2 or H3)
     headings = [

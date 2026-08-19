@@ -8,7 +8,9 @@
 |---|---|---|
 | 功能 | `FEA-XXX` | 每个流程必须归属 `feature-list.md` 功能清单已登记的 FEA；不得引入清单之外的孤儿功能 |
 | 故事 | `ST-XXX` | 流程的每个步骤必须可回溯到已确认的用户故事；无法回溯的步骤标 `AI_INFERENCE` |
-| 步骤 | `FL-XXX`（图内节点） | 图内业务步骤/状态节点可编号，命名与功能清单、故事原文一致，不自造术语 |
+| 分支 | `B-XXX` | 决策点分支行：来源为 `functional-flow.md` 产物正文 §分支流程（如 B-01~B-10）；每条分支条件标注、互斥、可穷举；下游 `interaction-rules` 等按 `B-XXX` 引用具体分支 |
+| 异常/边界流程 | `EX-XXX` | 异常/边界流程行：来源为 `functional-flow.md` 产物正文 §异常流程（如 EX-01~EX-05）；记录失败/超时/取消/恢复等异常分支与回退目标（**结构级**，只画异常分支与回退目标，处理明细归下游 `exception-handling` 的 EX-XXX）；下游 `exception-handling` / `interaction-rules` 等按 `EX-XXX` 承接细化 |
+| 步骤 | `FL-XXX`（图内节点） | **当前产物不使用（历史遗留）**：图内业务步骤/状态节点不采用 `FL-XXX` 编号，实际按流程内步骤序号（1..N）标注。保留此条目仅为历史说明；如重新启用须先说明弃用原因 |
 | 冲突 | `CONFLICT-XXX` | 上游范围与流程表达矛盾时显式保留，交人工裁决 |
 
 ## Artifact States
@@ -51,7 +53,7 @@
 
 ```text
 start_condition      # 流程在什么业务起点/触发条件下启动
-steps                # 主流程的原子业务步骤序列（FL-XXX）
+steps                # 主流程的原子业务步骤序列（按流程内步骤序号 1..N；不使用 FL-XXX）
 branch_points        # 决策点：判定条件、互斥、穷举
 exception_paths      # 异常/失败路径与回退目标
 exit_states          # 出口/终止状态与后续去向

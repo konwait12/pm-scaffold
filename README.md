@@ -6,7 +6,7 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 [![Repo](https://img.shields.io/badge/GitHub-konwait12%2Fpm--scaffold-blue.svg)](https://github.com/konwait12/pm-scaffold)
-[![Tests](https://img.shields.io/badge/tests-72%2F78-yellow.svg)](run_tests_mac.sh)
+[![Tests](https://img.shields.io/badge/tests-registry--driven-yellow.svg)](run_tests_mac.sh)
 
 ---
 
@@ -368,7 +368,7 @@ stateDiagram-v2
 
 ## 13 个 work_item
 
-v0.5.0 把 v0.4.x 的「5 主 + 9 子」复合结构拆解为 **13 个独立 work_item**，各产一份独立 .md 文件。
+当前 registry v7 使用 **13 个独立 work_item**，各产一份独立 `.md` 文件；旧复合结构仅作为 CHANGELOG 历史记录。
 
 ### 13 主干（顺序执行）
 
@@ -691,9 +691,9 @@ src/
 │   │   ├── user-stories/                    (v0.5.0 新拆)
 │   │   └── requirement-restate/             (能力)
 │   ├── 002-product-requirements/skills/
-│   │   ├── feature-list/                    (提升自 function-description)
+│   │   ├── feature-list/                    (独立 work_item)
 │   │   ├── functional-flow/                 (提升)
-│   │   ├── page-design/                     (提升自 product-ux)
+│   │   ├── page-design/                     (独立 work_item)
 │   │   ├── interaction-rules/               (提升)
 │   │   ├── business-rules/                  (提升)
 │   │   ├── validation-rules/                (提升)
@@ -738,7 +738,7 @@ requirements/                         # 运行时生成（gitignore）
 | user-journey/stories | 6 | ✅ PASS |
 | 001 阶段 fixtures | 6 | ✅ PASS |
 | REQ 状态/记录/追溯 | 22 | ✅ PASS |
-| **总计** | **84** | **✅ 84 PASS / 0 FAIL** |
+| **总计** | 以 `run_tests_mac.sh` 实测 | 通过/失败均 fail-loud |
 
 ### 版本历史
 

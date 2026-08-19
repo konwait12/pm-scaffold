@@ -50,4 +50,4 @@ Preflight → Intake → Think → Clarify → Generate → Audit → Human Gate
 - `references/source-handling.md` · 上游追溯规则
 - `references/thinking-framework.md` · 思考框架（必读）
 - `scripts/validate_artifact.py` · 产物校验
-- `templates/functional-flow-output.md` · 输出模板
+- `src/templates/stage-2-product/functional-flow.md` · 输出模板

@@ -10,6 +10,7 @@ import sys
 import tempfile
 import unittest
 from pathlib import Path
+from unittest import mock
 
 ROOT = Path(__file__).resolve().parents[2]
 SCRIPTS = ROOT / "src/scripts"
@@ -183,8 +184,8 @@ def build_gate_req(temp: Path) -> Path:
 class WorkflowRuntimeTest(unittest.TestCase):
     def test_registry_paths_and_order(self) -> None:
         items = workflow_registry.work_items()
-        self.assertEqual([item["order"] for item in items if item["order"] <= 5], [1, 2, 3, 4, 5])  # main 5 work items
-        self.assertGreaterEqual(len({item["id"] for item in items}), 5)  # 5 main + N sub-skills
+        self.assertEqual([item["order"] for item in items], list(range(1, 14)))
+        self.assertEqual(len({item["id"] for item in items}), 13)
         for item in items:
             self.assertTrue((ROOT / item["skill_path"] / "SKILL.md").is_file())
             self.assertTrue((ROOT / item["skill_path"] / "scripts/validate_artifact.py").is_file())
@@ -195,7 +196,7 @@ class WorkflowRuntimeTest(unittest.TestCase):
         items = {item["id"]: item for item in registry["work_items"]}
         artifacts = {artifact["id"]: artifact for artifact in registry["artifact_types"]}
 
-        self.assertEqual(len(artifacts), 5)  # 5 main artifacts (one per main work item)
+        self.assertEqual(len(artifacts), 13)
         self.assertEqual(
             {output for item in items.values() for output in item["required_outputs"]},
             set(artifacts),
@@ -209,19 +210,15 @@ class WorkflowRuntimeTest(unittest.TestCase):
         final_prd = artifacts["final-prd"]
         self.assertEqual(set(final_prd["depends_on"]), set(artifacts) - {"final-prd"})
 
-    def test_internal_capabilities_are_indexed_under_parent_work_items(self) -> None:
+    def test_no_legacy_internal_capabilities_remain(self) -> None:
         registry = workflow_registry.load_registry()
         parents = {item["id"] for item in registry["work_items"]}
         capabilities = registry["internal_capabilities"]
-        self.assertEqual(len(capabilities), 9)
-        self.assertEqual(len({capability["id"] for capability in capabilities}), 9)
-        for capability in capabilities:
-            self.assertIn(capability["parent_work_item"], parents)
-            self.assertTrue((ROOT / capability["skill_path"] / "SKILL.md").is_file())
-            self.assertTrue(capability["output_section"])
+        self.assertEqual(capabilities, [])
+        self.assertEqual(len(parents), 13)
 
     def test_support_skills_have_single_authoritative_location(self) -> None:
-        expected = {"competitive-research", "feasibility-analysis"}
+        expected = {"competitive-research", "feasibility-analysis", "brainstorming"}
         support_root = ROOT / "src/support-skills"
         self.assertEqual({path.name for path in support_root.iterdir() if path.is_dir()}, expected)
         for name in expected:
@@ -258,6 +255,63 @@ class WorkflowRuntimeTest(unittest.TestCase):
             result = orchestrator.build_status(req)
             self.assertEqual(result["active_work_item"], "project-background-goal")
             self.assertEqual(result["next_work_item"], "project-background-goal")
+
+    def test_init_root_isolated_from_repository(self) -> None:
+        with tempfile.TemporaryDirectory() as temp:
+            target = Path(temp) / "sandbox"
+            result = subprocess.run([
+                sys.executable, str(SCRIPTS / "pipeline.py"), "init", "REQ-777-isolated",
+                "--root", str(target),
+            ], capture_output=True, text=True, check=False, encoding="utf-8", errors="replace")
+            self.assertEqual(result.returncode, 0, result.stderr + result.stdout)
+            self.assertTrue((target / "requirements/REQ-777-isolated/00-input/source-register.md").is_file())
+            self.assertFalse((ROOT / "requirements/REQ-777-isolated").exists())
+
+    def test_feishu_detection_uses_path_without_host_specific_fallback(self) -> None:
+        not_found = subprocess.CompletedProcess(["which", "lark-cli"], 1, "", "")
+        with mock.patch.object(pipeline, "LARK_PLUGIN_ROOT", None), \
+             mock.patch.object(pipeline.subprocess, "run", return_value=not_found) as run:
+            result = pipeline._detect_feishu_capability()
+        self.assertFalse(result["lark_cli"])
+        self.assertFalse(result["lark_plugin"])
+        self.assertEqual(run.call_args.args[0], ["which", "lark-cli"])
+
+    def test_feishu_detection_uses_explicit_plugin_root(self) -> None:
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            cli = root / "1.2.3/bin/lark-cli"
+            cli.parent.mkdir(parents=True)
+            cli.write_text("placeholder", encoding="utf-8")
+            calls = [
+                subprocess.CompletedProcess(["which", "lark-cli"], 1, "", ""),
+                subprocess.CompletedProcess(["lark-cli", "--version"], 0, "lark-cli 1.2.3\n", ""),
+            ]
+            with mock.patch.object(pipeline, "LARK_PLUGIN_ROOT", root), \
+                 mock.patch.object(pipeline.subprocess, "run", side_effect=calls):
+                result = pipeline._detect_feishu_capability()
+            self.assertTrue(result["lark_cli"])
+            self.assertTrue(result["lark_plugin"])
+            self.assertEqual(result["version"], "lark-cli 1.2.3")
+
+    def test_reflow_prepares_all_downstream_then_marks_superseded(self) -> None:
+        with tempfile.TemporaryDirectory() as temp:
+            req = Path(temp) / "REQ-REFLOW"
+            for rel, artifact_id in (
+                ("001-business-requirements/02-user-journey/user-journey.md", "UJ-T-001"),
+                ("001-business-requirements/03-user-stories/user-stories.md", "US-T-001"),
+            ):
+                path = req / rel
+                path.parent.mkdir(parents=True, exist_ok=True)
+                path.write_text(f"---\nartifact_id: {artifact_id}\nstatus: confirmed\n---\n", encoding="utf-8")
+            result = subprocess.run([
+                sys.executable, str(SCRIPTS / "pipeline.py"), str(req), "reflow",
+                "--work-item", "project-background-goal", "--apply", "--reason", "测试回流",
+            ], capture_output=True, text=True, check=False, encoding="utf-8", errors="replace")
+            self.assertEqual(result.returncode, 0, result.stderr + result.stdout)
+            for path in req.glob("001-business-requirements/*/*.md"):
+                self.assertIn("status: superseded", path.read_text(encoding="utf-8"))
+            self.assertTrue(list((req / "99-review").glob("change-record-reflow-*.md")))
+            self.assertTrue((req / ".audit/events.jsonl").is_file())
 
     def test_layout_migration_is_idempotent(self) -> None:
         with tempfile.TemporaryDirectory() as temp:
@@ -421,10 +475,4 @@ class WorkflowRuntimeTest(unittest.TestCase):
 
 
 if __name__ == "__main__":
-    import sys
-    try:
-        unittest.main()
-    except SystemExit as e:
-        # v2: workflow_runtime tests reference OLD workflow (composite skills);
-        # v0.5.0 needs unit-test rewrite to match new 13-work_item pipeline
-        sys.exit(0)
+    unittest.main()

@@ -51,22 +51,32 @@ def validate_records(req_dir: Path) -> dict:
     # 借鉴点二：投影缓存（物化视图）。一次性构建 projection，所有 work_item 对"最
     # 新评审记录"的判定都来自同一个 source of truth，不再各自 glob+sort 导致漂移。
     try:
-        projection_cache.build_projection(req_dir, write=True)
-        projection_avail = True
-    except Exception:
-        # 构建失败不致命：回退 legacy 模式并追加一个 HIGH 级 notice，让回归保持绿
-        # 色；同时投影问题在日志中可见。
+        projection = projection_cache.build_projection(req_dir, write=True)
+        projection_avail = bool(projection.get("audit_chain_ok", True))
+        if not projection_avail:
+            issues.append(make_issue(
+                severity="CRITICAL", check_id="projection.audit_chain_invalid", family=FAMILY,
+                location=".audit/events.jsonl",
+                message="projection was not trusted because the audit chain is invalid",
+                expected="投影只能建立在完整的审计事件链上",
+                actual="audit_log.verify_chain returned invalid",
+                repair_hint="恢复 .audit/events.jsonl 到受信任版本后重建投影",
+                source_ref="constitution §7 / contracts.md §ProjectionCache",
+            ))
+    except (OSError, ValueError, json.JSONDecodeError) as exc:
+        # Legacy fallback is only for pre-event-sourcing requirements. A
+        # projection failure must remain blocking so a broken current workflow
+        # never looks equivalent to a legacy case.
         projection_avail = False
         issues.append(make_issue(
             severity="HIGH", check_id="projection.build_failed", family=FAMILY,
             location=".audit/projection.json",
-            message="projection_cache.build_projection raised; falling back to legacy glob-sort",
+            message="projection_cache.build_projection failed; legacy lookup is diagnostic only",
             expected="projection_cache.build_projection 应成功构建 .audit/projection.json",
-            actual="build_projection 抛出异常（详见 stderr）",
+            actual=f"{type(exc).__name__}: {exc}",
             repair_hint="检查 .audit/events.jsonl 是否损坏、workflow-registry 是否正确；可运行 "
                         "python3 src/scripts/projection_cache.py <req_dir> build 手动重建并查看报错",
             source_ref="contracts.md §ProjectionCache",
-            blocking=False,
         ))
     for item in work_items():
         artifact = find_artifact(req_dir, item)

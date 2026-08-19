@@ -52,6 +52,22 @@ VALID_STATUSES = {
     "legacy_unverified",
     "simulated",
 }
+
+# ── 模糊词 / 无阈值扫描（C 档移植：work buddy requirements-gathering 的 validateRequirements 思路）───
+# 扫描 AC 表行（形如 "| AC-001 | ..."）中的空泛词，以及写了 Given/When/Then 却无量化阈值的行。
+# 仅产生 MEDIUM advisory（blocking=False），不阻断现有 gate。
+VAGUE_AC_WORDS = (
+    "快速", "迅速", "流畅", "顺畅", "合理", "正常", "正常工作",
+    "提升体验", "提升用户体验", "优化体验", "改善体验",
+    "友好", "用户友好", "易用", "高效", "效率高",
+    "容易", "简单易用", "便捷", "稳定", "美观", "及时",
+)
+AC_ROW_RE = re.compile(r"^\s*\|?\s*AC-\d+\s*\|")
+# 行级"量化信号"：数字 / 百分号 / 时间或金额单位。故意排除 "个/人/次" 等会随中文出现的宽泛字，
+# 避免把含"用户/个"的正常 AC 行误判为无阈值。
+ROW_THRESHOLD_RE = re.compile(
+    r"[0-9０-９]|%|％|秒|分钟|小时|天|日|周|月|季|年|ms|元|万|倍|pp"
+)
 # ─────────────────────────────────────────────────────────
 
 SKILL_ID = "acceptance_criteria"
@@ -86,6 +102,30 @@ def _given_when_then_format(text: str) -> dict[str, int]:
     when = len(re.findall(r"\bWhen\b", text, re.IGNORECASE))
     then = len(re.findall(r"\bThen\b", text, re.IGNORECASE))
     return {"Given": given, "When": when, "Then": then}
+
+
+def _iter_ac_rows(text: str):
+    """Yield (line_no, row) for each AC table row like '| AC-001 | ...'."""
+    for line_no, line in enumerate(text.splitlines(), start=1):
+        if AC_ROW_RE.match(line.strip()):
+            yield line_no, line
+
+
+def _has_gwt_in_row(row: str) -> bool:
+    return bool(re.search(r"\b(given|when|then)\b", row, re.IGNORECASE))
+
+
+def _has_quantified_token(row: str) -> bool:
+    # 先剔除 ID 类引用（AC-/G-/FUN-/FEA-/ST-/BR-/EX-/VL- 等含数字的编号）与优先级值（P0/P1/P2），
+    # 避免把"编号/优先级里的数字"误当作量化阈值（例如仅剩 G-001 / P0 的行不算有阈值）。
+    cleaned = re.sub(
+        r"\b(?:AC|G|FUN|FEA|ST|BR|EX|VL|STATE)-\d+(?:-\d+)?\b|\bP[0-9]\b", " ", row
+    )
+    return bool(ROW_THRESHOLD_RE.search(cleaned))
+
+
+def _row_preview(row: str, limit: int = 80) -> str:
+    return row.strip().strip("|").strip()[:limit]
 
 
 def _make_issues(errors: list[str], warnings: list[str], path: Path) -> list[dict]:
@@ -160,6 +200,20 @@ def _make_issues(errors: list[str], warnings: list[str], path: Path) -> list[dic
                 "可追溯内容应带有知识状态标签 (FACT/DECISION/AI_INFERENCE/UNKNOWN)",
                 "全文未发现任何知识状态标签",
                 "在事实/决定/推断内容旁标注 FACT / DECISION / AI_INFERENCE / UNKNOWN",
+            )
+        elif w.startswith("Vague language"):
+            cid, exp, act, fix = (
+                f"{CHECK_PREFIX}.vague_language",
+                "AC 验收标准应使用可量化、可测量的表述，避免空泛形容词（快速/流畅/合理/正常/友好/高效 等）",
+                "AC 行出现空泛词",
+                "将空泛词替换为可量化指标（如 P99 ≤ 3s / 覆盖率 ≥ 99% / 30 天内）",
+            )
+        elif w.startswith("AC row without quantified threshold"):
+            cid, exp, act, fix = (
+                f"{CHECK_PREFIX}.no_quantified_threshold",
+                "每条 AC 应有可核验的量化阈值（数字/百分比/时间单位等）",
+                "该 AC 行未发现任何量化阈值",
+                "为该 AC 补充量化阈值（如 ≤ 500ms / ≥ 95% / 30 天内）",
             )
         elif "G-" in w or "goal" in w.lower():
             cid, exp, act, fix = (
@@ -242,6 +296,21 @@ def validate(path: Path) -> dict[str, object]:
         warnings.append(
             f"No knowledge-state tags (FACT/DECISION/AI_INFERENCE/UNKNOWN) found in {ARTIFACT_NAME}"
         )
+
+    # 模糊词 / 无量化阈值扫描（C 档移植 · advisory 非阻断）
+    # 只扫 AC 表行；命中输出 MEDIUM warning，不影响 ok / gate 结果。
+    for line_no, row in _iter_ac_rows(text):
+        for word in VAGUE_AC_WORDS:
+            if word in row:
+                warnings.append(
+                    f"Vague language in AC row (line {line_no}): '{word}' in: "
+                    f"{_row_preview(row)}"
+                )
+        if _has_gwt_in_row(row) and not _has_quantified_token(row):
+            warnings.append(
+                f"AC row without quantified threshold (line {line_no}): "
+                f"{_row_preview(row)}"
+            )
 
     return {"ok": not errors, "errors": errors, "warnings": warnings,
             "issues": _make_issues(errors, warnings, path)}

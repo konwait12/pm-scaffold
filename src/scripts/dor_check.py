@@ -118,12 +118,23 @@ def stage_closeup_check(req_dir: Path, item: dict, artifact_text: str, status: s
         if item["id"] not in ir_text:
             issues.append(f"issue-record 阶段收口表缺 {item['id']} 收口行")
     # 待确认引用检查（跳过 frontmatter 与标题行）
-    body = re.sub(r"^---\s*\n.*?\n---\s*\n?", "", artifact_text, flags=re.DOTALL)
+    # 先剥离可选的开头 <!-- --> 模板注释块，再剥离 YAML frontmatter——
+    # 否则 `^---` 只锚定字符串开头（re.DOTALL 不含 MULTILINE），对以注释
+    # 开头的产物剥离完全失效，frontmatter 里的「待确认」会被误判为无引用。
+    body = re.sub(r"^<!--.*?-->\s*", "", artifact_text, flags=re.DOTALL)
+    body = re.sub(r"^---\s*\n.*?\n---\s*\n?", "", body, flags=re.DOTALL | re.MULTILINE)
+    # 否定句式（"无新增待确认问题/未发现待确认项/无新增阻断性待确认问题"）是断言无待确认项，
+    # 不是占位符——跳过，避免把"无待确认"误判为无引用的待确认标记。
+    # E2E-022：放宽到「无/没有…」与「待确认」之间允许任意中文字符（含修饰词如"阻断性"），
+    #   但隔离到句末（。\n）或行末，防止把"无新增功能，待确认…"这类真占位符误吞。
+    NEGATED_PENDING = re.compile(r"(?:无|没有|不存在|未发现|无需)[^。\n]{0,20}?待确认")
     unreferenced = []
     for line in body.splitlines():
         if "待确认" not in line:
             continue
         if line.lstrip().startswith("#"):
+            continue
+        if NEGATED_PENDING.search(line):
             continue
         if re.search(r"(Q-\d+|ISS-\d+|DEC-\d+|SRC-\d+)", line):
             continue

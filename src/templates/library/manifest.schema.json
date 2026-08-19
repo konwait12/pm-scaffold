@@ -58,7 +58,7 @@
           "maps_to": {
             "type": "string",
             "description": "对应的核心模板名（resolver TEMPLATE_MAP 的 key）",
-            "examples": ["background-goal.md", "journey-and-stories.md", "prd.md"]
+      "examples": ["background-goal.md", "user-journey.md", "feature-list.md", "prd.md"]
           },
           "override_mode": {
             "type": "string",

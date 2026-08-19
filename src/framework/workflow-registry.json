@@ -112,7 +112,7 @@
       "skill_path": "src/stages/002-product-requirements/skills/feature-list",
       "artifact_dir": "002-product-requirements/01-feature-list",
       "artifact_file": "feature-list.md",
-      "artifact_prefix": "FEA-",
+      "artifact_prefix": "FL-",
       "required_outputs": [
         "feature-list"
       ],
@@ -135,7 +135,7 @@
       "skill_path": "src/stages/002-product-requirements/skills/functional-flow",
       "artifact_dir": "002-product-requirements/02-functional-flow",
       "artifact_file": "functional-flow.md",
-      "artifact_prefix": "FL-",
+      "artifact_prefix": "FF-",
       "required_outputs": [
         "functional-flow"
       ],
@@ -406,7 +406,7 @@
       "name": "交互规则 IX",
       "producer": "interaction-rules",
       "artifact_file": "002-product-requirements/04-interaction-rules/interaction-rules.md",
-      "prd_destination": "页面级交互规则 IX-XXX、5 状态覆盖、PD 追溯",
+      "prd_destination": "页面级交互规则 IX-XXX、5 状态覆盖、PG 追溯",
       "depends_on": [
         "page-design"
       ]

@@ -44,6 +44,7 @@ description: Transform confirmed user journey into story cards with MoSCoW prior
 - **当某个答案可能改变故事范围、优先级或归属时，停在 `needs_user_input`**。
 - 数量限制：每轮 Session 至多 5 个问题，按影响排序。
 - 遇到「待确认 / 冲突 / 信息缺口」信号：主动询问是否登记 issue-record（问题清单，见 `src/shared/clarify/skills/issue-record`）；送审前 dor_check 会硬检查收口与引用。
+- 范围边界或优先级存在取舍时，使用 `src/shared/clarify/references/scope-negotiation-scripts.md` 记录选项、代价、负责人和回滚条件，不得静默扩大 In 范围。
 
 ### 5. Generate
 - 填充模板。每个故事一行规范卡片：ID（ST-XXX）/ 角色 / 故事描述（As a...I want...so that...）/ 验收条件 / 来源（旅程节点）/ 优先级（MoSCoW）。
@@ -106,6 +107,8 @@ description: Transform confirmed user journey into story cards with MoSCoW prior
 | `references/use-case-spec-template.md` | UML 用例规格技法（参与者/前置后置/基本流/备选流/业务规则/数据说明） | Generate 用例规格时（按需） |
 | `references/job-story-and-moat.md` | JTBD 三层动机 + 竞争替代护城河矩阵 + Job Story 范式 + 出口闸门两问 | Generate 故事动机/优先级时（按需） |
 | `references/scenario-5elements.md` | 情景五要素（罗列/标题/描述/痛点快点/功能启发）驱动故事写法 | Generate 故事候选/场景上下文时（按需） |
+| `references/user-story-4elements.md` | 用户故事四要素模板（角色/场景/意图/动机）强化结构化写法 | Generate 故事卡片补齐四要素时（按需） |
+| `src/shared/clarify/references/scope-negotiation-scripts.md` | In/Out/Deferred/Conditional 的范围谈判脚本 | Clarify 发生范围或优先级取舍时（必查） |
 
 ## 完成标准（Completion）
 

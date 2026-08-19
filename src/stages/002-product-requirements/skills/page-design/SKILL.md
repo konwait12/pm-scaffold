@@ -95,6 +95,7 @@ Present: 页面清单、每页的入口/前置/操作/下一状态、所有标 `
 | `references/audit-checklist.md` | Audit 自审清单 | Audit 前 |
 | `references/output-contract.md` | 产出结构与 ID 契约 | Draft 前 |
 | `references/prototype-techniques.md` | 可点击原型技法：先出页面清单经人工确认，再生成单文件 HTML；覆盖主流程与全部分支场景（≥3 页或多方评审时用） | 需原型时（可选） |
+| `references/high-fidelity-prototype.md` | 高保真原型技法：作为文本骨架的可选附件，给 3 种设计方向（Dashboard / Consumer Mobile / To B Console）+ 反 AI-slop 硬规则 + PG-XXX→HTML 区块映射工作流 | ready_for_human_review 后、PM 主动请求视觉时（可选，需自检前端能力） |
 | `references/question-patterns.md` | Clarify 提问模板（8 类句式） | Clarify 提问时 |
 | `references/reviewer-checklist.md` | 人工评审清单（Human Gate 用） | Human Gate 前 |
 | `references/source-handling.md` | 上游追溯规则（FEA-/ST-/SRC- 引用） | Intake/追溯时 |
@@ -104,6 +105,7 @@ Present: 页面清单、每页的入口/前置/操作/下一状态、所有标 `
 | `references/ui-copywriting-rules.md` | UI 文案规范技法（5 原则 + 9 场景检查清单） | 写页面文案/按钮/提示语时（按需） |
 | `references/high-freq-missing-10.md` | 高频遗漏 10 项技法（评审前逐项核验缺项） | 页面骨架定稿/评审前（按需） |
 | `references/architecture-diagram-craft.md` | 架构图绘制技法（模块组成图分区结构 + 8 项自校验） | Generate 产品全景/模块组成图时（按需） |
+| `references/page-state-scan.md` | 页面状态与可用性收口扫查（状态七类 + Nielsen10 + 严重级🔴🟠🟡🔵） | 生成页面表后/Audit 前核对状态覆盖时（按需） |
 
 ## 完成标准
 

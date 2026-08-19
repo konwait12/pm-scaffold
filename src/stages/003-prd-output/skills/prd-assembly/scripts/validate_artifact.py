@@ -45,22 +45,22 @@ REQUIRED_FRONTMATTER = {
     "created_at", "updated_at", "confirmed_at",
 }
 
-# PRD must have 13 sections (not the old 7)
+# PRD must expose the current registry v7 work-item sections.
 REQUIRED_HEADINGS = [
     "项目背景与目标",
-    "业务角色、用户旅程与用户故事",
-    "UX：页面设计与交互规则",
-    "分功能描述",
-    "按需章节",
-    "事实与决定",
+    "用户旅程",
+    "用户故事与范围基线",
+    "功能清单",
+    "功能流程",
+    "页面设计",
+    "交互规则",
+    "业务规则",
+    "校验规则",
+    "状态变化",
+    "异常处理",
     "验收依据",
     "需求追溯矩阵",
     "自审记录",
-    # The 9 additional sections from v2 plan:
-    "业务规则",
-    "校验规则",
-    "状态机",
-    "异常处理",
 ]
 
 # 12 upstream work_item IDs that must be confirmed

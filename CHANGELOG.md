@@ -35,7 +35,18 @@ All notable changes to PM Scaffold · 产品 AI 脚手架 are documented here. T
 ## [Unreleased]
 
 ### Added
-- (next release) — placeholder
+- v0.6.1 全量审计与整改报告（文件覆盖、运行时验证、能力边界和 P1/P2 路线图）。
+- 证据四维检查与范围谈判脚本接入现行背景、故事、功能和 PRD 汇总 Skill。
+
+### Changed
+- `pipeline.py init --root` 现在隔离写入指定根目录；新增临时目录回归测试。
+- 飞书检测只使用 PATH 或 `PM_SCAFFOLD_LARK_PLUGIN_ROOT`，删除个人绝对路径依赖。
+- reflow 改为计划、预写、审计、原子替换的提交顺序；投影构建失败和审计链失效继续阻断流程。
+- macOS/Windows 测试入口对齐 PRD 追溯检查；测试结果改为运行时实测而非硬编码数字。
+- README、架构、驾驶舱、模板库和 PRD 模板收敛到 schema v7 的独立 work item 结构。
+
+### Removed
+- 已删除的复合 Skill 测试、复合模板和重复 per-Skill 输出模板；这些文件不再参与解析或假绿测试。
 
 ## [0.5.1] - 2026-08-17
 

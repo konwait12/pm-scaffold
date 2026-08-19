@@ -81,6 +81,7 @@ description: Build a lifecycle-by-role user journey map — lifecycle model, rol
 | 痛点写"体验不好" | 写具体行为："在第3步找不到导出按钮，尝试3次" |
 | 把机会写成功能方案 | 写可衡量的改进结果，如"减少50%表单填写时长" |
 | 为每个角色画相同结构的旅程 | 按角色真实的目标/阶段差异绘制 |
+| 把"用户行为"画成"产品功能/页面"（"看报表页""点按钮"） | 主语始终是角色、动词可观察（"监控项目进度""汇总业绩"）；见 `journey-behavior-vs-feature-jtbd.md` |
 
 ## 示例：充足输入 → 充足输出（Sufficient Input → Sufficient Output）
 
@@ -104,7 +105,13 @@ description: Build a lifecycle-by-role user journey map — lifecycle model, rol
 | `references/source-handling.md` | 来源处理规则（SRC-* 登记与引用） | Intake/来源处理时 |
 | `references/thinking-framework.md` | 思考透镜（Common Core + 领域 lens，必读） | 每次任务开始（必读） |
 | `references/journey-matrix-and-mot.md` | 旅程矩阵与关键时刻技法（角色×阶段 MECE 矩阵 / 情绪曲线 MOT / 触点矩阵 / 痛点→机会） | 多角色多阶段旅程或定位 MOT 时（按需） |
+| `references/journey-error-recovery-and-metrics.md` | 旅程错误恢复与指标技法（每步 Success Criteria 勾选 / 摩擦→缓解 / E1/E2 错误恢复四段式 / 旅程级 4 类指标） | 旅程需被验收/可测试、或含高风险异常路径、或需定义埋点指标时（按需） |
+| `references/journey-behavior-vs-feature-jtbd.md` | 用户行为≠功能技法（行为三问测试 / 一句话结果导向 JTBD 叙事 / 骨架活动 3-5 条 / 层层下钻留接口） | Intake 判行为vs功能 / Generate 前搭叙事主线 / Audit 查功能泄漏时（按需） |
 
 ## 完成标准（Completion）
 
 所有已确认角色都有完整的旅程图；每条旅程含阶段/触点/行为/痛点/情绪曲线/机会；情绪有来源依据；每个痛点对应可衡量的机会；主路径/分支/异常退出均有覆盖；旅程不包含用户故事卡片或范围基线；在启动 `user-stories` 前，获得授权的人类批准了用户旅程基线。
+
+## 融合指引
+
+旅程永远画在**用户行为层**，不画产品功能。分析前先想"角色在达成什么生活/业务结果"（一句 JTBD 叙事），再按行为→触点→情绪铺开；凡出现"看 X 页 / 点 X 按钮 / 系统怎么做"，即功能泄漏，路由到 `feature-list` / `functional-flow`，见 `references/journey-behavior-vs-feature-jtbd.md`。动机与优先级不在此展开（→ `user-stories/job-story-and-moat.md`、`feature-list/feature-priority-quant.md`）。

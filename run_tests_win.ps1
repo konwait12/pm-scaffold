@@ -67,6 +67,10 @@ foreach ($Test in Get-ChildItem "$Root\test" -Filter "test_*.py" -File -Recurse)
 foreach ($Req in Get-ChildItem "$Root\requirements\REQ-*" -Directory) {
     Run-Check "status/$($Req.Name)" "python `"$Root\src\scripts\orchestrator.py`" `"$($Req.FullName)`" --json"
     Run-Check "records/$($Req.Name)" "python `"$Root\src\scripts\branch_validator.py`" `"$($Req.FullName)`" --json"
+    $Prd = Join-Path $Req.FullName "003-prd-output\prd.md"
+    if ((Test-Path $Prd) -and -not ((Get-Content $Prd -Raw) -match '(?m)^status:\s*simulated')) {
+        Run-Check "trace/$($Req.Name)" "python `"$Root\src\scripts\traceability_check.py`" `"$($Req.FullName)`" --json"
+    }
 }
 
 Write-Host "Result: $Pass passed / $Fail failed"

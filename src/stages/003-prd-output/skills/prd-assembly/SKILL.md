@@ -69,6 +69,7 @@ description: Assemble all confirmed upstream baselines into one traceable PRD wi
    - **发现进 99-review 评审记录，不写进 prd.md 正文**
 5. 对抗性审视（thinking-core §1.3）："我能构造一个让这份 PRD 导向错误产品的场景吗？"
 6. **B3 收口**：确认 issue-record 的 §13 阶段收口表已更新本 work item 行（问题数 / 收口日期 / 状态；空阶段也落行）。
+- 对 PRD 中的 FACT 与关键 DECISION 执行四维证据检查（来源、规模、匹配、方向），见 `src/shared/audit/evidence-four-dimension-check.md`；无法通过的项必须进入审计问题而不是写成确定性结论。
 
 任何断裂的关系、未经批准的添加或 REVISION 级发现 → 闸门失败。
 
@@ -121,6 +122,7 @@ description: Assemble all confirmed upstream baselines into one traceable PRD wi
 | `references/output-contract.md` | 产物结构与 ID 契约 | Draft 前 |
 | `references/prd-structure-reference.md` | PRD 结构参考（章节组织方法论） | Generate 前 |
 | `references/prototype-embedding.md` | PRD 原型嵌入技法（上游有原型时用） | 上游有原型时 |
+| `src/shared/audit/evidence-four-dimension-check.md` | 聚合后事实与决策的证据质量检查 | Audit 与 Human Gate 前（必查） |
 | `references/question-patterns.md` | Clarify 提问模板（8 类句式） | Clarify 提问时 |
 | `references/reviewer-checklist.md` | 人工评审清单（Human Gate 用） | Human Gate 前 |
 | `references/source-handling.md` | 来源处理规则（SRC-* 登记与引用） | Intake/来源处理时 |

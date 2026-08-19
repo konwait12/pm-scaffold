@@ -53,4 +53,4 @@ business-rules (BR)
 python3 scripts/validate_artifact.py <产物路径> --json
 ```
 
-其中 `<产物路径>` 是生成的 `tracking-plan.md`（如 `requirements/REQ-XXX/99-review/support/tracking-plan.md`）；空模板见 Skill 目录下的 `templates/tracking-plan-output.md`。
+其中 `<产物路径>` 是生成的 `tracking-plan.md`（如 `requirements/REQ-XXX/99-review/support/tracking-plan.md`）；模板见 `src/templates/others/tracking-plan-output.md`。

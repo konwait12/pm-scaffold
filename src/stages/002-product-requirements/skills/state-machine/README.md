@@ -45,4 +45,4 @@
 - `references/output-contract.md` · §State 输出契约
 - `references/thinking-framework.md` · 思考框架
 - `scripts/validate_artifact.py` · 产物校验
-- `templates/state-machine-output.md` · 输出模板
+- `src/templates/stage-2-product/state-machine.md` · 输出模板

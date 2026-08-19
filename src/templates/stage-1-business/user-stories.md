@@ -3,7 +3,7 @@
 本模板由 user-stories SKILL.md 驱动。
 待确认 是唯一占位符。
 
-v2 拆分说明：自 journey-and-stories.md 拆出 §3-§6（故事卡片 + 覆盖矩阵 + 路径类型 + 范围基线）。
+当前独立 work item：用户故事与范围基线（故事卡片、覆盖矩阵、路径类型与范围基线）。
 用户旅程部分 → user-journey.md。
 -->
 ---

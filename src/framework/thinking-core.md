@@ -67,6 +67,25 @@
   2. 没有证据支撑的推断标 AI_INFERENCE 了没？不确定的标 UNKNOWN 了没？冲突标 CONFLICT 了没？
 - 产出落点：`Intake` 知识状态登记 + QuestionRecord 问题清单
 
+### 6.1 证据强度分级 / Evidence Strength Grading
+
+- 触发时机：`Intake` / `Generate` 标注 AI_INFERENCE 时（承接 §1.6 知识边界认知）
+- 核心问题：
+  1. 这条推断的证据强到什么程度？能支撑它进入评审基线吗？
+  2. 什么证据出现会推翻或降级这个判断（可证伪条件是否写清）？
+- 产出落点：AI_INFERENCE 标注附加分级（strong / medium / weak）+ 可证伪条件
+- 来源吸收：work buddy `product-management/references/prioritization-frameworks.md` RICE Confidence 三级（100% = high / 80% = medium / 50% = low）的分层思路 + Kill Decision「Would we start this today knowing what we know?」的"证据改变判断"意识，作为 `contracts.md` Knowledge States 中 AI_INFERENCE 的内部细化，不改标签体系。
+
+**三级分层**：
+
+| 级别 | 判定 | 标注 | 产物行为 |
+|---|---|---|---|
+| strong | ≥2 条独立来源交叉支撑 | `AI_INFERENCE(strong)` | 可写入产物正文，进入评审基线 |
+| medium | 单条来源或推断链成立但未交叉验证 | `AI_INFERENCE(medium)` | 写入正文但标 `待确认`，进 Clarify |
+| weak | 无来源、凭经验补全 | `AI_INFERENCE(weak)` | 不写入产物正文，只进 Clarify 问题清单 |
+
+**可证伪条件（必须写清什么证据会改变判断）**：每条 AI_INFERENCE 附带"若出现 X 证据，此判断降级/推翻"。例：`ASSUMPTION：销售每日录入跟进 1 次（AI_INFERENCE(medium)，若访谈 3 个客户中 ≥2 个反馈实际每日 3 次，则降级 UNKNOWN 并重走 Intake）`。写不出可证伪条件的推断视为 weak，不得进正文。
+
 ---
 
 ## §2 校验层（Audit / Human Gate 前 · 按需触发）
@@ -184,6 +203,7 @@
 | 决策预注册 / Decision Pre-registration | 决策记录 | 决策是否在四象限（技能/方差/运气/学费）中归属？事后是否复盘归因？ | prd-assembly |
 | 西瓜防御 / Watermelon Defense | 状态汇报 | 状态预测是否为具名风险（🟢🟡🔴）而非情绪判断？ | prd-assembly |
 | 二阶效应 / Second-Order Effects | 方案评估 | 方案的一阶后果之外，二阶连锁后果是什么？ | feasibility-analysis |
+| 停做审查 / Stop-Doing Review | 功能清单评审 / 范围收口 | 哪些功能用量 < 5%、无可测业务结果、持续成本超值、或"一直这么做"？触发即降级/移出/回滚的判据写清了吗？ | feature-list（配 `feature-list/references/kill-criteria.md` 停止条件技法），prd-assembly |
 
 ---
 
@@ -216,6 +236,7 @@
 | RBAC 权限矩阵 | product-design-0to1 | `business-rules/references/rbac-permission-matrix.md` | to B 角色×资源×操作场景 | BR-XXX 权限差异矩阵 |
 | 泳道图 + 状态机 | product-design-0to1 | `state-machine/references/swimlane-state-technique.md` | 多角色状态流转 | 泳道图 + Mermaid stateDiagram |
 | MRC 门禁 / 确认信号 | prd-to-prototype | `shared/clarify/references/confirmation-signal-technique.md` | Clarify 阶段完整度阈值 | 白/灰/黑确认信号处理 |
+| 范围谈判脚本 | product-management | `shared/clarify/references/scope-negotiation-scripts.md` | Clarify 范围争议 / 优先级摊平时 | 加需求/必须做/竞品对标/全P1 四类谈判脚本 |
 | 信息架构图 | prd-fullstack / prd-to-design-doc | `page-design/references/information-architecture.md` | 页面层级与导航设计 | Mermaid 信息架构图 |
 | AI 策略四要素 | prd-writer | `feature-list/references/ai-strategy-four-elements.md` | to B 智能化功能（推荐/排序/意图识别） | 输入信号/模型逻辑/输出形式/兜底规则 |
 | 溯源标注技法 | prd-generator-cc | `thinking-core` §5.1 附录 | 撰写期信息不确定 | 【推测】/【待确认】/「需专业确认」三级标注 |

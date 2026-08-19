@@ -45,8 +45,12 @@ def _parse_frontmatter(text: str) -> dict[str, str]:
 
     Mirrors ``workflow_registry.read_frontmatter`` so the minimum-threshold
     check agrees with the rest of the scaffold on what counts as a required
-    frontmatter field.
+    frontmatter field.  Templates produced by ``resolver.py`` open with an
+    optional ``<!-- ... -->`` comment block before the YAML header, so strip
+    it first — otherwise ``re.match`` anchored at the string start fails and
+    every stage-2 artifact is mis-reported as missing artifact_id/status.
     """
+    text = re.sub(r"^<!--.*?-->\s*", "", text, flags=re.DOTALL)
     match = re.match(r"---\s*\n(.*?)\n---", text, re.DOTALL)
     if not match:
         return {}
@@ -144,6 +148,11 @@ def section_by_keyword(text: str, *keywords: str) -> str:
 def check_state_machine(text: str, artifact_path: str = "<artifact>") -> list[dict]:
     """Check state transition completeness (parses the 状态变化 section only)."""
     issues = []
+    # E2E-021：非状态机工作项（feature-list/page-design/validation-rules/exception-handling/
+    # acceptance-criteria 等）合法地不定义状态机。若产物根本没有「状态变化」章节，
+    # 直接跳过该检查，否则会对每个非状态机产物误报 state_machine.missing_table。
+    if _norm("状态变化") not in _norm(text) and "状态迁移" not in _norm(text):
+        return issues
     section = section_by_keyword(text, "状态变化")
     state_rows = re.findall(
         r'\|\s*[^|]+\s*\|\s*([^|]+)\s*\|\s*([^|]+)\s*\|\s*([^|]+)\s*\|',

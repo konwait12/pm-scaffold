@@ -87,15 +87,26 @@ def parse_frontmatter(text: str) -> dict[str, str]:
 
 
 def _orphan_fea_rows(text: str) -> list[str]:
-    """FEA table rows that carry no ST-XXX traceability."""
+    """FEA table rows inside the 功能清单 table that carry no ST-XXX traceability.
+
+    Only rows within the feature-list table (header `| ID | 功能名称 | ... 所属故事 ST ...`)
+    are scanned. Cross-references to FEA-XXX elsewhere — unknowns (§4), questions (§5),
+    clarification sessions, source tables (§6) — must NOT be flagged as orphan features;
+    a full-file scan would raise false positives on any row mentioning FEA-XXX.
+    """
     orphans: list[str] = []
-    for line in text.splitlines():
-        line = line.strip()
-        if not line.startswith("|") or "---" in line:
-            continue
-        if FEA_ID_RE.search(line) and not ST_ID_RE.search(line):
-            ids = sorted(set(FEA_ID_RE.findall(line)))
-            orphans.append(f"{'/'.join(ids)} (row: {line[:80]}…)")
+    lines = text.splitlines()
+    for i, line in enumerate(lines):
+        if "| ID | 功能名称" in line and "所属故事 ST" in line:
+            for body in lines[i + 1:]:
+                b = body.strip()
+                if not b.startswith("|"):
+                    break  # table ended (next heading / blank line)
+                if "---" in b:
+                    continue
+                if FEA_ID_RE.search(b) and not ST_ID_RE.search(b):
+                    ids = sorted(set(FEA_ID_RE.findall(b)))
+                    orphans.append(f"{'/'.join(ids)} (row: {b[:80]}…)")
     return orphans
 
 

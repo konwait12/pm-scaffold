@@ -3,7 +3,7 @@
 本模板由 user-journey SKILL.md 驱动。
 待确认 是唯一占位符。
 
-v2 拆分说明：自 journey-and-stories.md 拆出 §1-§2（生命周期 + 旅程图）。
+当前独立 work item：用户旅程（生命周期、角色旅程与情绪/痛点映射）。
 用户故事部分 → user-stories.md。
 -->
 ---

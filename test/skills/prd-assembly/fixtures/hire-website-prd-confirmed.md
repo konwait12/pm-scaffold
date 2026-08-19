@@ -1,12 +1,12 @@
 <!--
 产物：PRD 汇总 · REQ-001 加拿大招聘网站
-v1.0 confirmed · 聚合 `project-background-goal` BG-HIRE-002 + `user-journey-and-stories` JS-HIRE-001
+v1.0 confirmed · 聚合 `project-background-goal` BG-HIRE-002 + `user-journey` UJ-HIRE-001
 本文件通过 validate_artifact.py 校验。
 
 ⚠️ Fixture 声明：本文件是 prd-assembly skill 的回归演示样本，非 REQ-001 真实 PRD 产物。
 REQ-001 实际只完成 `project-background-goal`（`requirements/REQ-001-hire-website/001-business-requirements/01-background-goal/`）；
 本 fixture 仅用于校验 prd-assembly validator 的结构与语义红线，不代表 REQ-001 PRD 终稿。
-真实 REQ-001 PRD 需先跑通 `product-ux` / `function-description` / `prd-assembly` 再汇总。
+真实 REQ-001 PRD 需先跑通当前 registry v7 的上游 work_item，再由 `prd-assembly` 汇总。
 -->
 ---
 artifact_id: PRD-HIRE-001
@@ -19,7 +19,7 @@ reviewer: VP of Talent
 created_at: 2026-08-11
 updated_at: 2026-08-11
 confirmed_at: ""
-upstream_artifact_ids: ["BG-HIRE-002", "JS-HIRE-001"]
+upstream_artifact_ids: ["BG-HIRE-002", "UJ-HIRE-001"]
 upstream_work_item_statuses: "project-background-goal:confirmed; user-journey:confirmed; user-stories:confirmed; feature-list:confirmed; functional-flow:confirmed; page-design:confirmed; interaction-rules:confirmed; business-rules:confirmed; validation-rules:confirmed; state-machine:confirmed; exception-handling:confirmed; acceptance-criteria:confirmed"
 ---
 
@@ -30,11 +30,11 @@ upstream_work_item_statuses: "project-background-goal:confirmed; user-journey:co
 | 步骤 | Artifact ID | 版本 | 状态 | 确认时间 |
 |---|---|---|---|---|
 | 1. 项目背景与目标 | BG-HIRE-002 | v1.0 | confirmed | 2026-08-11 |
-| 2. 用户旅程与用户故事 | JS-HIRE-001 | v1.0 | confirmed | 2026-08-11 |
-| 3. 产品 UX | — | — | ⏸ 待完成 | — |
-| 4. 功能描述 | — | — | ⏸ 待完成 | — |
+| 2. 用户旅程与用户故事 | UJ-HIRE-001 | v1.0 | confirmed | 2026-08-11 |
+| 3. 用户故事与范围基线 | US-HIRE-001 | v1.0 | confirmed | 2026-08-11 |
+| 4. 产品需求 work_items | FEA/FL/PD/IX/BR/VL/STATE/EX/AC | v1.0 | ready_for_human_review | 2026-08-11 |
 
-> 注: `product-ux`-4 尚未完成。本 PRD 汇总当前已确认的 `project-background-goal`-2 内容，`product-ux`-4 内容将在完成后增量更新。
+> 注: 本 fixture 使用完整 registry v7 章节占位，真实项目必须逐项通过人工闸门后再汇总。
 
 ## 1. 项目背景与目标
 
@@ -46,9 +46,9 @@ upstream_work_item_statuses: "project-background-goal:confirmed; user-journey:co
 - **目标 G1-G5**：简历 100% 入系统、筛选从 3h→≤1h/职位、投递转化 30%→≥40%、职位上线 2天→≤4h、招聘漏斗 100% 可视化。
 - **约束**：2026-12-31 上线硬约束、白标采购、PIPEDA 合规、法语版本期不做。
 
-## 2. 业务角色、用户旅程与用户故事
+## 2. 用户旅程
 
-（从 `user-journey-and-stories` JS-HIRE-001 完整引用）
+（从 `user-journey` UJ-HIRE-001 与 `user-stories` US-HIRE-001 完整引用）
 
 ### 生命周期：6 阶段
 
@@ -96,21 +96,37 @@ graph LR
 | ST-005 | 在〈候选人流程阶段变更时〉下，作为〈招聘专员〉，我希望〈在可视化 Pipeline 中拖拽更新候选人状态并批量操作〉，以便〈快速掌握所有职位的招聘进度〉 |
 | ST-006 | 在〈查看招聘数据时〉下，作为〈招聘专员〉，我希望〈在后台看板中查看招聘漏斗指标〉，以便〈评估渠道效果、优化招聘流程〉 |
 
-## 3. UX：页面设计与交互规则
+## 3. 用户故事与范围基线
 
-⏸ `product-ux` 尚未完成。本部分将在 product-ux 步骤 confirmed 后增量更新。
+故事卡片与范围基线见本节后续表格，状态按上游人工确认结果聚合。
 
-## 4. 分功能描述
+## 4. 功能清单
 
-⏸ `function-description` 尚未完成。本部分将在 function-description 步骤 confirmed 后增量更新。
+功能清单由 feature-list work item 提供，当前 fixture 仅保留追溯占位。
+
+## 5. 功能流程
+
+功能流程由 functional-flow work item 提供，FUN-XXX 作为内部流程节点。
+
+## 6. 页面设计
+
+页面设计与交互规则由 `page-design`（PD）和 `interaction-rules`（IX）独立 work_item 提供。
+
+## 7. 交互规则
+
+交互状态由 interaction-rules work item 提供。
+
+## 8. 业务规则
+
+功能清单、功能流程、业务规则、校验规则、状态机、异常处理和验收标准由对应独立 work_item 提供。
 
 ## 5. 按需章节
 
 ### 5.1 字段规则
-本期不适用（`function-description` 尚未完成）
+本期不适用（对应 VL work_item 尚未补齐）
 
 ### 5.2 埋点需求
-本期不适用（`function-description` 尚未完成）
+本期不适用（tracking-plan 为按需支持能力）
 
 ### 5.3 依赖与约束
 - 上线日期: 2026-12-31（硬约束）
@@ -122,35 +138,37 @@ graph LR
 - PIPEDA 数据存储位置与简历保留期（法务跟进，非阻断）
 - 候选人门户范围待评审
 
-## 业务规则
-
 | ID | 规则 | 依据 |
 |---|---|---|
 | BR-001 | 职位上线自发布审核通过起自动进入第三方同步队列 | BG G4 |
 | BR-002 | 简历筛选状态只能是 通过/不通过/待定 之一 | BG §4 |
 
-## 校验规则
+## 9. 校验规则
 
 | ID | 字段 | 规则 |
 |---|---|---|
 | VL-001 | 简历附件 | 仅支持 PDF，≤ 5MB |
 | VL-002 | 投递表单 | 必填项：姓名、邮箱、联系电话 |
 
-## 状态机
+## 10. 状态变化
 
 | 状态 | 触发事件 | 目标状态 |
 |---|---|---|
 | 已投递 | 简历审核通过 | 筛选中 |
 | 筛选中 | 招聘专员标记通过 | 面试中 |
 
-## 异常处理
+## 11. 异常处理
 
 | ID | 异常 | 处理 |
 |---|---|---|
 | EX-001 | 简历上传失败（超限/格式错） | 明确错误提示 + 允许重试 |
 | EX-002 | 第三方平台同步失败 | 后台告警 + 手动重试入口 |
 
-## 6. 需求追溯矩阵
+## 12. 验收依据
+
+验收标准由 acceptance-criteria work item 提供，当前 fixture 以 AC-XXX 占位并保留待确认状态。
+
+## 需求追溯矩阵
 
 | 目标 (G) | 故事 (ST) | 功能 (FEA) | 功能详述 (FUN) | 验收标准 (AC) | 业务规则 (BR) |
 |---|---|---|---|---|---|
@@ -160,24 +178,24 @@ graph LR
 | G4 (上线周期) | ST-001 | ⏸ | ⏸ | ⏸ | ⏸ |
 | G5 (漏斗可视化) | ST-005, ST-006 | ⏸ | ⏸ | ⏸ | ⏸ |
 
-> 注: FEA/FUN/AC/BR 列将在 `product-ux`-4 完成后填充。
+> 注: 各列由当前 registry v7 对应 work_item 逐项确认后填充。
 
 ## 7. 正向追溯检查
 
 | 检查项 | 结果 | 差距说明 |
 |---|---|---|
 | 所有 G-X → ≥ 1 ST-XXX | ✅ PASS | G1→ST-002, G2→ST-003, G3→ST-002/007, G4→ST-001, G5→ST-005/006 |
-| 所有 P0 ST → ≥ 1 FEA-XXX | ⏸ PENDING | `product-ux` 未完成 |
-| 所有 P0 FEA → ≥ 1 FUN-XXX | ⏸ PENDING | `function-description` 未完成 |
-| 所有 P0 FUN → ≥ 1 AC-XXX | ⏸ PENDING | `function-description` 未完成 |
+| 所有 P0 ST → ≥ 1 FEA-XXX | ⏸ PENDING | feature-list 尚未完成 |
+| 所有 P0 FEA → ≥ 1 FUN-XXX | ⏸ PENDING | functional-flow 尚未完成 |
+| 所有 P0 FUN → ≥ 1 AC-XXX | ⏸ PENDING | acceptance-criteria 尚未完成 |
 
 ## 8. 反向追溯检查
 
 | 检查项 | 结果 | 说明 |
 |---|---|---|
-| 所有 AC-XXX → FUN-XXX | ⏸ PENDING | `function-description` 未完成 |
-| 所有 FUN-XXX → FEA-XXX | ⏸ PENDING | `product-ux`-4 未完成 |
-| 所有 FEA-XXX → ST-XXX | ⏸ PENDING | `product-ux` 未完成 |
+| 所有 AC-XXX → FUN-XXX | ⏸ PENDING | functional-flow 尚未完成 |
+| 所有 FUN-XXX → FEA-XXX | ⏸ PENDING | feature-list 尚未完成 |
+| 所有 FEA-XXX → ST-XXX | ⏸ PENDING | user-stories 尚未完成 |
 | 无孤儿元素 | ✅ PASS | 当前已确认元素无孤儿 |
 
 ## 9. 不一致报告
@@ -194,7 +212,7 @@ graph LR
 
 | 原则 | 状态 | 证据 / 备注 |
 |---|---|---|
-| ① 业务事实分离 | PASS | 上游 BG/JS 均已完成 FACT/DECISION/AI_INFERENCE 标记 |
+| ① 业务事实分离 | PASS | 上游 BG/UJ/US 均已完成 FACT/DECISION/AI_INFERENCE 标记 |
 | ② AI 不替业务决定 | PASS | 上游所有决策均由人工确认 |
 | ③ 来源可追溯 | PASS | SRC-001/002/003 完整追溯 |
 | ④ 冲突显式保留并关闭 | PASS | CNF-001 已由 VP of Talent 裁决关闭 |
@@ -203,10 +221,10 @@ graph LR
 
 ### 12.1 关键验收基准
 - G1-G5 量化目标见 §1
-- `product-ux`-4 完成后补充功能级 AC
+- acceptance-criteria work_item 完成后补充功能级 AC
 
 ### 12.2 版本变更摘要
 
 | 版本 | 变更原因 | 主要变化 | 人工确认状态 |
 |---|---|---|---|
-| v1.0 | 初始 PRD 汇总（`project-background-goal`-2 confirmed） | G→ST 正向追溯完整；`product-ux`-4 待补齐 | **已确认** |
+| v1.0 | 初始 PRD 汇总（BG/UJ/US 已确认） | G→ST 正向追溯完整；下游 work_item 待补齐 | **待人工确认** |

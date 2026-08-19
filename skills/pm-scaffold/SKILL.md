@@ -1,7 +1,7 @@
 ---
 name: pm-scaffold
 description: PRD-only product manager AI scaffold. Convert raw requirements (BRDs, meeting notes, emails, PPTs) into structured, human-confirmed Chinese PRDs through a 3-stage registry-driven pipeline (13 work items + 3 branches + 1 resident + 2 capabilities).
-version: 0.6.0
+version: 0.6.1
 author: PM Scaffold
 tags: [pm, prd, requirements, product-management, spec-driven, b2b]
 ---
@@ -43,9 +43,9 @@ bash run_tests_mac.sh
 - **Non-bypassable human gates**: only `pipeline.py review --decision approve` with a real human reviewer can confirm artifacts
 - **SHA-256 binding**: confirmed artifacts are cryptographically bound to their reviewer
 - **Full traceability**: G→UJ→US→FEA→FL→PD→IX→BR→VL→SM→EX→AC forward and reverse traceability
-- **84+ regression tests** with fixture-based validation, registry-contract gate (E3_drift) fail-loud first
+- **Registry-driven regression** with fixture-based validation, registry-contract gate (E3_drift) fail-loud first; the displayed pass count always comes from the current run
 
-## External Skill Essence Integration（2026-08, v0.6.0）
+## External Skill Essence Integration（2026-08, v0.6.1）
 
 外部 PRD/PM skill 的精华按「A 思想层 / B 参考文档层 / C 审计层」注入既有 19 skill，不新增业务阶段、不触碰注册表/主干 8 步/模板 frontmatter/校验器：
 
@@ -76,7 +76,7 @@ New AI agents: read `AGENTS.md` first for startup order, hard rules, and quick-s
 ## Validation
 
 ```bash
-bash run_tests_mac.sh                              # Full regression (84+ tests, registry contract first)
+bash run_tests_mac.sh                              # Full regression (registry contract first)
 python3 src/scripts/consistency_check.py       # Cross-document drift check
 python3 src/scripts/property_check.py <fd.md>  # Rule completeness properties
 ```

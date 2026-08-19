@@ -41,6 +41,7 @@ description: 功能清单——从已确认的用户故事（ST-XXX）分解出�
 - 先自行调研可发现的事实（现有产品规格、竞品界面、公开数据）。
 - 剩余问题批量提交：AI 初步判断、依据、选项、影响、owner、阻断标志。
 - 当功能边界或范围决策改变必须构建的内容时，**停在 `needs_user_input`**。
+- 范围取舍必须使用 `src/shared/clarify/references/scope-negotiation-scripts.md` 留下候选、代价、负责人和回滚条件。
 - Limit: 每轮 ≤5 个问题，按影响排序。
 - 遇到「待确认 / 冲突 / 信息缺口」信号：主动询问是否登记 issue-record（问题清单，见 `src/shared/clarify/skills/issue-record`）；送审前 dor_check 会硬检查收口与引用。
 
@@ -101,6 +102,8 @@ Present 候选功能清单、证据摘要（每条功能由哪个故事支撑）
 | `references/ai-strategy-four-elements.md` | AI 策略四要素技法（输入信号/模型逻辑/输出形式/兜底规则） | Generate AI 功能时（按需） |
 | `references/dev-review-prd-standard-13.md` | 研发评审版 PRD 硬标准 13 项（达标判据 + 反模式 8 条） | Generate FEA 信息密度对照 / Human Gate 前（按需） |
 | `references/feature-priority-quant.md` | 功能优先级量化技法（RICE 评分锚点表 + MoSCoW→P0/P1/P2 映射 + 伪精确反模式 + 8 功能评分示例） | Generate 定 P0/P1/P2 或裁决优先级冲突时（按需） |
+| `references/kill-criteria.md` | 功能停止条件技法（用量阈值/成本上限/时间上限/指标护栏/定性信号 + 季度"停做"四问 + 桥接替代规则） | 给 FEA 定停止条件、范围收口争议、或评审"什么证据出现就该停"时（按需） |
+| `src/shared/clarify/references/scope-negotiation-scripts.md` | 范围边界与优先级取舍记录模板 | Clarify 或 Human Gate 发生范围取舍时（必查） |
 
 ## 完成标准
 

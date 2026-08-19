@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=1280">
-<title>PM Scaffold · 产品 AI 脚手架 · 项目驾驶舱 · 程序流程总图 v0.6.0</title>
+<title>PM Scaffold · 产品 AI 脚手架 · 项目驾驶舱 · 程序流程总图 v0.6.1</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 html,body{background:#F7F6F5;font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Microsoft YaHei","Noto Sans CJK SC",sans-serif;color:#0A0A0A;line-height:1.6}
@@ -165,7 +165,7 @@ footer{margin-top:24px;text-align:center;color:#888;font-size:11px;padding-top:1
 <div class="layout">
 <nav class="sidebar" id="sidebar">
   <div class="side-title">PM Scaffold 驾驶舱</div>
-  <div class="side-sub">v0.6.0 · 13 work_items · 84/84 · 两轮整合 69 注入点</div>
+  <div class="side-sub">v0.6.1 · 13 work_items · registry-driven · 95 注入点</div>
   <button class="tut-btn" id="tut-open">📖 新手教程 · 从这里开始</button>
     <a href="#sec-flow" class="nav-item" data-target="sec-flow"><span class="nav-n">01</span>主程序流程图</a>
     <a href="#sec-cmd" class="nav-item" data-target="sec-cmd"><span class="nav-n">02</span>命令全集</a>
@@ -186,9 +186,9 @@ footer{margin-top:24px;text-align:center;color:#888;font-size:11px;padding-top:1
 <div class="content">
 <header>
   <h1>PM Scaffold · 产品 AI 脚手架 · 项目驾驶舱 · 程序流程总图</h1>
-  <div class="sub">一个需求的完整程序流程：从「新需求输入」到「交付人工确认的 prd.md」——每个判断、每条线、每个回路都有明确条件 · v0.6.0</div>
+  <div class="sub">一个需求的完整程序流程：从「新需求输入」到「交付人工确认的 prd.md」——每个判断、每条线、每个回路都有明确条件 · v0.6.1</div>
   <div class="tags">
-    <span class="tag green">● 84/84 测试绿</span>
+    <span class="tag green">● 测试以当前运行结果为准</span>
     <span class="tag">3 阶段</span>
     <span class="tag">19 Skill（13 主干 + 3 分支 + 1 常驻 + 2 能力）</span>
     <span class="tag">9 共享模块</span>
@@ -378,7 +378,7 @@ footer{margin-top:24px;text-align:center;color:#888;font-size:11px;padding-top:1
   <!-- all confirmed decision -->
   <polygon points="610,1312 750,1380 610,1448 470,1380" fill="#FEF9EC" stroke="#C98A1B" stroke-width="1.8"/>
   <text x="610" y="1375" text-anchor="middle" font-size="12" font-weight="700" fill="#92580A">全部 5 项 confirmed？</text>
-  <text x="610" y="1392" text-anchor="middle" font-size="10" fill="#92580A">（5 主 Work Item 依次完成）</text>
+  <text x="610" y="1392" text-anchor="middle" font-size="10" fill="#92580A">（13 个主干 Work Item 全部 confirmed）</text>
 
   <!-- next work item loop -->
   <path d="M470 1380 C300 1380 300 452 498 452" fill="none" stroke="#A23B3B" stroke-width="1.6" stroke-dasharray="7 4" marker-end="url(#ar-red)"/>
@@ -415,12 +415,12 @@ footer{margin-top:24px;text-align:center;color:#888;font-size:11px;padding-top:1
   <!-- ================= 子 Skill 挂载（右侧括号） ================= -->
   <g>
     <rect x="948" y="1070" width="212" height="46" rx="8" fill="#F6F4FF" stroke="#C9C2EE" stroke-width="1.4"/>
-    <text x="1054" y="1088" text-anchor="middle" font-size="10.5" font-weight="700" fill="#3A2E8F">product-ux（已拆解 → page-design + interaction-rules）：</text>
+    <text x="1054" y="1088" text-anchor="middle" font-size="10.5" font-weight="700" fill="#3A2E8F">页面与交互 work_items：</text>
     <text x="1054" y="1105" text-anchor="middle" font-size="10" fill="#555">page-design（页面设计）· interaction-rules（交互规则）</text>
   </g>
   <g>
     <rect x="948" y="1120" width="212" height="46" rx="8" fill="#F6F4FF" stroke="#C9C2EE" stroke-width="1.4"/>
-    <text x="1054" y="1138" text-anchor="middle" font-size="10.5" font-weight="700" fill="#3A2E8F">function-description（已拆解 → 7 个独立 work_item）：</text>
+    <text x="1054" y="1138" text-anchor="middle" font-size="10.5" font-weight="700" fill="#3A2E8F">功能与质量 work_items：</text>
     <text x="1054" y="1155" text-anchor="middle" font-size="10" fill="#555">feature-list（功能清单）· functional-flow（功能流程）· business-rules（业务规则）· validation-rules（校验规则）· state-machine（状态机）· exception-handling（异常处理）· acceptance-criteria（验收标准）</text>
   </g>
 
@@ -515,7 +515,7 @@ footer{margin-top:24px;text-align:center;color:#888;font-size:11px;padding-top:1
 </section>
 <section id="sec-skills">
   <h2>6. Skill 全景说明书 <span class="badge">13 主干 + 3 分支 + 1 常驻 + 2 能力 = 19</span></h2>
-  <div class="desc"><b>v0.5.0 拆解</b>：原 v0.4.x 的「5 主 + 9 子」复合结构（<code>user-journey-and-stories</code> / <code>product-ux</code> / <code>function-description</code>）拆解为 13 个独立 work_item，每个产独立 .md 文件，前缀见下。所有 skill 统一结构：<code>SKILL.md</code>（10 节）+ <code>references/</code>（7 类）+ <code>agents/openai.yaml</code> + <code>scripts/validate_artifact.py</code> + <code>README.md</code>。数据来自 workflow-registry.json（schema v7）。</div>
+  <div class="desc"><b>当前 registry v7</b>：13 个独立 work_item，每个产独立 .md 文件，前缀见下。所有 skill 统一结构：<code>SKILL.md</code> + <code>references/</code> + <code>agents/openai.yaml</code> + <code>scripts/validate_artifact.py</code> + <code>README.md</code>。数据来自 workflow-registry.json（schema v7）。</div>
   <h3 style="margin:14px 0 8px">主干 work_item（13 · 顺序执行，进 PRD 正文）</h3>
   <table><tr><th>work_item</th><th>阶段/顺序</th><th>产物文件</th><th>ID 前缀</th><th>前置（须 confirmed）</th><th>评审角色</th><th>一句话定位</th></tr>
     <tr><td><code>project-background-goal</code>（项目背景与目标）</td><td>001 · 1</td><td><code>001-business-requirements/01-background-goal/background-goal.md</code></td><td>BG-</td><td>—（入口）</td><td>business_owner / product_owner</td><td>Turn raw requirement materials into a sourced, human-confirmed business background and goal baseline before journey or product design starts.</td></tr>
@@ -655,7 +655,7 @@ footer{margin-top:24px;text-align:center;color:#888;font-size:11px;padding-top:1
 <!-- ================= 全景节点图（可展开） ================= -->
 <section id="sec-tree2">
   <h2>全景节点图 <span class="badge">所有节点 · 点击展开</span></h2>
-  <div class="desc">全部 19 个 Skill、5 主产物、9 共享机制、信号层都在这一棵树上。点击任意节点标题展开/收起其子节点；用下面两个按钮可展开/收起整棵树。</div>
+  <div class="desc">全部 19 个 Skill、13 个主干产物、9 个共享机制和信号层都在这一棵树上。点击任意节点标题展开/收起其子节点；用下面两个按钮可展开/收起整棵树。</div>
   <div class="tree-actions">
     <button class="tree-btn" id="tree-expand">⤢ 展开全部</button>
     <button class="tree-btn" id="tree-collapse">⤡ 收起全部</button>
@@ -667,9 +667,9 @@ footer{margin-top:24px;text-align:center;color:#888;font-size:11px;padding-top:1
 </div></div><div class="tnode t-stage" data-depth="1"><div class="tnode-h"><span class="ttoggle">▸</span><span class="tbadge">阶段</span><span class="tname">001 业务需求</span></div><div class="tnode-d">业务真相与范围的源头。</div><div class="tchildren">
 <div class="tnode t-main" data-depth="2"><div class="tnode-h"><span class="ttoggle leaf"></span><span class="tbadge">主 skill</span><span class="tname">主① project-background-goal（项目背景与目标）</span></div><div class="tnode-d">产物 background-goal.md（BG-）。DoR 硬检查「00-input ≥1 SRC」。背景/现状/问题/目标/角色/约束，六态标注。评审角色：business_owner / product_owner。</div></div><div class="tnode t-main" data-depth="2"><div class="tnode-h"><span class="ttoggle leaf"></span><span class="tbadge">主 skill</span><span class="tname">② user-journey + ③ user-stories（v0.5.0 拆分）</span></div><div class="tnode-d">v0.5.0 拆解为两个独立 work_item：<b>user-journey</b>（UJ-）产物 user-journey.md（生命周期×角色×情绪）+ <b>user-stories</b>（US-）产物 user-stories.md（MoSCoW + 范围基线 + 故事 ST-）。前置：主① confirmed。评审：business_owner / product_owner。</div></div>
 </div></div><div class="tnode t-stage" data-depth="1"><div class="tnode-h"><span class="ttoggle">▸</span><span class="tbadge">阶段</span><span class="tname">002 产品需求</span></div><div class="tnode-d">把业务需求细化为产品方案。</div><div class="tchildren">
-<div class="tnode t-main" data-depth="2"><div class="tnode-h"><span class="ttoggle">▸</span><span class="tbadge">work_item</span><span class="tname">product-ux（已拆解）</span></div><div class="tnode-d">v0.5.0 拆解为两个独立 work_item：<b>page-design</b>（PD-）产物 page-design.md（页面骨架）+ <b>interaction-rules</b>（IX-）产物 interaction-rules.md（5 状态覆盖 IX-XXX）。前置：functional-flow confirmed。评审：product_owner。</div><div class="tchildren">
+<div class="tnode t-main" data-depth="2"><div class="tnode-h"><span class="ttoggle">▸</span><span class="tbadge">work_item</span><span class="tname">page-design</span></div><div class="tnode-d">独立 work_item：产物 page-design.md（PD-）定义功能流程各步骤的页面骨架。前置：functional-flow confirmed。评审：product_owner。</div><div class="tchildren">
 <div class="tnode t-sub" data-depth="3"><div class="tnode-h"><span class="ttoggle leaf"></span><span class="tbadge">子 skill</span><span class="tname">子 page-design（页面设计）</span></div><div class="tnode-d">§页面设计。页面骨架 + 可点击原型（两步流程：页面清单先人工确认 → 单文件 HTML）。</div></div><div class="tnode t-sub" data-depth="3"><div class="tnode-h"><span class="ttoggle leaf"></span><span class="tbadge">子 skill</span><span class="tname">子 interaction-rules（交互规则）</span></div><div class="tnode-d">§交互规则 IX-XXX。操作/反馈/权限/可逆性，状态覆盖 loading/empty/error/disabled。</div></div>
-</div></div><div class="tnode t-main" data-depth="2"><div class="tnode-h"><span class="ttoggle">▸</span><span class="tbadge">work_item</span><span class="tname">function-description（已拆解）</span></div><div class="tnode-d">v0.5.0 拆解为 7 个独立 work_item：feature-list（FEA）/ functional-flow（FL）/ business-rules（BR）/ validation-rules（VL）/ state-machine（SM）/ exception-handling（EX）/ acceptance-criteria（AC）。前置：user-stories confirmed。评审：product_owner / business_owner。</div><div class="tchildren">
+</div></div><div class="tnode t-main" data-depth="2"><div class="tnode-h"><span class="ttoggle">▸</span><span class="tbadge">work_item</span><span class="tname">feature-list</span></div><div class="tnode-d">独立 work_item：产物 feature-list.md（FEA-）是下游消费的唯一功能总账。前置：user-stories confirmed。评审：product_owner / business_owner。</div><div class="tchildren">
 <div class="tnode t-sub" data-depth="3"><div class="tnode-h"><span class="ttoggle leaf"></span><span class="tbadge">子 skill</span><span class="tname">子 feature-list（功能清单 FEA-）</span></div><div class="tnode-d">§功能清单。从已确认 ST-XXX 分解 FEA-XXX，P0/P1 优先级、边界不重叠、每项追溯 ST。</div></div><div class="tnode t-sub" data-depth="3"><div class="tnode-h"><span class="ttoggle leaf"></span><span class="tbadge">子 skill</span><span class="tname">子 functional-flow（功能流程）</span></div><div class="tnode-d">§功能流程。把 FEA 组织为主流程/分支流程/异常流程，Mermaid 呈现并回溯到已确认故事。</div></div><div class="tnode t-sub" data-depth="3"><div class="tnode-h"><span class="ttoggle leaf"></span><span class="tbadge">子 skill</span><span class="tname">子 business-rules（业务规则 BR-）</span></div><div class="tnode-d">计算/约束/条件/权限/时序五类，每条可执行。</div></div><div class="tnode t-sub" data-depth="3"><div class="tnode-h"><span class="ttoggle leaf"></span><span class="tbadge">子 skill</span><span class="tname">子 validation-rules（校验规则 VL- + 字段定义表）</span></div><div class="tnode-d">VL- 校验规则 + 字段定义表（字段名/类型/长度/来源）。</div></div><div class="tnode t-sub" data-depth="3"><div class="tnode-h"><span class="ttoggle leaf"></span><span class="tbadge">子 skill</span><span class="tname">子 state-machine（状态机 STATE-）</span></div><div class="tnode-d">状态定义 + 转换表 + 禁止转换显式声明 + 终态不可回退。</div></div><div class="tnode t-sub" data-depth="3"><div class="tnode-h"><span class="ttoggle leaf"></span><span class="tbadge">子 skill</span><span class="tname">子 exception-handling（异常处理 EX-）</span></div><div class="tnode-d">六类失败源，恢复方式（重试/手动/自动/终止）+ 用户提示。</div></div><div class="tnode t-sub" data-depth="3"><div class="tnode-h"><span class="ttoggle leaf"></span><span class="tbadge">子 skill</span><span class="tname">子 acceptance-criteria（验收标准 AC-）</span></div><div class="tnode-d">Given/When/Then + 量化阈值 + 追溯 G-XXX。</div></div>
 </div></div>
 </div></div><div class="tnode t-stage" data-depth="1"><div class="tnode-h"><span class="ttoggle">▸</span><span class="tbadge">阶段</span><span class="tname">003 PRD 输出</span></div><div class="tnode-d">聚合为唯一交付物。</div><div class="tchildren">
@@ -685,7 +685,7 @@ footer{margin-top:24px;text-align:center;color:#888;font-size:11px;padding-top:1
 
 <section id="sec-tree">
   <h2>12. 文件完整架构 <span class="badge">v0.5.0 · 13 work_items · 9 共享模块 · 18 脚本</span></h2>
-  <div class="desc"><b>v0.5.0 重构</b>：3 个旧复合目录（<code>user-journey-and-stories</code> / <code>product-ux</code> / <code>function-description</code>）已删除；9 个子 skill 提升为平级 work_item；<code>user-journey</code> + <code>user-stories</code> 是新拆分的独立 skill。无嵌套 <code>skills/</code> 子目录。每个目录/文件一句话职责。★ = 唯一真相源 / 核心引擎。每个 skill 内部统一为：<code>SKILL.md</code>（10 节）+ <code>references/</code>（7 类）+ <code>agents/openai.yaml</code> + <code>scripts/validate_artifact.py</code> + <code>README.md</code>。</div>
+  <div class="desc"><b>当前结构</b>：所有主干能力都是平级 work_item，无嵌套复合 Skill。每个目录/文件一句话职责。★ = 唯一真相源 / 核心引擎。每个 skill 内部统一为：<code>SKILL.md</code> + <code>references/</code> + <code>agents/openai.yaml</code> + <code>scripts/validate_artifact.py</code> + <code>README.md</code>。</div>
   <pre style="font-family:&#39;SF Mono&#39;,Menlo,monospace;font-size:11.5px;line-height:1.75;background:#F8F8FA;border:1px solid #E5E5E5;border-radius:10px;padding:18px 20px;overflow-x:auto;color:#333">
 PM Scaffold · 文件完整架构
 │
@@ -733,9 +733,9 @@ PM Scaffold · 文件完整架构
 │  │  │  ├─ user-stories/               ③ 用户故事与范围基线（v0.5.0 新拆）
 │  │  │  └─ requirement-restate/        能力 · 需求复述（复述确认 RR-NNN）
 │  │  ├─ 002-product-requirements/skills/     10 skill（9 work_item + 1 分支）
-│  │  │  ├─ feature-list/               ④ 功能清单（提升自 function-description）
+│  │  │  ├─ feature-list/               ④ 功能清单（独立 work_item）
 │  │  │  ├─ functional-flow/            ⑤ 功能流程（提升）
-│  │  │  ├─ page-design/                ⑥ 页面设计（提升自 product-ux）
+│  │  │  ├─ page-design/                ⑥ 页面设计（独立 work_item）
 │  │  │  ├─ interaction-rules/          ⑦ 交互规则（提升）
 │  │  │  ├─ business-rules/             ⑧ 业务规则（提升）
 │  │  │  ├─ validation-rules/           ⑨ 字段与校验规则（提升）
@@ -761,10 +761,10 @@ PM Scaffold · 文件完整架构
   </pre>
 </section>
 <section id="sec-kpi">
-  <h2>13. 测试与质量基线 <span class="badge">84/84</span></h2>
-  <div class="desc">run_tests_mac.sh 由注册表驱动：13 work_item + 3 分支 + 1 常驻 + 2 能力校验器全量语法检查与 fixture 验证；<b>violation 负例反向断言</b>——故意违规样本必须被校验器拒绝，否则 FAIL。两轮 Skill 精华整合（2026-08）后仍保持 84/84：registry_contract_check（E3_drift）首关 fail-loud、consistency_check 0 errors、悬空引用扫描清零——零架构改动红线持续有效。</div>
+  <h2>13. 测试与质量基线 <span class="badge">registry-driven</span></h2>
+  <div class="desc">run_tests_mac.sh 由注册表驱动：13 work_item + 支持能力校验器全量语法检查与 fixture 验证；<b>violation 负例反向断言</b>——故意违规样本必须被校验器拒绝，否则 FAIL。通过数不硬编码，始终以当前运行结果为准。</div>
   <div class="kpi-grid">
-    <div class="kpi"><div class="n">84/84</div><div class="l">回归检查（含负例反向断言 + 案例全流程）</div></div>
+    <div class="kpi"><div class="n">动态</div><div class="l">回归检查（含负例反向断言 + 案例全流程）</div></div>
     <div class="kpi"><div class="n">19</div><div class="l">Skill（13 主干 + 3 分支 + 1 常驻 + 2 能力）</div></div>
     <div class="kpi"><div class="n">95</div><div class="l">三档注入点（18 透镜 + 64 技法 + 13 审计）</div></div>
     <div class="kpi"><div class="n">0</div><div class="l">一致性错误（consistency_check）</div></div>
@@ -783,7 +783,7 @@ PM Scaffold · 文件完整架构
   </table>
 </section>
 <section id="sec-integration">
-  <h2>15. Skill 精华整合（两轮 · 69 注入点） <span class="badge">零改动三档 · 红线零触碰</span></h2>
+  <h2>15. Skill 精华整合（当前版本 · 95 注入点） <span class="badge">边界受控</span></h2>
   <div class="desc">2026-08 两轮整合 + 薄弱 skill 补厚，把团队 PRD Skill 的精华按「A 思想层 / B 参考文档层 / C 审计层」注入脚手架：<b>只加内容、不改架构</b>——不碰 workflow-registry.json、SKILL.md 主干 8 步、模板 frontmatter、validate_artifact.py。共评估 <b>48 个外部 skill → 13 整合 + 25 部分吸收 + 10 不整合（重复/超范围）→ 合计 95 注入点</b>（A 档 18 透镜/技法登记 + B 档 64 技法文件 + C 档 13 审计扩展），全部落在 19 个既有 skill 的 references/ 与框架文档中，不新增业务阶段。第三轮补厚覆盖 9 个技法件稀少的 skill（user-journey / issue-record / functional-flow / state-machine / acceptance-criteria / tracking-plan / exception-handling / feature-list / interaction-rules）。</div>
 
   <h3 style="margin:14px 0 8px">第一轮（scene#18）：13 个 PRD skill 精华 → 24 项</h3>
@@ -824,10 +824,10 @@ PM Scaffold · 文件完整架构
     <tr><td><code>shared/clarify</code></td><td>confirmation-signal-technique</td></tr>
   </table>
 
-  <div class="desc" style="margin-top:12px">验证状态：<span class="ok">84/84 测试绿</span> · <span class="ok">consistency 0 errors</span> · <span class="ok">悬空引用 0</span> · <span class="ok">64 技法文件全部登记且 ≥80 行</span> · <span class="ok">知识状态仅 6 标准标签</span> · <span class="ok">红线零触碰</span>。实施依据：<code>docs/new-skills-integration-plan.md</code>（全量评估表 + 映射 + M1-M6 里程碑）。</div>
+  <div class="desc" style="margin-top:12px">验证状态：测试数量以当前运行结果为准 · registry/consistency/引用扫描均应由命令实测确认 · 技法文件登记状态见各 SKILL.md。实施依据：<code>docs/new-skills-integration-plan.md</code> 与当前审计报告。</div>
 </section>
 <footer>
-  PM Scaffold · v0.6.0 · 本图与 src/framework/workflow-registry.json 同源——registry 是唯一机器真相，本图仅作人类可读视图。测试数与 Skill 数以 <code>bash run_tests_mac.sh</code> 与 registry 实测为准。飞书链路以 lark-cli 实测为准。
+  PM Scaffold · v0.6.1 · 本图与 src/framework/workflow-registry.json 同源——registry 是唯一机器真相，本图仅作人类可读视图。测试数与 Skill 数以 <code>bash run_tests_mac.sh</code> 与 registry 实测为准。飞书链路以 PATH 或 <code>PM_SCAFFOLD_LARK_PLUGIN_ROOT</code> 实测为准。
 </footer>
 </div>
 </div>

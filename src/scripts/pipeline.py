@@ -6,6 +6,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import os
 import re
 import subprocess
 import sys
@@ -147,7 +148,117 @@ def branch_skill_signals(req_dir: Path, statuses: dict) -> list[dict]:
     return signals
 
 
-def init_requirement(name: str | None) -> int:
+# Optional plugin root for installations where lark-cli is not on PATH. A
+# checkout must not depend on a particular user's home directory.
+LARK_PLUGIN_ROOT = Path(os.environ["PM_SCAFFOLD_LARK_PLUGIN_ROOT"]).expanduser() \
+    if os.environ.get("PM_SCAFFOLD_LARK_PLUGIN_ROOT") else None
+
+
+def _detect_feishu_capability() -> dict:
+    """扫描本机是否具备飞书能力（lark-cli / lark 插件）。
+
+    返回结构：``{"lark_cli": bool, "lark_plugin": bool, "version": str}``
+
+    扫描规则：
+        1. ``which lark-cli``（macOS PATH 已注入时优先命中）；
+        2. 可选兜底：检查 ``PM_SCAFFOLD_LARK_PLUGIN_ROOT/<ver>/bin/lark-cli``；
+        3. ``lark_cli`` 为真时跑 ``lark-cli --version`` 捕获 stdout。
+
+    刻意不跑 ``lark-cli auth status``：Trae 托管外部凭证注入下实测报
+    "Credential management is not supported" —— 用 ``--version`` 判断可执行性即可。
+    """
+    lark_plugin = LARK_PLUGIN_ROOT is not None and LARK_PLUGIN_ROOT.is_dir()
+    lark_cli = False
+    version = ""
+    # 1. which lark-cli（macOS）
+    try:
+        which_result = subprocess.run(
+            ["which", "lark-cli"],
+            capture_output=True, text=True, check=False,
+            encoding="utf-8", errors="replace",
+        )
+        if which_result.returncode == 0 and which_result.stdout.strip():
+            lark_cli = True
+    except (OSError, subprocess.SubprocessError):
+        pass
+    # 2. 兜底：直接扫描 lark 插件 bin 目录
+    if not lark_cli and LARK_PLUGIN_ROOT is not None and lark_plugin:
+        for version_dir in sorted(LARK_PLUGIN_ROOT.iterdir(), reverse=True):
+            if version_dir.is_dir() and (version_dir / "bin" / "lark-cli").is_file():
+                lark_cli = True
+                break
+    # 3. lark-cli --version（捕获输出，不依赖 auth status）
+    if lark_cli:
+        try:
+            ver_result = subprocess.run(
+                ["lark-cli", "--version"],
+                capture_output=True, text=True, check=False,
+                encoding="utf-8", errors="replace",
+                timeout=5,
+            )
+            if ver_result.returncode == 0:
+                version = ver_result.stdout.strip()
+        except (OSError, subprocess.SubprocessError):
+            pass
+    return {"lark_cli": lark_cli, "lark_plugin": lark_plugin, "version": version}
+
+
+def _lark_plugin_version_str() -> str:
+    """从可选 LARK_PLUGIN_ROOT 取最大版本目录名（如 ``1.0.3``）。"""
+    if LARK_PLUGIN_ROOT is None or not LARK_PLUGIN_ROOT.is_dir():
+        return ""
+    versions = sorted(
+        [p.name for p in LARK_PLUGIN_ROOT.iterdir()
+         if p.is_dir() and p.name[:1].isdigit()],
+        reverse=True,
+    )
+    return versions[0] if versions else ""
+
+
+def _prompt_feishu_integration(req_dir: Path) -> None:
+    """init 完成后扫描飞书能力并询问是否启用，落盘 00-input/feishu-enabled.json。
+
+    - 检测到 lark-cli 或 lark 插件：
+        - TTY：主动询问 [y/N]，y 写 ``enabled:true``，N/默认写 ``enabled:false``；
+        - 非 TTY：跳过询问，打印能力扫描结果，写默认 ``enabled:false``。
+    - 未检测到：不询问，写 ``{"enabled": false, "reason": "..."}``。
+    """
+    feishu = _detect_feishu_capability()
+    today = datetime.now(timezone.utc).astimezone().strftime("%Y-%m-%d")
+    feishu_file = req_dir / "00-input" / "feishu-enabled.json"
+    if feishu.get("lark_cli") or feishu.get("lark_plugin"):
+        plugin_ver = _lark_plugin_version_str()
+        parts = []
+        if feishu.get("lark_cli"):
+            parts.append(f"lark-cli 已安装（{feishu.get('version') or 'version unknown'}）")
+        if feishu.get("lark_plugin"):
+            parts.append(f"飞书插件 v{plugin_ver or 'unknown'} 可用")
+        print(f"  飞书能力扫描：检测到 {'; '.join(parts)}")
+        if sys.stdin.isatty():
+            answer = input(
+                "  检测到飞书能力，是否启用飞书集成？"
+                "本项目将以 lark-cli 为来源读取飞书文档/发布 PRD。[y/N] "
+            ).strip().lower()
+            enabled = answer in ("y", "yes")
+            print(f"  飞书集成：{'已启用' if enabled else '未启用（默认）'}")
+        else:
+            print("  飞书集成：非交互环境，跳过询问，默认未启用")
+            enabled = False
+        payload = {
+            "enabled": enabled,
+            "detected_at": today,
+            "lark_cli_version": feishu.get("version", ""),
+            "lark_plugin_version": plugin_ver,
+        }
+    else:
+        print("  飞书能力扫描：未检测到 lark-cli 与 lark 插件")
+        payload = {"enabled": False, "reason": "lark-cli and lark plugin not detected"}
+    feishu_file.write_text(
+        json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8",
+    )
+
+
+def init_requirement(name: str | None, root: Path | None = None) -> int:
     """Create a requirement skeleton from the registry (REQ-NNN-topic-name)."""
     if not name:
         print("ERROR: init requires a requirement name like REQ-NNN-my-feature", file=sys.stderr)
@@ -155,7 +266,8 @@ def init_requirement(name: str | None) -> int:
     if not re.fullmatch(r"REQ-\d{3}[A-Za-z0-9_-]*", name):
         print(f"ERROR: invalid requirement name '{name}' (expect REQ-NNN-topic)", file=sys.stderr)
         return 1
-    req_dir = Path("requirements") / name
+    requirements_root = (root.resolve() if root is not None else Path.cwd()) / "requirements"
+    req_dir = requirements_root / name
     if req_dir.exists():
         print(f"ERROR: {req_dir} already exists", file=sys.stderr)
         return 1
@@ -169,6 +281,19 @@ def init_requirement(name: str | None) -> int:
     (req_dir / "00-input" / "authorized-reviewers.json").write_text(
         json.dumps({"reviewers": []}, ensure_ascii=False, indent=2) + "\n", encoding="utf-8",
     )
+    # E2E-003③: 单一真相源——issue-record 骨架来自 shared issue-record 模板，
+    # init 时自动落盘到 99-review/support/issue-record.md（gate 强制要求该产物存在）。
+    issue_record_template = (
+        Path(__file__).parent.parent
+        / "shared/clarify/skills/issue-record/assets/issue-record-template.md"
+    )
+    if issue_record_template.is_file():
+        support_dir = req_dir / "99-review" / "support"
+        support_dir.mkdir(parents=True, exist_ok=True)
+        (support_dir / "issue-record.md").write_text(
+            issue_record_template.read_text(encoding="utf-8"),
+            encoding="utf-8",
+        )
     # 单一真相源：source-register 骨架来自 project-init 共享模板（src/shared/
     # project-init/templates/source-register-skeleton.md），不在 pipeline 内硬编码。
     source_register_template = (
@@ -211,6 +336,8 @@ def init_requirement(name: str | None) -> int:
     print(f"Created {req_dir}")
     print(f"  Next: put source materials in {req_dir}/00-input/, then run")
     print(f"        python3 src/scripts/pipeline.py {req_dir} status")
+    # 飞书能力扫描 + 主动询问（仅 init 一次；非 TTY 自动写默认 false）
+    _prompt_feishu_integration(req_dir)
     return 0
 
 
@@ -289,6 +416,65 @@ def write_change_record(req_dir: Path, item: dict, artifact: Path, from_status: 
         ]), encoding="utf-8",
     )
     return record
+
+
+def reviewer_cli(argv: list[str]) -> int:
+    """E2E-001: manage 00-input/authorized-reviewers.json from the CLI.
+
+    subcommands:
+      pipeline.py reviewer add <req_dir> --id <id> --name <name> --roles r1,r2 [--roles ...]
+      pipeline.py reviewer list <req_dir>
+    Registration is strictly an alias for the human to grant review rights;
+    it never auto-fills a reviewer into a review call.
+    """
+    if not argv:
+        print("usage: pipeline.py reviewer add <req_dir> --id <id> --name <name> --roles r1,r2")
+        print("       pipeline.py reviewer list <req_dir>")
+        return 2
+    sub, *rest = argv
+    parser = argparse.ArgumentParser(prog=f"pipeline.py reviewer {sub}")
+    parser.add_argument("req_dir", type=Path)
+    if sub == "add":
+        parser.add_argument("--id", required=True, dest="rid")
+        parser.add_argument("--name", required=True)
+        parser.add_argument("--roles", required=True, help="comma-separated role list, e.g. product_owner,pm")
+    parser.add_argument("--json", action="store_true")
+    try:
+        args = parser.parse_args(rest)
+    except SystemExit as e:
+        return int(e.code or 2)
+    if not args.req_dir.is_dir():
+        print(f"ERROR: {args.req_dir} is not a directory", file=sys.stderr)
+        return 1
+    registry = args.req_dir / "00-input" / "authorized-reviewers.json"
+    data = {"reviewers": []}
+    if registry.is_file():
+        try:
+            data = json.loads(registry.read_text(encoding="utf-8"))
+        except (json.JSONDecodeError, OSError):
+            data = {"reviewers": []}
+        data.setdefault("reviewers", [])
+
+    if sub == "add":
+        # 去重：同 id+name 存在则合并 roles，否则新增
+        roles = [r.strip() for r in args.roles.split(",") if r.strip()]
+        for entry in data["reviewers"]:
+            if entry.get("id") == args.rid and entry.get("name") == args.name:
+                merged = {**entry, "roles": sorted(set(entry.get("roles", [])) | set(roles))}
+                entry.update(merged)
+                break
+        else:
+            data["reviewers"].append({"id": args.rid, "name": args.name, "roles": roles})
+        registry.parent.mkdir(parents=True, exist_ok=True)
+        registry.write_text(json.dumps(data, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+        out = {"added": [args.rid], "roles": roles, "registry": str(registry)}
+        print(json.dumps(out, ensure_ascii=False, indent=2))
+        return 0
+
+    # list
+    out = {"reviewers": data["reviewers"], "registry": str(registry)}
+    print(json.dumps(out, ensure_ascii=False, indent=2))
+    return 0
 
 
 def review(req_dir: Path, item: dict, decision: str, reviewer: str, reviewer_id: str,
@@ -376,6 +562,7 @@ def review(req_dir: Path, item: dict, decision: str, reviewer: str, reviewer_id:
         )
     except (ValueError, FileNotFoundError) as audit_err:
         # 审计事件写入失败必须 fail-loud：确认操作整体中止
+        record.unlink(missing_ok=True)
         print(f"ERROR: failed to append review audit event: {audit_err}", file=sys.stderr)
         return 1
     # B13 fix: record an external append-only hash anchor on approve.
@@ -554,7 +741,19 @@ def audit_backfill(req_dir: Path) -> int:
 def main() -> int:
     # `pipeline.py init <name>` — init is the action, <name> is the target.
     if len(sys.argv) >= 2 and sys.argv[1] == "init":
-        return init_requirement(sys.argv[2] if len(sys.argv) > 2 else None)
+        init_parser = argparse.ArgumentParser(prog="pipeline.py init")
+        init_parser.add_argument("name", nargs="?", help="Requirement name: REQ-NNN-topic")
+        init_parser.add_argument(
+            "--root", type=Path, default=None,
+            help="Directory that receives requirements/<name>; defaults to the current directory",
+        )
+        init_args = init_parser.parse_args(sys.argv[2:])
+        return init_requirement(init_args.name, init_args.root)
+    # E2E-001: `pipeline.py reviewer add <req_dir> --id <id> --name <name> --roles r1,r2`
+    #          / `pipeline.py reviewer list <req_dir>` — 提供登记评审人的 CLI 入口，
+    #          摆脱"手改 00-input/authorized-reviewers.json"的痛点。
+    if len(sys.argv) >= 2 and sys.argv[1] == "reviewer":
+        return reviewer_cli(sys.argv[2:])
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("req_dir", type=Path)
     parser.add_argument("action", nargs="?", choices=["status", "entry", "gate", "review", "reflow", "backfill"], default="status")
@@ -658,6 +857,7 @@ def main() -> int:
         return 0 if result["ok"] else 1
     if args.action == "reflow":
         results = {"work_item": item["id"], "impact": [], "applied": bool(args.apply), "superseded": []}
+        pending_updates: list[tuple[Path, str]] = []
         for downstream in work_items():
             if downstream["order"] > item["order"]:
                 dart = find_artifact(args.req_dir, downstream)
@@ -670,7 +870,7 @@ def main() -> int:
                         results["impact"].append({"id": downstream["id"], "status": status, "action": action})
                         if args.apply:
                             new_text = re.sub(r"(?m)^status:\s*\S+", "status: superseded", text, count=1)
-                            dart.write_text(new_text, encoding="utf-8")
+                            pending_updates.append((dart, new_text))
                             results["superseded"].append(downstream["id"])
         if args.apply and results["superseded"]:
             now = datetime.now(timezone.utc).replace(microsecond=0).isoformat()
@@ -697,9 +897,24 @@ def main() -> int:
                 "Downstream artifacts were flipped to `superseded`; they must be re-validated",
                 "after the earliest affected work item is re-confirmed.", "",
             ])
-            record.write_text(record_body, encoding="utf-8")
+            # Pre-write all outputs, then publish the audit event, then atomically
+            # replace each artifact. A failed preflight or event append leaves all
+            # live downstream artifacts untouched.
+            prepared: list[tuple[Path, Path]] = []
+            try:
+                for index, (dart, new_text) in enumerate(pending_updates, start=1):
+                    tmp = dart.with_name(f".{dart.name}.reflow-{now[:10]}-{index}.tmp")
+                    tmp.write_text(new_text, encoding="utf-8")
+                    prepared.append((dart, tmp))
+                record.write_text(record_body, encoding="utf-8")
+            except OSError as write_err:
+                for _dart, tmp in prepared:
+                    tmp.unlink(missing_ok=True)
+                record.unlink(missing_ok=True)
+                print(f"ERROR: failed to prepare reflow changes: {write_err}", file=sys.stderr)
+                return 1
             results["change_record"] = str(record.relative_to(args.req_dir).as_posix())
-            # 事件溯源：reflow 后追加 reflow 审计事件
+            # 事件先于状态可见，满足 audit-log 单一事实来源不变式。
             try:
                 audit_log.append_event(
                     args.req_dir,
@@ -713,7 +928,18 @@ def main() -> int:
                     },
                 )
             except (ValueError, FileNotFoundError) as audit_err:
+                for _dart, tmp in prepared:
+                    tmp.unlink(missing_ok=True)
+                record.unlink(missing_ok=True)
                 print(f"ERROR: failed to append reflow audit event: {audit_err}", file=sys.stderr)
+                return 1
+            try:
+                for dart, tmp in prepared:
+                    os.replace(tmp, dart)
+            except OSError as commit_err:
+                for _dart, tmp in prepared:
+                    tmp.unlink(missing_ok=True)
+                print(f"CRITICAL: reflow event recorded but artifact commit failed: {commit_err}", file=sys.stderr)
                 return 1
         print(json.dumps(results, ensure_ascii=False, indent=2))
         return 0
