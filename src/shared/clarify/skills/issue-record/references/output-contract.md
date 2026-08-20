@@ -8,13 +8,13 @@
 | `needs_user_input` | 阻断 / 待决；需要先回答 | No |
 | `conditional_review` | 已知晓非阻断未知，可审 | No |
 | `ready_for_human_review` | 自审通过；待授权审 | No |
-| `confirmed` | 授权人显式接受 closed-out 列表 | Yes |
-| `superseded` | 被新 confirmed 版本取代 | No |
+| `confirmed` | 仅为历史兼容保留；Issue Record 不作为独立 work item 确认 | No |
+| `superseded` | 被后续版本取代 | No |
 
 ## 版本规则（Version Rules）
 
 - 起 `v0.1`，人工要求修订时递增 minor。
-- 首次 confirmed 为 `v1.0`。
+- Issue Record 随主线工作项持续更新；其结构和 B3 收口通过每次 `pipeline.py ... gate` 校验。最终 PRD 的确认由 `prd-assembly` 处理。
 - 新问题随时可加；状态变更走 Audit。
 
 ## 知识状态标签（Knowledge-State Labels）
@@ -37,8 +37,11 @@
 | 10 | 来源追溯 | Yes |
 | 11 | 待确认问题 | Yes |
 | 12 | Constitution Compliance | Yes |
+| 13 | 阶段收口表（B3） | Yes，L1/L2 only |
 
-空章节用 `待确认` 占位，不删除标题。
+空章节用明确的“无”声明，不删除标题。L0 不创建 issue-record；L1/L2 的
+`§13 阶段收口表` 是由 `00-input/intake-decision.md` 的持久化
+`process_tier` 与 workflow registry 派生的治理账本，不能手工沿用另一档位的行。
 
 ## 问题结构（Issue Schema）
 
@@ -66,6 +69,11 @@
 - 每个 open 都有 Owner
 - BLK / DEC 都有 target_close
 - 30 天以上 open 都有 escalation 记录
+- B3 收口表的 `(阶段, Work Item)` 必须与当前档位 work item 集合精确相等：
+  L1 为 7 个上游加 `prd-assembly`（8 行），L2 为 13 行；缺行、重复行、
+  跨档行或错误阶段均为结构错误。
+- 每次送审时，当前 work item 的 B3 行必须已收口；其余行可以保持 `open`，
+  但不得伪造不属于当前档位的“0 问题”记录。
 
 ## 人类职责（Human Responsibilities）
 

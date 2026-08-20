@@ -54,7 +54,7 @@ Load `references/thinking-framework.md`（Common Core + 12 维度发散 lens）b
 
 ### 4. Clarify
 - **对话式逐问**（吸收自超能力启发范式）：**优先一次一问、选择题优先**（2-4 个互斥选项 + 「其他」），仅确有多个独立缺口时批量；每题带 AI 初判 + 证据 + 选项 + 影响 + owner + blocking flag；答案会实质改变候选集或处置选项时 **STOP at `needs_user_input`**。Limit ≤5 questions per session，按影响排序。
-- 遇到「待确认 / 信息缺口」信号：主动询问是否登记 `issue-record`（问题清单）并更新 §13 收口表；送审前 dor_check 会硬检查收口与引用。
+- 遇到「待确认 / 信息缺口」信号：自动登记带来源的 `issue-record` ISS-NNN（仅 PM/PRD 问题）并更新 §13 收口表；仅对业务决定、owner、接受或关闭动作提问。送审前 dor_check 会硬检查收口与引用。
 - **当答案会实质改变候选集或处置选项时，停在 `needs_user_input`**。
 
 ### 5. Generate

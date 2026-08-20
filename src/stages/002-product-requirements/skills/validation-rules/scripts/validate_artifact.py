@@ -67,24 +67,25 @@ def _project_root() -> Path:
 
 
 # ── C3 收紧：逐行挂接 / 内容 / 来源（借鉴点三：先逐行、后全文）────
-FUN_ID_RE = re.compile(r"\bFUN-\d+\b")
-SECTION_FUN_RE = re.compile(r"^#{1,6}\s*FUN-\d+\b")
+TRACE_ANCHOR_RE = re.compile(r"\b(?:FUN|FEA|ST|BR|VL|EX|IX|STATE|SRC|BG|G)-\d+[A-Z]?\b")
+SECTION_TRACE_RE = re.compile(r"^#{1,6}\s*((?:FUN|FEA|ST|BR|VL|EX|IX|STATE|SRC|BG|G)-\d+[A-Z]?)\b")
+GLOBAL_SCOPE_RE = re.compile(r"(?:适用范围|scope)\s*[:：]?\s*(?:GLOBAL|全局)\b", re.IGNORECASE)
 REF_SOURCE_RE = re.compile(
     r"\b(?:BR|ST|FEA|VL|EX|AC|IX|FD|FUN|SRC|STATE|US|BG|PD|PRD)-\d+\b"
 )
 
 
 def _c3_line_checks(text: str, pid_re: object, kind: str) -> tuple[list[str], list[str]]:
-    """逐行收紧：以目标 ID 为首列的规则行必须 (1) 带真实内容 (2) 挂接 FUN-XXX
+    """逐行检查目标行：必须有真实内容和可解释追溯锚点。
     (3) 引用来源。返回 (errors, warnings)。"""
     errors: list[str] = []
     warnings: list[str] = []
-    section_fun: str | None = None
+    section_anchor: str | None = None
     for line in text.splitlines():
         ls = line.strip()
-        mh = SECTION_FUN_RE.match(ls)
+        mh = SECTION_TRACE_RE.match(ls)
         if mh:
-            section_fun = FUN_ID_RE.search(ls).group(0)
+            section_anchor = mh.group(1)
             continue
         if not ls.startswith("|"):
             continue
@@ -105,11 +106,13 @@ def _c3_line_checks(text: str, pid_re: object, kind: str) -> tuple[list[str], li
                 "and reference cells; fill in a real statement."
             )
             continue
-        # (2) FUN 挂接：行内有 FUN-XXX 或正处于 FUN-XXX 区块
-        if not FUN_ID_RE.search(ls) and section_fun is None:
+        # (2) 追溯锚点：功能级、跨功能或全局条目均可；禁止凭空伪造 FUN
+        anchors = [m.group(0) for m in TRACE_ANCHOR_RE.finditer(ls)]
+        has_external_anchor = any(anchor != rid for anchor in anchors)
+        if not has_external_anchor and section_anchor != rid and not GLOBAL_SCOPE_RE.search(ls):
             errors.append(
-                f"{rid} is orphan: not attached to any FUN-XXX "
-                "(no '所属 FUN' cell and not under a '#### FUN-XXX' section)."
+                f"{rid} is orphan: no trace anchor or explicit GLOBAL scope "
+                "(use FUN/FEA/ST/BR/VL/EX/IX/STATE/SRC/BG/G or scope=GLOBAL)."
             )
             continue
         # (3) 来源追溯（warning，来源可为自由文本）

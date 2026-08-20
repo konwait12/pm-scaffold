@@ -79,6 +79,107 @@ def test_pointer_gate_fails():
         Path(tmp).unlink()
 
 
+def test_l1_positive_fixture_passes():
+    """L1 标准档 PRD：缺 §7 原型/UX、§8 交互规则（无上游产物）应 PASS（V8_L1 分叉）。"""
+    fixture = Path(__file__).resolve().parent / "fixtures/prd-l1-ok.md"
+    result = validate_module.validate(fixture)
+    assert result["ok"], f"L1 fixture should PASS; got: {result.get('errors')}"
+    print("✅ test_l1_positive_fixture_passes")
+
+
+def test_l1_violation_l2_only_upstream_fails():
+    """L1 档声明 L2-only 上游（Q6 双查）必须 FAIL。"""
+    fixture = Path(__file__).resolve().parent / "fixtures/prd-l1-violation-l2-only-upstream.md"
+    result = validate_module.validate(fixture)
+    assert not result["ok"], "L1 PRD 声明 L2-only 上游应 FAIL"
+    has_q6 = any("L2-only upstream" in e for e in result["errors"])
+    assert has_q6, f"Expected L2-only upstream error; got: {result['errors']}"
+    print("✅ test_l1_violation_l2_only_upstream_fails")
+
+
+def test_l1_l2_only_subsection_fails():
+    """L1 must omit, not fake, sections whose upstream artifacts belong to L2."""
+    content = _l1_content().replace(
+        "## 10. 验收依据",
+        "### 9.2 校验规则\n\n本期不适用（L1 无 validation-rules 上游）。\n\n## 10. 验收依据",
+    )
+    with tempfile.NamedTemporaryFile(mode="w", suffix=".md", delete=False, encoding="utf-8") as f:
+        f.write(content)
+        tmp = Path(f.name)
+    try:
+        result = validate_module.validate(tmp)
+        assert not result["ok"]
+        assert any("must omit L2-only" in item for item in result["errors"])
+    finally:
+        tmp.unlink()
+
+
+def test_l1_state_machine_in_business_rules_fails():
+    """L1 不得把 L2 的状态机设计藏入 §9.1 业务规则。"""
+    content = _l1_content().replace(
+        "BR-001 活动开始前 24h 触发提醒（FEA-001）。",
+        """BR-001 活动开始前 24h 触发提醒。
+
+| 起始状态 | 触发事件 | 守卫条件 | 终止状态 |
+| --- | --- | --- | --- |
+| 草稿 | 提交 | 信息完整 | 已发布 |""",
+    )
+    with tempfile.NamedTemporaryFile(mode="w", suffix=".md", delete=False, encoding="utf-8") as f:
+        f.write(content)
+        tmp = Path(f.name)
+    try:
+        result = validate_module.validate(tmp)
+        assert not result["ok"]
+        assert any("L1 PRD must not model L2-only state-machine behavior in §9.1" in item for item in result["errors"])
+    finally:
+        tmp.unlink()
+
+
+def _l1_content(*, source: str = "[\"BG-001\"]", extra: str = "") -> str:
+    fixture = Path(__file__).resolve().parent / "fixtures/prd-l1-ok.md"
+    text = fixture.read_text(encoding="utf-8")
+    text = text.replace('upstream_artifact_ids: ["BG-001", "UJ-001", "US-001", "FL-001", "FF-001", "BR-001", "AC-001"]',
+                        "upstream_artifact_ids: " + source)
+    return text.replace("---\n\n# PRD", extra + "---\n\n# PRD", 1)
+
+
+def test_l1_placeholder_section_fails():
+    content = _l1_content().replace("G-001 目标：提升活动提醒触达率。", "待确认")
+    with tempfile.NamedTemporaryFile(mode="w", suffix=".md", delete=False, encoding="utf-8") as f:
+        f.write(content)
+        tmp = Path(f.name)
+    try:
+        result = validate_module.validate(tmp)
+        assert not result["ok"]
+        assert any("Meaningful-content gate failed" in item for item in result["errors"])
+    finally:
+        tmp.unlink()
+
+
+def test_l1_missing_source_fails():
+    with tempfile.NamedTemporaryFile(mode="w", suffix=".md", delete=False, encoding="utf-8") as f:
+        f.write(_l1_content(source="[]"))
+        tmp = Path(f.name)
+    try:
+        result = validate_module.validate(tmp)
+        assert not result["ok"]
+        assert any("Source-trace gate failed" in item for item in result["errors"])
+    finally:
+        tmp.unlink()
+
+
+def test_l1_declared_hash_tamper_fails():
+    with tempfile.NamedTemporaryFile(mode="w", suffix=".md", delete=False, encoding="utf-8") as f:
+        f.write(_l1_content(extra="content_sha256: " + "0" * 64 + "\n"))
+        tmp = Path(f.name)
+    try:
+        result = validate_module.validate(tmp)
+        assert not result["ok"]
+        assert any("Hash integrity failed" in item for item in result["errors"])
+    finally:
+        tmp.unlink()
+
+
 
 if __name__ == "__main__":
     import sys
@@ -88,6 +189,13 @@ if __name__ == "__main__":
         "test_missing_contract_fails",
         "test_violation_fixture_emits_d52_error",
         "test_pointer_gate_fails",
+        "test_l1_positive_fixture_passes",
+        "test_l1_violation_l2_only_upstream_fails",
+        "test_l1_l2_only_subsection_fails",
+        "test_l1_state_machine_in_business_rules_fails",
+        "test_l1_placeholder_section_fails",
+        "test_l1_missing_source_fails",
+        "test_l1_declared_hash_tamper_fails",
     ]:
         fn = locals().get(fn_name) or globals().get(fn_name)
         if fn is None:

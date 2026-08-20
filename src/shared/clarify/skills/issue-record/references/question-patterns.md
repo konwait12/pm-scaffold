@@ -7,7 +7,7 @@ Eight canonical question templates for the one-question-at-a-time Clarify loop. 
 - **Three examples** — paraphrased real cases (desensitized)
 - **Common traps** — typical AI mistakes when asking this kind of question
 
-Use these as reference when generating a new question in a Clarify Session, especially for the **AI 主动询问契约**（先问"要不要登记为 ISS-NNN"再继续生成）。See `SKILL.md` § Clarify for runtime rules (≤5 sessions, ordered by impact, every question carries an AI preliminary judgment).
+Use these as reference when generating a new question in a Clarify Session, after AI has auto-registered a sourced draft/open `ISS-NNN`. Ask about the business decision, owner, blocking level, acceptance, or closure, rather than asking permission to preserve the evidence. See `SKILL.md` § Clarify for runtime rules (≤5 sessions, ordered by impact, every question carries an AI preliminary judgment).
 
 ---
 
@@ -213,7 +213,7 @@ Use these as reference when generating a new question in a Clarify Session, espe
 
 ## Cross-cutting tips
 
-1. **先问后登记（强制）**: 任何"待确认/冲突/风险"信号,先问"要不要登记为 ISS-NNN",确认后再登记。
+1. **先登记后决策（强制）**: 任何有来源的"待确认/冲突/风险"信号，先自动登记为 draft/open `ISS-NNN`；再询问类别、业务 owner、阻断等级、接受或关闭所需的人类决定。
 2. **排序原则**: Clarify 一次只问 1 个,按 Impact × Uncertainty 排序,先问阻断性高的。
 3. **每问必带 AI 初步判断**: 给出建议类别/owner/期限,让决策者确认而非从零想。
 4. **三选项常驻**: 给 2-4 个互斥选项 + 「其他」兜底。

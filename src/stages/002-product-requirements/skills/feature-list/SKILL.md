@@ -43,7 +43,7 @@ description: 功能清单——从已确认的用户故事（ST-XXX）分解出�
 - 当功能边界或范围决策改变必须构建的内容时，**停在 `needs_user_input`**。
 - 范围取舍必须使用 `src/shared/clarify/references/scope-negotiation-scripts.md` 留下候选、代价、负责人和回滚条件。
 - Limit: 每轮 ≤5 个问题，按影响排序。
-- 遇到「待确认 / 冲突 / 信息缺口」信号：主动询问是否登记 issue-record（问题清单，见 `src/shared/clarify/skills/issue-record`）；送审前 dor_check 会硬检查收口与引用。
+- 遇到「待确认 / 冲突 / 信息缺口」信号：自动登记带来源的 issue-record `ISS-NNN`（只记录 PM/PRD 问题）；仅对业务决定、owner、接受或关闭动作提问。送审前 dor_check 会硬检查收口与引用。
 
 ### 5. Generate
 - 填独立的 `feature-list.md` 中的功能表。一行一个功能，强制列：ID / 功能名称 / 所属故事 ST / 优先级 / 一句话描述 / 来源。

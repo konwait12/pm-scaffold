@@ -1,12 +1,16 @@
 # Question Record
 
+> A single clarification question. This is not the project-level PM/PRD
+> `issue-record.md`; cross-stage issues belong in
+> `99-review/support/issue-record.md`.
+
 | Field | Value |
 |---|---|
 | question_id | Q-XXX |
 | work_item | `待填写` |
 | question | `待填写` |
 | ai_preliminary_judgment | `待填写` |
-| evidence | `待填写` |
+| evidence | `SRC-XXX` / artifact section |
 | options_and_impact | `待填写` |
 | decision_owner | `待填写` |
 | blocking | yes / no |

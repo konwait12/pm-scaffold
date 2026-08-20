@@ -1,0 +1,32 @@
+interface:
+  display_name: "轻量 PRD (Mini PRD · L0)"
+  short_description: "L0 轻量档单产物 PRD：bug 修复/文案调整/配置开关，一个 skill 一气呵成，business_owner 单签 / Single-artifact lightweight PRD for L0-tier changes (bug fix, copy edit, config toggle), one skill one artifact, single human sign-off."
+  default_prompt: |
+    Use the mini-prd Skill for this L0-tier change. First check the intake
+    qualification matrix and hard escalation conditions. If any hard condition
+    applies or the evidence does not prove the L0 boundary, STOP and route back
+    to intake-routing for a higher tier (L1/L2). Otherwise fill the 6-section
+    template, self-audit against the error list, and run
+    scripts/validate_artifact.py before requesting a single human sign-off.
+    Never set the artifact status to `confirmed`; only an authorized business
+    owner may do that.
+
+# Agent-facing trigger examples (used by OpenAI / Anthropic Agent runtimes
+# during routing).
+trigger_examples:
+  - |
+    Use this Skill when the change is a single-point fix: one bug, one field,
+    one copy edit, one config toggle, or one status text — no new module,
+    single role, no state machine, no compliance exposure.
+  - |
+    Use this Skill when the user says "改个文案 / 修个 bug / 调个开关" and the
+    change touches a single location with a clear rollback.
+
+should_not_trigger_examples:
+  - |
+    Do NOT use this Skill for new modules, multi-role requirements, state
+    machines, compliance/finance/PII exposure, or anything needing journey /
+    page / interaction / state-machine artifacts. Route to L1/L2.
+  - |
+    Do NOT use this Skill when the change spans ≥2 modules or ≥1 complete
+    module — escalate to L1 Standard.

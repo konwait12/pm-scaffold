@@ -6,7 +6,7 @@
 
 - [ ] 独立产物 `feature-list.md` 中存在 `## 功能清单` 章节（支持 `## N. 功能清单` 编号形式）
 - [ ] 至少存在一个 `FEA-\d+` 标识，无 `FEA-XXX` 占位 ID 冒充
-- [ ] FEA ID 全局唯一、编号连续（FEA-001、FEA-002…），无跳号、无重复
+- [ ] FEA ID 全局唯一、稳定且不可复用；删除/合并后允许保留编号空洞，不为补洞重编号
 - [ ] 功能清单表头列与契约一致：`ID | 功能名称 | 所属故事 ST | 优先级 | 一句话描述 | 来源`
 - [ ] 元数据含 artifact ID、version、status、owner、reviewer、日期或 `待确认` / `TBD`
 - [ ] 元数据 status 位于白名单内（draft / needs_user_input / conditional_review / ready_for_human_review 等），**不包含 `confirmed`**

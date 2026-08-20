@@ -43,7 +43,7 @@ description: Turn raw requirement materials into a sourced, human-confirmed busi
 - 将其余问题批量呈现，附带：AI 初步判断、证据、选项、影响、负责人、是否阻断标记。
 - **当某个答案可能改变问题、目标、角色、范围、成本、时间或风险时，停在 `needs_user_input`**。
 - 数量限制：每轮 Session 至多 5 个问题，按影响排序。
-- 遇到「待确认 / 冲突 / 信息缺口」信号：主动询问是否登记 issue-record（问题清单，见 `src/shared/clarify/skills/issue-record`）；送审前 dor_check 会硬检查收口与引用。
+- 遇到「待确认 / 冲突 / 信息缺口」信号：自动登记带来源的 issue-record `ISS-NNN`（只记录 PM/PRD 问题）；仅对业务决定、owner、接受或关闭动作提问。送审前 dor_check 会硬检查收口与引用。
 
 ### 5. Generate
 - 填充模板。叙述部分放入有来源依据的内容；不确定的内容放进显式寄存器（§6-§8）。

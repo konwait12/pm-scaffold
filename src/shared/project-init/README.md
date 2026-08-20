@@ -1,5 +1,5 @@
-# Requirement Initialization
+# 需求初始化
 
-For a new requirement, allocate the next `REQ-NNN`, create the v2 stage directory skeleton from the registry, create README/source-register records, and register supplied sources. Initialization does not analyze or confirm business content; the first work item remains `project-background-goal`.
+新需求须分配下一个 `REQ-NNN` 编号，并按注册表和持久化工序档位创建目录骨架、README、来源登记及授权评审人记录。初始化不分析或确认业务内容；首个工作项由档位决定：L0 为 `mini-prd`，L1/L2 为 `project-background-goal`。
 
-Use the templates in this directory. Do not duplicate original source files when a stable link or path can be registered.
+使用本目录模板。原始来源如已有稳定链接或路径，只登记引用，不重复复制文件。

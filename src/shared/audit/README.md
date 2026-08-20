@@ -1,5 +1,5 @@
-# Shared Audit
+# 共享审计
 
-Every Skill combines deterministic validation with domain review. The standard audit uses completeness, first-principles, systems, adversarial, reverse-validation, traceability, consistency, verifiability and communication lenses.
+每个 Skill 都必须同时经过确定性结构校验和领域审查。标准审计从完整性、第一性原理、系统影响、反例、反向验证、追溯、一致性、可验证性和沟通清晰度等角度检查产物。
 
-Audit may repair structure and wording but cannot invent business facts or approve decisions. Passing Audit leads only to `ready_for_human_review`.
+审计可以修正结构与表达，但不得虚构业务事实、替代业务方作决定或确认产物。通过审计最多只能进入 `ready_for_human_review`；`confirmed` 仍须由授权人工完成。

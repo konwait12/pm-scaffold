@@ -257,32 +257,17 @@ def check_artifact_types(registry: dict, issues: list[dict[str, Any]]) -> None:
 def check_requirements_content(issues: list[dict[str, Any]]) -> None:
     """Close the 'empty requirements/' blind spot.
 
-    `requirements/` is gitignored (each user creates their own), so a fresh
-    clone legitimately has none.  But if REQ-* dirs exist, their structure
-    must be valid, and we surface how many non-simulated PRDs actually exist
-    so the repo cannot silently claim 'validated' without evidence.
+    `requirements/` is a gitignored runtime workspace. A fresh clone and a
+    packaged DSH plugin legitimately have none. If REQ-* dirs exist, their
+    structure must be valid, and we surface how many non-simulated PRDs
+    actually exist so the repo cannot silently claim 'validated' without
+    evidence.
     """
     req_root = PROJECT / "requirements"
     if not req_root.is_dir():
-        _add(issues, "MEDIUM", "consistency.requirements.no_dir",
-             "requirements/ 不存在 — 尚无真实端到端需求产物（待首个真实需求验证）",
-             field_path="requirements/",
-             expected="requirements/ 目录存在（可被 .gitignore，但本地应有真实需求目录）",
-             actual="requirements/ 不存在",
-             repair_hint="创建一个真实需求目录（如 requirements/REQ-NNN-xxx/，含 README.md 与 00-input/）",
-             source_ref="consistency_check §requirements_content",
-             blocking=False)
         return
     req_dirs = [d for d in req_root.iterdir() if d.is_dir() and d.name.startswith("REQ-")]
     if not req_dirs:
-        _add(issues, "MEDIUM", "consistency.requirements.empty",
-             "requirements/ 为空 — 尚无真实端到端需求产物（待首个真实需求验证）",
-             field_path="requirements/",
-             expected="requirements/ 下至少有一个 REQ-* 目录",
-             actual="requirements/ 存在但没有任何 REQ-* 目录",
-             repair_hint="创建 requirements/REQ-NNN-xxx/ 骨架（README.md + 00-input/）",
-             source_ref="consistency_check §requirements_content",
-             blocking=False)
         return
     real_prds = 0
     for d in req_dirs:

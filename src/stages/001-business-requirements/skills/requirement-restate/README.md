@@ -10,7 +10,7 @@
 
 它的输出是 stakeholder 看到重述后说"是的，就是这个"或"不是，你漏了 X"的检查位。**重举通过后**，结论进入 `issue-record.md`：
 - CONFLICT → `ISS-XXX`（CLS 类别）
-- UNKNOWN → `Q-XXX`（INF 类别）
+- UNKNOWN → `Q-XXX` + `ISS-XXX`（INF 类别）
 - 重举通过的需求行才进入下游 `project-background-goal`
 
 ## 用途
@@ -46,7 +46,7 @@
 | 2 | 来源清单（SRC-IDs） | 起草时 |
 | 3 | 重述需求清单（RR-XXX） | Generate 后 |
 | 4 | 冲突清单（CONFLICT → ISS-XXX） | Intake 时 |
-| 5 | 未知清单（UNKNOWN → Q-XXX） | Intake 时 |
+| 5 | 未知清单（UNKNOWN → Q-XXX / ISS-XXX） | Intake 时 |
 | 6 | stakeholder 自查反馈位 | Human Gate |
 | 7 | 来源追溯 | Generate 后 |
 | 8 | 待确认问题 | Audit 前 |
@@ -55,7 +55,7 @@
 ## 上下游衔接
 
 - **上游**：源材料（会议记录 / 邮件 / BRD / 工单 / 已有文档）
-- **下游（成功路径）**：重举通过 → 进 `issue-record.md`（CONFLICT / UNKNOWN）+ `project-background-goal`（已确认需求）
+- **下游（成功路径）**：重举通过 → CONFLICT 回链 `issue-record.md` 的 `ISS-XXX`；UNKNOWN 回链 `Q-XXX` + `ISS-XXX`；已确认需求进入 `project-background-goal`
 - **下游（失败路径）**：stakeholder 否认重举 → 修订重述 → 重新走流程
 
 ## 验证

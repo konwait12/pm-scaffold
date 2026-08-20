@@ -2,7 +2,7 @@
 Validate the stable structure of a requirement-restate Markdown artifact.
 
 The artifact is the "shared understanding" checkpoint, NOT a PRD deliverable.
-Its outputs feed into issue-record (CONFLICT → ISS, UNKNOWN → Q).
+Its outputs feed into issue-record (CONFLICT → ISS, UNKNOWN → Q + ISS).
 
 Section headings match REQUIRED_HEADINGS exactly.
 """
@@ -105,6 +105,10 @@ def _collect_rows(body: str, id_prefix: str) -> list[list[str]]:
     return rows
 
 
+def _has_id(cells: list[str], prefix: str) -> bool:
+    return any(re.search(rf"\b{re.escape(prefix)}\d+\b", cell) for cell in cells)
+
+
 def validate(path: Path) -> dict[str, object]:
     errors: list[str] = []
     warnings: list[str] = []
@@ -160,7 +164,9 @@ def validate(path: Path) -> dict[str, object]:
                     f"Advisory: {cells[0]} has placeholder restated or original_phrase"
                 )
 
-    # Conflict list rows must have at least 2 source references
+    # CONFLICT and UNKNOWN are PM/PRD process findings, not repository defects.
+    # They must therefore link the project-level issue record, while UNKNOWN
+    # additionally keeps its stakeholder-facing Q-NNN clarification.
     body = _extract_section(text, r"^##\s+\d+\.\s*冲突清单.*?$(.*?)(?=^##\s+|\Z)")
     for cells in _collect_rows(body, "CON-"):
         if len(cells) >= 4:
@@ -168,6 +174,21 @@ def validate(path: Path) -> dict[str, object]:
                 warnings.append(
                     f"Advisory: {cells[0]} conflict description still placeholder"
                 )
+            if not _has_id(cells, "ISS-"):
+                errors.append(
+                    f"{cells[0]} conflict is missing an ISS-NNN issue-record link"
+                )
+
+    body = _extract_section(text, r"^##\s+\d+\.\s*未知清单.*?$(.*?)(?=^##\s+|\Z)")
+    for cells in _collect_rows(body, "UNK-"):
+        if not _has_id(cells, "Q-"):
+            errors.append(
+                f"{cells[0]} unknown is missing a Q-NNN clarification link"
+            )
+        if not _has_id(cells, "ISS-"):
+            errors.append(
+                f"{cells[0]} unknown is missing an ISS-NNN issue-record link"
+            )
 
     if status == "confirmed":
         unresolved = [
@@ -209,6 +230,9 @@ _RR_ERROR_RULES = [
     ("Invalid status", "rr.invalid_status"),
     ("Missing required headings:", "rr.missing_headings"),
     ("No SRC-* source traceability identifier found", "rr.missing_src_traceability"),
+    ("conflict is missing an ISS-NNN issue-record link", "rr.conflict_missing_issue_link"),
+    ("unknown is missing a Q-NNN clarification link", "rr.unknown_missing_question_link"),
+    ("unknown is missing an ISS-NNN issue-record link", "rr.unknown_missing_issue_link"),
     ("Confirmed artifact has unresolved confirmation fields:", "rr.unresolved_confirmation"),
 ]
 

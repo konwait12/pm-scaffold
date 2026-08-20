@@ -43,7 +43,7 @@ description: Transform confirmed user journey into story cards with MoSCoW prior
 - 剩余问题批量提交，附带：AI 初步判断、证据、选项、影响、负责人、阻断标记。
 - **当某个答案可能改变故事范围、优先级或归属时，停在 `needs_user_input`**。
 - 数量限制：每轮 Session 至多 5 个问题，按影响排序。
-- 遇到「待确认 / 冲突 / 信息缺口」信号：主动询问是否登记 issue-record（问题清单，见 `src/shared/clarify/skills/issue-record`）；送审前 dor_check 会硬检查收口与引用。
+- 遇到「待确认 / 冲突 / 信息缺口」信号：自动登记带来源的 issue-record `ISS-NNN`（只记录 PM/PRD 问题）；仅对业务决定、owner、接受或关闭动作提问。送审前 dor_check 会硬检查收口与引用。
 - 范围边界或优先级存在取舍时，使用 `src/shared/clarify/references/scope-negotiation-scripts.md` 记录选项、代价、负责人和回滚条件，不得静默扩大 In 范围。
 
 ### 5. Generate

@@ -7,11 +7,11 @@
 
 ## 2. 聚合闸门（Aggregation Gate）
 - [ ] §1-§4 content matches upstream verbatim (no rewriting)
-- [ ] All stable IDs preserved (SRC-*, BG-*, UJ-*, US-*, ST-*, FEA-*, FL-*, PD-*, IX-*, BR-*, VL-*, SM-*, EX-*, AC-*)
+- [ ] All artifact and trace IDs preserved; new prose follows `id-contract.md` (`G-*` / `FUN-*` / `STATE-*`), confirmed historical IDs remain unchanged
 - [ ] No new requirements introduced
 
 ## 3. 追溯闸门（Traceability Gate）
-- [ ] §6 RTM covers all P0 G→ST→FEA→FL→AC→BR chains
+- [ ] §6 RTM covers all P0 G→ST→FEA→FUN→AC core chains; applicable BR/VL/STATE/EX evidence is linked without forcing a false linear chain
 - [ ] §7 forward trace: no broken P0 links
 - [ ] §8 backward trace: no orphan elements
 - [ ] §9 inconsistency report generated (may be empty)

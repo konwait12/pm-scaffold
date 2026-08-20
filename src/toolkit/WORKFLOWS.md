@@ -1,21 +1,21 @@
-# Toolkit Workflows
+# 工具链工作流
 
-Toolkit capabilities support a work item; they do not determine workflow order.
+工具链能力服务于工作项，不决定工作流顺序。
 
-## Requirement Intake
+## 需求入口
 
-Register sources → inspect material types → route to the earliest unconfirmed predecessor in `workflow-registry.json` → use document/image/browser tooling only as needed.
+登记来源 → 检查材料类型与成熟度 → 按 `workflow-registry.json` 路由至当前档位最早未确认的前置工作项 → 仅在需要时使用文档、图片或浏览器工具。
 
-## Visual Communication
+## 可视化沟通
 
-Start from the authoritative text/table model → choose Mermaid, editable canvas, HTML prototype or export format according to the review need → keep the same stable IDs → verify rendering → link the visual from the artifact.
+从权威文本或表格模型出发，按评审需要选择 Mermaid、可编辑画布、HTML 原型或导出格式；保持稳定 ID 不变，验证渲染结果，并从产物正文链接到可视化内容。
 
-Journey and P0 UX flow contracts require a visual flow representation. Other work items use diagrams only when they improve communication.
+用户旅程和 P0 用户体验流程必须有可视化流程表示；其他工作项仅在确实提升沟通效率时使用图表。
 
-## Review And Reflow
+## 评审与回流
 
-Run the Skill validator → shared record validator → human review. A requested change produces a ModificationRecord and reruns Audit. A confirmed upstream change produces a SelectiveReflowRecord and invalidates affected downstream baselines.
+依次执行 Skill 校验器、共享记录校验器和人工评审。请求修改时写入变更记录并重新审计；已确认上游发生变化时写入定向回流记录，并使受影响的下游基线失效。
 
-## Publish
+## 发布
 
-Only a human-confirmed PRD with passing traceability may be exported to Feishu, PDF or HTML. Publishing never changes content or confirmation state.
+只有已由人工确认且追溯校验通过的 PRD 才能导出到飞书、PDF 或 HTML。发布不得修改内容或确认状态。

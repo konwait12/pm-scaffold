@@ -1,7 +1,5 @@
-# Decision Log
+# 决策记录
 
-Record material business and product decisions as `DEC-XXX` with decision, alternatives, decider, rationale, source, time, affected IDs and downstream impact. A superseding decision links to the prior record and triggers selective reflow when confirmed content changes.
+将重要业务与产品决定记录为 `DEC-XXX`，至少包含决定、备选方案、决策人、理由、来源、时间、受影响 ID 与下游影响。替代原决定的记录必须关联旧记录；若已确认内容改变，则触发定向回流。
 
-Decision logging is a shared record mechanism, not a separate business Skill.
-
-For each decision capture the decider and time, considered alternatives, rationale, affected artifact IDs, downstream impact and source. Append project decisions under `99-review/`; use `src/templates/others/decision-record.md` as the record contract.
+决策记录是共享记录机制，不是独立业务 Skill。项目级决定写在 `99-review/` 下，记录契约见 `src/templates/others/decision-record.md`。

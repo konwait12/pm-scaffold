@@ -6,7 +6,7 @@
 ## 1. Structural Gate（结构门：章节存在、ID 前缀齐全）
 
 - [ ] 独立产物中存在 `## 异常与失败处理` 章节，且异常处理内容位于各 `FEA-XXX` 块内的「异常处理」小节，无游离在函数块之外的孤儿异常
-- [ ] 至少存在一条 `FEA-\d+` 标识（校验器 `ID_PATTERN = r"FEA-\d+"`），异常场景以 `EX-\d+` 编号，无缺失、无重复、无跳号
+- [ ] 异常场景以 `EX-\d+` 编号且不重复；必须有 `FUN/FEA/BR/STATE/SRC` 等可解释锚点或显式 `GLOBAL`，允许历史编号空洞
 - [ ] 每条 `EX-XXX` 都挂在某个 `FEA-XXX` 之下，与函数职责一一对应
 - [ ] 表头列与模板一致：`ID | 异常场景 | 触发条件 | 系统行为 | 恢复路径 | 用户提示 | 来源`
 - [ ] `python3 scripts/validate_artifact.py <exception-handling.md> --json` 返回 `"ok": true`

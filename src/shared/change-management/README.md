@@ -1,5 +1,5 @@
-# Change And Selective Reflow
+# 变更与定向回流
 
-Trigger when a confirmed fact, decision, scope item, story, feature or rule changes, or when downstream analysis exposes an upstream defect.
+当已确认的事实、决定、范围项、用户故事、功能或规则发生变化，或下游分析暴露上游缺陷时，启动此机制。
 
-Identify the earliest affected work item, record the delta and impact graph, mark affected downstream baselines stale/superseded, rerun only impacted work items in registry order, and require fresh human confirmation. Never patch only the final PRD when its source baseline changed.
+识别最早受影响的工作项，记录变化及影响图，将受影响的下游基线标为过期或被替代；随后仅按注册表顺序重跑受影响的工作项，并重新获取人工确认。上游基线已改变时，禁止只补改最终 PRD。

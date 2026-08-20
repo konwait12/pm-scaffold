@@ -18,7 +18,17 @@ import subprocess
 import sys
 from pathlib import Path
 
-from workflow_registry import artifact_status, find_artifact, resolve_work_item, skill_path, work_items
+from workflow_registry import (
+    assert_work_item_in_tier,
+    artifact_status,
+    find_artifact,
+    l1_exclusion_evidence,
+    resolve_work_item,
+    skill_path,
+    tier_for_req,
+    work_items,
+    work_items_for_tier,
+)
 
 
 # ---- Knowledge state coverage check (v2) -----------------------------------
@@ -106,6 +116,10 @@ def stage_closeup_check(req_dir: Path, item: dict, artifact_text: str, status: s
        （空清单也是审计证据）
     2. 产物正文每个「待确认」标记必须带引用（Q-/ISS-/DEC-/SRC-，同一行）
     """
+    tier = tier_for_req(req_dir)
+    if tier == "L0":
+        return {"name": "stage_closeup", "pass": True, "skipped": True,
+                "detail": "L0 不使用 issue-record / B3"}
     if status != "ready_for_human_review":
         return {"name": "stage_closeup", "pass": True, "skipped": True,
                 "detail": f"status={status}（送审才强制）"}
@@ -115,7 +129,31 @@ def stage_closeup_check(req_dir: Path, item: dict, artifact_text: str, status: s
         issues.append("99-review/support/issue-record.md 不存在（B3 每阶段强制收口，空清单也是审计证据）")
     else:
         ir_text = ir.read_text(encoding="utf-8")
-        if item["id"] not in ir_text:
+        ledger = re.search(
+            r"^##\s+13\.\s*阶段收口表.*?$(.*?)(?=^##\s+|\Z)",
+            ir_text, re.MULTILINE | re.DOTALL,
+        )
+        rows: list[tuple[str, str]] = []
+        if ledger:
+            for line in ledger.group(1).splitlines():
+                if not line.lstrip().startswith("|") or set(line.strip()) <= set("|-: "):
+                    continue
+                cells = [cell.strip() for cell in line.strip().strip("|").split("|")]
+                if len(cells) >= 2 and cells[0] != "阶段" and cells[1] != "Work Item":
+                    rows.append((cells[0], cells[1]))
+        expected = [(candidate["stage"], candidate["id"]) for candidate in work_items_for_tier(tier)]
+        actual_set = set(rows)
+        expected_set = set(expected)
+        missing = expected_set - actual_set
+        unexpected = actual_set - expected_set
+        duplicates = sorted({row for row in rows if rows.count(row) > 1})
+        if missing:
+            issues.append("issue-record 阶段收口表缺档位收口行: " + ", ".join(item_id for _, item_id in sorted(missing)))
+        if unexpected:
+            issues.append("issue-record 阶段收口表含跨档或错误阶段行: " + ", ".join(item_id for _, item_id in sorted(unexpected)))
+        if duplicates:
+            issues.append("issue-record 阶段收口表含重复行: " + ", ".join(item_id for _, item_id in duplicates))
+        if (item["stage"], item["id"]) not in actual_set:
             issues.append(f"issue-record 阶段收口表缺 {item['id']} 收口行")
     # 待确认引用检查（跳过 frontmatter 与标题行）
     # 先剥离可选的开头 <!-- --> 模板注释块，再剥离 YAML frontmatter——
@@ -162,10 +200,29 @@ def run_validator(item: dict, artifact: Path) -> tuple[bool, str]:
 
 
 def check_item(req_dir: Path, item: dict) -> dict:
-    predecessor_states = {p: artifact_status(req_dir, resolve_work_item(p)) for p in item["predecessors"]}
+    try:
+        assert_work_item_in_tier(req_dir, item)
+    except ValueError as exc:
+        return {
+            "work_item": item["id"], "stage": item["stage"], "artifact": "not_checked",
+            "status": "not_checked", "predecessors": {}, "dor_pass": False,
+            "dod_pass": False, "checks": [{"name": "tier_membership", "pass": False, "detail": str(exc)}],
+        }
+    # Process Tier：predecessors 只检查「当前 tier 集内」的前置，集外豁免
+    # （如 L1 下 acceptance-criteria 的 exception-handling / interaction-rules 前置不参与）。
+    tier = tier_for_req(req_dir)
+    tier_ids = {i["id"] for i in work_items_for_tier(tier)}
+    preds = [p for p in item["predecessors"] if p in tier_ids]
+    predecessor_states = {p: artifact_status(req_dir, resolve_work_item(p)) for p in preds}
     dor_ok = all(state == "confirmed" for state in predecessor_states.values())
     artifact = find_artifact(req_dir, item)
     checks = []
+    if item["id"] == "prd-assembly":
+        exclusions = l1_exclusion_evidence(req_dir)
+        if not exclusions.get("skipped"):
+            detail = "L1 L2-only exclusions have factual evidence" if exclusions["ok"] else " | ".join(exclusions["issues"])
+            checks.append({"name": "l1_l2_only_exclusions", "pass": bool(exclusions["ok"]), "detail": detail})
+            dor_ok = dor_ok and bool(exclusions["ok"])
     # Entry material DoR: project-background-goal must have registered sources
     # (machine version of the SKILL.md Preflight "no source → STOP" rule).
     if item["id"] == "project-background-goal":
@@ -178,13 +235,18 @@ def check_item(req_dir: Path, item: dict) -> dict:
     if artifact:
         valid, detail = run_validator(item, artifact)
         checks.append({"name": "artifact_validator", "pass": valid, "detail": detail})
-        text = artifact.read_text(encoding="utf-8")
-        has_audit = "Constitution Compliance" in text or "自审" in text or "Audit" in text
-        checks.append({"name": "audit_evidence", "pass": has_audit})
-        # v2: knowledge state coverage hard gate (only fires for review-ready statuses)
-        checks.append(knowledge_state_check(text, artifact_status(req_dir, item)))
-        # B3: per-stage forced closeout (issue-record exists + 待确认 references)
-        checks.append(stage_closeup_check(req_dir, item, text, artifact_status(req_dir, item)))
+        if "L0" in (item.get("tiers") or []):
+            # L0 轻量 DoD：只跑产物校验器，裁掉六态/自审/阶段收口等重型检查
+            # （轻量治理裁的是工序不是证据链——审批仍走 ReviewRecord + hash 锚）。
+            pass
+        else:
+            text = artifact.read_text(encoding="utf-8")
+            has_audit = "Constitution Compliance" in text or "自审" in text or "Audit" in text
+            checks.append({"name": "audit_evidence", "pass": has_audit})
+            # v2: knowledge state coverage hard gate (only fires for review-ready statuses)
+            checks.append(knowledge_state_check(text, artifact_status(req_dir, item)))
+            # B3: per-stage forced closeout (issue-record exists + 待确认 references)
+            checks.append(stage_closeup_check(req_dir, item, text, artifact_status(req_dir, item)))
     else:
         checks.append({"name": "artifact_exists", "pass": False})
     dod_ok = bool(artifact) and all(check["pass"] for check in checks)
@@ -212,7 +274,7 @@ def main() -> int:
         return 1
     if args.wave:
         print("DEPRECATED: --wave will be removed after the v3 compatibility baseline.", file=sys.stderr)
-    selected = [resolve_work_item(args.work_item, args.wave)] if (args.work_item or args.wave) else work_items()
+    selected = [resolve_work_item(args.work_item, args.wave)] if (args.work_item or args.wave) else work_items_for_tier(tier_for_req(args.req_dir))
     results = [check_item(args.req_dir, item) for item in selected]
     if args.json:
         print(json.dumps(results, ensure_ascii=False, indent=2))

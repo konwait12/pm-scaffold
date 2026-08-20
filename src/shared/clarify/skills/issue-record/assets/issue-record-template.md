@@ -7,9 +7,10 @@
 artifact_id: IR-REQ-XXX
 version: v0.1
 status: draft
+process_tier: {PROCESS_TIER}
 owner: 产品经理（待业务方 review 时确认）
+business_fact_owner: 业务方代表（待业务方 review 时确认）
 goal_decision_owner: 业务方负责人（待人工 review 时确认）
-business_sponsor: 业务方（待人工 review 时确认）
 reviewer: 业务方负责人 + 项目 PMO
 created_at: （待填写）
 updated_at: （待填写）
@@ -39,37 +40,37 @@ confirmed_at: （授权人工 review 后填写）
 
 | ID | 标题 | 描述 | 状态 | Owner | 知识状态 | 来源 | 目标关闭 | 备注 |
 |---|---|---|---|---|---|---|---|---|
-| ISS-001 | （待确认） | （待确认） | open | （待确认） | UNKNOWN | SRC-XXX | （待确认） | — |
+| （无） | — | — | — | — | — | — | — | — |
 
 ## 4. Risk（RSK）
 
 | ID | 标题 | 描述 | 状态 | Owner | 知识状态 | 来源 | 缓解措施 | 备注 |
 |---|---|---|---|---|---|---|---|---|
-| ISS-101 | （待确认） | （待确认） | open | （待确认） | ASSUMPTION | SRC-XXX | （待确认） | — |
+| （无） | — | — | — | — | — | — | — | — |
 
 ## 5. Decision-in-waiting（DEC）
 
 | ID | 标题 | 描述 | 状态 | Owner | 知识状态 | 来源 | 目标关闭 | 备注 |
 |---|---|---|---|---|---|---|---|---|
-| ISS-201 | （待确认） | （待确认） | open | （待确认） | UNKNOWN | SRC-XXX | （待确认） | — |
+| （无） | — | — | — | — | — | — | — | — |
 
 ## 6. Information gap（INF）
 
 | ID | 标题 | 描述 | 状态 | Owner | 知识状态 | 来源 | 备注 |
 |---|---|---|---|---|---|---|---|
-| ISS-301 | （待确认） | （待确认） | open | （待确认） | UNKNOWN | SRC-XXX | — |
+| （无） | — | — | — | — | — | — | — |
 
 ## 7. Clarification（CLS）
 
 | ID | 标题 | 描述 | 状态 | Owner | 知识状态 | 来源 | 备注 |
 |---|---|---|---|---|---|---|---|
-| ISS-401 | （待确认） | （待确认） | open | （待确认） | AI_INFERENCE | SRC-XXX | — |
+| （无） | — | — | — | — | — | — | — |
 
 ## 8. Out-of-band（OUT）
 
 | ID | 标题 | 描述 | 状态 | Owner | 知识状态 | 来源 | 路由至 | 备注 |
 |---|---|---|---|---|---|---|---|---|
-| ISS-501 | （待确认） | （待确认） | open | （待确认） | UNKNOWN | SRC-XXX | （待确认） | — |
+| （无） | — | — | — | — | — | — | — | — |
 
 ## 9. Closed Issues
 
@@ -77,29 +78,29 @@ confirmed_at: （授权人工 review 后填写）
 
 | ID | 标题 | 接受者 | 接受日期 | 接受条件 | 备注 |
 |---|---|---|---|---|---|
-| ISS-A01 | （待确认） | （待确认） | （待确认） | （待确认） | — |
+| （无） | — | — | — | — |
 
 ### 9.2 Resolved（已解决）
 
 | ID | 标题 | 解决方案 | 关闭日期 | 引用变更 | 备注 |
 |---|---|---|---|---|---|
-| ISS-R01 | （待确认） | （待确认） | （待确认） | artifact §（待确认） | — |
+| （无） | — | — | — | — |
 
 ### 9.3 Escalated（已升级）
 
 | ID | 标题 | 升级至 | 升级日期 | 新 Owner | 备注 |
 |---|---|---|---|---|---|
-| ISS-E01 | （待确认） | （待确认） | （待确认） | （待确认） | — |
+| （无） | — | — | — | — |
 
 ## 10. 来源追溯
 
 | SRC-ID | 来源 | 关键陈述 | 知识状态 |
 |---|---|---|---|
-| SRC-001 | （待确认） | （待确认） | FACT |
+| （无已登记来源） | — | — | — |
 
 ## 11. 待确认问题
 
-- Q-001: （待确认）
+- 无待确认问题。
 
 ## 12. Constitution Compliance
 
@@ -110,25 +111,13 @@ confirmed_at: （授权人工 review 后填写）
 - 跨阶段对齐：✅ 已对齐（待确认 / UNKNOWN / CONFLICT 均已收录或记录关闭理由）
 - AI 主动询问：✅ 已对齐（所有登记都先经用户确认）
 
-## 13. 阶段收口表（每个 work item 送审前必填 · 空阶段=审计证据）
+## 13. 阶段收口表（L1/L2 每个 work item 送审前必填 · 空阶段=审计证据）
 
 > B3 强制语义：每个 work item 的产物在 `ready_for_human_review` 送审前，必须在本表落收口行（空阶段也落行，问题数=0 即审计证据）。
 
 | 阶段 | Work Item | 问题数 | 收口日期 | 状态 |
 |---|---|---|---|---|
-| 001-business-requirements | project-background-goal | 0 | 待填写 | open |
-| 001-business-requirements | user-journey | 0 | 待填写 | open |
-| 001-business-requirements | user-stories | 0 | 待填写 | open |
-| 002-product-requirements | feature-list | 0 | 待填写 | open |
-| 002-product-requirements | functional-flow | 0 | 待填写 | open |
-| 002-product-requirements | page-design | 0 | 待填写 | open |
-| 002-product-requirements | interaction-rules | 0 | 待填写 | open |
-| 002-product-requirements | business-rules | 0 | 待填写 | open |
-| 002-product-requirements | validation-rules | 0 | 待填写 | open |
-| 002-product-requirements | state-machine | 0 | 待填写 | open |
-| 002-product-requirements | exception-handling | 0 | 待填写 | open |
-| 002-product-requirements | acceptance-criteria | 0 | 待填写 | open |
-| 003-prd-output | prd-assembly | 0 | 待填写 | open |
+{B3_LEDGER_ROWS}
 
 ## 版本变更摘要
 

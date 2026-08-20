@@ -72,8 +72,9 @@ VALID_STATUSES = {
     "conditional_review",
     "ready_for_human_review",
     "confirmed",
-    "superseded", "legacy_unverified",
-    "simulated", "legacy_unverified",
+    "superseded",
+    "legacy_unverified",
+    "simulated",
 }
 
 

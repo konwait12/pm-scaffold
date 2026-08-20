@@ -6,7 +6,7 @@
 
 - [ ] 独立产物 `acceptance-criteria.md` 中包含「验收标准」章节，且每条 `AC-XXX` 都引用某个 `FEA-XXX`
 - [ ] 至少存在一条 `AC-\d+` 标识，且未出现「待确认」占位 ID
-- [ ] AC ID 全局唯一、编号连续（AC-001、AC-002…），无跳号、无重复、未与其他 work_item ID 前缀混淆
+- [ ] AC ID 全局唯一、稳定且不可复用；删除/合并后允许保留编号空洞，不为补洞重编号
 - [ ] 每条 `AC-XXX` 都引用某个 `FEA-XXX`，没有游离于所有功能之外的孤儿验收标准
 - [ ] 验收依据表头列与模板一致：`ID | 验收标准（Given/When/Then） | 量化阈值 | 来源目标 | 优先级`
 - [ ] `python3 scripts/validate_artifact.py <acceptance-criteria.md> --json` 返回 `"ok": true`

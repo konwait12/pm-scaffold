@@ -42,7 +42,7 @@ description: 为已确认功能流程中的每一步定义页面骨架——入�
 - 剩余问题批量提交：AI 初步判断、依据、选项、影响、owner、阻断标志。
 - 当答案改变某 P0 页面的入口、前置条件、内容、操作或下一状态时，**停在 `needs_user_input`**。
 - Limit: 每轮 ≤5 个问题。不问视觉样式（超出范围）或规则（下游 work_item）。
-- 遇到「待确认 / 冲突 / 信息缺口」信号：主动询问是否登记 issue-record（问题清单，见 `src/shared/clarify/skills/issue-record`）；送审前 dor_check 会硬检查收口与引用。
+- 遇到「待确认 / 冲突 / 信息缺口」信号：自动登记带来源的 issue-record `ISS-NNN`（只记录 PM/PRD 问题）；仅对业务决定、owner、接受或关闭动作提问。送审前 dor_check 会硬检查收口与引用。
 
 ### 5. Generate
 - 填独立的 `page-design.md` 中的页面/步骤表。每个页面/步骤占一行：页面/步骤、所属功能、入口、前置条件、主要内容、操作、下一状态。

@@ -12,19 +12,19 @@ PRD 汇总步骤要求全部 12 个上游产物 `status: confirmed`：
 | user-journey.md | UJ-XXX | §2 用户旅程（旅程图、路径覆盖） |
 | user-stories.md | US-XXX | §3 用户故事与范围基线（故事卡 ST-XXX） |
 | feature-list.md | FEA-XXX | §4 功能清单（P0/P1/P2） |
-| functional-flow.md | FL-XXX | §5 功能流程（主流程/分支/异常、跨系统交接点） |
+| functional-flow.md | artifact `FL-XXX` / trace `FUN-XXX` | §5 功能流程（主流程/分支/异常、跨系统交接点） |
 | page-design.md | PD-XXX | §6 页面设计（页面骨架、字段） |
 | interaction-rules.md | IX-XXX | §7 交互规则 |
 | business-rules.md | BR-XXX | §8 业务规则 |
 | validation-rules.md | VL-XXX | §9 校验规则 |
-| state-machine.md | SM-XXX | §10 状态变化 |
+| state-machine.md | STATE-XXX（兼容已确认历史 SM-XXX） | §10 状态变化 |
 | exception-handling.md | EX-XXX | §11 异常与失败处理 |
 | acceptance-criteria.md | AC-XXX | §12 验收依据 |
 
 ## 聚合规则（Aggregation Rules）
 
 1. **复制，不改写（Copy, don't rewrite）**：来自上游产物的内容必须 verbatim 复现。不概括、不"润色措辞"、不重构。
-2. **保留全部 ID**：每个 SRC-*、BG-*、UJ-*、US-*、ST-*、FEA-*、FL-*、PD-*、IX-*、BR-*、VL-*、SM-*、EX-*、AC-*、G-X 都必须与来源完全一致地出现在 PRD 中。
+2. **保留全部 ID**：保留每个来源中的 artifact ID 与 Trace ID；新正文使用 `G-*`、`FUN-*`、`STATE-*`，已确认历史 `G1` / `SM-*` 原样保留，不因汇总重编号。
 3. **章节映射**：按上表「提供」列一一对应，不要跨章节重排内容。
 4. **条件章节**（§5 按需：字段规则、埋点需求、依赖、未决项）：仅当上游相关产物有非空内容时才纳入。否则注明「本期不适用」。
 
@@ -40,7 +40,7 @@ PRD 汇总步骤要求全部 12 个上游产物 `status: confirmed`：
 
 RTM（§6）、正向追溯检查（§7）与反向追溯检查（§8）通过以下方式构建：
 
-1. 解析全部 12 个上游产物中的稳定 ID（G-X、ST-XXX、FEA-XXX、FL-XXX、AC-XXX、BR-XXX）。
+1. 解析全部 12 个上游产物中的稳定 ID（G-*、ST-*、FEA-*、FUN-*、AC-*、BR-* 及按需 STATE/EX/VL/IX/PD）。
 2. 跟随每个产物中的显式引用（例如 `feature-list` 功能清单说"来源故事：ST-001、ST-002"）。
 3. 机械地构建矩阵——无推断、无猜测。
 

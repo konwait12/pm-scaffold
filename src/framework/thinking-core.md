@@ -65,7 +65,7 @@
 - 核心问题：
   1. 已知 / 未知 / 自以为知道——三者分清了没？
   2. 没有证据支撑的推断标 AI_INFERENCE 了没？不确定的标 UNKNOWN 了没？冲突标 CONFLICT 了没？
-- 产出落点：`Intake` 知识状态登记 + QuestionRecord 问题清单
+- 产出落点：`Intake` 知识状态登记 + `QuestionRecord`（单条提问）/ `issue-record.md`（跨阶段 PM/PRD 问题清单）
 
 ### 6.1 证据强度分级 / Evidence Strength Grading
 

@@ -18,7 +18,10 @@ import sys
 from datetime import datetime, timezone
 from pathlib import Path
 
-from workflow_registry import artifact_status, find_artifact, load_registry, read_frontmatter, work_items
+from workflow_registry import (
+    artifact_status, find_artifact, load_registry, read_frontmatter,
+    tier_for_req, work_items_for_tier,
+)
 
 
 # Statuses that count as "active" (in progress, awaiting human, etc.)
@@ -103,8 +106,12 @@ def loop_signals(req_dir: Path, statuses: dict) -> list[dict]:
     return signals
 
 
-def build_status(req_dir: Path) -> dict:
-    items = work_items()
+def build_status(req_dir: Path, tier: str | None = None) -> dict:
+    # Process Tier：按 REQ 的 process_tier 过滤 work_items（缺省 L2=13 项，不含 mini-prd）
+    items = work_items_for_tier(tier or tier_for_req(req_dir))
+    # 当前 tier 集内的 work_item id——predecessors 检查只对集内生效，
+    # 集外（如 L1 下的 page-design/interaction-rules/exception-handling）视为 tier 豁免。
+    tier_ids = {item["id"] for item in items}
     statuses = {item["id"]: artifact_status(req_dir, item) for item in items}
 
     # Single-active-item check: at most one active work item may exist.
@@ -126,6 +133,8 @@ def build_status(req_dir: Path) -> dict:
             continue
         next_item = item["id"]
         for predecessor in item["predecessors"]:
+            if predecessor not in tier_ids:
+                continue  # Process Tier 豁免：集外前置不参与本 tier
             p_status = statuses.get(predecessor, "not_created")
             if p_status != "confirmed":
                 blockers.append(f"{predecessor} is {p_status}")
@@ -136,6 +145,8 @@ def build_status(req_dir: Path) -> dict:
     for item in items:
         if statuses[item["id"]] in ACTIVE_STATUSES:
             for predecessor in item["predecessors"]:
+                if predecessor not in tier_ids:
+                    continue  # Process Tier 豁免
                 if statuses.get(predecessor) != "confirmed":
                     workflow_valid = False
                     if item["id"] not in invalid_active:
@@ -251,6 +262,8 @@ def main() -> int:
         for stage in registry["stages"]:
             print(f"\n{stage['id']} {stage['name']}")
             for item_id in stage["work_items"]:
+                if item_id not in result["work_items"]:
+                    continue  # 非当前 tier 的 work_item（如 L2 下的 mini-prd）
                 print(f"  {item_id}: {result['work_items'][item_id]}")
         if result["complete"]:
             print("\nNext: publish confirmed PRD")

@@ -4,6 +4,18 @@
 
 ## 主干（Backbone）
 
+每个新 REQ 先通过 `pipeline.py init REQ-NNN-topic --process-tier L0|L1|L2`
+持久化档位决定。`00-input/intake-decision.md` 是唯一事实源：`status`/`entry`
+可以显示临时预览，`gate`、`review`、`reflow` 和 PRD 装配不能覆盖该决定。
+
+| 档位 | 交付集合 | 治理 |
+|---|---|---|
+| L0 | `mini-prd` 一个产物，六个核心章节 | 一次人工确认 + ReviewRecord + hash anchor + audit event；不要求 issue-record 或跨产物追溯 |
+| L1 | 7 个上游产物 + `prd-assembly`，共 8 项 | PD/IX/VL/STATE/EX 必须由 intake 逐项证明不适用，否则升级 L2 |
+| L2 | 12 个上游产物 + `prd-assembly`，共 13 项 | 完整状态、交互、校验、异常和追溯链 |
+
+L0 只适用于单一可定位、单角色、无持久状态、无敏感/资金/合规影响、无数据迁移且可简单回退的变更；任一硬升级条件命中都必须升至 L1 或 L2。
+
 ```text
 001 业务需求阶段
   project-background-goal
@@ -73,7 +85,7 @@ Clarify（澄清）与 reflow（回流）是当前 Work Item 内部的状态，�
 - `requirement-restate`：当输入有可追溯来源（L1-L4）、多源措辞不一致或需「我们真的同意了吗」检查位时，提供需求复述确认（RR-NNN verbatim 复述）。
 - `brainstorming`：当输入只停留在 L0 一行想法 / 材料稀疏 / 需要方案发散时，按 12 场景维度发散 SCN-XXX 候选并交人工四值处置，include 候选综合成输入包。
 - `tracking-plan`：当某个功能需要度量数据时，提供数据追踪 / 埋点（instrumentation）计划。
-- `issue-record`：跨阶段的问题清单；任何 Work Item 送审前必须先完成 B3 收口。
+- `issue-record`：跨阶段的问题清单；L1/L2 的任何 Work Item 送审前必须先完成 B3 收口，L0 不创建该独立产物。
 
 ### to B 技法（Thinking Core §5 登记，按需加载）
 

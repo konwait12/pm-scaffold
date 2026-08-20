@@ -1,5 +1,5 @@
-# Clarification And Issues
+# 澄清与问题清单
 
-Create a QuestionRecord only when information is unknown, conflicting, or decision-dependent. Discoverable facts should be researched first. Questions are batched by decision owner and include preliminary judgment, evidence, options, impact, blocking flag, deferral risk and reflow target.
+仅当信息未知、相互冲突或依赖业务决策时创建 `QuestionRecord`；可查证的事实应先调研。问题按决策负责人归组，并记录初步判断、证据、选项、影响、是否阻断、延期风险和回流目标。
 
-No empty issue record is required. Blocking questions set `needs_user_input`; non-blocking questions remain visible with an owner and deadline. Answers are written back to the affected artifact and trigger Audit again.
+每个 L1/L2 需求都维护一份项目级 `issue-record.md`，即使当前没有开放问题也要保留。它只记录需求澄清、冲突、决定、风险、信息缺口和范围路由证据；仓库缺陷、测试失败、部署问题和工程实现任务不属于该产物。AI 可以登记有证据的草稿或开放记录；阻断问题使状态进入 `needs_user_input`，非阻断问题也必须保留负责人和截止时间。答复应回写到受影响产物并重新审计；只有人工决策负责人可以接受风险、关闭业务决定或确认产物。

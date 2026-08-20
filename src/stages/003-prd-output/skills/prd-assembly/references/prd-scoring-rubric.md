@@ -8,6 +8,10 @@
 
 本评分卡是**参考工具**：评分结果不改变 prd.md 的产物状态（draft/ready_for_human_review/confirmed），不接入 validate_artifact.py，不产生 blocking 闸门。仅辅助评审人结构化自检。最终阻断仍以 review-taxonomy 的 REVISION 裁决与 authorized-reviewers 的人工批准为准。
 
+## 0.1 蒸馏说明
+
+蒸馏自 workbuddy `prd-reviewer` skill（10 分 7 模块 + 3 红线 + 17 检查）+ `incremental-prd-collaboration` 高频遗漏清单 + `incre-prd-checklist.md`。本文档是**advisory 级**，prd-assembly validate_artifact.py 是**结构级**——两者互补不互替代。
+
 ## 1. 三大禁忌（评分红线，吸收自 prd-reviewer）
 
 1. **禁止模糊评分**：扣分须引用 prd.md 原文位置（§章节/FEA-XXX/BR-XXX），不允许"大致符合""基本达标"等模糊表述。
@@ -113,6 +117,18 @@
 | 15 | 报表 | 需报表填具体需求？无需报表标注？ |
 | 16 | 风险 | 资金风险（跟钱相关/风险等级）判断？ |
 | 17 | 风险 | 数据泄露风险标注（有无均标注）？to B 含权限/审计/数据出境？ |
+
+## 4.1 研发评审版 PRD 硬标准（蒸馏 B1 + G3 pm-master）
+
+PRD 送研发评审前，**必须**包含以下硬性章节；任一缺失即使评分 ≥7 也应打回返工：
+
+- [ ] 组件级需求（页面/接口/数据模型分层清晰）
+- [ ] 状态机（涉及状态变更的字段须文档化）
+- [ ] 埋点方案（事件名 + 触发时机 + 上报参数 + 分析维度）
+- [ ] 接口契约（调用方 / 返回结构 / 错误码）
+- [ ] 验收标准（Given/When/Then + 量化阈值）
+- [ ] 异常降级（至少 1 条失败路径 + 兜底）
+- [ ] 灰度与回滚（适用范围 + 比例 + 监控 + 回滚触发条件）
 
 ## 5. 与 review-taxonomy 的映射
 

@@ -41,7 +41,7 @@ description: 定义实体状态迁移 STATE-XXX——合法状态、触发事件
 - 剩余问题批量提交：AI 初步判断、依据、选项、影响、owner、阻断标志。
 - 当未定义的转移或守卫条件改变生命周期行为、成本或风险时，**停在 `needs_user_input`**。
 - Limit: 每轮 ≤5 个问题，按影响排序。
-- 遇到「待确认 / 冲突 / 信息缺口」信号：主动询问是否登记 issue-record（问题清单，见 `src/shared/clarify/skills/issue-record`）；送审前 dor_check 会硬检查收口与引用。
+- 遇到「待确认 / 冲突 / 信息缺口」信号：自动登记带来源的 issue-record `ISS-NNN`（只记录 PM/PRD 问题）；仅对业务决定、owner、接受或关闭动作提问。送审前 dor_check 会硬检查收口与引用。
 
 ### 5. Generate
 - 填独立的 `state-machine.md` 中的状态变化表：状态定义（进入/退出条件）+ 转移表（当前状态 | 触发事件 | 目标状态 | 条件 | 副作用 | 来源）+ Mermaid 状态图。

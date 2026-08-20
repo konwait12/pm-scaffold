@@ -20,7 +20,7 @@
 
 当人类用户第一次接触本项目（问「这是什么 / 怎么用 / 从哪开始」）时，按顺序：
 
-1. **先打开驾驶舱给他们看**：`open src/toolkit/visualization/scaffold-flow.html`（浏览器打开）——里面是项目流程图、19 Skill 说明书、命令全集、文件架构。
+1. **先打开驾驶舱给他们看**：`open src/toolkit/visualization/scaffold-flow.html`（浏览器打开）——里面是分档流程图、Skill 说明书、命令全集、文件架构。
 2. **引导点左侧「📖 新手教程 · 从这里开始」**——那是给人类看的协作手册（用什么 Agent、怎么下指令、从零到 PRD 的完整剧本）。这是硬核项目、没有外部生态，这个 HTML 是唯一的入门门面。
 3. **本文件是你的工作合同，不要直接甩给用户读**——用户需要的是「怎么用」，不是「你的规则」。等用户看完教程、按他们的指令开始协作后，你按本文件 §2-§8 执行。
 
@@ -35,6 +35,7 @@
 | 3 | `src/framework/workflow.md` | 每个 Work Item 必走的 8 步循环 |
 | 4 | `src/framework/thinking-core.md` | 共享思想引导层：§1 的 6 个核心透镜每次必用 + §2 校验层 + §3 发散决策层 + §5 表达层技法注册（外部 skill 精华已按 A/B/C 三档注入，见 `docs/new-skills-integration-plan.md`） |
 | 5 | `src/framework/contracts.md` | 知识状态标注 + 确认不变式；含 AuditEvent / ProjectionCache / ValidatorIssue / RegistryContract 等扩展 Shared Records 契约（v0.4.0 Harness 借鉴） |
+| 6 | `src/framework/id-contract.md` | artifact ID 与产物内 Trace ID 的边界、当前格式及兼容策略；不得用前缀替代业务语义 |
 
 之后读当前需求的 `STAGE.md` 和对应 Skill 的 `SKILL.md`。
 
@@ -71,7 +72,8 @@ Preflight → Intake → Think → Clarify → Generate → Audit → Human Gate
 requirements/REQ-NNN-topic/
 ├── README.md
 ├── 00-input/                      # 原始材料 + authorized-reviewers.json
-├── 001-business-requirements/
+├── 000-minimal/01-mini-prd/       # 仅 L0
+├── 001-business-requirements/     # L1/L2 按档位生成
 │   ├── 01-background-goal/
 │   ├── 02-user-journey/
 │   └── 03-user-stories/
@@ -86,14 +88,16 @@ requirements/REQ-NNN-topic/
 │   ├── 08-exception-handling/
 │   └── 09-acceptance-criteria/
 ├── 003-prd-output/prd.md          # 唯一最终交付物
-└── 99-review/                     # 评审记录 + support/issue-record.md（B3 收口）
+└── 99-review/                     # 评审记录；support/issue-record.md 仅 L1/L2
 ```
 
 一个 artifact 原地演进；快照与评审/变更记录保存历史，不创建竞争的「最终版」副本。
 
-**入口探索序列**（进入 project-background-goal 前）：`entry` 判定 L0-L4（内容六信号）→ L0 无源材料先 `brainstorming`（发散收敛·SCN-XXX 候选）→ 多源/歧义时 `requirement-restate`（复述确认·RR-NNN）→ 材料充分直接主干 bg（DoR 硬检查 ≥1 个 SRC 材料）。
+**档位决策优先**：新 REQ 必须以 `pipeline.py init REQ-NNN-topic --process-tier L0|L1|L2` 创建；`00-input/intake-decision.md` 是唯一事实源。L0 为一个六节 mini-PRD；L1 为 7 个上游加 PRD、共 8 项；L2 为完整 13 项。`status`/`entry` 的 `--process-tier` 只做预览，任何写操作均使用持久档位；跨档 work item 必须立即失败。
 
-**B3 每阶段强制收口**：任何 work item 送审 `ready_for_human_review` 前，`99-review/support/issue-record.md` 必须存在且 §13 收口表含该 work item 行（空阶段也落行）；产物每个「待确认」必须带 Q-/ISS-/DEC-/SRC- 引用。dor_check 硬检查，缺失即阻断送审。
+**入口探索序列**（进入当前档位首个 work item 前）：`entry` 判定材料成熟度 L0-L4（与 process tier 正交）→ L0 无源材料先 `brainstorming`（发散收敛·SCN-XXX 候选）→ 多源/歧义时 `requirement-restate`（复述确认·RR-NNN）→ 材料充分后进入当前档位首项。
+
+**B3 每阶段强制收口**：L1/L2 的任何 work item 送审 `ready_for_human_review` 前，`99-review/support/issue-record.md` 必须存在且 §13 收口表含该 work item 行（空阶段也落行）；产物每个「待确认」必须带 Q-/ISS-/DEC-/SRC- 引用。L0 不创建 issue-record，但仍保留真实人工审批、ReviewRecord、hash anchor 与 audit event。
 
 ---
 
@@ -101,7 +105,7 @@ requirements/REQ-NNN-topic/
 
 ```bash
 # 1. 创建新需求骨架
-python3 src/scripts/pipeline.py init REQ-005-topic-name
+python3 src/scripts/pipeline.py init REQ-005-topic-name --process-tier L2
 
 # 2. 把输入材料放进 requirements/REQ-005-topic-name/00-input/
 
@@ -131,16 +135,22 @@ python3 src/scripts/consistency_check.py
 
 ---
 
-## 7. Skill 全景（13 主干 + 3 分支 + 1 常驻 + 2 能力 = 19）
+## 7. Skill 全景（按档位启用）
 
-**主干 skill（13，主干必做，永不询问）**
+**L0 主干 skill（1）**
+`mini-prd`
+
+**L1 主干 skill（8）**
+`project-background-goal` → `user-journey` → `user-stories` → `feature-list` → `functional-flow` → `business-rules` → `acceptance-criteria` → `prd-assembly`
+
+**L2 主干 skill（13）**
 `project-background-goal` → `user-journey` → `user-stories` → `feature-list` → `functional-flow` → `page-design` → `interaction-rules` → `business-rules` → `validation-rules` → `state-machine` → `exception-handling` → `acceptance-criteria` → `prd-assembly`
 
 **分支 skill（3，触发才跑）**
 `competitive-research`（竞品调研）、`feasibility-analysis`（可行性分析）、`tracking-plan`（埋点计划）
 
-**常驻 skill（1，始终监控）**
-`issue-record`（问题清单）
+**常驻 skill（L1/L2，始终监控）**
+`issue-record`（问题清单；L0 不创建，也不执行 B3 阶段收口）
 
 **能力 skill（2+，按需调用）**
 `requirement-restate`（需求重举能力：复述确认，过程记录，RR-NNN）、`brainstorming`（发散收敛能力：L0 候选生成，过程记录，SCN-XXX）、`prd-assembly`（PRD 汇总能力）
@@ -162,7 +172,7 @@ python3 src/scripts/consistency_check.py
 
 ```text
 src/framework/       宪法、契约、思考核心、注册表（先读这里）
-src/stages/          3 阶段 × 13 主干 work_item（+ 分支/常驻/能力共 19 skill）
+src/stages/          3 阶段；L2 完整路径为 13 项，L1 为 8 项，L0 为 1 项（+ 分支/常驻/能力）
 src/shared/          9 个共享机制（审计/澄清/变更/闸门/追溯等）
 src/support-skills/  support capabilities：competitive-research / feasibility-analysis / brainstorming（发散收敛）在此；requirement-restate / tracking-plan 在 stages；issue-record 在 shared/clarify（物理=逻辑统一：跨阶段能力归位 support-skills / shared）
 src/scripts/         pipeline / orchestrator / dor_check / branch_validator / audit_log / projection_cache / registry_contract_check / validation_errors（后四项为 v0.4.0 Harness 借鉴基础设施）

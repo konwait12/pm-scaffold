@@ -6,7 +6,7 @@
 
 - [ ] 独立产物 `validation-rules.md` 中包含「系统校验」章节，且每条 `VL-XXX` 都引用某个 `FEA-XXX`
 - [ ] 至少存在一条 `VL-\d+` 标识，无「待确认」占位 ID
-- [ ] VL ID 全局唯一、编号连续（VL-001、VL-002…），无跳号、无重复、不与 `BR-\d+` 混淆
+- [ ] VL ID 全局唯一、稳定且不可复用；删除/合并后允许保留编号空洞，不为补洞重编号（见 `src/framework/id-contract.md`）
 - [ ] 每个 `VL-XXX` 引用对应的 `FEA-XXX`，不堆到全局段落
 - [ ] 表头列与模板一致：`ID | 校验内容 | 校验规则 | 触发时机 | 错误提示 | 关联字段 (F) | 关联业务规则 (BR) | 来源`
 - [ ] 元数据含 artifact ID、version、status、owner、reviewer、日期或 `待确认` / `TBD`

@@ -32,7 +32,7 @@
 
 ## 必需章节（Required Sections）
 
-使用 `src/templates/stage-1-business/background-goal.md` 中的全部标题。如果某个章节没有已确认内容，写入 `待确认` 并链接到某个问题或未知 ID；不要删除标题。
+使用 `src/templates/stage-1-business/user-journey.md` 中的全部标题。生命周期、角色、情绪映射、路径变体与来源追溯共同构成该产物的最小可用结构；缺少已确认内容时，写入 `待确认` 并链接到对应问题或未知 ID，不要以背景目标章节代替或删除旅程章节。
 
 > 占位符 `待确认` 在中文化 PRD 惯例中保留。翻译者在纯英文产物中可使用 `[NEEDS CLARIFICATION]`，前提是校验器能识别这两种形式。
 
@@ -49,12 +49,10 @@
 
 ```text
 confirmed_version
-background_summary
-goal_summary
+journey_summary
 confirmed_roles
-known_lifecycle_clues
-constraints_and_dependencies
-accepted_assumptions
+lifecycle_stages
+path_coverage
 open_nonblocking_unknowns
 source_ids
 ```

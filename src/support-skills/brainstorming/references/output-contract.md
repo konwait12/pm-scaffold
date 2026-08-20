@@ -2,7 +2,7 @@
 
 ## 目的（Purpose）
 
-本 skill 是**能力（`output_kind=process`）**，不是产物型 skill：产物是过程记录 `brainstorming-output.md`（SCN 发散候选 + 人工处置表 + 收敛后输入包），**永远不进 PRD 正文**。它只作为"收敛后的输入包"喂给后续工作项 `project-background-goal`。注册表 `workflow-registry.json` 已将其标记为 `output_kind: process`。
+本能力（`output_kind=process`）不是 PRD 产物：过程记录 `brainstorming-output.md` **永远不进 PRD 正文**。材料成熟度与 `process_tier` 正交；写回目标由持久化 intake 决策决定：L0 为 `mini-prd` 第 1/2 节输入线索，L1/L2 为 `project-background-goal` 输入包。
 
 模板：`src/templates/others/brainstorming-output.md`。
 
@@ -36,7 +36,7 @@
 
 ## 候选表契约（Candidate Table · SCN-XXX）
 
-材料稀疏/L0 时按 12 维度发散（lifecycle / roles / normal-alternate-exception-failure-timeout / permission / data condition / handoff / dependency / cancellation / retry / rollback / change-recovery / constraint），聚类去重后每个独立想法一个稳定 ID `SCN-001`, `SCN-002`, …。
+材料稀疏时按风险相关维度发散。12 个维度是扫描透镜而非候选数量 KPI；无关维度标 `not_material` 并说明依据。聚类去重后每个独立想法一个稳定 ID `SCN-001`, `SCN-002`, …。
 
 | 列 | 内容 | 规则 |
 |---|---|---|
@@ -60,17 +60,17 @@
 Rules:
 
 - **Human Disposition** 是四值之一：`include` / `exclude` / `defer` / `research`。AI 填其余所有列；**只有负责人工（business_owner）填这一列**。
-- `include` → 候选进入正式写回；**必须**给非占位的 Write-back Target（写回 `project-background-goal` 输入包的哪个段：§生命周期线索 / §角色候选 / §约束候选 …）。
+- `include` → 候选进入正式写回；必须给非占位的 Write-back Target。L0 只可指向 `mini-prd` 第 1/2 节；L1/L2 才可指向 `project-background-goal` 输入包。
 - `exclude` → 排除；Reason 必须说明排除原因。
 - `defer` → 暂缓；Reason 给出触发条件或计划周期。
 - `research` → 待调研；登记 issue-record / QuestionRecord，不静默搁置。
 
 ## 写回契约（Write-back Contract）
 
-- 只有 `include` 候选被写回，且**只**写回 `project-background-goal` 输入包（综合为 ≥ 50 字的充分输入）。
+- 只有 `include` 候选被写回。L0 写为 `mini-prd` 第 1/2 节的来源线索；L1/L2 综合为 `project-background-goal` 输入包。
 - 写回包必须是朴素的输入需求（"要探索什么"），而不是设计好的方案。
 - `exclude` / `defer` / `research` 候选一律**不**写回输入包。
-- 写回后，work item 在 `project-background-goal` 恢复（registry `resume_work_item`）。
+- 写回前必须复核或更新 `00-input/intake-decision.md`；回流 work item 由注册表 `resume_work_item_by_tier` 决定，不能由材料稀疏度猜测。
 
 ## YAGNI 削减契约（YAGNI Trim Contract）
 

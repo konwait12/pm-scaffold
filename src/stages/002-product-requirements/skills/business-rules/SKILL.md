@@ -42,7 +42,7 @@ description: 从已确认的功能流程与功能清单中提取领域级业务�
 - 剩余问题批量提交：AI 初步判断、依据、选项、影响、owner、阻断标志。
 - 当缺失的约束或策略决策改变规则的结果、范围、成本或风险时，**停在 `needs_user_input`**。
 - Limit: 每轮 ≤5 个问题，按影响排序。
-- 遇到「待确认 / 冲突 / 信息缺口」信号：主动询问是否登记 issue-record（问题清单，见 `src/shared/clarify/skills/issue-record`）；送审前 dor_check 会硬检查收口与引用。
+- 遇到「待确认 / 冲突 / 信息缺口」信号：自动登记带来源的 issue-record `ISS-NNN`（只记录 PM/PRD 问题）；仅对业务决定、owner、接受或关闭动作提问。送审前 dor_check 会硬检查收口与引用。
 
 ### 5. Generate
 - 填独立的 `business-rules.md` 中的业务规则表。一行一条规则；强制归类：计算 / 约束 / 条件 / 权限 / 时序。

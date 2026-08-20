@@ -88,4 +88,4 @@ no-issue-signal input → skip lens ideation
 
 ## Clarify 是独立闭环
 
-每次 Clarify Session 一行一 session（≤5），`accepted_answer` 在 `ready_for_human_review` 前必填；答案回写目标产物章节（`reflow_target`）。登记问题本身必须先经用户确认——这是 issue-record 的独特契约，违反即反模式。
+每次 Clarify Session 一行一 session（≤5），`accepted_answer` 在 `ready_for_human_review` 前必填；答案回写目标产物章节（`reflow_target`）。有来源的 PM/PRD 问题由 AI 自动登记为 draft/open；业务 owner、风险接受、关闭和业务决策必须经人工确认。

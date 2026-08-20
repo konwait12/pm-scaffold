@@ -20,7 +20,7 @@
 - **无方案泄露（No Solution Leak）**：没有一行包含提议的方案、技术或设计。来源提到的方案是带 `solution_leak=true` 的 hint，不是决策。
 - **stakeholder 之声（Stakeholder Voice）**：重述读起来是 stakeholder 的话，不是 AI 的话。
 - **冲突可见性（Conflict Visibility）**：所有冲突都被标记，没有一个被解决。
-- **未知已路由（Unknowns Routed）**：每个 UNKNOWN 都链接到一个问题或 issue-record 条目。
+- **冲突与未知已路由（Conflict / Unknown Routing）**：每个 CON-XXX 和 UNK-XXX 都回链到项目级 `issue-record.md` 的 ISS-NNN；每个 UNK-XXX 另有 Q-NNN 提问或已记录的回答来源。
 
 ## 质量透镜（Quality Lenses）
 

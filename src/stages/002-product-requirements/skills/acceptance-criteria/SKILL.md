@@ -40,7 +40,7 @@ description: 为每个 P0 功能以 Given/When/Then 编写原子、可测量的�
 - 剩余问题批量提交：AI 初步判断、依据、选项、影响、owner、阻断标志。
 - 当答案改变成功定义、关键阈值或异常路径范围时，**停在 `needs_user_input`**。
 - Limit: 每轮 ≤5 个问题，按影响排序。
-- 遇到「待确认 / 冲突 / 信息缺口」信号：主动询问是否登记 issue-record（问题清单，见 `src/shared/clarify/skills/issue-record`）；送审前 dor_check 会硬检查收口与引用。
+- 遇到「待确认 / 冲突 / 信息缺口」信号：自动登记带来源的 issue-record `ISS-NNN`（只记录 PM/PRD 问题）；仅对业务决定、owner、接受或关闭动作提问。送审前 dor_check 会硬检查收口与引用。
 
 ### 5. Generate
 - 填独立的 `acceptance-criteria.md` 中的 AC-XXX 行。每个 P0 FEA：≥1 条主流程 AC + ≥1 条异常/边界 AC。

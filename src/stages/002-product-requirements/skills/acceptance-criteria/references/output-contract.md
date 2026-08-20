@@ -9,7 +9,7 @@ Output format must match the table in `src/templates/stage-2-product/acceptance-
 
 | 列 | 要求 |
 |---|---|
-| ID | `AC-XXX`，全局唯一、编号连续（AC-001…），引用所属 `FEA-XXX`，不与 BR-/VL-/ST-/EX-/IX- 混淆 |
+| ID | `AC-XXX`，全局唯一、稳定且不可复用；允许历史编号空洞，引用适用的 `FEA/FUN` 或显式 `GLOBAL`，不与 BR-/VL-/ST-/EX-/IX- 混淆 |
 | 验收标准 | Given（前置条件）→ when（动作/事件）→ then（可观测结果）三段式，缺一不可 |
 | 量化阈值 | 可量化的结果必须有具体阈值（≤ 2 秒 / ≥ 99.9% / 0 元），可回溯 `G-XXX` |
 | 来源目标 | Stage 1 目标 `G-XXX` ID；无对应目标标 `待确认` 或 `UNKNOWN` |
@@ -18,8 +18,17 @@ Output format must match the table in `src/templates/stage-2-product/acceptance-
 ## ID And Prefix Rules
 
 - 保持 `AC-` 前缀；不与 `BR-` / `VL-` / `ST-` / `EX-` / `IX-` 混淆。
-- 每条 `AC-XXX` 引用某个 `FEA-XXX`；全局唯一、无跳号。
+- 每条 `AC-XXX` 引用适用的 `FEA-XXX` / `FUN-XXX`；跨功能或平台级验收写 `GLOBAL` 并保留来源。ID 全局唯一且不可复用。
 - 一条 AC = 一个行为（原子）；多个 when/then 拆成多条，让失败时能精准定位到是哪一步不满足。
+
+## 状态转移覆盖（可选 · 蒸馏自 H1 test-cases StateTransition）
+
+当本期需求**涉及状态变更**时，模板 `## 1.5 状态转移覆盖` 表**应当填写**（非强制，校验器不阻断）：
+- 起始状态 / 触发事件 / 守卫 / 终止状态：必须**与 `state-machine` 产物中的转移表一一对应**
+- 关联 AC：每条 ST-XX 至少挂一条 AC-XX 验证"触发 → 终止"路径
+- 仅展示只读页面（无状态变更）的需求：标 `本期不适用` + 注明"无状态实体"
+
+不适用场景举例：纯文案修正、纯配置开关、纯一次性回滚操作（无状态机）。
 
 ## Knowledge-State Labels
 

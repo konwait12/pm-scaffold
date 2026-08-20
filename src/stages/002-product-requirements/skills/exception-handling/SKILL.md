@@ -42,7 +42,7 @@ description: 为每个 P0 功能枚举失败模式、重试/回滚/恢复策略�
 - 剩余问题批量提交：AI 初步判断、依据、选项、影响、owner、阻断标志。
 - 当答案可能改变恢复策略、提示文案或补偿行为时，**停在 `needs_user_input`**。
 - Limit: 每轮 ≤5 个问题，按影响排序。
-- 遇到「待确认 / 冲突 / 信息缺口」信号：主动询问是否登记 issue-record（问题清单，见 `src/shared/clarify/skills/issue-record`）；送审前 dor_check 会硬检查收口与引用。
+- 遇到「待确认 / 冲突 / 信息缺口」信号：自动登记带来源的 issue-record `ISS-NNN`（只记录 PM/PRD 问题）；仅对业务决定、owner、接受或关闭动作提问。送审前 dor_check 会硬检查收口与引用。
 
 ### 5. Generate
 - 填独立的 `exception-handling.md` 中的 EX-XXX 行。一行一种失败——触发条件与系统行为分开为独立单元格。

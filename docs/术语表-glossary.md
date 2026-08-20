@@ -108,16 +108,16 @@
 
 | 项 | 内容 |
 |---|---|
-| **定义** | feature-list (et al.) 的逻辑完备性维度：每个 FUN 必须有足够的 BR + VL + AC 覆盖。阈值：总数 < 3 → HIGH（under-specified）；< 6 → MEDIUM（建议补充）。支持两种布局：`### FUN-XXX` 子标题块、功能清单表格（按「所属 FUN」列聚合）。无 FUN 可定位时输出 MEDIUM「规则密度校验跳过」兜底。 |
+| **定义** | feature-list 等产物的证据覆盖观察：对适用的 `FUN-XXX` / `FEA-XXX` 汇总 BR、VL、AC 数量，重点识别“有业务约束却没有可验证 AC”的闭环缺口。没有统一的 3/6 条数量阈值；只读、导航、平台级 NFR、合规等能力按适用性说明判断。无可定位锚点时记为不适用，不报格式错误。 |
 | **出现位置** | `src/scripts/property_check.py`（`check_rule_density` / `_table_rule_density` / `_id_fun_pairs`）。 |
 | **相关校验器** | `src/scripts/property_check.py`（仅 feature-list (et al.) 触发，见 `pipeline.py machine_gate()`）。 |
-| **示例** | `FUN-001 has only 2 rules (BR=1, VL=0, AC=1) — under-specified (minimum 3)`。 |
+| **示例** | `FUN-001 has business rules but no acceptance evidence (BR=2, VL=1, AC=0)`；若仅展示型能力为 `coverage not applicable`。 |
 
 ### 2.11 capability-fragment（能力片段）
 
 | 项 | 内容 |
 |---|---|
-| **定义** | 跨案例重复出现的「通用能力 / 组件型功能」标准片段库。生成 `feature-list` / `functional-flow` / `business-rules` / `validation-rules` / `state-machine` / `exception-handling` / `acceptance-criteria` 时，组件型 / 通用型功能**优先引用片段而非重写**；每个片段可追溯到来源案例。片段自带 ≥3 条标准 BR 兜底（满足规则密度要求）。 |
+| **定义** | 跨案例重复出现的「通用能力 / 组件型功能」标准片段库。生成 `feature-list` / `functional-flow` / `business-rules` / `validation-rules` / `state-machine` / `exception-handling` / `acceptance-criteria` 时，组件型 / 通用型功能**优先引用片段而非重写**；每个片段可追溯到来源案例。片段不以固定条数替代对实际风险和验收证据的判断。 |
 | **出现位置** | `src/shared/capability-fragments/README.md`（使用约定 / 片段清单）；`src/shared/capability-fragments/{subscription-notice,comment-validation,time-picker}.md`（片段本体）。 |
 | **相关校验器** | 无独立校验器（纯 Markdown 知识库）；片段被复制进产物后，产物仍走既有 gate 校验（`validate_artifact.py` / `property_check.py`）。 |
 | **示例** | `time-picker.md`（时间/年月选择组件，4 BR / 3 AC / 2 EX，来源 REQ-008-bae FUN-009）。 |

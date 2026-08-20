@@ -1,5 +1,9 @@
 #!/usr/bin/env python3
-"""Validate explicit G→ST→FEA→FUN→AC/BR relationships across artifacts."""
+"""Validate explicit G→ST→FEA→FUN→AC/BR relationships across artifacts.
+
+Trace IDs are defined by ``src/framework/id-contract.md``. Registry artifact
+prefixes are file-level identifiers and are not substituted for trace rows.
+"""
 
 from __future__ import annotations
 
@@ -17,10 +21,13 @@ from workflow_registry import find_artifact, work_items
 FAMILY = "traceability"
 
 PATTERNS = {
-    "goal": r"\bG\d+[a-z]?\b",
+    # G1 is accepted only for historical artifacts; new output uses G-001.
+    "goal": r"\bG-?\d+[A-Za-z]?\b",
     "story": r"\bST-\d+\b",
     "feature": r"\bFEA-\d+\b",
-    "function": r"\bFUN-\d+\b",
+    # E2E-017 后功能流程节点为 FEA 作用域（无独立 FUN- 前缀），与
+    # validate_artifact.py prd_assembly 的 FUN 槽位口径保持一致（FUN|FL|FEA）。
+    "function": r"\b(FUN|FL|FEA)-\d+(?:-\d+)?\b",
     "acceptance": r"\bAC-\d+\b",
     "rule": r"\bBR-\d+\b",
 }
@@ -123,7 +130,7 @@ def validate(req_dir: Path) -> dict:
                 message=f"{orphan} has no explicit {upstream} link on the same traceability row or statement",
                 expected=f"{downstream} 编号 '{orphan}' 必须与 {upstream} 编号出现在同一行/同一句（显式链路）",
                 actual=f"{orphan} 出现在 {loc}，但该行/句无任何 {upstream} 编号",
-                repair_hint=f"在 '{orphan}' 出现的表格行或描述句中补充其上游 {upstream} 编号（如 G1/ST-001）",
+                repair_hint=f"在 '{orphan}' 出现的表格行或描述句中补充其上游 {upstream} 编号（如 G-001/ST-001）",
                 source_ref="traceability_check §REQUIRED_EDGES",
             ))
     for downstream, upstream in CROSS_LEVEL_EDGES:
@@ -141,7 +148,7 @@ def validate(req_dir: Path) -> dict:
                 message=f"{orphan} has no explicit {upstream} link — verify this AC validates the correct business goal",
                 expected=f"每条 AC 都应显式引用其验证的业务目标 {upstream}（跨层校验）",
                 actual=f"{orphan} 出现在 {loc}，同一行/句未引用任何 {upstream}",
-                repair_hint=f"为 '{orphan}' 补充其验证的 {upstream} 编号（如在 AC 表格补充 G1 列引用）",
+                repair_hint=f"为 '{orphan}' 补充其验证的 {upstream} 编号（如在 AC 表格补充 G-001 列引用）",
                 source_ref="traceability_check §CROSS_LEVEL_EDGES",
             ))
     # Reverse traceability: every upstream ID must be consumed by some downstream.

@@ -2,7 +2,7 @@
 
 ## 结构闸门（Structural Gate）
 
-- 所有必需标题都存在（§1-§12 + `## Constitution Compliance` + `## 版本变更摘要`）。
+- 所有必需标题都存在（§1-§13：含阶段收口表、`Constitution Compliance` 与版本变更摘要）。
 - 元数据包含产物 ID、版本、状态、owner、reviewer 以及日期或 `待确认` / `TBD`。
 - 每个问题都有稳定 ID（`ISS-NNN`）、类别、状态、标题、描述、owner、知识状态、来源和 raised_at。
 - 重大结论引用来源 ID。阻断性问题被显式标记。
@@ -29,11 +29,12 @@
 - 没有问题在无证据的情况下关闭（没有"只为清空清单"式关闭）。
 - 类别稳定：BLK 是真阻断，INF 是缺失来源/数据，CLS 是措辞歧义，DEC 有具名决策者，OUT 有路由目标。
 
-## AI 询问合规闸门（AI Inquiry Compliance Gate）
+## AI 自主登记与人工决定闸门（AI Registration / Human Decision Gate）
 
-- 每次登记都以 AI 询问"要不要登记为 ISS-NNN"为前提——没有"静默越过待确认标记"。
+- 有来源的 PM/PRD 信号均已由 AI 登记为 ISS-NNN，或记录无须登记的明确理由；没有"静默越过待确认标记"。
+- 没有仓库缺陷、测试失败、部署故障或实现任务混入问题清单。
 - AI 没有替用户接受风险。
-- 未经用户确认进入的新问题被标记为违规。
+- AI 没有替用户确认业务 owner、关闭问题或作出业务决策。
 
 ## 质量透镜（Quality Lenses）
 
@@ -49,7 +50,7 @@
 
 仅当剩余未知项为非阻断、有 owner、且包含延期风险时，设置 `conditional_review`。
 
-仅当所有其他闸门通过时，设置 `ready_for_human_review`。绝不设置 `confirmed`；只有目标决策 owner / 业务发起人才能批准 closed-out 清单。
+Issue Record 的存在、结构和 B3 收口由每个 work item 的 `pipeline.py ... gate` 校验。只有目标决策 owner / 业务发起人才能接受风险或批准业务决定；最终 PRD 确认由 `prd-assembly` 的人工 review 完成。
 
 ## 审计报告形态（Audit Report Shape）
 

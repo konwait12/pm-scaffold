@@ -13,7 +13,7 @@
 把上游产物的内容拉进 PRD 时：
 
 1. **逐字复制**，不要转述。"润色" = 未经授权的修改。已确认文本经过人工评审——你没有权限改它。
-2. **保留全部来源 ID**。每个 SRC-*、BG-*、UJ-*、US-*、ST-*、FEA-*、FL-*、PD-*、IX-*、BR-*、VL-*、SM-*、EX-*、AC-* 都必须原样保留。
+2. **保留全部来源 ID**。artifact ID 与 Trace ID 均原样保留；新正文遵循 `id-contract.md` 的 `G-*`、`FUN-*`、`STATE-*`，兼容已确认历史 ID。
 3. **如果你在已确认内容里发现错误**：不要静默修。在 §9 不一致报告里记录并标记供人工关注。
 
 **反模式**："`project-background-goal` 里这段有点啰嗦，所以我概括了一下。"——这违反了聚合契约。
@@ -23,15 +23,15 @@
 从目标到验收标准走一遍链：
 
 ```
-G-X (background-goal) → UJ-XXX (user-journey) → ST-XXX (user-stories) → FEA-XXX (feature-list) → FL-XXX (functional-flow) → PD-XXX (page-design) → IX-XXX (interaction-rules) → BR-XXX (business-rules) → VL-XXX (validation-rules) → SM-XXX (state-machine) → EX-XXX (exception-handling) → AC-XXX (acceptance-criteria)
+G-* (background-goal) → ST-* (user-stories) → FEA-* (feature-list) → FUN-* (functional-flow) → AC-* (acceptance-criteria)
 ```
 
 对每条链接核验：
 1. **G→ST**：每个已确认目标是否有 ≥ 1 个故事应对它？
 2. **ST→FEA**：每个 P0 故事是否映射到 ≥ 1 个功能？
-3. **FEA→FL**：每个 P0 功能是否映射到 ≥ 1 条功能流程？
-4. **FL→AC**：每个 P0 功能是否有 ≥ 1 条验收标准？
-5. **AC→BR**：每条引用业务规则的 AC 是否都引用了它？
+3. **FEA→FUN**：每个需要交互或业务流程的 P0 功能是否映射到 ≥ 1 条功能流程？
+4. **FUN/FEA→AC**：每个 P0 可交付能力是否有 ≥ 1 条验收标准？
+5. **横向证据**：BR/VL/STATE/EX/PD/IX 仅对适用场景检查来源与闭环，不强迫所有条目串成一条链。
 
 在 §7 正向追溯检查中记录断裂链接。
 
@@ -40,13 +40,13 @@ G-X (background-goal) → UJ-XXX (user-journey) → ST-XXX (user-stories) → FE
 反向走一遍链：
 
 ```
-BR-XXX → AC-XXX → FL-XXX → FEA-XXX → ST-XXX → G-X
+AC/BR/VL/STATE/EX → FUN 或 FEA → ST → G
 ```
 
 对每个元素核验：
-1. **BR→AC**：每条业务规则是否有对应的 AC 测试它？
-2. **AC→FL**：每条验收标准是否属于某个功能流程？
-3. **FL→FEA**：每个功能流程是否追溯到某个功能清单项？
+1. **BR→AC**：对需要行为验收的业务规则，是否有对应 AC？平台/全局规则可注明适用性。
+2. **AC→FUN/FEA**：每条验收标准是否属于一个功能流程或功能？
+3. **FUN→FEA**：每个功能流程是否追溯到某个功能清单项？
 4. **FEA→ST**：每个功能清单项是否追溯到 ≥ 1 个故事？
 5. **无孤儿**：有没有任何元素没有上游连接？
 
@@ -71,7 +71,7 @@ BR-XXX → AC-XXX → FL-XXX → FEA-XXX → ST-XXX → G-X
 识别本应存在但缺失的内容：
 
 1. **未覆盖目标**：完全没有下游链的 G-X。
-2. **缺失功能流程**：没有功能流程（FL-XXX）的 P0 功能清单项（FEA-XXX）。
+2. **缺失功能流程**：需要交互或业务流程却没有功能流程（FUN-XXX）的 P0 功能清单项（FEA-XXX）。
 3. **未被测试的验收标准**：没有可度量阈值的 AC-XXX。
 4. **缺失 NFR 覆盖**：明显需要 NFR（例如处理个人数据）却没有 NFR 章节的功能。
 
@@ -79,9 +79,9 @@ BR-XXX → AC-XXX → FL-XXX → FEA-XXX → ST-XXX → G-X
 
 构建需求追溯矩阵（§6）：
 
-| G | ST | FEA | FL | AC | BR |
+| G | ST | FEA | FUN | AC | Applicable evidence |
 |---|---|---|---|---|---|
-| G1 | ST-001, ST-002 | FEA-001 | FL-001, FL-002 | AC-001, AC-002 | BR-001, BR-002 |
+| G-001 | ST-001, ST-002 | FEA-001 | FUN-001, FUN-002 | AC-001, AC-002 | BR-001, BR-002 |
 
 规则：
 - 每行代表一条完整追溯链。

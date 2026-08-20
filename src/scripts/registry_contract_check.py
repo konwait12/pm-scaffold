@@ -57,6 +57,7 @@ T_WORK_ITEM = {
     },
     "opt": {
         "legacy_wave": int, "legacy_artifact_dir": str, "human_gate": bool,
+        "tiers": list,  # Process Tier：["L0"]/["L1","L2"]/["L2"]；缺省 = L2 完整档
     },
 }
 T_INTERNAL_CAP = {
@@ -70,7 +71,7 @@ T_ARTIFACT_TYPE = {
 T_SUPPORT_CAP = {
     "req": {"id": str, "skill_path": str, "trigger": str,
            "applicable_stages": list, "output_location": str},
-    "opt": {"resume_work_item": (str, type(None)), "responsible_role": str,
+    "opt": {"resume_work_item": (str, type(None)), "resume_work_item_by_tier": dict, "responsible_role": str,
             "output_kind": str, "name": str},
 }
 T_TOP = {
@@ -310,6 +311,19 @@ def validate_schema(registry: dict) -> list[dict[str, Any]]:
                 f"$.support_capabilities.{sc['id']}.resume_work_item", "support_capability", "cross_ref",
                 detail=f"resume_work_item '{resume}' not a known work_item id",
             ))
+        tier_resume = sc.get("resume_work_item_by_tier") or {}
+        invalid_tiers = set(tier_resume) - {"L0", "L1", "L2"}
+        if invalid_tiers:
+            issues.append(_shape_issue(
+                f"$.support_capabilities.{sc['id']}.resume_work_item_by_tier", "support_capability", "cross_ref",
+                detail=f"tier keys {sorted(invalid_tiers)} must be limited to L0/L1/L2",
+            ))
+        for tier, target in tier_resume.items():
+            if target is not None and target not in known_wis:
+                issues.append(_shape_issue(
+                    f"$.support_capabilities.{sc['id']}.resume_work_item_by_tier.{tier}", "support_capability", "cross_ref",
+                    detail=f"resume work item '{target}' not a known work_item id",
+                ))
     # Stage.work_items reference check (双向一致)
     for s in registry["stages"]:
         for wi_id in s.get("work_items", []):

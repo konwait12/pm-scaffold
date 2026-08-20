@@ -1,5 +1,7 @@
 # 运行时契约
 
+> 编号约定见 `src/framework/id-contract.md`。`workflow-registry.json` 的 `artifact_prefix` 仅标识 artifact，不能替代产物内 Trace ID。
+
 ## 知识状态（Knowledge States）
 
 `FACT`、`DECISION`、`ASSUMPTION`、`AI_INFERENCE`、`UNKNOWN`、`CONFLICT` 是仅有的知识状态标签。只有有出处的（sourced）事实与已记录的人工决策，才可以被视为已确认的业务真相。
@@ -9,6 +11,15 @@
 `draft`、`needs_user_input`、`conditional_review`、`ready_for_human_review`、`confirmed`、`superseded`、`simulated`。
 
 `confirmed` 需要 `reviewer`、`reviewed_at` 以及一条人工 `ReviewRecord`。自动化可以校验候选，但不能确认它。
+
+## 分档契约（Process Tier Contract）
+
+新 REQ 的 `process_tier` 必须保存在 `00-input/intake-decision.md` 的
+frontmatter。L0 的单一 `mini-prd` 仍需真实人工确认和审计留痕；它省略的是
+issue-record 与跨产物追溯。L1 的交付是七个 confirmed 上游加一个 PRD，共八项；
+其五项 L2-only 能力（PD/IX/VL/STATE/EX）的每个省略都必须在 intake 内有可审计的
+不适用事实。L1/L2 的 PRD 装配来源必须记录 artifact ID、相对路径、confirmed 状态、
+内容 SHA-256 和目标章节；装配来源或内嵌来源块被改写即不满足契约。
 
 ## 共享记录（Shared Records）
 

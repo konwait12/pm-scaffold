@@ -21,7 +21,7 @@ confirmed_at: （授权 stakeholder 确认后填写）
 - 项目 ID：REQ-XXX
 - 项目名称：（待确认）
 - 关联上游：（待确认：源材料 / 邮件 / 会议记录 / 已有 BRD）
-- 关联下游：issue-record.md §3-§8（CONFIRMED 后登记）
+- 关联下游：`99-review/support/issue-record.md` §3-§8（每个 CON-/UNK- 条目都回链对应 ISS-NNN）
 - 评审版本：v0.1
 
 ## 2. 来源清单（SRC-IDs）
@@ -42,11 +42,11 @@ confirmed_at: （授权 stakeholder 确认后填写）
 |---|---|---|---|---|---|
 | CON-001 | （待确认） | SRC-XXX | SRC-YYY | （待确认：让 stakeholder 选择） | ISS-XXX |
 
-## 5. 未知清单（UNKNOWN → Q-XXX）
+## 5. 未知清单（UNKNOWN → Q-XXX / ISS-XXX）
 
-| ID | 未知描述 | 阻塞？ | 建议提问 | 关联源 |
-|---|---|---|---|---|
-| UNK-001 | （待确认） | yes / no | （待确认） | SRC-XXX |
+| ID | 未知描述 | 阻塞？ | 建议提问 | 关联源 | Issue 链接 |
+|---|---|---|---|---|---|
+| UNK-001 | （待确认） | yes / no | （待确认） | SRC-XXX | ISS-XXX |
 
 ## 6. stakeholder 自查反馈位
 
@@ -76,7 +76,7 @@ confirmed_at: （授权 stakeholder 确认后填写）
 - 模板符合性：✅ 已对齐
 - 反模式自检：✅ 已通过（无方案泄露 / 无多需求合并）
 - 冲突已升级：✅ 已登记到 issue-record（CONFLICT → ISS-XXX）
-- 未知已路由：✅ 已记入 Q-XXX 或 issue-record
+- 未知已路由：✅ 每个 UNK-XXX 均已记入 Q-XXX，并回链 issue-record 的 ISS-XXX
 
 ## 版本变更摘要
 

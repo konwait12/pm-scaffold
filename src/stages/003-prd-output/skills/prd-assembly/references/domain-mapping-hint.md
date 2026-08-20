@@ -10,7 +10,7 @@
 |---|---|---|
 | PRD 文本（名词/动词/约束/枚举） | prd.md 正文（功能清单/业务规则/校验规则/状态变化） | 提取信号做候选映射 |
 | 业务规则（BR-XXX） | prd.md §8 业务规则 | 「Must」类约束 → Invariant 候选 |
-| 状态流转（SM-XXX） | prd.md §10 状态变化 | 状态迁移 → 领域事件候选 |
+| 状态流转（STATE-XXX，兼容历史 SM-XXX） | prd.md §10 状态变化 | 状态迁移 → 领域事件候选 |
 | 校验规则（VL-XXX） | prd.md §9 校验规则 | 封闭取值集 → Enum 候选 |
 
 ## 2. 核心映射表：PRD 信号 → 领域候选
@@ -46,7 +46,7 @@
 |---|---|---|---|
 | §8 业务规则 BR-003「订单必须包含至少一个商品行」 | Must 约束 | Invariant | 订单聚合的不变量候选 |
 | §6 页面「客户档案」（有唯一身份/生命周期） | Noun | Entity（Customer） | 身份候选 |
-| §10 状态变化 SM-001「待支付 → 已支付」 | 状态迁移 | Domain Event（OrderPaid） | 事件命名建议 |
+| §10 状态变化 STATE-001「待支付 → 已支付」 | 状态迁移 | Domain Event（OrderPaid） | 事件命名建议 |
 | §9 校验规则 VL-002「订单状态 ∈ {待支付,已支付,已取消}」 | 封闭取值集 | Enum（OrderStatus） | 枚举候选 |
 | §5 功能流程「积分 = 实付金额 × 系数」 | 计算公式 | Domain Logic | 方法候选 |
 | §8 业务规则 BR-007「金额」（纯属性、无身份） | Noun | Value Object（Money） | 值对象候选 |
@@ -67,8 +67,8 @@
 | FEA-XXX（功能清单） | 名词/动词候选的索引 |
 | BR-XXX（业务规则） | Invariant / Precondition / Policy 候选 |
 | VL-XXX（校验规则） | Enum / 边界校验候选 |
-| SM-XXX（状态变化） | Domain Event 候选 |
-| FL-XXX（功能流程） | Command / 领域逻辑候选 |
+| STATE-XXX（状态变化；兼容历史 SM-XXX） | Domain Event 候选 |
+| FUN-XXX（功能流程；artifact 可为 FL-XXX） | Command / 领域逻辑候选 |
 
 ## 7. 工作流程
 

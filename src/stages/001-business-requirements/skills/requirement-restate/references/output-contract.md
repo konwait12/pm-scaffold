@@ -41,7 +41,7 @@
 | 2 | 来源清单（SRC-IDs） | Yes |
 | 3 | 重述需求清单（RR-XXX） | Yes |
 | 4 | 冲突清单（CONFLICT → ISS-XXX） | Yes |
-| 5 | 未知清单（UNKNOWN → Q-XXX） | Yes |
+| 5 | 未知清单（UNKNOWN → Q-XXX / ISS-XXX） | Yes |
 | 6 | stakeholder 自查反馈位 | Yes |
 | 7 | 来源追溯 | Yes |
 | 8 | 待确认问题 | Yes |

@@ -2,7 +2,7 @@
 
 > **PRD-only 产品经理 AI 工作流**：把原始需求（BRD、会议纪要、邮件、PPT、图片）逐步转化为一份**经真实人工确认、可沟通、可实现、可核验的中文 `prd.md`**。
 >
-> 13 个独立 work_item · 不可绕过的人工闸门 · 全程可追溯 · Loop 工程化
+> L0/L1/L2 分档交付 · 不可绕过的人工闸门 · 全程可追溯 · Loop 工程化
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 [![Repo](https://img.shields.io/badge/GitHub-konwait12%2Fpm--scaffold-blue.svg)](https://github.com/konwait12/pm-scaffold)
@@ -16,7 +16,7 @@
 2. [驾驶舱 · 必看](#驾驶舱--必看)
 3. [快速开始 · 5 分钟跑通](#快速开始--5-分钟跑通)
 4. [架构全景](#架构全景)
-5. [13 个 work_item](#13-个-work_item)
+5. [分档 Work Item](#分档-work-item)
 6. [产物体系](#产物体系)
 7. [命令全集](#命令全集)
 8. [脚本与基础设施](#脚本与基础设施)
@@ -53,7 +53,7 @@ open src/toolkit/visualization/scaffold-flow.html
 打开后：
 
 - 左侧点「**📖 新手教程 · 从这里开始**」——10 章协作手册，从零到第一份 prd.md 的完整剧本。
-- 左侧导航是项目全景：主流程图（每条线有条件标注）、13 个 work_item 说明书、产物说明书、脚本说明书、命令全集、文件架构。
+- 左侧导航是项目全景：分档主流程图（每条线有条件标注）、L0/L1/L2 work_item 说明书、产物说明书、脚本说明书、命令全集、文件架构。
 
 > **看完驾驶舱 = 了解项目 80%**。本 README 是文字索引；驾驶舱是交互式百科。
 
@@ -82,7 +82,7 @@ open src/toolkit/visualization/scaffold-flow.html   # macOS
 ### 第 2 步 · 创建第一个需求（30 秒）
 
 ```bash
-python3 src/scripts/pipeline.py init REQ-001-my-feature
+python3 src/scripts/pipeline.py init REQ-001-my-feature --process-tier L2
 ```
 
 输出示例：
@@ -92,6 +92,8 @@ Created requirements/REQ-001-my-feature
   Next: put source materials in requirements/REQ-001-my-feature/00-input/, then run
         python3 src/scripts/pipeline.py requirements/REQ-001-my-feature status
 ```
+
+`--process-tier` 会写入 `00-input/intake-decision.md`，它是档位的唯一事实源。L0 只创建一个 mini-PRD；L1 创建 7 个上游与最终 PRD，共 8 项；L2 创建完整 13 项。`status` 和 `entry` 可以展示临时预览，`gate`、`review`、`reflow` 不接受临时切档。
 
 ### 第 3 步 · 放原始材料（1 分钟）
 
@@ -105,10 +107,10 @@ requirements/REQ-001-my-feature/
 │   ├── authorized-reviewers.json          # 评审人名单（必须）
 │   ├── BRD-2026-08-v1.md
 │   └── ...
-├── 001-business-requirements/             # 由 work_item 逐步生成
-├── 002-product-requirements/              # 由 work_item 逐步生成
-├── 003-prd-output/                        # 由 prd-assembly 汇总
-└── 99-review/                             # 评审记录 + issue-record
+├── 001-business-requirements/             # L1/L2 按档位生成
+├── 002-product-requirements/              # L1/L2 按档位生成
+├── 003-prd-output/                        # L1/L2 的 prd-assembly
+└── 99-review/                             # 评审记录；issue-record 仅 L1/L2
 ```
 
 `authorized-reviewers.json` 最小示例：
@@ -160,7 +162,7 @@ python3 src/scripts/pipeline.py requirements/REQ-001-my-feature entry
 
 ### 第 6 步 · AI 按 SKILL.md 起草
 
-让你的 AI Agent 按 [`AGENTS.md`](AGENTS.md)（项目唯一入口）启动，逐个走完 13 个 work_item 的 8 步循环。
+让你的 AI Agent 按 [`AGENTS.md`](AGENTS.md)（项目唯一入口）启动，逐个走完当前档位 work item 的 8 步循环：L0 为 1 项，L1 为 8 项，L2 为 13 项。
 
 每个 work_item 完成后，让 AI 执行：
 
@@ -187,7 +189,7 @@ python3 src/scripts/pipeline.py requirements/REQ-001-my-feature review \
 
 → 写 `confirmed` + SHA-256 绑定 + 事件溯源记录。
 
-### 第 8 步 · 全部 12 上游 confirmed → prd-assembly 自动可启动
+### 第 8 步 · 完成当前档位上游后启动 PRD 汇总
 
 ```bash
 python3 src/scripts/pipeline.py requirements/REQ-001-my-feature gate \
@@ -203,7 +205,9 @@ python3 src/scripts/pipeline.py requirements/REQ-001-my-feature review \
 
 ## 架构全景
 
-### 三阶段 + 13 个 work_item（注册表驱动）
+### 三阶段与分档 Work Item（注册表驱动）
+
+注册表保留 L2 的完整 13 项链，同时由持久化的 `00-input/intake-decision.md` 决定当前 REQ 实际启用 L0（1 项）、L1（8 项）或 L2（13 项）。下图按 L2 完整路径展开，L0/L1 不会创建或执行未纳入档位的 work item。
 
 ```mermaid
 flowchart TB
@@ -211,7 +215,7 @@ flowchart TB
     IN[/"原始材料<br/>BRD · 纪要 · 邮件 · PPT · 图片"/]:::input
 
     %% 注册表（唯一真相源）
-    REG["src/framework/workflow-registry.json<br/>schema_version=7 · 13 work_items"]:::registry
+        REG["src/framework/workflow-registry.json<br/>schema_version=7 · L2 13 work_items · L1 8 · L0 1"]:::registry
 
     %% 三阶段 + 13 work_item
     subgraph S001["STAGE 001 · 业务需求"]
@@ -248,7 +252,7 @@ flowchart TB
         CR["competitive-research"]:::branch
         FA["feasibility-analysis"]:::branch
         TP["tracking-plan"]:::branch
-        IR["issue-record<br/>（常驻）"]:::resident
+        IR["issue-record<br/>（L1/L2 常驻）"]:::resident
         RR["requirement-restate<br/>brainstorming"]:::cap
     end
 
@@ -311,11 +315,11 @@ flowchart TB
 
 | 颜色/形状 | 含义 |
 |---|---|
-| 紫色实线框 | 13 主干 work_item |
+| 紫色实线框 | L2 完整路径中的 13 个主干 work_item（L0/L1 按档位裁剪） |
 | 🟡 黄色厚边框（菱形） | Human Gate（机器止步·人工拍板） |
 | 🟢 绿色实线框 | prd-assembly 最终交付 |
 | 🟢 绿色细线框 | 3 个分支 skill（按需触发） |
-| 🟠 虚线框 | issue-record（常驻贯穿全流程） |
+| 🟠 虚线框 | issue-record（仅 L1/L2 常驻贯穿全流程） |
 | 灰色细线框 | 2 个能力 skill（requirement-restate / brainstorming） |
 | 浅紫框 | 9 个共享机制（横向服务） |
 | 深色填充框 | 事件溯源基础设施 |
@@ -327,7 +331,7 @@ flowchart TB
 flowchart LR
     A[1. Preflight<br/>DoR 硬检查] --> B[2. Intake<br/>成熟度 L0-L4]
     B --> C[3. Think<br/>thinking-core 6 透镜]
-    C --> D[4. Clarify<br/>缺口 → issue-record]
+    C --> D[4. Clarify<br/>缺口 → issue-record（L1/L2）]
     D --> E[5. Generate<br/>填模板 → 写产物]
     E --> F[6. Audit<br/>本地校验器]
     F --> G[7. Human Gate<br/>ready_for_human_review]
@@ -366,11 +370,17 @@ stateDiagram-v2
 
 ---
 
-## 13 个 work_item
+## 分档 Work Item
 
-当前 registry v7 使用 **13 个独立 work_item**，各产一份独立 `.md` 文件；旧复合结构仅作为 CHANGELOG 历史记录。
+新 REQ 的档位以 `00-input/intake-decision.md` 为准。资格矩阵与硬升级条件见 [`src/shared/intake-routing/references/process-tier-routing.md`](src/shared/intake-routing/references/process-tier-routing.md)。旧 REQ 缺少决策文件时兼容按 L2 运行。
 
-### 13 主干（顺序执行）
+| 档位 | 适用边界 | work item | 交付与治理 |
+|---|---|---:|---|
+| L0 | 单一可定位、单角色、无状态/敏感数据/合规/迁移且简单回退 | 1 | 一个 6 节 `mini-prd.md`；一次人工确认、ReviewRecord、hash anchor、audit event；不要求 issue-record 或跨产物追溯 |
+| L1 | 受限标准需求，PD/IX/VL/STATE/EX 均有事实化不适用依据 | 8 | 7 个上游 + `prd-assembly`；完整确认、审计和集内追溯 |
+| L2 | 状态、交互、校验、异常、合规、多角色或多系统需求 | 13 | 完整产物链与追溯 |
+
+### L2 完整主干（顺序执行）
 
 | # | work_item | 产物 | 前缀 | 前置 |
 |---|---|---|---|---|
@@ -395,7 +405,7 @@ stateDiagram-v2
 | 分支 | `competitive-research` | 方案方向不清 / 多方案对比 |
 | 分支 | `feasibility-analysis` | 技术可行性不确定 |
 | 分支 | `tracking-plan` | 功能需要埋点 |
-| 常驻 | `issue-record` | 任何 UNKNOWN/CONFLICT 触发（贯穿全流程） |
+| 常驻（L1/L2） | `issue-record` | 任何 UNKNOWN/CONFLICT 触发（贯穿 L1/L2 全流程；L0 不创建） |
 | 能力 | `requirement-restate` | L0（无材料）或内容六信号命中 |
 | 能力 | `brainstorming` | L0 发散收敛 |
 
@@ -403,7 +413,7 @@ stateDiagram-v2
 
 ## 产物体系
 
-13 个产物 + 1 个最终 PRD，每个都有：
+L2 有 12 个上游产物和一个最终 PRD；L1 仅保留其 7 个上游和最终 PRD；L0 使用独立 mini-PRD。每项都有：
 
 - **独立模板**（`src/templates/stage-{1,2,3}-*/...md`）
 - **独立校验器**（`scripts/validate_artifact.py`，使用 `validation_errors.make_issue` 输出统一错误格式）
@@ -423,11 +433,11 @@ reviewer: "评审人"
 created_at: "2026-08-17"
 updated_at: "2026-08-17"
 confirmed_at: "2026-08-17"
-upstream_artifact_ids: ["BG-001", "UJ-001", "US-001", "FEA-001", "FL-001", "PD-001", "IX-001", "BR-001", "VL-001", "SM-001", "EX-001", "AC-001"]
+upstream_artifact_ids: ["BG-001", "UJ-001", "US-001", "FEA-001", "FL-001", "PD-001", "IX-001", "BR-001", "VL-001", "STATE-001", "EX-001", "AC-001"]
 ---
 ```
 
-**追溯链**：`BG → UJ → US → ST → FEA → FL → PD → IX → BR → VL → SM → EX → AC → PRD`
+**追溯链**：`BG → UJ → US → ST → FEA → FL → PD → IX → BR → VL → STATE → EX → AC → PRD`
 
 ---
 
@@ -437,7 +447,7 @@ upstream_artifact_ids: ["BG-001", "UJ-001", "US-001", "FEA-001", "FL-001", "PD-0
 
 | 子命令 | 用途 | 示例 |
 |---|---|---|
-| `init` | 创建新需求骨架 | `init REQ-NNN-topic` |
+| `init` | 创建新需求骨架并持久化档位 | `init REQ-NNN-topic --process-tier L0` |
 | `status` | 查激活项 / 下一步 / 越级 | `requirements/REQ-001 status` |
 | `entry` | 入口判定（L0-L4 + 分支建议） | `requirements/REQ-001 entry` |
 | `gate` | 跑机器闸门（不改状态） | `gate --work-item project-background-goal` |
@@ -449,7 +459,7 @@ upstream_artifact_ids: ["BG-001", "UJ-001", "US-001", "FEA-001", "FL-001", "PD-0
 
 ```bash
 # 1. 初始化
-python3 src/scripts/pipeline.py init REQ-005-wecom-integration
+python3 src/scripts/pipeline.py init REQ-005-wecom-integration --process-tier L1
 
 # 2. 放材料到 requirements/REQ-005-wecom-integration/00-input/
 
@@ -679,12 +689,12 @@ AI 试图把 frontmatter 的 `status` 设为 `confirmed`。**这是 v0.4.0 第 1
 ```text
 src/
 ├── framework/                       # 规范 + 注册表 + 思考核心 + 契约
-│   ├── workflow-registry.json       # 唯一真相源（schema_version=7, 13 work_items）
+│   ├── workflow-registry.json       # 唯一真相源（schema_version=7；L2 13 / L1 8 / L0 1）
 │   ├── constitution.md               # 8 条硬宪法
 │   ├── workflow.md                   # 8 步循环
 │   ├── thinking-core.md              # 共享思想核心（6 核心透镜 + 校验层 + 发散决策层 + 技法注册）
 │   └── contracts.md                  # Shared Records 契约
-├── stages/                          # 3 阶段 × 13 work_item + 1 常驻 + 1 能力
+├── stages/                          # 3 阶段；L2 13 work_item，L1 8，L0 1；支持能力按需
 │   ├── 001-business-requirements/skills/
 │   │   ├── project-background-goal/
 │   │   ├── user-journey/                    (v0.5.0 新拆)

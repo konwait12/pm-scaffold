@@ -39,15 +39,21 @@ def write_valid_issue_record(req: Path) -> None:
     """
     support = req / "99-review" / "support"
     support.mkdir(parents=True, exist_ok=True)
+    tier = workflow_registry.require_persisted_tier(req)
+    ledger_rows = [
+        f"| {item['stage']} | {item['id']} | 0 | 2026-08-13 | closed |"
+        for item in workflow_registry.work_items_for_tier(tier)
+    ]
     (support / "issue-record.md").write_text(
         "\n".join([
             "---",
             "artifact_id: IR-TEST-001",
             "version: v0.1",
             "status: draft",
+            f"process_tier: {tier}",
             "owner: 产品经理（测试）",
+            "business_fact_owner: 业务方代表（测试）",
             "goal_decision_owner: 业务方负责人（测试）",
-            "business_sponsor: 业务方（测试）",
             "reviewer: 业务方负责人（测试）",
             "created_at: 2026-08-13",
             "updated_at: 2026-08-13",
@@ -151,7 +157,7 @@ def write_valid_issue_record(req: Path) -> None:
             "",
             "| 阶段 | Work Item | 问题数 | 收口日期 | 状态 |",
             "|---|---|---|---|---|",
-            "| 001-business-requirements | project-background-goal | 0 | 2026-08-13 | closed |",
+            *ledger_rows,
             "",
             "## 版本变更摘要",
             "",
@@ -171,6 +177,9 @@ def build_gate_req(temp: Path) -> Path:
     target.parent.mkdir(parents=True)
     write_reviewer_registry(req)
     (req / "00-input").mkdir(parents=True, exist_ok=True)
+    (req / "00-input/intake-decision.md").write_text(
+        "---\nprocess_tier: L1\n---\n", encoding="utf-8",
+    )
     (req / "00-input/SRC-001.md").write_text(
         "# 需求来源（测试）\n业务方代表A 提出的测试需求。\n", encoding="utf-8",
     )
@@ -183,7 +192,8 @@ def build_gate_req(temp: Path) -> Path:
 
 class WorkflowRuntimeTest(unittest.TestCase):
     def test_registry_paths_and_order(self) -> None:
-        items = workflow_registry.work_items()
+        # L2 完整档 = 现有 13 项（不含 L0 的 mini-prd）
+        items = workflow_registry.work_items_for_tier("L2")
         self.assertEqual([item["order"] for item in items], list(range(1, 14)))
         self.assertEqual(len({item["id"] for item in items}), 13)
         for item in items:
@@ -196,7 +206,9 @@ class WorkflowRuntimeTest(unittest.TestCase):
         items = {item["id"]: item for item in registry["work_items"]}
         artifacts = {artifact["id"]: artifact for artifact in registry["artifact_types"]}
 
-        self.assertEqual(len(artifacts), 13)
+        # 14 = 13 主干产物 + L0 的 mini-prd
+        self.assertEqual(len(artifacts), 14)
+        self.assertIn("mini-prd", artifacts)
         self.assertEqual(
             {output for item in items.values() for output in item["required_outputs"]},
             set(artifacts),
@@ -208,17 +220,22 @@ class WorkflowRuntimeTest(unittest.TestCase):
             self.assertTrue(artifact["prd_destination"])
 
         final_prd = artifacts["final-prd"]
-        self.assertEqual(set(final_prd["depends_on"]), set(artifacts) - {"final-prd"})
+        # mini-prd 是 L0 独立产物，不参与 L2 的 final-prd 依赖链
+        self.assertEqual(set(final_prd["depends_on"]), set(artifacts) - {"final-prd", "mini-prd"})
 
-    def test_no_legacy_internal_capabilities_remain(self) -> None:
+    def test_internal_capabilities_are_registered(self) -> None:
         registry = workflow_registry.load_registry()
         parents = {item["id"] for item in registry["work_items"]}
         capabilities = registry["internal_capabilities"]
-        self.assertEqual(capabilities, [])
-        self.assertEqual(len(parents), 13)
+        self.assertEqual({cap["id"] for cap in capabilities}, {"delivery-review"})
+        self.assertEqual(capabilities[0]["parent_work_item"], "prd-assembly")
+        self.assertEqual(len(parents), 14)
 
     def test_support_skills_have_single_authoritative_location(self) -> None:
-        expected = {"competitive-research", "feasibility-analysis", "brainstorming"}
+        expected = {
+            "brainstorming", "competitive-research", "delivery-review",
+            "feasibility-analysis",
+        }
         support_root = ROOT / "src/support-skills"
         self.assertEqual({path.name for path in support_root.iterdir() if path.is_dir()}, expected)
         for name in expected:
@@ -261,6 +278,7 @@ class WorkflowRuntimeTest(unittest.TestCase):
             target = Path(temp) / "sandbox"
             result = subprocess.run([
                 sys.executable, str(SCRIPTS / "pipeline.py"), "init", "REQ-777-isolated",
+                "--process-tier", "L2",
                 "--root", str(target),
             ], capture_output=True, text=True, check=False, encoding="utf-8", errors="replace")
             self.assertEqual(result.returncode, 0, result.stderr + result.stdout)
@@ -331,10 +349,10 @@ class WorkflowRuntimeTest(unittest.TestCase):
         with tempfile.TemporaryDirectory() as temp:
             req = Path(temp)
             rows = {
-                "001-business-requirements/01-background-goal/background-goal.md": "| G1 | Goal |\n",
-                "001-business-requirements/02-user-journey/user-journey.md": "| ST-001 | G1 | Story |\n",
+                "001-business-requirements/01-background-goal/background-goal.md": "| G-001 | Goal |\n",
+                "001-business-requirements/02-user-journey/user-journey.md": "| ST-001 | G-001 | Story |\n",
                 "002-product-requirements/03-page-design/page-design.md": "| FEA-001 | ST-001 | Feature |\n",
-                "002-product-requirements/02-functional-flow/functional-flow.md": "| FUN-001 | FEA-001 | Function |\n| AC-001 | FUN-001 | G1 | Then success |\n| BR-001 | FUN-001 | Rule |\n",
+                "002-product-requirements/02-functional-flow/functional-flow.md": "| FUN-001 | FEA-001 | Function |\n| AC-001 | FUN-001 | G-001 | Then success |\n| BR-001 | FUN-001 | Rule |\n",
             }
             for rel, text in rows.items():
                 path = req / rel

@@ -1,0 +1,122 @@
+> superseded_by: `docs/tier-l0-l1-rebuild-plan.md`
+
+> 历史状态：2026-08-20 起不再作为规范；保留用于追溯。失效范围：旧 L0 章节、累计评分、L1 数量与治理结论。
+
+# L0 mini-prd 全面化方案
+
+> 用户指示：「档位减少的是流程复杂度，不是 PRD 质量；L0 最快速但不简陋。」
+> 本方案把 mini-prd 从 6 节扩到 12 节，质量达到 workbuddy `prd-document.md` 流派水平。
+
+## 1. 设计原则
+
+| 原则 | 体现 |
+|---|---|
+| **档位 = 流程复杂度** | L0 仍不建 issue-record 独立库、不跑 prd-assembly、不做完整 trace |
+| **质量 = 与档位无关** | mini-prd 单文档需覆盖 PRD 全部硬要素（背景/范围/场景/需求/验收/异常/边界/合规/风险/依赖/术语） |
+| **门 = 表达约束** | workbuddy "错误即失败" 思想：mini-prd 校验器把关，关键要素缺失即 FAIL |
+| **单 skill 一气呵成** | 仍是 1 个 work_item、1 个产物，不拆 L1+ L2 |
+
+## 2. 章节扩到 12 节（workbuddy 对齐）
+
+| # | 章节名 | 内容要求 | 依据 |
+|---|---|---|---|
+| §1 | 改什么 | 改动点精确定位（文件/页面/字段/文案）+ 一句话目标 + 来源 | workbuddy `prd-document.md` §Background 四要素 |
+| §2 | 为什么 | 触发来源 + 一句话现状/不做的代价 + 量化指标（如有）| workbuddy §Goal qualitative/quantitative |
+| §3 | 范围与非目标 | In/Out/Deferred 范围基线（即使是 L0 单点也要标清楚不动的边界） | workbuddy §Scope 强调 scope creep |
+| §4 | 用户场景与角色 | actor 列表 + 触发条件 + 入口；即使是单角色也要显式标 | workbuddy §User Stories 角色/场景 |
+| §5 | 行为需求与验收 | actor + trigger / precondition + observable outcome + failure / edge + Given/When/Then 验收 | workbuddy §Key requirements 强约束 |
+| §6 | 异常与边界 | 失败路径 ≤3 条 + 兜底 + 网络/空数据/无权限/并发冲突适用项 | workbuddy §异常边界 |
+| §7 | 适用质量约束 | 性能/可用性/安全/隐私/合规（如 N/A 标 "本期不适用"）| workbuddy §适用质量约束 + 行业特定模块 |
+| §8 | 灰度与发布（如适用）| 灰度范围/比例/时间/监控；N/A 标"无需灰度" | workbuddy §默认 OFF 章节 |
+| §9 | 追踪与指标（如适用）| 事件名 + 触发时机 + 上报参数；N/A 标"无需埋点" | workbuddy §Tracking & Metrics |
+| §10 | 风险与依赖 | 外部依赖 + 风险 + 缓解 + 兜底 | workbuddy §依赖 |
+| §11 | 开放问题 | owner + 影响 + 关闭条件（即使 L0 单点也要列）| workbuddy §Open Questions |
+| §12 | 名词解释（如适用）| 术语 / 缩略词 / 缩写；N/A 标"本期不适用" | workbuddy §Glossary |
+
+## 3. 校验器增强（workbuddy "错误即失败" 思想）
+
+校验器新增 11 条硬检查（缺失即 FAIL）：
+
+1. **§1 改动点定位**：必须含"文件/页面/字段/文案"四类至少其一
+2. **§2 量化**：含目标/指标关键词或显式"N/A"
+3. **§3 范围**：含 "In:" 与 "Out:"（即使是 L0 也要写明 Out）
+4. **§4 角色**：含 "actor" 或角色关键词
+5. **§5 验收**：Given/When/Then 三要素或显式 N/A
+6. **§6 异常**：≥1 条失败路径
+7. **§7 合规/安全**：含"合规/隐私/安全"关键词或显式"N/A"
+8. **§8 灰度**：含"灰度"或显式"无需灰度"
+9. **§9 追踪**：含"埋点"或显式"无需埋点"
+10. **§10 风险/依赖**：含"依赖"或"风险"
+11. **§11 开放问题**：含 "owner" + 影响
+
+校验器只查**显式声明的存在性**（关键词或 N/A），不深究内容质量——保持 L0 "单 skill 一气呵成" 的轻量。
+
+## 4. 模板与契约改动
+
+| 文件 | 改动 |
+|---|---|
+| `assets/mini-prd-template.md` | 6 节 → 12 节（含 N/A 显式说明位） |
+| `scripts/validate_artifact.py` | 新增 11 条硬检查（关键词扫描 + N/A 兜底）|
+| `SKILL.md` | §Workflow 加 §3 Scope / §5 Quality 七要素；§Self-Audit 5 条 → 11 条 |
+| `references/output-contract.md` | 章节列表更新到 12 节；升档触发线描述不变 |
+
+## 5. workbuddy 真正精髓的落地
+
+| workbuddy 特征 | 我们的落地 |
+|---|---|
+| **错误清单即失败** | 校验器硬规则：关键要素缺失即 FAIL |
+| **「先定范围 / 非目标 / 优先级 / 依赖 / 假设 /开放问题」** | §3 + §10 + §11 三节 |
+| **关键需求 = actor + trigger/precondition + observable outcome + failure/edge** | §4 + §5 + §6 三节合一 |
+| **「把大而不可测的需求拆到可验收粒度」** | §5 Given/When/Then + 量化阈值 |
+| **「不编造研究/阈值/批准」** | 校验器接受"N/A"显式声明，禁止隐式编造 |
+| **「关键合规/安全门缺失时 blocked」** | §7 含合规/安全时强制触发，无 N/A 即 FAIL |
+| **「开放问题不得藏在脚注」** | §11 独立章节 + owner + 影响 |
+
+## 6. 工序仍轻量（守住档位初衷）
+
+| 工序 | 保留 / 裁掉 |
+|---|---|
+| Generate 12 节模板 | 保留 |
+| Self-Audit 11 条硬规则 | 保留 |
+| Single human sign-off | 保留 |
+| ReviewRecord + hash 锚 | 保留 |
+| ~~preflight 充分度判定~~ | 裁掉 |
+| ~~七透镜 think~~ | 裁掉 |
+| ~~clarify 批量问询~~ | 裁掉（§11 开放问题替代）|
+| ~~review-taxonomy 扫描~~ | 裁掉（校验器硬规则替代）|
+| ~~B3 收口表~~ | 裁掉 |
+| ~~issue-record 独立库~~ | 裁掉 |
+| ~~traceability_check~~ | 裁掉 |
+| ~~prd-assembly 聚合~~ | 裁掉 |
+
+## 7. 与 L1/L2 的边界
+
+| 维度 | L0 | L1 | L2 |
+|---|---|---|---|
+| PRD 章节数 | 12 节（mini-prd 独立文件）| 8 主干 + §11 + 附录A/B | 10 主干 + §11 + 附录A/B/C |
+| 角色/场景 | §4 简列 | UJ-001 旅程图 | UJ-001 旅程图 + 情绪映射 |
+| 验收 | §5 GWT（≤5 条）| AC-001（≥10 条）| AC-001 + 异常/边界 case 覆盖 |
+| 状态机 | N/A 时不写 | 仅当 ≥2 状态时 | STATE-001 状态表 |
+| 合规披露 | §7 简述 | BR/VL 中带 | EX-001 分级 + BR-015 |
+
+L0 不抢 L1 的活（不要求旅程图、状态表），但**该有的硬要素一个不少**。
+
+## 8. 实施步骤（保持轻量）
+
+| 步骤 | 改动 |
+|---|---|
+| 1 | 重写 `mini-prd-template.md`：6 节 → 12 节（含 N/A 显式位） |
+| 2 | 扩 `validate_artifact.py`：新增 11 条硬检查（关键词扫描）|
+| 3 | 更新 `SKILL.md` §Self-Audit（5 条 → 11 条）|
+| 4 | 更新 `output-contract.md` 章节列表 |
+| 5 | 新增 12 节正/负 fixture（mini-prd-12sec-ok + mini-prd-12sec-violation）|
+| 6 | `test_skills/mini-prd/test_validate_artifact.py` 加 2 用例 |
+| 7 | `run_tests_mac.sh` 全量回归（预期 95/0）|
+
+## 9. 风险
+
+| 风险 | 缓解 |
+|---|---|
+| 12 节对单点改动过重 | N/A 位显式允许跳过：8/9/10/11/12 节均可填 N/A |
+| 校验器硬规则太严卡正常流程 | "N/A" 关键词显式通过；只挡**完全缺失**而非"内容浅薄" |
+| 与 L1 PRD 章节不协调 | L0 是独立产物（不聚合到 prd.md），与 L1/L2 无章节对齐义务 |

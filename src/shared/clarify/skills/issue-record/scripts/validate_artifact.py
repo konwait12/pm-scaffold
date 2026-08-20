@@ -38,8 +38,8 @@ REQUIRED_FRONTMATTER = {
     "version",
     "status",
     "owner",
+    "business_fact_owner",
     "goal_decision_owner",
-    "business_sponsor",
     "reviewer",
     "created_at",
     "updated_at",
@@ -59,6 +59,7 @@ REQUIRED_HEADINGS = [
     "来源追溯",
     "待确认问题",
     "Constitution Compliance",
+    "阶段收口表",
     "版本变更摘要",
 ]
 
@@ -119,6 +120,52 @@ def _collect_issues(body: str, id_prefix: str) -> list[dict[str, str]]:
             continue
         rows.append({"raw": line, "cells": cells})
     return rows
+
+
+def _b3_rows(text: str) -> list[tuple[str, str]]:
+    """Return `(stage, work_item)` rows from §13 without trusting free text."""
+    match = re.search(
+        r"^##\s+13\.\s*阶段收口表.*?$(.*?)(?=^##\s+|\Z)",
+        text, re.MULTILINE | re.DOTALL,
+    )
+    if not match:
+        return []
+    rows: list[tuple[str, str]] = []
+    for line in match.group(1).splitlines():
+        if not line.lstrip().startswith("|") or set(line.strip()) <= set("|-: "):
+            continue
+        cells = [cell.strip() for cell in line.strip().strip("|").split("|")]
+        if len(cells) >= 2 and cells[0] != "阶段" and cells[1] != "Work Item":
+            rows.append((cells[0], cells[1]))
+    return rows
+
+
+def _validate_b3_tier_ledger(text: str, metadata: dict[str, str], req_dir: Path) -> list[str]:
+    """Validate the ledger against the durable intake tier, not a copied template."""
+    try:
+        from workflow_registry import require_persisted_tier, work_items_for_tier
+        tier = require_persisted_tier(req_dir)
+    except (ImportError, ValueError) as exc:
+        return [f"Cannot resolve persisted process tier for B3 ledger: {exc}"]
+    if tier == "L0":
+        return ["L0 must not contain an issue-record B3 ledger"]
+    declared_tier = metadata.get("process_tier", "").upper()
+    if declared_tier and declared_tier != tier:
+        return [f"issue-record process_tier {declared_tier} does not match intake tier {tier}"]
+    expected = {(item["stage"], item["id"]) for item in work_items_for_tier(tier)}
+    rows = _b3_rows(text)
+    actual = set(rows)
+    errors: list[str] = []
+    missing = expected - actual
+    unexpected = actual - expected
+    duplicates = sorted({row for row in rows if rows.count(row) > 1})
+    if missing:
+        errors.append("B3 ledger missing tier work items: " + ", ".join(item_id for _, item_id in sorted(missing)))
+    if unexpected:
+        errors.append("B3 ledger contains cross-tier or wrong-stage work items: " + ", ".join(item_id for _, item_id in sorted(unexpected)))
+    if duplicates:
+        errors.append("B3 ledger contains duplicate work items: " + ", ".join(item_id for _, item_id in duplicates))
+    return errors
 
 
 def _make_issues(errors: list[str], warnings: list[str], path: Path) -> list[dict]:
@@ -200,7 +247,7 @@ def _make_issues(errors: list[str], warnings: list[str], path: Path) -> list[dic
     return issues
 
 
-def validate(path: Path) -> dict[str, object]:
+def validate(path: Path, req_dir: Path | None = None) -> dict[str, object]:
     errors: list[str] = []
     warnings: list[str] = []
 
@@ -233,17 +280,24 @@ def validate(path: Path) -> dict[str, object]:
     if missing_headings:
         errors.append(f"Missing required headings: {', '.join(missing_headings)}")
 
+    if req_dir is not None:
+        errors.extend(_validate_b3_tier_ledger(text, metadata, req_dir))
+
     if "SRC-" not in text:
         errors.append("No SRC-* source traceability identifier found")
 
     # Section-level issue audits
+    # ID scheme: ISS-NNN 单一递增（不再用百位段编码类别）。
+    # 类别由所在章节决定——§3 Blocker 章节内的 ISS-NNN 即 BLK 类，
+    # §6 Information gap 章节内的 ISS-NNN 即 INF 类。这样人脑可直接读懂
+    # ID 编号，无需查百位段映射表；与 RTM 7 标准列 / Atlassian Jira 实践一致。
     section_specs = [
-        (r"^##\s+\d+\.\s*Blocker.*?$(.*?)(?=^##\s+|\Z)", "BLK", "ISS-0"),
-        (r"^##\s+\d+\.\s*Risk.*?$(.*?)(?=^##\s+|\Z)", "RSK", "ISS-1"),
-        (r"^##\s+\d+\.\s*Decision-in-waiting.*?$(.*?)(?=^##\s+|\Z)", "DEC", "ISS-2"),
-        (r"^##\s+\d+\.\s*Information gap.*?$(.*?)(?=^##\s+|\Z)", "INF", "ISS-3"),
-        (r"^##\s+\d+\.\s*Clarification.*?$(.*?)(?=^##\s+|\Z)", "CLS", "ISS-4"),
-        (r"^##\s+\d+\.\s*Out-of-band.*?$(.*?)(?=^##\s+|\Z)", "OUT", "ISS-5"),
+        (r"^##\s+\d+\.\s*Blocker.*?$(.*?)(?=^##\s+|\Z)", "BLK", "ISS-"),
+        (r"^##\s+\d+\.\s*Risk.*?$(.*?)(?=^##\s+|\Z)", "RSK", "ISS-"),
+        (r"^##\s+\d+\.\s*Decision-in-waiting.*?$(.*?)(?=^##\s+|\Z)", "DEC", "ISS-"),
+        (r"^##\s+\d+\.\s*Information gap.*?$(.*?)(?=^##\s+|\Z)", "INF", "ISS-"),
+        (r"^##\s+\d+\.\s*Clarification.*?$(.*?)(?=^##\s+|\Z)", "CLS", "ISS-"),
+        (r"^##\s+\d+\.\s*Out-of-band.*?$(.*?)(?=^##\s+|\Z)", "OUT", "ISS-"),
     ]
     for pattern, label, id_prefix in section_specs:
         body = _extract_section(text, pattern)
@@ -298,9 +352,10 @@ def validate(path: Path) -> dict[str, object]:
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("artifact", type=Path)
+    parser.add_argument("--req-dir", type=Path, help="REQ root used to resolve the durable process tier")
     parser.add_argument("--json", action="store_true", dest="as_json")
     args = parser.parse_args()
-    result = validate(args.artifact)
+    result = validate(args.artifact, args.req_dir)
     if args.as_json:
         print(json.dumps(result, ensure_ascii=False, indent=2))
     else:

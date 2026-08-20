@@ -21,14 +21,20 @@ from workflow_registry import (
     find_artifact,
     read_frontmatter,
     resolve_work_item,
+    assert_work_item_in_tier,
+    require_persisted_tier,
+    resolve_branch_capability,
+    resume_work_item_for_tier,
+    tier_for_req,
     work_items,
+    work_items_for_tier,
 )
 
 import audit_log
 import hash_anchor
 
 
-def run_script_json(script: Path, target: Path) -> dict:
+def run_script_json(script: Path, target: Path, *extra_args: str) -> dict:
     """Run an arbitrary validator script against a target path with `--json`.
 
     Unlike `run_json` (which resolves scripts under src/scripts/), this helper
@@ -36,7 +42,7 @@ def run_script_json(script: Path, target: Path) -> dict:
     validator under src/shared/clarify/...) can be invoked from the gate.
     """
     result = subprocess.run(
-        [sys.executable, str(script), str(target), "--json"],
+        [sys.executable, str(script), str(target), "--json", *extra_args],
         capture_output=True, text=True, check=False,
         encoding="utf-8", errors="replace",
     )
@@ -75,11 +81,11 @@ ISSUE_RECORD_PATH = "99-review/support/issue-record.md"
 
 
 def check_issue_record(req_dir: Path) -> dict:
-    """强制校验每个案例必备的 issue-record 稳定产物。
+    """校验 L1/L2 的、按持久化档位派生的 issue-record。
 
-    1. 99-review/support/issue-record.md 必须存在，缺失即 gate 失败（error）。
-    2. 存在则运行 shared issue-record 校验器（模板 §1-§13 + frontmatter），
-       ok=False 即 gate 失败。
+    1. L0 不应调用本函数；它不创建 issue-record。
+    2. L1/L2 的 issue-record 必须存在，且 validator 用 req_dir 的 intake tier
+       校验 B3 阶段收口表是否与当前档位 work item 集合精确匹配。
     3. 校验结果并入返回 dict 的 `issue_record` 字段。
     """
     path = req_dir / ISSUE_RECORD_PATH
@@ -87,9 +93,9 @@ def check_issue_record(req_dir: Path) -> dict:
         return {
             "ok": False,
             "path": ISSUE_RECORD_PATH,
-            "error": f"{ISSUE_RECORD_PATH} 不存在（每个案例必备的稳定产物，缺失即 gate 失败）",
+            "error": f"{ISSUE_RECORD_PATH} 不存在（L1/L2 B3 治理产物，缺失即 gate 失败）",
         }
-    result = run_script_json(ISSUE_RECORD_VALIDATOR, path)
+    result = run_script_json(ISSUE_RECORD_VALIDATOR, path, "--req-dir", str(req_dir))
     result["path"] = str(path.relative_to(req_dir).as_posix())
     result["ok"] = bool(result.get("ok"))
     return result
@@ -125,7 +131,7 @@ def entry_branch_signals(req_dir: Path) -> list[dict]:
         text += p.read_text(encoding="utf-8", errors="ignore") + "\n"
     out: list[dict] = []
     if not src_files:
-        out.append({"id": "brainstorming", "signal": "L0 无源材料，建议发散收敛（头脑风暴）", "auto_detect": False})
+        out.append({"id": "brainstorming", "signal": "无源材料，建议发散收敛（头脑风暴）；材料成熟度不等于交付档位", "auto_detect": False})
     if len(src_files) >= 2:
         out.append({"id": "requirement-restate", "signal": "多源材料（≥2 SRC），建议需求复述确认", "auto_detect": False})
     elif any(k in text for k in ("歧义", "不一致", "待确认", "待定", "可能", "也许")):
@@ -258,10 +264,13 @@ def _prompt_feishu_integration(req_dir: Path) -> None:
     )
 
 
-def init_requirement(name: str | None, root: Path | None = None) -> int:
+def init_requirement(name: str | None, root: Path | None = None, process_tier: str | None = None) -> int:
     """Create a requirement skeleton from the registry (REQ-NNN-topic-name)."""
     if not name:
         print("ERROR: init requires a requirement name like REQ-NNN-my-feature", file=sys.stderr)
+        return 1
+    if process_tier not in {"L0", "L1", "L2"}:
+        print("ERROR: init requires explicit --process-tier L0|L1|L2", file=sys.stderr)
         return 1
     if not re.fullmatch(r"REQ-\d{3}[A-Za-z0-9_-]*", name):
         print(f"ERROR: invalid requirement name '{name}' (expect REQ-NNN-topic)", file=sys.stderr)
@@ -274,24 +283,38 @@ def init_requirement(name: str | None, root: Path | None = None) -> int:
     req_dir.mkdir(parents=True, exist_ok=True)
     (req_dir / "00-input").mkdir()
     (req_dir / "99-review").mkdir()
-    # stage artifact dirs derived from the registry (single source of truth)
-    for item in work_items():
+    # Only create directories enabled by the durable tier.
+    for item in work_items_for_tier(process_tier):
         (req_dir / item["artifact_dir"]).mkdir(parents=True, exist_ok=True)
+    intake_template = Path(__file__).parent.parent / "shared/intake-routing/templates/intake-decision.md"
+    if not intake_template.is_file():
+        print(f"ERROR: intake decision template not found: {intake_template}", file=sys.stderr)
+        return 1
+    intake_text = intake_template.read_text(encoding="utf-8").replace("{PROCESS_TIER}", process_tier).replace("{REQ_NAME}", name)
+    (req_dir / "00-input/intake-decision.md").write_text(intake_text, encoding="utf-8")
     # authorized-reviewers skeleton: AI must never fill a real reviewer here
     (req_dir / "00-input" / "authorized-reviewers.json").write_text(
         json.dumps({"reviewers": []}, ensure_ascii=False, indent=2) + "\n", encoding="utf-8",
     )
-    # E2E-003③: 单一真相源——issue-record 骨架来自 shared issue-record 模板，
-    # init 时自动落盘到 99-review/support/issue-record.md（gate 强制要求该产物存在）。
+    # L1/L2 的 B3 账本来自共享模板，但行集必须由持久化档位派生；L0 不创建它。
     issue_record_template = (
         Path(__file__).parent.parent
         / "shared/clarify/skills/issue-record/assets/issue-record-template.md"
     )
-    if issue_record_template.is_file():
+    if process_tier != "L0" and issue_record_template.is_file():
         support_dir = req_dir / "99-review" / "support"
         support_dir.mkdir(parents=True, exist_ok=True)
+        ledger_rows = "\n".join(
+            f"| {item['stage']} | {item['id']} | 0 | 待填写 | open |"
+            for item in work_items_for_tier(process_tier)
+        )
+        issue_text = (
+            issue_record_template.read_text(encoding="utf-8")
+            .replace("{PROCESS_TIER}", process_tier)
+            .replace("{B3_LEDGER_ROWS}", ledger_rows)
+        )
         (support_dir / "issue-record.md").write_text(
-            issue_record_template.read_text(encoding="utf-8"),
+            issue_text,
             encoding="utf-8",
         )
     # 单一真相源：source-register 骨架来自 project-init 共享模板（src/shared/
@@ -324,7 +347,25 @@ def init_requirement(name: str | None, root: Path | None = None) -> int:
         readme_template.read_text(encoding="utf-8")
         .replace("{NNN}", req_num)
         .replace("{业务主题}", req_topic)
+        .replace("{PROCESS_TIER}", process_tier)
+        .replace("`待填写`（L0 / L1 / L2）", f"`{process_tier}`（L0 / L1 / L2）")
     )
+    first_item = work_items_for_tier(process_tier)[0]
+    readme_content = readme_content.replace(
+        "**`project-background-goal`（项目背景与目标）· status = draft**",
+        f"**`{first_item['id']}`（{first_item['name']}）· status = draft**",
+    )
+    enabled_dirs = {item["artifact_dir"] for item in work_items_for_tier(process_tier)}
+    lines = readme_content.splitlines()
+    filtered = []
+    for line in lines:
+        match = re.search(r"\| `([^`]+)` \|", line)
+        candidate = match.group(1).rstrip("/") if match else ""
+        all_dirs = {item["artifact_dir"] for item in work_items()}
+        if candidate in all_dirs and candidate not in enabled_dirs:
+            continue
+        filtered.append(line)
+    readme_content = "\n".join(filtered) + "\n"
     (req_dir / "README.md").write_text(readme_content, encoding="utf-8")
     # 事件溯源：初始化完成写入 init 事件（inline payload 无需 record 文件）
     audit_log.append_event(
@@ -356,8 +397,11 @@ def machine_gate(req_dir: Path, item: dict) -> dict:
     if item["id"] in STAGE2_IDS:
         art = find_artifact(req_dir, item)
         prop = run_property_check(art) if art else {"ok": False, "skipped": False, "error": "artifact not found"}
-    # issue-record: 每个案例必备的稳定产物，pipeline gate 强制校验（非可选分支）
-    issue_record = check_issue_record(req_dir)
+    # L0 不建 issue-record；L1/L2 一律使用 intake 持久化档位的 B3 账本。
+    process_tier = tier_for_req(req_dir)
+    issue_record = {"ok": True, "skipped": process_tier == "L0"}
+    if process_tier != "L0":
+        issue_record = check_issue_record(req_dir)
     ok = (result["dor_pass"] and result["dod_pass"] and bool(cross.get("ok"))
           and bool(records.get("ok")) and bool(prop.get("ok")) and bool(issue_record.get("ok")))
     return {"ok": ok, "work_item": result, "cross_trace": cross, "records": records,
@@ -643,6 +687,14 @@ def audit_backfill(req_dir: Path) -> int:
     ``changed_at`` when it keeps the log monotonic; otherwise the append uses
     "now" and the original timestamp stays preserved in the record body.
     """
+    # Resolve the durable tier before inspecting records.  Backfill is a write
+    # action, so it must not smuggle an out-of-tier historical record into the
+    # event chain.
+    try:
+        persisted_tier = require_persisted_tier(req_dir)
+    except ValueError as exc:
+        print(f"ERROR: {exc}", file=sys.stderr)
+        return 1
     events = audit_log.replay_events(req_dir)
     existing_refs = {ev["payload"] for ev in events if isinstance(ev.get("payload"), str)}
 
@@ -688,6 +740,19 @@ def audit_backfill(req_dir: Path) -> int:
             pending.append((p, text, _iso(ts)))
 
     pending.sort(key=lambda t: (t[2] is not None, t[2] or datetime.min, t[0].name))
+    # Validate the whole batch before the first append.  A failure leaves the
+    # audit chain untouched rather than producing a partial backfill.
+    for p, text, _rec_dt in pending:
+        rel = str(p.relative_to(req_dir).as_posix())
+        work_item_id = _match_field(text, r"(?m)^\s*-\s*work_item:\s*(\S+)")
+        if not work_item_id:
+            print(f"ERROR: {rel}: missing work_item; cannot validate persisted tier {persisted_tier}", file=sys.stderr)
+            return 1
+        try:
+            assert_work_item_in_tier(req_dir, resolve_work_item(work_item_id))
+        except (KeyError, ValueError) as exc:
+            print(f"ERROR: {rel}: {exc}", file=sys.stderr)
+            return 1
     for p, text, rec_dt in pending:
         rel = str(p.relative_to(req_dir).as_posix())
         extra = {
@@ -747,8 +812,10 @@ def main() -> int:
             "--root", type=Path, default=None,
             help="Directory that receives requirements/<name>; defaults to the current directory",
         )
+        init_parser.add_argument("--process-tier", required=True, choices=["L0", "L1", "L2"],
+                                 help="Persist the REQ process tier in 00-input/intake-decision.md")
         init_args = init_parser.parse_args(sys.argv[2:])
-        return init_requirement(init_args.name, init_args.root)
+        return init_requirement(init_args.name, init_args.root, init_args.process_tier)
     # E2E-001: `pipeline.py reviewer add <req_dir> --id <id> --name <name> --roles r1,r2`
     #          / `pipeline.py reviewer list <req_dir>` — 提供登记评审人的 CLI 入口，
     #          摆脱"手改 00-input/authorized-reviewers.json"的痛点。
@@ -769,6 +836,8 @@ def main() -> int:
     parser.add_argument("--comments", default="")
     parser.add_argument("--reason", default="", help="B12: required for reverse transitions (--decision changes); recorded in the change record")
     parser.add_argument("--json", action="store_true")
+    parser.add_argument("--process-tier", choices=["L0", "L1", "L2"], default=None,
+                        help="status/entry preview only; gate/review/reflow always use persisted intake tier")
     args = parser.parse_args()
     if not args.req_dir.is_dir():
         print(f"ERROR: {args.req_dir} is not a directory", file=sys.stderr)
@@ -778,21 +847,38 @@ def main() -> int:
     if args.yes:
         print("NOTICE: --yes runs machine checks only and does not bypass human review.", file=sys.stderr)
     if args.action == "status":
-        result = build_status(args.req_dir)
+        try:
+            persisted = tier_for_req(args.req_dir)
+        except ValueError as exc:
+            print(f"ERROR: {exc}", file=sys.stderr)
+            return 1
+        result = build_status(args.req_dir, tier=args.process_tier)
+        result["persisted_tier"] = persisted
+        result["tier_preview"] = args.process_tier
+        result["tier_source"] = "intake-decision" if (args.req_dir / "00-input/intake-decision.md").is_file() else "legacy-compat"
         print(json.dumps(result, ensure_ascii=False, indent=2))
         return 0
     if args.action == "entry":
-        result = build_status(args.req_dir)
+        try:
+            persisted = tier_for_req(args.req_dir)
+        except ValueError as exc:
+            print(f"ERROR: {exc}", file=sys.stderr)
+            return 1
+        result = build_status(args.req_dir, tier=args.process_tier)
         input_dir = args.req_dir / "00-input"
         src_count = len(list(input_dir.glob("SRC-*.md"))) if input_dir.is_dir() else 0
         artifact_count = sum(1 for s in result["work_items"].values() if s not in ("not_created", ""))
         confirmed_count = sum(1 for s in result["work_items"].values() if s == "confirmed")
+        tier = args.process_tier or persisted
+        brainstorming_resume = resume_work_item_for_tier(
+            resolve_branch_capability("brainstorming"), persisted
+        )
 
         # If workflow invalid (over-active items), surface the fix first.
         if result["invalid_active_items"]:
             maturity = "⚠️ 越级待审"
             entry = f"先修正: 将 {', '.join(result['invalid_active_items'])} 降为 draft，确认 {result['active_work_item']}"
-        elif confirmed_count == 13:
+        elif confirmed_count == len(work_items_for_tier(tier)):
             maturity, entry = "L4 已全部确认", "PRD 已确认，可发布（复核由 branch_validator 自动执行）"
         elif any(result["work_items"].get(wid) in ACTIVE for wid in (
             "feature-list", "functional-flow", "page-design", "interaction-rules",
@@ -816,14 +902,21 @@ def main() -> int:
             else:
                 maturity, entry = f"L1 有 {src_count} 份原始材料（内容信号 {sum(sig.values())}/6）", "Stage 1 (project-background-goal)"
         else:
-            maturity, entry = "L0 仅想法", "发散收敛（brainstorming）→ Stage 1"
+            if persisted == "L0":
+                maturity, entry = "材料成熟度 L0：仅有想法", f"发散收敛（brainstorming）→ {brainstorming_resume}"
+            else:
+                maturity, entry = "材料成熟度 L0：仅有想法", (
+                    f"发散收敛（brainstorming）或补充材料 → {brainstorming_resume}"
+                )
 
         entry_blocked = None
         if not result["invalid_active_items"] and confirmed_count == 0 and not result["work_items"].get("project-background-goal") in ACTIVE:
             if src_count == 0:
-                entry_blocked = "L0 材料不足：先发散收敛（brainstorming）或补充材料，再进入 Stage 1"
+                entry_blocked = (
+                    f"材料不足：先发散收敛（brainstorming）或补充材料，再进入 {brainstorming_resume}"
+                )
             elif sum(entry_content_signals(args.req_dir).values()) < 2:
-                entry_blocked = "L1 材料稀疏：建议补料或 requirement-restate（需求复述）确认理解"
+                entry_blocked = "材料成熟度 L1：建议补料或 requirement-restate（需求复述）确认理解"
 
         print(json.dumps({
             "requirement": result["requirement"],
@@ -840,6 +933,9 @@ def main() -> int:
             "next_work_item": result["next_work_item"],
             "blockers": result["blockers"],
             "branch_skill_signals": branch_skill_signals(args.req_dir, result["work_items"]),
+            "persisted_tier": persisted,
+            "tier_preview": args.process_tier,
+            "tier_source": "intake-decision" if (args.req_dir / "00-input/intake-decision.md").is_file() else "legacy-compat",
         }, ensure_ascii=False, indent=2))
         return 0
     if args.action == "backfill":
@@ -848,6 +944,11 @@ def main() -> int:
         print("ERROR: --work-item is required", file=sys.stderr)
         return 1
     item = resolve_work_item(args.work_item, args.wave)
+    try:
+        assert_work_item_in_tier(args.req_dir, item)
+    except ValueError as exc:
+        print(f"ERROR: {exc}", file=sys.stderr)
+        return 1
     if args.stage and args.stage != item["stage"]:
         print(f"ERROR: {item['id']} belongs to {item['stage']}", file=sys.stderr)
         return 1
@@ -858,7 +959,7 @@ def main() -> int:
     if args.action == "reflow":
         results = {"work_item": item["id"], "impact": [], "applied": bool(args.apply), "superseded": []}
         pending_updates: list[tuple[Path, str]] = []
-        for downstream in work_items():
+        for downstream in work_items_for_tier(tier_for_req(args.req_dir)):
             if downstream["order"] > item["order"]:
                 dart = find_artifact(args.req_dir, downstream)
                 if dart:

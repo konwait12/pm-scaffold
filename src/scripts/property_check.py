@@ -5,7 +5,7 @@ Goes beyond structural validation to check logical completeness:
 1. State machine exhaustiveness: every state × known event → target state defined
 2. Exception path coverage: every BR with an exception branch has a recovery path
 3. VL↔AC pairing: every validation rule has a corresponding acceptance criterion
-4. Rule density: each FUN has sufficient BR+VL+AC coverage
+4. Evidence coverage: applicable BR/VL/AC anchors form a verifiable loop
 
 Accepts any of the 9 stage-2 artifact types:
   feature-list, functional-flow, page-design, interaction-rules,
@@ -114,6 +114,22 @@ def _rule_id_re(prefix: str) -> str:
     checks and under-counted the rules per FUN.
     """
     return rf"\b{prefix}-\d+[A-Z]?\b"
+
+
+TRACE_ANCHOR_RE = re.compile(r"\b(?:FUN|FEA|ST|BR|VL|EX|IX|STATE|SRC|BG|G)-\d+[A-Z]?\b")
+
+
+def _row_id_anchors(section: str, prefix: str) -> list[tuple[str, set[str]]]:
+    """Return each row ID and external FUN/FEA trace anchors."""
+    rows: list[tuple[str, set[str]]] = []
+    row_re = re.compile(r"^\s*\|\s*(" + _rule_id_re(prefix) + r")\s*\|", re.MULTILINE)
+    for match in row_re.finditer(section):
+        end = section.find("\n", match.start())
+        line = section[match.start(): end if end >= 0 else len(section)]
+        rid = match.group(1)
+        anchors = {m.group(0) for m in TRACE_ANCHOR_RE.finditer(line) if m.group(0) != rid}
+        rows.append((rid, anchors))
+    return rows
 
 
 def parse_sections(text: str) -> dict[str, str]:
@@ -299,27 +315,27 @@ def check_exception_coverage(text: str, artifact_path: str = "<artifact>") -> li
 
 
 def check_vl_ac_pairing(text: str, artifact_path: str = "<artifact>") -> list[dict]:
-    """Check every VL's owning FUN has a corresponding AC (VL↔AC via 所属 FUN)."""
+    """Advisory check that applicable VL anchors have measurable AC evidence."""
     issues = []
     vl_section = section_by_keyword(text, "校验规则")
     ac_section = section_by_keyword(text, "验收依据")
     vl_ids = set(re.findall(_rule_id_re("VL"), vl_section))
     ac_ids = set(re.findall(_rule_id_re("AC"), ac_section))
 
-    vl_funs = set(re.findall(r'\|\s*VL-\d+[A-Z]?\s*\|(?:[^|\n]*\|){3}\s*([^|\n]+?)\s*\|', vl_section))
-    ac_funs = set(re.findall(r'\|\s*AC-\d+[A-Z]?\s*\|(?:[^|\n]*\|){3}\s*([^|\n]+?)\s*\|', ac_section))
-    uncovered = {f for f in vl_funs - ac_funs if f and f != "—"}
-    for fun in sorted(uncovered):
+    vl_anchors = {a for _, anchors in _row_id_anchors(vl_section, "VL") for a in anchors if a.startswith(("FUN-", "FEA-"))}
+    ac_anchors = {a for _, anchors in _row_id_anchors(ac_section, "AC") for a in anchors if a.startswith(("FUN-", "FEA-"))}
+    uncovered = sorted(vl_anchors - ac_anchors)
+    for fun in uncovered:
         issues.append(make_issue(
             severity="MEDIUM",
             check_id="vl_ac_pairing.uncovered_fun",
             family=FAMILY,
             location=artifact_path,
-            field_path=f"tables.校验规则.FUNs.{fun}",
-            message=f"FUN {fun} has validation rules (VL) but no acceptance criteria (AC)",
-            expected=f"每个在 校验规则 表格中出现过的所属 FUN={fun}，必须在 验收依据 表格中有至少一行 验收标准 AC-xxx 覆盖（可验证阈值）",
-            actual=f"所属 FUN '{fun}' 匹配到 VL 规则（共 {len(vl_ids)} 个 VL），但 AC 表格的所属 FUN 集合缺少 '{fun}'（当前 AC 共 {len(ac_ids)} 条）",
-            repair_hint=f"在 验收依据 章节添加 AC-xxx 行，其所属 FUN 列填 '{fun}'，量化阈值列写出该功能的可验证指标（如『成功率≥99.9%』『P95 响应<200ms』『字段 XXX 必过后台校验』）",
+            field_path=f"tables.校验规则.anchors.{fun}",
+            message=f"{fun} has validation rules (VL) but no acceptance criteria (AC)",
+            expected=f"对需要用户/业务验收的 {fun}，应有至少一条可验证 AC；纯平台或全局约束可标注不适用",
+            actual=f"校验规则引用 {fun}，但验收依据未发现同一 FUN/FEA 锚点（VL={len(vl_ids)}, AC={len(ac_ids)}）",
+            repair_hint=f"补充引用 {fun} 的 Given/When/Then AC，或明确 scope=GLOBAL / 不适用及理由",
             source_ref="acceptance-criteria subskill SKILL.md §EAR 语法",
             blocking=False,
         ))
@@ -338,7 +354,7 @@ def check_vl_ac_pairing(text: str, artifact_path: str = "<artifact>") -> list[di
 
 
 def _id_fun_pairs(section: str, id_prefix: str, gap: int) -> list[tuple[str, str]]:
-    """Extract (ID, FUN) pairs from a table section's 所属 FUN column.
+    """Extract (ID, preferred FUN/FEA anchor) pairs from table rows.
 
     `gap` is the number of cells between the ID cell and the 所属 FUN cell:
       BR: | BR-X | 规则描述 | 类型 | 触发条件 | 约束/逻辑 | FUN-X | 来源 |  → gap=4
@@ -348,19 +364,15 @@ def _id_fun_pairs(section: str, id_prefix: str, gap: int) -> list[tuple[str, str
     non-ID cell can never anchor across newlines.
     """
     pairs: list[tuple[str, str]] = []
-    pattern = re.compile(
-        r"\|\s*(" + _rule_id_re(id_prefix) + r")\s*\|(?:[^|\n]*\|){"
-        + str(gap) + r"}\s*([^|\n]+?)\s*\|"
-    )
-    for m in pattern.finditer(section):
-        fun = re.search(r"\bFUN-\d+[A-Z]?\b", m.group(2))
-        if fun:
-            pairs.append((m.group(1), fun.group(0)))
+    for rid, anchors in _row_id_anchors(section, id_prefix):
+        preferred = sorted(a for a in anchors if a.startswith(("FUN-", "FEA-")))
+        if preferred:
+            pairs.append((rid, preferred[0]))
     return pairs
 
 
 def _table_rule_density(text: str, artifact_path: str) -> list[dict]:
-    """Table-based rule density for 功能清单表格 layouts (no `### FUN-XXX`)."""
+    """Risk-adapted evidence coverage for table layouts."""
     issues = []
     br_pairs = _id_fun_pairs(section_by_keyword(text, "业务规则"), "BR", 4)
     vl_pairs = _id_fun_pairs(section_by_keyword(text, "校验规则"), "VL", 3)
@@ -369,16 +381,12 @@ def _table_rule_density(text: str, artifact_path: str) -> list[dict]:
     funs = sorted({fun for _, fun in br_pairs + vl_pairs + ac_pairs})
     if not funs:
         issues.append(make_issue(
-            severity="MEDIUM",
-            check_id="rule_density.no_fun_refs",
+            severity="INFO",
+            check_id="rule_density.not_applicable",
             family=FAMILY,
             location=artifact_path,
             field_path="tables.功能清单",
-            message="未检测到功能子标题（### FUN-XXX）或表格中的 FUN 引用，规则密度校验跳过",
-            expected="stage-2 产物应至少定义 FUN-XXX 并在业务规则/校验规则/验收依据表格的 所属 FUN 列引用它",
-            actual="业务规则/校验规则/验收依据 三张表全部未匹配到 FUN-XXX 引用",
-            repair_hint="（1）在功能清单中为每个功能定义 FUN-xxx 编号；（2）在业务规则/校验规则/验收依据表格的 所属 FUN 列填入对应 FUN-xxx（不可留空）",
-            source_ref="stage-2 skill §FUN/BR/VL/AC 编号规范",
+            message="未发现 FUN/FEA 规则锚点；覆盖度检查不适用于当前产物",
             blocking=False,
         ))
         return issues
@@ -389,43 +397,25 @@ def _table_rule_density(text: str, artifact_path: str) -> list[dict]:
         ac_count = sum(1 for _, f in ac_pairs if f == fun)
         total = br_count + vl_count + ac_count
 
-        if total < 3:
+        if br_count and not ac_count:
             issues.append(make_issue(
-                severity="HIGH",
-                check_id="rule_density.underspecified",
-                family=FAMILY,
-                location=artifact_path,
-                field_path=f"tables.rules.FUNs.{fun}",
-                message=f"{fun} has only {total} rules (BR={br_count}, VL={vl_count}, AC={ac_count}) — under-specified (minimum 3)",
-                expected=f"每个 FUN 至少需要 3 条 BR+VL+AC 规则合计（推荐 6 条以上，覆盖 规则/校验/验收三个维度）",
-                actual=f"{fun} 当前只有 {total} 条：BR={br_count}, VL={vl_count}, AC={ac_count}",
-                repair_hint=f"为 {fun} 补充规则：至少 1 条业务规则(BR) + 1 条校验规则(VL) + 1 条验收标准(AC)，合计 ≥ 3；推荐达到 6 条以通过 MEDIUM 提示",
-                source_ref="thinking-core.md §透镜4 功能描述密度 / property_check §B5",
+                severity="MEDIUM", check_id="rule_density.missing_acceptance",
+                family=FAMILY, location=artifact_path,
+                field_path=f"tables.rules.anchors.{fun}",
+                message=f"{fun} has business rules but no acceptance evidence (BR={br_count}, VL={vl_count}, AC={ac_count})",
+                expected="有业务约束或状态变化的功能应有至少一条可验证 AC；只读/平台能力可说明不适用",
+                actual=f"{fun} 当前 BR={br_count}, VL={vl_count}, AC={ac_count}",
+                repair_hint=f"为 {fun} 补充可测量 AC，或记录该能力不需要用户验收的适用性判断",
+                source_ref="acceptance-criteria SKILL.md §Traceability", blocking=False,
             ))
-        elif total < 6:
+        else:
             issues.append(make_issue(
-                severity="MEDIUM",
-                check_id="rule_density.consider_more",
-                family=FAMILY,
-                location=artifact_path,
-                field_path=f"tables.rules.FUNs.{fun}",
-                message=f"{fun} has {total} rules (BR={br_count}, VL={vl_count}, AC={ac_count}) — consider adding more coverage",
-                expected=f"建议每个 FUN 的 BR+VL+AC 合计达到 6 条以上，确保业务规则、前后端校验、验收阈值三维度都覆盖充分",
-                actual=f"{fun} 当前 {total} 条（BR={br_count}, VL={vl_count}, AC={ac_count}），低于 6 条建议阈值",
-                repair_hint=f"检查 {fun} 是否遗漏以下维度：异常分支 BR、边界条件 VL、非功能指标 AC（性能/安全/可用性阈值）；各加 1 条即可达标",
-                source_ref="thinking-core.md §透镜5 异常穷尽 / §透镜9 非功能约束",
+                severity="INFO", check_id="rule_density.coverage_summary",
+                family=FAMILY, location=artifact_path,
+                field_path=f"tables.rules.anchors.{fun}",
+                message=f"{fun} evidence coverage: BR={br_count}, VL={vl_count}, AC={ac_count}",
                 blocking=False,
             ))
-
-    if not any(i["severity"] in {"HIGH", "MEDIUM"} for i in issues):
-        issues.append(make_issue(
-            severity="INFO",
-            check_id="rule_density.pass_table",
-            family=FAMILY,
-            location=artifact_path,
-            message=f"All {len(funs)} FUNs have sufficient rule density (table layout)",
-            blocking=False,
-        ))
 
     return issues
 
@@ -445,43 +435,25 @@ def check_rule_density(text: str, artifact_path: str = "<artifact>") -> list[dic
         ac_count = len(re.findall(_rule_id_re("AC"), block))
         total = br_count + vl_count + ac_count
 
-        if total < 3:
+        if br_count and not ac_count:
             issues.append(make_issue(
-                severity="HIGH",
-                check_id="rule_density.underspecified",
-                family=FAMILY,
-                location=artifact_path,
+                severity="MEDIUM", check_id="rule_density.missing_acceptance",
+                family=FAMILY, location=artifact_path,
                 field_path=f"sections.heading_blocks.{fun_id}",
-                message=f"{fun_id} has only {total} rules (BR={br_count}, VL={vl_count}, AC={ac_count}) — under-specified (minimum 3)",
-                expected=f"每个 ### FUN-xxx 子块至少需要 3 条 BR+VL+AC 规则合计",
-                actual=f"{fun_id} 当前 {total} 条：BR={br_count}, VL={vl_count}, AC={ac_count}",
-                repair_hint=f"在 ### {fun_id} 下方小节补充至少 3 条：1条业务规则(BR) + 1条校验(VL) + 1条验收(AC)",
-                source_ref="thinking-core.md §透镜4 / property_check §B5",
+                message=f"{fun_id} has business rules but no acceptance evidence (BR={br_count}, VL={vl_count}, AC={ac_count})",
+                expected="有业务约束或状态变化的功能应有至少一条可验证 AC；只读/平台能力可说明不适用",
+                actual=f"{fun_id} 当前 BR={br_count}, VL={vl_count}, AC={ac_count}",
+                repair_hint=f"为 {fun_id} 补充可测量 AC，或记录该能力不需要用户验收的适用性判断",
+                source_ref="acceptance-criteria SKILL.md §Traceability", blocking=False,
             ))
-        elif total < 6:
+        else:
             issues.append(make_issue(
-                severity="MEDIUM",
-                check_id="rule_density.consider_more",
-                family=FAMILY,
-                location=artifact_path,
+                severity="INFO", check_id="rule_density.coverage_summary",
+                family=FAMILY, location=artifact_path,
                 field_path=f"sections.heading_blocks.{fun_id}",
-                message=f"{fun_id} has {total} rules (BR={br_count}, VL={vl_count}, AC={ac_count}) — consider adding more coverage",
-                expected=f"建议每个 FUN 子块 ≥6 条 BR+VL+AC 合计",
-                actual=f"{fun_id} 当前 {total} 条（BR={br_count}, VL={vl_count}, AC={ac_count}）",
-                repair_hint=f"为 {fun_id} 增加异常业务 BR、边界校验 VL、以及非功能 AC（性能/安全/可用性）各至少 1 条",
-                source_ref="thinking-core.md §透镜5 / §透镜9",
+                message=f"{fun_id} evidence coverage: BR={br_count}, VL={vl_count}, AC={ac_count}",
                 blocking=False,
             ))
-
-    if not any(i["severity"] in {"HIGH", "MEDIUM"} for i in issues):
-        issues.append(make_issue(
-            severity="INFO",
-            check_id="rule_density.pass_heading",
-            family=FAMILY,
-            location=artifact_path,
-            message="All FUN blocks have sufficient rule density",
-            blocking=False,
-        ))
 
     return issues
 

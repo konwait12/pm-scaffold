@@ -4,8 +4,8 @@
 
 ## ID 契约
 
-- 每个规则行携带稳定 ID `BR-XXX`（BR-001、BR-002、…），全局唯一、零填充、无空缺、无重复。
-- 每条 BR-XXX 恰好引用一个已确认的 `FEA-XXX`——功能之外无孤儿规则。
+- 每个规则行携带稳定 ID `BR-XXX`（BR-001、BR-002、…），全局唯一、零填充、不可复用；允许已确认历史留下编号空洞，详见 `src/framework/id-contract.md`。
+- 每条 BR-XXX 必须有可解释追溯锚点：优先 `FUN-XXX` / `FEA-XXX`，也可为 `ST/BR/STATE/SRC/BG/G-XXX`；跨功能规则写 `GLOBAL` 并保留来源，禁止为通过校验伪造功能关系。
 - 每条 BR-XXX 的 `来源` 引用一个已确认的 `ST-XXX` 或 `FEA-XXX`。
 - 规则移除后 ID 永不复用（补空会破坏审计历史）。
 

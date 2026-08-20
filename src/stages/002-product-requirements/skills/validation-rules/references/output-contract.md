@@ -4,8 +4,8 @@
 
 ## ID 契约
 
-- 每个校验行携带稳定 ID `VL-XXX`（VL-001、VL-002、…），全局唯一、零填充、无空缺、无重复，绝不与 `BR-XXX` 混淆。
-- 每条 VL-XXX 恰好引用一个已确认的 `FEA-XXX`——功能之外无全局堆叠。
+- 每个校验行携带稳定 ID `VL-XXX`（VL-001、VL-002、…），全局唯一、零填充、不可复用，绝不与 `BR-XXX` 混淆；允许已确认历史留下编号空洞，详见 `src/framework/id-contract.md`。
+- 每条 VL-XXX 必须有可解释追溯锚点：优先 `FUN-XXX` / `FEA-XXX`，也可为 `BR/STATE/IX/SRC/BG/G-XXX`；跨功能校验写 `GLOBAL` 并保留来源。
 - 每条 VL-XXX 的 `来源` 引用一个已确认的 `BR-XXX` / `FEA-XXX` / 字段定义（F-XXX）。
 - 检查移除后 ID 永不复用（补空会破坏审计历史）。
 

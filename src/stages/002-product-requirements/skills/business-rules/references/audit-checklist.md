@@ -6,7 +6,7 @@
 
 - [ ] 独立产物 `business-rules.md` 中包含「业务规则」章节，且每条 `BR-XXX` 都引用某个 `FEA-XXX`
 - [ ] 至少存在一条 `BR-\d+` 标识，无「待确认」占位 ID
-- [ ] BR ID 全局唯一、编号连续（BR-001、BR-002…），无跳号、无重复
+- [ ] BR ID 全局唯一、稳定且不可复用；删除/合并后允许保留编号空洞，不为补洞重编号（见 `src/framework/id-contract.md`）
 - [ ] 每条 `BR-XXX` 都引用某个 `FEA-XXX`，没有游离于所有功能之外的孤儿规则
 - [ ] 规则表头列与模板一致：`ID | 规则描述 | 类型 | 触发条件 | 约束/逻辑 | 来源`
 - [ ] 元数据含 artifact ID、version、status、owner、reviewer、日期或 `待确认` / `TBD`

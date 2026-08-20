@@ -1,7 +1,17 @@
-# Intake And Routing
+# 入口与路由
 
-Every requirement starts by registering input and assessing whether required upstream business context already exists. The normal entry is `project-background-goal`.
+每个需求先登记输入材料，并判断必要的上游业务背景是否已经具备。常规入口为当前档位的首个工作项。
 
-Advanced material may reduce drafting work, but a downstream work item cannot start until every predecessor in `workflow-registry.json` has a valid confirmed baseline. Missing upstream context is backfilled; it is never silently skipped.
+高成熟度材料可以减少起草量，但下游工作项必须等待 `workflow-registry.json` 中全部前置项形成有效的已确认基线；缺失上游内容必须补齐，不能被静默跳过。
 
-Assess input maturity as L0 vague input, L1 business need, L2 business solution, L3 product solution, or L4 detailed specification. Present the assessment for human confirmation. L0 (无源/仅一行想法) triggers `brainstorming`（发散收敛，SCN-XXX 候选 → include 输入包）; L1-L4 仍从最早的未确认 predecessor 进入，多源措辞不一致或歧义时触发 `requirement-restate`（复述确认）。Use `src/templates/others/entry-assessment.md` when a persistent routing record is needed.
+材料成熟度与工序档位相互独立。材料成熟度分为 L0 模糊输入、L1 业务需求、L2 业务方案、L3 产品方案、L4 详细规格，并应呈现给人工确认。成熟度 L0（无来源或仅一行想法）触发 `brainstorming`：生成 SCN-XXX 候选并由人工处置，仅 `include` 候选进入输入包；多源措辞不一致或存在歧义时触发 `requirement-restate`。需要保存路由记录时使用 `src/templates/others/entry-assessment.md`。
+
+## 工序档位
+
+除材料成熟度外，入口还必须决定工序档位。它由需求复杂度驱动，不受材料篇幅直接决定：
+
+- **L0 快速变更**：可定位的单点改动，例如文案或简单配置；产出一个 `mini-prd.md`，由业务负责人一次确认。
+- **L1 标准交付**：单模块新功能或单一主流程；执行 7 个上游产物和 `prd-assembly`，共 8 个工作项。
+- **L2 完整 PRD**：涉及多角色、合规、状态、复杂交互、多端或多系统；执行完整 13 项链路。
+
+具体选择以 `references/process-tier-routing.md` 的资格矩阵和硬升级条件为准；评分只能辅助建议。档位仅以 `00-input/intake-decision.md` 为事实源，README 不能覆盖它。L0/L1 命中升级条件时必须重新路由；历史 REQ 缺失决策文件时兼容视为 L2，迁移时应补建决策文件。

@@ -7,7 +7,7 @@ State Machine 产出物：状态定义 + 状态转移表（current state, trigge
 
 - [ ] 独立产物中存在 `## 状态变化` 章节，State Machine 产出物已写入「状态变化」子章节，而非散落其他章节
 - [ ] 至少存在一条 `STATE-\d+` 标识，无「待确认」占位 ID
-- [ ] STATE ID 全局唯一、编号连续（STATE-001、STATE-002…），无重号、无跳号、不与 `BR-\d+` / `ST-\d+` 混淆
+- [ ] STATE ID 全局唯一、稳定且不可复用；删除/合并后允许保留编号空洞，不为补洞重编号
 - [ ] 每个 STATE-XXX 落在对应的 `FEA-XXX` 块内，无游离转移
 - [ ] 表格列齐全且与模板一致：状态定义（ID/名称/FEA/描述/进入条件/退出条件）+ 状态转移表（当前状态/触发事件/目标状态/条件/副作用/来源）
 - [ ] 元数据含 artifact ID、version、status、owner、reviewer、日期或 `待确认` / `TBD`

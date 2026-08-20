@@ -2,6 +2,14 @@
   "schema_version": 7,
   "stages": [
     {
+      "id": "000-minimal",
+      "name": "轻量需求阶段（L0）",
+      "path": "src/stages/000-minimal",
+      "work_items": [
+        "mini-prd"
+      ]
+    },
+    {
       "id": "001-business-requirements",
       "name": "业务需求阶段",
       "path": "src/stages/001-business-requirements",
@@ -38,6 +46,27 @@
   ],
   "work_items": [
     {
+      "id": "mini-prd",
+      "name": "轻量 PRD（单产物）",
+      "order": 0,
+      "stage": "000-minimal",
+      "skill_path": "src/stages/000-minimal/skills/mini-prd",
+      "artifact_dir": "000-minimal/01-mini-prd",
+      "artifact_file": "mini-prd.md",
+      "artifact_prefix": "MP-",
+      "required_outputs": [
+        "mini-prd"
+      ],
+      "predecessors": [],
+      "reviewer_roles": [
+        "business_owner"
+      ],
+      "tiers": [
+        "L0"
+      ],
+      "human_gate": true
+    },
+    {
       "id": "project-background-goal",
       "name": "项目背景与目标",
       "order": 1,
@@ -56,7 +85,11 @@
       ],
       "human_gate": true,
       "legacy_wave": 1,
-      "legacy_artifact_dir": "01_background-goal"
+      "legacy_artifact_dir": "01_background-goal",
+      "tiers": [
+        "L1",
+        "L2"
+      ]
     },
     {
       "id": "user-journey",
@@ -79,7 +112,11 @@
       ],
       "human_gate": true,
       "legacy_wave": 2,
-      "legacy_artifact_dir": "02_journey-stories"
+      "legacy_artifact_dir": "02_journey-stories",
+      "tiers": [
+        "L1",
+        "L2"
+      ]
     },
     {
       "id": "user-stories",
@@ -102,7 +139,11 @@
       ],
       "human_gate": true,
       "legacy_wave": 3,
-      "legacy_artifact_dir": "02_journey-stories"
+      "legacy_artifact_dir": "02_journey-stories",
+      "tiers": [
+        "L1",
+        "L2"
+      ]
     },
     {
       "id": "feature-list",
@@ -125,7 +166,11 @@
       ],
       "human_gate": true,
       "legacy_wave": 4,
-      "legacy_artifact_dir": "02_function-description"
+      "legacy_artifact_dir": "02_function-description",
+      "tiers": [
+        "L1",
+        "L2"
+      ]
     },
     {
       "id": "functional-flow",
@@ -147,7 +192,11 @@
       ],
       "human_gate": true,
       "legacy_wave": 5,
-      "legacy_artifact_dir": "02_function-description"
+      "legacy_artifact_dir": "02_function-description",
+      "tiers": [
+        "L1",
+        "L2"
+      ]
     },
     {
       "id": "page-design",
@@ -169,7 +218,10 @@
       ],
       "human_gate": true,
       "legacy_wave": 6,
-      "legacy_artifact_dir": "01_product-ux"
+      "legacy_artifact_dir": "01_product-ux",
+      "tiers": [
+        "L2"
+      ]
     },
     {
       "id": "interaction-rules",
@@ -191,7 +243,10 @@
       ],
       "human_gate": true,
       "legacy_wave": 7,
-      "legacy_artifact_dir": "01_product-ux"
+      "legacy_artifact_dir": "01_product-ux",
+      "tiers": [
+        "L2"
+      ]
     },
     {
       "id": "business-rules",
@@ -214,7 +269,11 @@
       ],
       "human_gate": true,
       "legacy_wave": 8,
-      "legacy_artifact_dir": "02_function-description"
+      "legacy_artifact_dir": "02_function-description",
+      "tiers": [
+        "L1",
+        "L2"
+      ]
     },
     {
       "id": "validation-rules",
@@ -236,7 +295,10 @@
       ],
       "human_gate": true,
       "legacy_wave": 9,
-      "legacy_artifact_dir": "02_function-description"
+      "legacy_artifact_dir": "02_function-description",
+      "tiers": [
+        "L2"
+      ]
     },
     {
       "id": "state-machine",
@@ -258,7 +320,10 @@
       ],
       "human_gate": true,
       "legacy_wave": 10,
-      "legacy_artifact_dir": "02_function-description"
+      "legacy_artifact_dir": "02_function-description",
+      "tiers": [
+        "L2"
+      ]
     },
     {
       "id": "exception-handling",
@@ -280,7 +345,10 @@
       ],
       "human_gate": true,
       "legacy_wave": 11,
-      "legacy_artifact_dir": "02_function-description"
+      "legacy_artifact_dir": "02_function-description",
+      "tiers": [
+        "L2"
+      ]
     },
     {
       "id": "acceptance-criteria",
@@ -304,7 +372,11 @@
       ],
       "human_gate": true,
       "legacy_wave": 12,
-      "legacy_artifact_dir": "02_function-description"
+      "legacy_artifact_dir": "02_function-description",
+      "tiers": [
+        "L1",
+        "L2"
+      ]
     },
     {
       "id": "prd-assembly",
@@ -338,10 +410,21 @@
       ],
       "human_gate": true,
       "legacy_wave": 13,
-      "legacy_artifact_dir": "05_prd"
+      "legacy_artifact_dir": "05_prd",
+      "tiers": [
+        "L1",
+        "L2"
+      ]
     }
   ],
-  "internal_capabilities": [],
+  "internal_capabilities": [
+    {
+      "id": "delivery-review",
+      "parent_work_item": "prd-assembly",
+      "order": 1,
+      "skill_path": "src/support-skills/delivery-review"
+    }
+  ],
   "artifact_types": [
     {
       "id": "project-background-goals",
@@ -482,6 +565,14 @@
         "exception-handling",
         "acceptance-criteria"
       ]
+    },
+    {
+      "id": "mini-prd",
+      "name": "轻量 PRD",
+      "producer": "mini-prd",
+      "artifact_file": "000-minimal/01-mini-prd/mini-prd.md",
+      "prd_destination": "L0 轻量档最终交付（单产物）",
+      "depends_on": []
     }
   ],
   "support_capabilities": [
@@ -528,13 +619,14 @@
       "id": "brainstorming",
       "name": "发散收敛（头脑风暴，单模式能力）",
       "skill_path": "src/support-skills/brainstorming",
-      "trigger": "L0 仅想法 / 材料稀疏 / 方案发散",
+      "trigger": "未定档的稀疏材料 / 方案发散；材料成熟度不等于 process tier",
       "applicable_stages": [
         "001-business-requirements",
         "002-product-requirements"
       ],
       "output_location": "99-review/support/",
       "resume_work_item": "project-background-goal",
+      "resume_work_item_by_tier": {"L0": "mini-prd", "L1": "project-background-goal", "L2": "project-background-goal"},
       "responsible_role": "business_owner",
       "output_kind": "process"
     },
