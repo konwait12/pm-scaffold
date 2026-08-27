@@ -38,6 +38,7 @@ def _bootstrap_scripts() -> None:
 
 _bootstrap_scripts()
 from validation_errors import make_issue
+from product_quality import validate_quality_record
 # ─────────────────────────────────────────────────────────
 
 # ── Per-work-item configuration ──────────────────────────
@@ -254,6 +255,11 @@ def validate(path: Path) -> dict[str, object]:
     if status == "ready_for_human_review" and not fea_ids:
         warnings.append("status is ready_for_human_review but no FEA identifiers found")
 
+    quality_errors, quality_warnings = validate_quality_record(
+        text, required=(meta.get("quality_contract_version") == "1" and status in {"ready_for_human_review", "confirmed"})
+    )
+    errors.extend(quality_errors)
+    warnings.extend(quality_warnings)
     return {"ok": not errors, "errors": errors, "warnings": warnings,
             "issues": _make_issues(errors, warnings, path)}
 

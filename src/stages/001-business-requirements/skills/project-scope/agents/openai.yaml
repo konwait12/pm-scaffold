@@ -1,0 +1,29 @@
+interface:
+  display_name: "项目范围 (Project Scope)"
+  short_description: "显式定义 PRD §2 项目范围基线——In/Out/Deferred/Conditional 四态 + 假设 + 依赖 + 风险姿态，作为范围变更回流的事实源 / Explicitly define the PRD §2 scope baseline (In/Out/Deferred/Conditional + assumptions + dependencies + risk posture) as the single upstream for scope."
+  default_prompt: |
+    Use the project-scope Skill to draw an explicit scope baseline for the PRD §2.
+    Produce the four-state scope (In / Out / Deferred / Conditional), assumptions
+    (each with a knowledge-state label), dependencies (each with owner + landing
+    date), and risk posture across compliance/data/funds/privacy. Never invent
+    scope; route back to project-background-goal or feasibility-analysis when the
+    boundary is unclear. Never set the artifact status to `confirmed`; only an
+    authorized human may do that.
+
+# Agent-facing trigger examples (used by OpenAI / Anthropic Agent runtimes
+# during routing).
+trigger_examples:
+  - |
+    Use this Skill when the project needs a written In / Out / Deferred /
+    Conditional scope baseline before user journeys and user stories are authored.
+  - |
+    Use this Skill when a stakeholder asks "本期到底做不做 X" or "为什么 Y 不在范围内".
+
+should_not_trigger_examples:
+  - |
+    Do NOT use this Skill to collect requirements, write user stories, or draft
+    feature lists. Route to the corresponding downstream Skill.
+  - |
+    Do NOT use this Skill for a single-feature change without a business context;
+    take the low-density degradation path (sufficiency assessment + batched
+    clarifying questions) instead of fabricating a scope baseline.

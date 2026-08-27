@@ -18,7 +18,7 @@
 | 用户约束符合度 | 6/10 | §4.2 上游产物合并直接违反"图中产物都要有"；开放项表推翻用户对可行性分析的明确选择 |
 | 技术可实施性 | 5/10 | L1 产物数与前置依赖图矛盾；验收章删除会同时破坏 3 处机器契约 |
 | 风险控制 | 4/10 | REQ-001 已 confirmed 产物兼容性完全未处理；13 步一次性交付无阶段隔离 |
-| 完整性 | 6/10 | 调研充分（workbuddy 真实章节定义已吸收），但关键决策的落位字段多处缺失 |
+| 完整性 | 6/10 | 方法论调研充分，但关键决策的落位字段多处缺失 |
 
 **综合：不可直接实施，需修订。**
 
@@ -29,7 +29,7 @@
 1. **三层正交设计**：阶段分层（已有 001/002/003，零修改）/ PRD 章节分层（文档呈现层）/ Process Tier（工序重量层）三者独立互不冲突——与用户"这个分层和阶段分层互不冲突"指示一致。
 2. **项目用 vs PRD 用的区分**：可行性分析→99-review、问题清单→issue-record（默认不进 PRD）、需求重举→支持 skill 不是产物、校验器/收口表/hash 锚→流程用不占章节。这张"不进 PRD"清单是本计划最有价值的部分。
 3. **UX 独立成章（§5 原型/UX）**：补上了之前 16 节结构里缺失的独立 UX 承载，与图中"原型/UX"产物对应。
-4. **调研深度**：读取了 workbuddy `prd-document.md` 的完整模块结构（Light/Medium/Heavyweight 分档 + Default-OFF 模块思想），其"验收标准默认 OFF"的判断被辩证吸收而非照搬（因我们有机器追溯链）。
+4. **调研深度**：比较了轻量、中量和完整交付的模块结构；“默认按需”的判断被审慎吸收而非照搬，因为本项目有机器追溯链。
 5. **AI 推荐 + 用户必选**：符合宪法"AI 不替业务决定"。
 
 ---
@@ -59,7 +59,7 @@
   - `prd-assembly/scripts/validate_artifact.py` 的 REQUIRED_HEADINGS 含"验收依据"；
   - `traceability_check.py` 核心链 G→ST→FEA→FUN→AC，`acceptance` pattern 必须命中；
   - RTM 必含 AC 列（列数 ≥6 校验）。
-  workbuddy 默认 OFF 验收是因为它**没有机器追溯链**；我们有，所以必须保留。
+  验收不能因篇幅控制而省略；本项目存在机器追溯链，因此必须保留。
 - **修正**：验收依据保留独立章（排在 §7 业务规则之后）。将"验收并入规则末"的判断**撤销**。
 
 ### F4【高·依赖图计算错误】L1"5 产物"不可达
@@ -132,7 +132,7 @@ Phase 1 · PRD 章节重设（模板层，上游产物零修改）
 
 Phase 2 · Process Tier（结构层，独立回归）
   ├─ P2.1 registry 每 work_item 加 tiers 字段；pipeline 按 tier 过滤 predecessors（L1 豁免链）
-  ├─ P2.2 新建 000-minimal/mini-prd（workbuddy 6 节 + 轻量治理：单签 ReviewRecord + hash 锚）
+  ├─ P2.2 新建 000-minimal/mini-prd（历史六节草稿 + 轻量治理：单签 ReviewRecord + hash 锚）
   ├─ P2.3 intake-routing：6 维评分(去重计分) + 三档对比 + 用户必选 → frontmatter process_tier
   ├─ P2.4 REQ frontmatter：process_tier / issue_in_prd / schema_version
   └─ P2.5 回归 + mini-prd fixture 单测

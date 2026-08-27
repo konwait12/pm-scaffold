@@ -1,0 +1,908 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>驾驶舱图 · 需求管理脚手架</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{
+    font-family:"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+    background:#0f1a26;color:#cfd8e4;line-height:1.5;font-size:13.5px;
+    overflow-x:auto;
+  }
+  .wrap{padding:18px 24px 30px;}
+
+  /* 顶部 */
+  .top{display:flex;justify-content:space-between;align-items:center;padding:6px 0 14px;border-bottom:1px solid #1f2c3c;}
+  .top .l{font-size:11px;color:#5e6e85;letter-spacing:.16em;}
+  .top h1{font-size:18px;color:#fff;font-weight:700;margin-top:4px;letter-spacing:.04em;}
+  .top .r{font-size:11px;color:#5e6e85;text-align:right;}
+  .top .r b{color:#cfd8e4;font-size:13px;}
+
+  /* 图容器 */
+  .canvas{
+    position:relative;
+    margin-top:18px;
+    background:
+      linear-gradient(rgba(255,255,255,.025) 1px,transparent 1px) 0 0/40px 40px,
+      linear-gradient(90deg,rgba(255,255,255,.025) 1px,transparent 1px) 0 0/40px 40px,
+      linear-gradient(180deg,#0f1a26 0%,#16263a 100%);
+    border:1px solid #1f2c3c;border-radius:8px;
+    padding:14px;
+    min-width:1300px;
+    overflow:hidden;
+  }
+
+  /* SVG 流动线层 */
+  .flow-svg{position:absolute;inset:14px;width:calc(100% - 28px);height:calc(100% - 28px);pointer-events:none;}
+
+  /* 节点卡片通用 */
+  .node{
+    position:absolute;background:#1a2937;border:1px solid #2c3d52;border-radius:7px;
+    padding:10px 12px;cursor:pointer;transition:all .18s;min-width:140px;
+  }
+  .node:hover{background:#233649;border-color:#3d5274;transform:translateY(-2px);box-shadow:0 6px 18px rgba(0,0,0,.4);z-index:10;}
+  .node-title{font-size:12.5px;font-weight:700;color:#fff;line-height:1.35;}
+  .node-sub{font-size:10.5px;color:#5e6e85;margin-top:3px;font-family:ui-monospace,Menlo,monospace;}
+  .node-meta{font-size:10.5px;color:#7a8aa3;margin-top:6px;}
+  .node-meta b{color:#cfd8e4;font-weight:600;}
+
+  /* 节点类型 */
+  .node.entry{border-color:#a06a1f;background:linear-gradient(180deg,#2a2218,#1f1a14);}
+  .node.entry .node-title{color:#e6b170;}
+  .node.tier-fast{border-color:#2f7d5a;background:linear-gradient(180deg,#1c2e25,#152520);}
+  .node.tier-fast .node-title{color:#7fc4a5;}
+  .node.tier-mid{border-color:#a06a1f;background:linear-gradient(180deg,#2a2218,#1f1a14);}
+  .node.tier-mid .node-title{color:#e6b170;}
+  .node.tier-full{border-color:#a64a3a;background:linear-gradient(180deg,#2c1e1b,#21171a);}
+  .node.tier-full .node-title{color:#d89285;}
+  .node.skill{border-color:#3d5274;background:linear-gradient(180deg,#1f2d3e,#182332);}
+  .node.gate{border-color:#5a7a9a;background:linear-gradient(180deg,#243246,#1a2632);}
+  .node.gate .node-title{color:#9bb6cf;}
+  .node.check{border-color:#7a8aa3;background:linear-gradient(180deg,#1f2935,#161e28);}
+  .node.check .node-title{color:#a8b8cf;}
+  .node.exit{border-color:#2f7d5a;background:linear-gradient(180deg,#1c2e25,#152520);}
+  .node.exit .node-title{color:#7fc4a5;}
+  .node.issue{border-color:#5a7a9a;background:linear-gradient(180deg,#1f2935,#161e28);}
+
+  /* 节点标签 */
+  .tag{display:inline-block;font-size:9.5px;font-weight:700;letter-spacing:.06em;padding:2px 6px;border-radius:3px;margin-bottom:5px;}
+  .tag.entry{background:#a06a1f;color:#1f1a14;}
+  .tag.fast{background:#2f7d5a;color:#fff;}
+  .tag.mid{background:#a06a1f;color:#1f1a14;}
+  .tag.full{background:#a64a3a;color:#fff;}
+  .tag.skill{background:#3d5274;color:#fff;}
+  .tag.gate{background:#5a7a9a;color:#fff;}
+  .tag.check{background:#7a8aa3;color:#1a2632;}
+  .tag.exit{background:#2f7d5a;color:#fff;}
+  .tag.issue{background:#5a7a9a;color:#fff;}
+
+  /* 区块背景标识 */
+  .zone{position:absolute;border:1px dashed #2c3d52;border-radius:10px;pointer-events:none;}
+  .zone-label{position:absolute;font-size:10px;color:#5e6e85;letter-spacing:.18em;font-weight:700;}
+
+  /* 详情面板 */
+  .detail{
+    position:fixed;right:18px;top:78px;width:380px;max-height:calc(100vh - 100px);overflow-y:auto;
+    background:#16263a;border:1px solid #3d5274;border-radius:8px;padding:14px 16px;
+    box-shadow:0 10px 30px rgba(0,0,0,.5);
+    transition:opacity .18s,transform .18s;
+  }
+  .detail-empty{color:#5e6e85;font-size:12px;text-align:center;padding:60px 0;}
+  .detail-h{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;border-bottom:1px solid #2c3d52;padding-bottom:8px;}
+  .detail-h .dh-t{font-size:14px;font-weight:700;color:#fff;}
+  .detail-h .dh-s{font-size:11px;color:#7a8aa3;margin-top:3px;font-family:ui-monospace,Menlo,monospace;}
+  .detail-h .dh-x{cursor:pointer;color:#7a8aa3;font-size:14px;background:none;border:none;}
+  .detail-h .dh-x:hover{color:#fff;}
+  .detail-d{font-size:12px;color:#a8b8cf;margin-bottom:10px;line-height:1.6;}
+  .detail-h4{font-size:11px;font-weight:700;color:#5e7a9a;margin:10px 0 6px;letter-spacing:.04em;}
+  .detail-row{font-size:11.5px;color:#cfd8e4;padding:4px 0;border-bottom:1px dashed #2c3d52;display:flex;justify-content:space-between;gap:10px;}
+  .detail-row .k{color:#7a8aa3;flex:0 0 100px;}
+  .detail-row .v{color:#cfd8e4;flex:1;text-align:right;}
+  .detail-row .v b{color:#fff;}
+  .detail-sec{background:#0f1a26;border:1px solid #2c3d52;border-radius:5px;padding:7px 10px;margin-top:4px;font-size:11px;}
+  .detail-sec .sec-no{color:#a06a1f;font-family:ui-monospace,Menlo,monospace;font-weight:700;font-size:10.5px;}
+  .detail-sec .sec-t{color:#cfd8e4;font-weight:600;margin-left:8px;}
+  .detail-refs{display:grid;grid-template-columns:1fr 1fr;gap:4px;}
+  .detail-ref{background:#0f1a26;border:1px solid #2c3d52;border-radius:4px;padding:5px 7px;font-size:10.5px;color:#a8b8cf;}
+  .detail-ref .rn{color:#a06a1f;font-family:ui-monospace,Menlo,monospace;font-size:10px;}
+
+  /* 顶部栏图例 */
+  .legend{display:flex;gap:14px;font-size:11px;color:#7a8aa3;align-items:center;}
+  .legend-item{display:flex;align-items:center;gap:5px;}
+  .legend-dot{width:10px;height:10px;border-radius:2px;border:1px solid;}
+
+  /* 底部说明 */
+  .legend-zone{margin-top:14px;display:flex;gap:18px;flex-wrap:wrap;font-size:11px;color:#7a8aa3;padding:8px 14px;background:#16263a;border:1px solid #2c3d52;border-radius:6px;}
+  .legend-zone b{color:#cfd8e4;}
+
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- 顶部 -->
+  <div class="top">
+    <div>
+      <div class="l">PM SCAFFOLD · 驾驶舱图</div>
+      <h1>需求怎么进来，怎么被理清，怎么出去</h1>
+    </div>
+    <div class="r">
+      <div>三档需求 · 阶段一全 4 个 skill · 16 环节</div>
+      <div style="margin-top:4px;"><b>悬停节点</b> 查看产物组成 / 章节 / 参考文档</div>
+    </div>
+  </div>
+
+  <!-- 图区 -->
+  <div class="canvas" id="canvas">
+
+    <!-- 流动线 SVG -->
+    <svg class="flow-svg" id="flowSvg">
+      <defs>
+        <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+          <path d="M0,0 L10,5 L0,10 Z" fill="#5a7a9a"/>
+        </marker>
+        <marker id="arr-fast" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+          <path d="M0,0 L10,5 L0,10 Z" fill="#7fc4a5"/>
+        </marker>
+        <marker id="arr-mid" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+          <path d="M0,0 L10,5 L0,10 Z" fill="#e6b170"/>
+        </marker>
+        <marker id="arr-full" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+          <path d="M0,0 L10,5 L0,10 Z" fill="#d89285"/>
+        </marker>
+      </defs>
+      <!-- 线在 JS 里画 -->
+    </svg>
+
+    <!-- ============ 区域标识 ============ -->
+    <div class="zone-label" style="left:30px;top:18px;">入口 · 3 步决策</div>
+    <div class="zone" style="left:24px;top:36px;width:280px;height:200px;"></div>
+
+    <div class="zone-label" style="left:30px;top:248px;">三档分流</div>
+    <div class="zone" style="left:24px;top:266px;width:280px;height:200px;"></div>
+
+    <div class="zone-label" style="left:340px;top:18px;">阶段一 · 业务需求（4 skill · 8 阶段循环）</div>
+    <div class="zone" style="left:334px;top:36px;width:730px;height:430px;"></div>
+
+    <div class="zone-label" style="left:340px;top:478px;">B3 收口 · 校验 · 确认</div>
+    <div class="zone" style="left:334px;top:496px;width:730px;height:170px;"></div>
+
+    <div class="zone-label" style="left:1090px;top:18px;">下游</div>
+    <div class="zone" style="left:1084px;top:36px;width:200px;height:630px;"></div>
+
+    <!-- ============ 入口节点 ============ -->
+    <div class="node entry" style="left:40px;top:58px;width:240px;" data-id="intake">
+      <div class="tag entry">步骤 1</div>
+      <div class="node-title">登记来源</div>
+      <div class="node-sub">SRC-001 起</div>
+      <div class="node-meta">类型 / 提供者 / 时间 / 位置</div>
+    </div>
+
+    <div class="node entry" style="left:40px;top:140px;width:240px;" data-id="scoring">
+      <div class="tag entry">步骤 2</div>
+      <div class="node-title">6 维评分</div>
+      <div class="node-sub">0-2 分 × 6 维</div>
+      <div class="node-meta">总分 <b>0-12</b> · 推荐档位</div>
+    </div>
+
+    <div class="node entry" style="left:40px;top:222px;width:240px;" data-id="tier-decide">
+      <div class="tag entry">步骤 3</div>
+      <div class="node-title">用户选档</div>
+      <div class="node-sub">frontmatter 持久化</div>
+      <div class="node-meta">业务负责人显式确认</div>
+    </div>
+
+    <!-- ============ 三档节点 ============ -->
+    <div class="node tier-fast" style="left:40px;top:300px;width:240px;" data-id="tier-l0">
+      <div class="tag fast">L0 · 快速通道</div>
+      <div class="node-title">小改 / 文案 / 配置</div>
+      <div class="node-sub">总分 0-4</div>
+      <div class="node-meta">1 个产物 · mini-prd</div>
+    </div>
+
+    <div class="node tier-mid" style="left:40px;top:378px;width:240px;" data-id="tier-l1">
+      <div class="tag mid">L1 · 标准通道</div>
+      <div class="node-title">新功能 / 单一主流程</div>
+      <div class="node-sub">总分 5-8</div>
+      <div class="node-meta">7 产物 + 工序裁剪</div>
+    </div>
+
+    <div class="node tier-full" style="left:40px;top:456px;width:240px;" data-id="tier-l2">
+      <div class="tag full">L2 · 完整通道</div>
+      <div class="node-title">大工程 / 合规 / 状态机</div>
+      <div class="node-sub">总分 9-12</div>
+      <div class="node-meta">13 产物 · 全链路</div>
+    </div>
+
+    <!-- ============ 阶段一 4 个 skill ============ -->
+    <!-- skill 1: requirement-restate -->
+    <div class="node skill" style="left:354px;top:58px;width:170px;" data-id="sk-rr">
+      <div class="tag skill">SKILL 1</div>
+      <div class="node-title">需求重举</div>
+      <div class="node-sub">requirement-restate</div>
+      <div class="node-meta">RR-NNN · 能力型</div>
+    </div>
+
+    <!-- skill 2: project-background-goal -->
+    <div class="node skill" style="left:534px;top:58px;width:170px;" data-id="sk-bg">
+      <div class="tag skill">SKILL 2</div>
+      <div class="node-title">项目背景与目标</div>
+      <div class="node-sub">project-background-goal</div>
+      <div class="node-meta">BG-001 · 产物型</div>
+    </div>
+
+    <!-- skill 3: user-journey -->
+    <div class="node skill" style="left:714px;top:58px;width:170px;" data-id="sk-uj">
+      <div class="tag skill">SKILL 3</div>
+      <div class="node-title">用户旅程</div>
+      <div class="node-sub">user-journey</div>
+      <div class="node-meta">UJ-001 · 产物型</div>
+    </div>
+
+    <!-- skill 4: user-stories -->
+    <div class="node skill" style="left:894px;top:58px;width:160px;" data-id="sk-us">
+      <div class="tag skill">SKILL 4</div>
+      <div class="node-title">用户故事</div>
+      <div class="node-sub">user-stories</div>
+      <div class="node-meta">US-001 · 产物型</div>
+    </div>
+
+    <!-- 8 阶段循环展示 -->
+    <div class="node check" style="left:354px;top:158px;width:700px;height:54px;cursor:default;" onmouseover="this.style.background='#233649'" onmouseout="this.style.background=''">
+      <div style="display:flex;gap:8px;align-items:center;">
+        <div class="tag check" style="margin-bottom:0;">8 阶段循环</div>
+        <div style="display:flex;gap:6px;flex:1;justify-content:space-between;font-size:11px;color:#a8b8cf;">
+          <span><b style="color:#e6b170;">①</b> Preflight</span>
+          <span>→</span>
+          <span><b style="color:#e6b170;">②</b> Intake</span>
+          <span>→</span>
+          <span><b style="color:#e6b170;">③</b> Think</span>
+          <span>→</span>
+          <span><b style="color:#e6b170;">④</b> Clarify</span>
+          <span>→</span>
+          <span><b style="color:#e6b170;">⑤</b> Generate</span>
+          <span>→</span>
+          <span><b style="color:#e6b170;">⑥</b> Audit</span>
+          <span>→</span>
+          <span><b style="color:#7fc4a5;">⑦</b> Human Gate</span>
+          <span>→</span>
+          <span><b style="color:#7fc4a5;">⑧</b> Commit</span>
+        </div>
+      </div>
+      <div style="font-size:10.5px;color:#7a8aa3;margin-top:6px;">每个 skill 都跑完整 8 阶段循环；Clarify 自成循环（≤5 问题/轮）；Audit 后必须跑 dor_check 校 B3 收口与引用</div>
+    </div>
+
+    <!-- Human Gate 节点 -->
+    <div class="node gate" style="left:354px;top:228px;width:170px;" data-id="gate-st1">
+      <div class="tag gate">Human Gate</div>
+      <div class="node-title">业务负责人确认</div>
+      <div class="node-sub">pipeline review approve</div>
+      <div class="node-meta">SHA-256 签</div>
+    </div>
+
+    <!-- Issue Record 路由 -->
+    <div class="node issue" style="left:534px;top:228px;width:170px;" data-id="issue-record">
+      <div class="tag issue">问题路由</div>
+      <div class="node-title">issue-record</div>
+      <div class="node-sub">CLS / DEC / INF</div>
+      <div class="node-meta">ISS-NNN · B3 收口表</div>
+    </div>
+
+    <!-- validate 校验器 -->
+    <div class="node check" style="left:714px;top:228px;width:170px;" data-id="validate">
+      <div class="tag check">校验器</div>
+      <div class="node-title">validate_artifact.py</div>
+      <div class="node-sub">+ dor_check.py</div>
+      <div class="node-meta">每产物必跑</div>
+    </div>
+
+    <!-- 追溯 -->
+    <div class="node check" style="left:894px;top:228px;width:160px;" data-id="trace">
+      <div class="tag check">追溯</div>
+      <div class="node-title">traceability_check</div>
+      <div class="node-sub">链式校</div>
+      <div class="node-meta">G→ST→FEA→AC</div>
+    </div>
+
+    <!-- L0 mini-prd 出口（左侧） -->
+    <div class="node exit" style="left:1104px;top:300px;width:170px;" data-id="l0-out">
+      <div class="tag exit">L0 出口</div>
+      <div class="node-title">mini-prd</div>
+      <div class="node-sub">单产物</div>
+      <div class="node-meta">6 节 · 当天定</div>
+    </div>
+
+    <!-- 阶段二入口（L1/L2） -->
+    <div class="node skill" style="left:1104px;top:378px;width:170px;" data-id="stage2">
+      <div class="tag skill">阶段二</div>
+      <div class="node-title">产品需求（9 skill）</div>
+      <div class="node-sub">FL→FF→PD→IX→BR→VL→SM→EX→AC</div>
+      <div class="node-meta">下游依赖</div>
+    </div>
+
+    <!-- 阶段三入口 -->
+    <div class="node skill" style="left:1104px;top:458px;width:170px;" data-id="stage3">
+      <div class="tag skill">阶段三</div>
+      <div class="node-title">prd-assembly</div>
+      <div class="node-sub">12 上游 + 自包含 PRD</div>
+      <div class="node-meta">需求说明书</div>
+    </div>
+
+    <!-- 最终交付 -->
+    <div class="node exit" style="left:1104px;top:538px;width:170px;" data-id="final">
+      <div class="tag exit">最终交付</div>
+      <div class="node-title">PRD（已定稿）</div>
+      <div class="node-sub">13 章 · 192 追溯</div>
+      <div class="node-meta">工程可直接开工</div>
+    </div>
+
+    <!-- ============ 底部 B3 区节点 ============ -->
+    <div class="node check" style="left:354px;top:520px;width:230px;" data-id="b3">
+      <div class="tag check">B3 收口表</div>
+      <div class="node-title">issue-record §13</div>
+      <div class="node-sub">每 skill 一行</div>
+      <div class="node-meta">问题数 / 收口日期 / 状态</div>
+    </div>
+
+    <div class="node check" style="left:594px;top:520px;width:230px;" data-id="states">
+      <div class="tag check">状态机</div>
+      <div class="node-title">6 态标注</div>
+      <div class="node-sub">FACT / DECISION / ASSUMPTION</div>
+      <div class="node-meta">AI_INFERENCE / UNKNOWN / CONFLICT</div>
+    </div>
+
+    <div class="node check" style="left:834px;top:520px;width:230px;" data-id="review">
+      <div class="tag check">评审证据</div>
+      <div class="node-title">ReviewRecord + hash</div>
+      <div class="node-sub">SHA-256 锚</div>
+      <div class="node-meta">不可篡改</div>
+    </div>
+
+    <!-- 详情面板 -->
+    <div class="detail" id="detail" style="opacity:0;pointer-events:none;">
+      <div class="detail-h">
+        <div>
+          <div class="dh-t" id="dh-t">—</div>
+          <div class="dh-s" id="dh-s">—</div>
+        </div>
+        <button class="dh-x" onclick="closeDetail()">×</button>
+      </div>
+      <div class="detail-d" id="dh-d">—</div>
+      <div id="dh-body"></div>
+    </div>
+
+  </div>
+
+  <!-- 图例 -->
+  <div class="legend-zone">
+    <span><b>节点类型：</b></span>
+    <span><span class="legend-dot" style="border-color:#a06a1f;background:#2a2218;"></span> 入口</span>
+    <span><span class="legend-dot" style="border-color:#2f7d5a;background:#1c2e25;"></span> L0</span>
+    <span><span class="legend-dot" style="border-color:#a06a1f;background:#2a2218;"></span> L1</span>
+    <span><span class="legend-dot" style="border-color:#a64a3a;background:#2c1e1b;"></span> L2</span>
+    <span><span class="legend-dot" style="border-color:#3d5274;background:#1f2d3e;"></span> skill</span>
+    <span><span class="legend-dot" style="border-color:#5a7a9a;background:#243246;"></span> Human Gate</span>
+    <span><span class="legend-dot" style="border-color:#7a8aa3;background:#1f2935;"></span> 校验 / 状态 / 收口</span>
+    <span><span class="legend-dot" style="border-color:#2f7d5a;background:#1c2e25;"></span> 出口</span>
+  </div>
+
+</div>
+
+<script>
+// ============ 节点数据 ============
+const NODES = {
+  'intake':{
+    title:'登记来源',
+    sub:'SRC-001 起',
+    desc:'所有原始材料（邮件、BRD、会议纪要、聊天）登记为 SRC-001 起，每个来源标注类型、提供者、时间、位置。',
+    rows:[
+      ['来源类型', '邮件 / BRD / 会议纪要 / 聊天'],
+      ['编号规则', 'SRC-001, SRC-002, ...'],
+      ['位置粒度', '具体到段落 / 时间戳'],
+      ['下游引用', '被所有 skill 引用']
+    ]
+  },
+  'scoring':{
+    title:'6 维评分',
+    sub:'score=0..2 × 6 维',
+    desc:'按 6 个维度评估需求复杂度，每维 0/1/2 分，总分 0-12。AI 给推荐档位，但业务负责人必须显式选择。',
+    rows:[
+      ['维度 1', '影响模块数 ≤1 / 2-3 / 多端'],
+      ['维度 2', '角色数 1 / 2 / ≥3'],
+      ['维度 3', '状态复杂度 0 / 2-3 / ≥4'],
+      ['维度 4', '异常路径 0 / 1-2 / ≥3'],
+      ['维度 5', '合规资金 无 / 数据 / 资金'],
+      ['维度 6', '改动体量 ≤10行 / 中 / 大改'],
+      ['总分 0-4', '推荐 L0'],
+      ['总分 5-8', '推荐 L1'],
+      ['总分 9-12', '推荐 L2']
+    ]
+  },
+  'tier-decide':{
+    title:'用户选档',
+    sub:'frontmatter 持久化',
+    desc:'AI 推荐档位基于总分，但业务负责人必须显式选择 L0/L1/L2，写进 REQ frontmatter 持久化。中途改档要 reflow。',
+    rows:[
+      ['写位', 'REQ-XX/README.md 或 00-input/intake-decision.md'],
+      ['字段', 'process_tier: L0 / L1 / L2'],
+      ['强校验', 'init --process-tier 必须显式'],
+      ['降级风险', '中途改档需 reflow']
+    ]
+  },
+  'tier-l0':{
+    title:'L0 · 快速通道',
+    sub:'mini-prd · 1 产物',
+    desc:'小改 / 文案 / 配置 / Bug 修复。单产物 skill 一气呵成，6 节模板，6 条校验器硬规则。',
+    rows:[
+      ['产物数', '1（mini-prd）'],
+      ['流程', '登记 → 起草 → 自审 → 确认'],
+      ['产物文件', '000-minimal/01-mini-prd/mini-prd.md'],
+      ['章节', '6 节（改什么/影响/验收/回滚等）'],
+      ['reviewer', 'business_owner 单签'],
+      ['耗时', '0.5-1 pd']
+    ]
+  },
+  'tier-l1':{
+    title:'L1 · 标准通道',
+    sub:'7 产物 + 工序裁剪',
+    desc:'单模块新功能 / 单一主流程。复用阶段一 4 个 skill + 阶段二核心 3 个（FL/FF/BR/AC）+ prd-assembly。',
+    rows:[
+      ['产物数', '7 + 1'],
+      ['跳过', 'PD/IX/VL/SM/EX'],
+      ['L1 五项豁免', '用具体事实 not_applicable'],
+      ['PRD', '8 主干（无 §7/§8）'],
+      ['reviewer', 'product_owner 主签'],
+      ['耗时', '3-5 pd']
+    ]
+  },
+  'tier-l2':{
+    title:'L2 · 完整通道',
+    sub:'13 产物全链路',
+    desc:'大工程 / 合规 / 状态机 / 多端。完整 13 工作项拉链，零修改现有通路。',
+    rows:[
+      ['产物数', '12 上游 + prd-assembly'],
+      ['流程', '完整 8 阶段循环 × 4 skill'],
+      ['PRD', '10 主干 + 按需 + 附录 A/B'],
+      ['校验', 'traceability + branch_validator'],
+      ['reviewer', '按 work_item 注册角色'],
+      ['耗时', '10-20 pd'],
+      ['存量 REQ', 'REQ-001 已 verified 88/0']
+    ]
+  },
+  'sk-rr':{
+    title:'SKILL 1 · 需求重举',
+    sub:'requirement-restate',
+    desc:'用 stakeholder 原话 verbatim 复述需求，建立"我们真的同意了吗"检查点。能力型（output_kind=process），过程记录永远不进 PRD 正文。',
+    rows:[
+      ['产物 ID', 'RR-NNN'],
+      ['产物类型', '过程记录 · 不进 PRD'],
+      ['状态', 'draft / needs_user_input / ready_for_human_review / confirmed'],
+      ['签约人', '原 stakeholder 或其代理'],
+      ['下游路由', 'CONFLICT→ISS-XXX（CLS/DEC）；UNKNOWN→Q-XXX + ISS-XXX（INF）'],
+      ['8 阶段循环', 'Preflight→Intake→Think→Clarify→Generate→Audit→Human Gate→Commit'],
+      ['章节数', '9 节（元元元元元元元元元）'],
+      ['产物组成', '见下方章节'],
+    ],
+    sections:[
+      ['1','项目元数据'],
+      ['2','来源清单（SRC-IDs）'],
+      ['3','重述需求清单（RR-XXX）'],
+      ['4','冲突清单（CONFLICT → ISS-XXX）'],
+      ['5','未知清单（UNKNOWN → Q-XXX / ISS-XXX）'],
+      ['6','stakeholder 自查反馈位'],
+      ['7','来源追溯'],
+      ['8','待确认问题'],
+      ['9','Constitution Compliance']
+    ],
+    refs:[
+      'thinking-framework.md（必读）',
+      'output-contract.md（Draft 前）',
+      'audit-checklist.md（Audit 前）',
+      'reviewer-checklist.md（Human Gate 前）',
+      'source-handling.md（Intake 时）',
+      'question-patterns.md（Clarify）',
+      'anti-patterns.md（Generate 对照）',
+      'gap-checklist-14d.md',
+      'fact-ledger.md',
+      'interview-synthesis.md',
+      'assets/template'
+    ]
+  },
+  'sk-bg':{
+    title:'SKILL 2 · 项目背景与目标',
+    sub:'project-background-goal',
+    desc:'把原始材料变成有来源、有人确认的业务背景与目标基线。说明需求为什么存在、今天发生了什么、什么问题重要、涉及哪些人、预期达成什么结果。',
+    rows:[
+      ['产物 ID', 'BG-001'],
+      ['产物类型', '产物型 · 进 PRD'],
+      ['签约人', '业务事实 owner + 目标决策 owner'],
+      ['下游', 'UJ-001 / FL-001 / US-001'],
+      ['8 阶段循环', 'Preflight→Intake→Think→Clarify→Generate→Audit→Human Gate→Commit'],
+      ['章节数', '15 节'],
+      ['产物组成', '见下方章节'],
+    ],
+    sections:[
+      ['0','预检输入充分度判定'],
+      ['1','需求来源与触发'],
+      ['2','项目与需求背景'],
+      ['3','当前现状与已有做法'],
+      ['4','核心问题与证据'],
+      ['5','目标与成功判断'],
+      ['6','角色与干系人'],
+      ['7','约束与依赖'],
+      ['8','初步边界与非目标'],
+      ['9','事实与决定'],
+      ['10','假设/AI 推断/未知/冲突'],
+      ['11','待确认问题'],
+      ['12','来源追溯'],
+      ['13','Clarifications'],
+      ['14','Constitution Compliance']
+    ],
+    refs:[
+      'thinking-framework.md',
+      'output-contract.md',
+      'audit-checklist.md',
+      'reviewer-checklist.md',
+      'source-handling.md',
+      'question-patterns.md',
+      'anti-patterns.md',
+      'elicitation-techniques.md',
+      'background-4elements.md',
+      'stakeholder-4class.md',
+      'stakeholder-power-interest.md',
+      'business-constraint-taxonomy.md',
+      'value-complexity-matrix.md',
+      'positioning-stxswot.md',
+      'planning-report.md'
+    ]
+  },
+  'sk-uj':{
+    title:'SKILL 3 · 用户旅程',
+    sub:'user-journey',
+    desc:'通过角色视角绘制用户完成生命周期目标所经历的路程/阶段，识别每个阶段的行为、触点、痛点与情绪波动，将痛点转化为机会。',
+    rows:[
+      ['产物 ID', 'UJ-001'],
+      ['产物类型', '产物型 · 进 PRD'],
+      ['签约人', '业务/产品负责人'],
+      ['下游', 'US-001 / FL-001'],
+      ['8 阶段循环', 'Preflight→Intake→Think→Clarify→Generate→Audit→Human Gate→Commit'],
+      ['章节数', '14 节'],
+      ['产物组成', '见下方章节'],
+    ],
+    sections:[
+      ['0','预检输入充分度判定'],
+      ['1','业务生命周期分解'],
+      ['2','用户旅程图（阶段×角色矩阵）'],
+      ['3','情绪曲线与关键时刻（MOT）'],
+      ['4','路径多样性（主/分支/异常退出）'],
+      ['5','痛点→机会'],
+      ['6','角色画像'],
+      ['7','触点矩阵'],
+      ['8','旅程级指标'],
+      ['9','假设/AI 推断/未知/冲突'],
+      ['10','待确认问题'],
+      ['11','来源追溯'],
+      ['12','Clarifications'],
+      ['13','Constitution Compliance']
+    ],
+    refs:[
+      'thinking-framework.md',
+      'output-contract.md',
+      'audit-checklist.md',
+      'reviewer-checklist.md',
+      'source-handling.md',
+      'question-patterns.md',
+      'anti-patterns.md',
+      'journey-matrix-and-mot.md',
+      'journey-error-recovery-and-metrics.md',
+      'journey-behavior-vs-feature-jtbd.md'
+    ]
+  },
+  'sk-us':{
+    title:'SKILL 4 · 用户故事',
+    sub:'user-stories',
+    desc:'把已确认的用户旅程转化为规范格式的故事卡片、MoSCoW 优先级与范围基线（In/Out/Deferred/Conditional）。每个故事必须可追溯到旅程中的某个痛点或机会。',
+    rows:[
+      ['产物 ID', 'US-001'],
+      ['产物类型', '产物型 · 进 PRD'],
+      ['签约人', '产品/业务负责人'],
+      ['下游', 'FL-001 → ...'],
+      ['8 阶段循环', 'Preflight→Intake→Think→Clarify→Generate→Audit→Human Gate→Commit'],
+      ['章节数', '10 节'],
+      ['产物组成', '见下方章节'],
+    ],
+    sections:[
+      ['0','预检输入充分度判定'],
+      ['1','故事卡片清单（ST-XXX）'],
+      ['2','MoSCoW 优先级分布'],
+      ['3','范围基线（In/Out/Deferred/Conditional）'],
+      ['4','旅程→故事覆盖矩阵'],
+      ['5','假设/AI 推断/未知/冲突'],
+      ['6','待确认问题'],
+      ['7','来源追溯'],
+      ['8','Clarifications'],
+      ['9','Constitution Compliance']
+    ],
+    refs:[
+      'thinking-framework.md',
+      'output-contract.md',
+      'audit-checklist.md',
+      'reviewer-checklist.md',
+      'source-handling.md',
+      'question-patterns.md',
+      'anti-patterns.md',
+      'use-case-spec-template.md',
+      'job-story-and-moat.md',
+      'scenario-5elements.md',
+      'user-story-4elements.md'
+    ]
+  },
+  'gate-st1':{
+    title:'Human Gate · 业务负责人确认',
+    sub:'pipeline review approve',
+    desc:'每个 skill 的 8 阶段循环必经节点。原 stakeholder 或其代理必须确认"是的，这就是我说的"。',
+    rows:[
+      ['签约动作', 'pipeline.py review --decision approve'],
+      ['必签', '业务事实 owner / 目标决策 owner'],
+      ['生成产物', 'ReviewRecord + SHA-256 hash'],
+      ['状态', 'confirmed（下游可用）'],
+      ['L0 简化', 'business_owner 单签'],
+      ['L1 简化', 'product_owner 主签']
+    ]
+  },
+  'issue-record':{
+    title:'问题路由 · issue-record',
+    sub:'CLS / DEC / INF',
+    desc:'clarify 阶段遇到冲突 / 未知自动登记到 issue-record 的 ISS-NNN，按类型分 CLS（关闭）/ DEC（决策）/ INF（信息），B3 收口表跟踪关闭。',
+    rows:[
+      ['ID 规则', 'ISS-NNN 单一递增'],
+      ['类别', '由章节章节（（（（决定'],
+      ['L0 简化', '必要时挂单条 ISS-NNN'],
+      ['L1 按需', '非每张 L1 都建库'],
+      ['L2 强制', '必须建库并收口']
+    ]
+  },
+  'validate':{
+    title:'校验器',
+    sub:'validate_artifact.py',
+    desc:'每产物必跑。检查 frontmatter、章节、6 态标注、追溯链。失败→reflow。',
+    rows:[
+      ['校验脚本', 'src/scripts/validate_artifact.py'],
+      ['DoR/DoD', 'dor_check.py'],
+      ['每产物', '必跑'],
+      ['失败处理', '返回 needs_user_input'],
+      ['L0 简化', 'mini-prd 校验器（6 条硬规则）'],
+      ['L1 配套', 'l1_exclusion_evidence 五项 not_applicable'],
+      ['L2 配套', 'traceability_check + branch_validator']
+    ]
+  },
+  'trace':{
+    title:'追溯',
+    sub:'traceability_check',
+    desc:'检查 G→ST→FEA→FUN→AC→BR 链是否完整、是否有孤儿。L1 仅集内追溯，L2 全量追溯。',
+    rows:[
+      ['链式', 'G→ST→FEA→FUN→AC→BR'],
+      ['L1', '集内追溯（7 产物）'],
+      ['L2', '全量追溯（13 产物）'],
+      ['孤儿', '无'],
+      ['缺口', '返回 reflow']
+    ]
+  },
+  'b3':{
+    title:'B3 收口表',
+    sub:'issue-record §13',
+    desc:'每 skill 一行，问题数 / 收口日期 / 状态。空阶段也落行。',
+    rows:[
+      ['位置', 'issue-record.md §13'],
+      ['必填', '每 work_item 一行'],
+      ['字段', '问题数 / 收口日期 / 状态'],
+      ['门禁', 'Audit 前必查']
+    ]
+  },
+  'states':{
+    title:'6 态标注',
+    sub:'知识状态',
+    desc:'每条主张标 6 态之一。无来源支持的内容标 AI_INFERENCE 或 UNKNOWN，不混入 FACT。',
+    rows:[
+      ['FACT', '来源权威范围内的显式来源陈述'],
+      ['DECISION', '被授权人类做出的显式决策'],
+      ['ASSUMPTION', '为分析而接受的临时条件'],
+      ['AI_INFERENCE', 'AI 推导的解读，非业务事实'],
+      ['UNKNOWN', '缺失的信息'],
+      ['CONFLICT', '不兼容的来源陈述需解决']
+    ]
+  },
+  'review':{
+    title:'评审证据',
+    sub:'ReviewRecord + SHA-256 hash',
+    desc:'每个 skill confirmed 时生成的不可篡改证据，记录评审人、时间、内容摘要、SHA-256 锚。',
+    rows:[
+      ['生成时机', 'pipeline.py review approve'],
+      ['记录', 'ReviewRecord'],
+      ['锚', 'SHA-256 hash'],
+      ['位置', '.audit/ 目录'],
+      ['L0 简化', '单签记录保留'],
+      ['L2 完整', '含 audit_chain']
+    ]
+  },
+  'l0-out':{
+    title:'L0 出口 · mini-prd',
+    sub:'单产物 · 当天定',
+    desc:'小改走 L0，单产物 skill 一气呵成。6 节模板：改什么 / 为什么 / 影响 / 验收 / 风险 / 回滚。',
+    rows:[
+      ['产物', 'mini-prd.md（6 节）'],
+      ['位置', '000-minimal/01-mini-prd/'],
+      ['典型耗时', '0.5-1 pd'],
+      ['reviewer', 'business_owner 单签'],
+      ['校验', 'mini-prd 校验器 6 条硬规则']
+    ]
+  },
+  'stage2':{
+    title:'阶段二 · 产品需求',
+    sub:'9 skill',
+    desc:'FL→FF→PD→IX→BR→VL→SM→EX→AC。9 个 skill 把业务需求翻译成产品级细节。',
+    rows:[
+      ['work_item 数', '9'],
+      ['产物', 'FL/FF/PD/IX/BR/VL/SM/EX/AC'],
+      ['L1 跳过', 'PD/IX/VL/SM/EX'],
+      ['L2 必跑', '全部'],
+      ['下游', '阶段三 prd-assembly']
+    ]
+  },
+  'stage3':{
+    title:'阶段三 · prd-assembly',
+    sub:'12 上游 → 1 PRD',
+    desc:'逐字内嵌 12 个上游产物，生成自包含需求说明书。L1 8 主干 + L2 10 主干 + 按需 + 附录 A/B/C。',
+    rows:[
+      ['work_item 数', '1'],
+      ['产物', 'PRD-001'],
+      ['章节数', 'L1:8 主干 / L2:10 主干 + 附录'],
+      ['下游交付', '工程可直接开工']
+    ]
+  },
+  'final':{
+    title:'最终交付 · PRD',
+    sub:'已定稿',
+    desc:'需求说明书，已定稿。包含全部已确认上游内容 + 自审 + 追溯对照表。工程可直接照做。',
+    rows:[
+      ['规模', '~2500 行 / 13 章'],
+      ['追溯', '192 条关联'],
+      ['校验', '96/0 全过'],
+      ['状态', 'confirmed'],
+      ['下游', '工程开发 + 测试验收']
+    ]
+  }
+};
+
+// ============ 详情面板 ============
+function showDetail(id){
+  const n = NODES[id];
+  if(!n) return;
+  document.getElementById('dh-t').textContent = n.title;
+  document.getElementById('dh-s').textContent = n.sub;
+  document.getElementById('dh-d').textContent = n.desc;
+  let body = '';
+  if(n.rows){
+    body += '<div class="detail-h4">关键字段</div>';
+    n.rows.forEach(r=>{
+      body += `<div class="detail-row"><span class="k">${r[0]}</span><span class="v">${r[1]}</span></div>`;
+    });
+  }
+  if(n.sections){
+    body += '<div class="detail-h4">产物章节（' + n.sections.length + ' 节）</div>';
+    n.sections.forEach(s=>{
+      body += `<div class="detail-sec"><span class="sec-no">§${s[0]}</span><span class="sec-t">${s[1]}</span></div>`;
+    });
+  }
+  if(n.refs){
+    body += '<div class="detail-h4">加载参考文档（' + n.refs.length + ' 份）</div>';
+    body += '<div class="detail-refs">';
+    n.refs.forEach(r=>{
+      const [n,c] = r.split('（');
+      body += `<div class="detail-ref"><div class="rn">${n}</div>${c ? '（'+c : ''}</div>`;
+    });
+    body += '</div>';
+  }
+  document.getElementById('dh-body').innerHTML = body;
+  const det = document.getElementById('detail');
+  det.style.opacity='1';
+  det.style.pointerEvents='auto';
+}
+
+function closeDetail(){
+  document.getElementById('detail').style.opacity='0';
+  document.getElementById('detail').style.pointerEvents='none';
+}
+
+// ============ 流动线 ============
+function drawLines(){
+  const svg = document.getElementById('flowSvg');
+  if(!svg) return;
+  const W = svg.clientWidth, H = svg.clientHeight;
+  svg.setAttribute('viewBox',`0 0 ${W} ${H}`);
+  svg.innerHTML = svg.innerHTML.split('</defs>')[0] + '</defs>';
+
+  function line(x1,y1,x2,y2,marker,cls,dash){
+    const path = document.createElementNS('http://www.w3.org/2000/svg','path');
+    const mx=(x1+x2)/2;
+    const d = `M${x1},${y1} C${mx},${y1} ${mx},${y2} ${x2},${y2}`;
+    path.setAttribute('d',d);
+    path.setAttribute('stroke',cls);
+    path.setAttribute('stroke-width','1.5');
+    path.setAttribute('fill','none');
+    path.setAttribute('marker-end',`url(#${marker})`);
+    if(dash) path.setAttribute('stroke-dasharray',dash);
+    svg.appendChild(path);
+  }
+
+  // 入口内部
+  line(160,108,160,128,'arr','#5a7a9a');
+  line(160,190,160,210,'arr','#5a7a9a');
+  line(160,272,160,288,'arr','#5a7a9a');
+
+  // 三档到阶段一（仅 L1/L2 走阶段一）
+  // L0 → L0-out
+  line(160,344,1100,338,'arr-fast','#7fc4a5','4 3');
+  // L1 → 阶段一 skill1
+  line(280,418,350,90,'arr-mid','#e6b170');
+  // L2 → 阶段一 skill1（粗线，主流）
+  line(280,496,350,100,'arr-full','#d89285','6 4');
+
+  // 阶段一 4 个 skill 之间
+  line(524,90,534,90,'arr','#3d5274');
+  line(704,90,714,90,'arr','#3d5274');
+  line(884,90,894,90,'arr','#3d5274');
+
+  // skill 下到 8 阶段循环
+  line(440,108,440,158,'arr','#5e7a9a');
+  line(620,108,620,158,'arr','#5e7a9a');
+  line(800,108,800,158,'arr','#5e7a9a');
+  line(975,108,975,158,'arr','#5e7a9a');
+
+  // 8 阶段 → Human Gate
+  line(440,212,440,228,'arr','#5e7a9a');
+  line(620,212,620,228,'arr','#5e7a9a');
+  line(800,212,800,228,'arr','#5e7a9a');
+  line(975,212,975,228,'arr','#5e7a9a');
+
+  // Human Gate / issue / validate / trace 之间
+  line(524,253,534,253,'arr','#5a7a9a');
+  line(704,253,714,253,'arr','#5a7a9a');
+  line(884,253,894,253,'arr','#5a7a9a');
+
+  // 阶段一 → 阶段二（经 skill 4 下）
+  line(975,283,975,378,'arr','#5a7a9a');
+  line(1054,418,1104,418,'arr','#5a7a9a');
+
+  // 阶段二 → 阶段三
+  line(1189,458,1189,478,'arr-mid','#e6b170');
+  line(1054,498,1104,498,'arr','#5a7a9a');
+
+  // 阶段三 → 最终
+  line(1189,538,1189,558,'arr','#5a7a9a');
+
+  // L0 出口 → 最终（虚线，跨档）
+  line(1189,338,1189,538,'arr-fast','#7fc4a5','2 3');
+
+  // B3 / 状态 / 评审 与阶段一关联
+  line(440,253,440,520,'arr','#5a7a9a','3 3');
+  line(700,253,700,520,'arr','#5a7a9a','3 3');
+  line(950,253,950,520,'arr','#5a7a9a','3 3');
+}
+
+// ============ 绑定 ============
+document.querySelectorAll('.node[data-id]').forEach(el=>{
+  el.addEventListener('mouseenter',()=>showDetail(el.dataset.id));
+  el.addEventListener('mouseleave',()=>{});
+});
+
+// 初始画线（多次以适配布局）
+window.addEventListener('load',()=>setTimeout(drawLines,50));
+window.addEventListener('resize',()=>setTimeout(drawLines,50));
+setTimeout(drawLines,100);
+setTimeout(drawLines,400);
+</script>
+</body>
+</html>

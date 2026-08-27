@@ -33,7 +33,7 @@
 | 1 | `src/framework/workflow-registry.json` | 阶段 / Skill / 产物的**唯一机器真相源**，一切路径以此为准，不要硬编码 |
 | 2 | `src/framework/constitution.md` | 8 条硬宪法，违反任何一条 = 缺陷 |
 | 3 | `src/framework/workflow.md` | 每个 Work Item 必走的 8 步循环 |
-| 4 | `src/framework/thinking-core.md` | 共享思想引导层：§1 的 6 个核心透镜每次必用 + §2 校验层 + §3 发散决策层 + §5 表达层技法注册（外部 skill 精华已按 A/B/C 三档注入，见 `docs/new-skills-integration-plan.md`） |
+| 4 | `src/framework/thinking-core.md` | 共享思想引导层：§1 的 6 个核心透镜每次必用 + §2 校验层 + §3 发散决策层 + §5 表达层技法注册（能力接入边界见 `docs/l0-l1-capability-quality-matrix.md`） |
 | 5 | `src/framework/contracts.md` | 知识状态标注 + 确认不变式；含 AuditEvent / ProjectionCache / ValidatorIssue / RegistryContract 等扩展 Shared Records 契约（v0.4.0 Harness 借鉴） |
 | 6 | `src/framework/id-contract.md` | artifact ID 与产物内 Trace ID 的边界、当前格式及兼容策略；不得用前缀替代业务语义 |
 
@@ -74,26 +74,29 @@ requirements/REQ-NNN-topic/
 ├── 00-input/                      # 原始材料 + authorized-reviewers.json
 ├── 000-minimal/01-mini-prd/       # 仅 L0
 ├── 001-business-requirements/     # L1/L2 按档位生成
+│   ├── 00-feasibility-analysis/   # L1/L2 立项首项
 │   ├── 01-background-goal/
-│   ├── 02-user-journey/
-│   └── 03-user-stories/
+│   ├── 02-project-scope/          # L1/L2 项目范围基线（In/Out/Def/Cond）
+│   ├── 03-user-journey/
+│   └── 04-user-stories/
 ├── 002-product-requirements/
 │   ├── 01-feature-list/
 │   ├── 02-functional-flow/
-│   ├── 03-page-design/
-│   ├── 04-interaction-rules/
+│   ├── 03-page-design/            # L2 only
+│   ├── 04-interaction-rules/      # L2 only
 │   ├── 05-business-rules/
-│   ├── 06-validation-rules/
-│   ├── 07-state-machine/
-│   ├── 08-exception-handling/
-│   └── 09-acceptance-criteria/
+│   ├── 06-field-rules/            # L2 only · 字段规则说明（拆自 VL）
+│   ├── 07-validation-rules/       # L2 only · 仅校验（已与字段定义表分离）
+│   ├── 08-state-machine/          # L2 only
+│   ├── 09-exception-handling/     # L2 only
+│   └── 10-acceptance-criteria/
 ├── 003-prd-output/prd.md          # 唯一最终交付物
 └── 99-review/                     # 评审记录；support/issue-record.md 仅 L1/L2
 ```
 
 一个 artifact 原地演进；快照与评审/变更记录保存历史，不创建竞争的「最终版」副本。
 
-**档位决策优先**：新 REQ 必须以 `pipeline.py init REQ-NNN-topic --process-tier L0|L1|L2` 创建；`00-input/intake-decision.md` 是唯一事实源。L0 为一个六节 mini-PRD；L1 为 7 个上游加 PRD、共 8 项；L2 为完整 13 项。`status`/`entry` 的 `--process-tier` 只做预览，任何写操作均使用持久档位；跨档 work item 必须立即失败。
+**档位决策优先**：新 REQ 必须以 `pipeline.py init REQ-NNN-topic --process-tier L0|L1|L2` 创建；`00-input/intake-decision.md` 是唯一事实源。L0 的主工作项是六类事实采集 mini-PRD，确认后确定性投影为完整 canonical PRD；L1 为 9 个上游加 PRD、共 10 项（含立项首项 FA + 范围基线 SCOPE）；L2 为完整 15 项（含 FA + SCOPE + FIELDS）。三档最终 PRD 章节编号与语义一致，只改变证据深度和治理强度。`status`/`entry` 的 `--process-tier` 只做预览，任何写操作均使用持久档位；跨档 work item 必须立即失败。
 
 **入口探索序列**（进入当前档位首个 work item 前）：`entry` 判定材料成熟度 L0-L4（与 process tier 正交）→ L0 无源材料先 `brainstorming`（发散收敛·SCN-XXX 候选）→ 多源/歧义时 `requirement-restate`（复述确认·RR-NNN）→ 材料充分后进入当前档位首项。
 
@@ -140,14 +143,16 @@ python3 src/scripts/consistency_check.py
 **L0 主干 skill（1）**
 `mini-prd`
 
-**L1 主干 skill（8）**
-`project-background-goal` → `user-journey` → `user-stories` → `feature-list` → `functional-flow` → `business-rules` → `acceptance-criteria` → `prd-assembly`
+**L1 主干 skill（10）**
+`feasibility-analysis` → `project-background-goal` → `project-scope` → `user-journey` → `user-stories` → `feature-list` → `functional-flow` → `business-rules` → `acceptance-criteria` → `prd-assembly`
 
-**L2 主干 skill（13）**
-`project-background-goal` → `user-journey` → `user-stories` → `feature-list` → `functional-flow` → `page-design` → `interaction-rules` → `business-rules` → `validation-rules` → `state-machine` → `exception-handling` → `acceptance-criteria` → `prd-assembly`
+**L2 主干 skill（15）**
+`feasibility-analysis` → `project-background-goal` → `project-scope` → `user-journey` → `user-stories` → `feature-list` → `functional-flow` → `page-design` → `interaction-rules` → `business-rules` → `field-rules` → `validation-rules` → `state-machine` → `exception-handling` → `acceptance-criteria` → `prd-assembly`
 
-**分支 skill（3，触发才跑）**
-`competitive-research`（竞品调研）、`feasibility-analysis`（可行性分析）、`tracking-plan`（埋点计划）
+**分支 skill（2，触发才跑）**
+`competitive-research`（竞品调研）、`tracking-plan`（埋点计划）
+
+> `feasibility-analysis` 已从分支 skill 升级为 L1/L2 主干首项（立项首项），不再列为分支 skill。
 
 **常驻 skill（L1/L2，始终监控）**
 `issue-record`（问题清单；L0 不创建，也不执行 B3 阶段收口）

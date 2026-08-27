@@ -1,6 +1,6 @@
 # 业务约束五分类技法参考（Business Constraint Taxonomy）
 
-> 来源吸收：Trae `prd-to-prototype` skill 的「业务约束五分类细分 + 需求来源三段式」，作为 project-background-goal 的可选 to B 落地能力。
+> 本文将相关实践转化为本项目的可选方法，不引入外部运行时依赖。
 > 定位：project-background-goal 产出的 BG-XXX 背景目标文本是权威；本文档提供"把业务约束按五类细分结构化登记"的技法，增强约束可见性。
 > 触发：当项目背景涉及合规、时间、预算、组织或历史约束时使用。**按需加载，不设全局闸门**。
 

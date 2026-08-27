@@ -93,7 +93,9 @@ Created requirements/REQ-001-my-feature
         python3 src/scripts/pipeline.py requirements/REQ-001-my-feature status
 ```
 
-`--process-tier` 会写入 `00-input/intake-decision.md`，它是档位的唯一事实源。L0 只创建一个 mini-PRD；L1 创建 7 个上游与最终 PRD，共 8 项；L2 创建完整 13 项。`status` 和 `entry` 可以展示临时预览，`gate`、`review`、`reflow` 不接受临时切档。
+`--process-tier` 会写入 `00-input/intake-decision.md`，它是档位的唯一事实源。入口先选择需求难度：低难度不触发档位建议；中/高难度才显示 L1/L2 建议，但建议只供参考，最终仍由人工选择档位，系统不会自动切档。可用 `entry --difficulty medium|high` 只读预览建议。L0 只创建一个 mini-PRD；L1 创建 7 个上游与最终 PRD，共 8 项；L2 创建完整 13 项。`status` 和 `entry` 可以展示临时预览，`gate`、`review`、`reflow` 不接受临时切档。
+
+L0/L1 不以减少工作项为代价降低产品质量。新产物启用 `quality_contract_version: "1"` 后，必须记录受影响角色、被排除替代、价值-成本-风险、失败回退和可证伪条件；L1 还要求旅程→故事→功能→流程→规则→验收链可逆追溯。能力矩阵见 [`docs/l0-l1-capability-quality-matrix.md`](docs/l0-l1-capability-quality-matrix.md)，统一契约见 [`src/shared/process-skills/references/l0-l1-product-quality-contract.md`](src/shared/process-skills/references/l0-l1-product-quality-contract.md)。
 
 ### 第 3 步 · 放原始材料（1 分钟）
 
@@ -413,7 +415,7 @@ stateDiagram-v2
 
 ## 产物体系
 
-L2 有 12 个上游产物和一个最终 PRD；L1 仅保留其 7 个上游和最终 PRD；L0 使用独立 mini-PRD。每项都有：
+L2 有 12 个上游产物和一个最终 canonical PRD；L1 保留其 7 个上游加 PRD 装配，共 8 项；L0 使用一个六类事实采集 mini-PRD，确认后投影为同一套完整 canonical PRD。三档最终 PRD 章节编号和语义一致，只改变证据深度与治理强度。每项都有：
 
 - **独立模板**（`src/templates/stage-{1,2,3}-*/...md`）
 - **独立校验器**（`scripts/validate_artifact.py`，使用 `validation_errors.make_issue` 输出统一错误格式）

@@ -50,7 +50,7 @@ def run_lark_fetch(token: str, scope: str = 'full', doc_format: str = 'markdown'
                    detail: str | None = None, fmt: str = 'json') -> dict | str:
     """调用 lark-cli docs +fetch 读取文档。
 
-    身份认证由 Trae Lark 插件外部注入托管，不传 --as / --profile。
+    身份认证由宿主环境注入托管，不传 --as / --profile。
     - scope='full' (默认) + fmt='json' + doc_format='markdown'：返回 dict（向后兼容）
     - scope='outline'：返回 pretty XML 字符串（仅大纲，不写正文）
     - scope='section'：需传 start_block_id，返回 dict

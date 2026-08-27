@@ -98,6 +98,10 @@ description: 为每个 P0 功能以 Given/When/Then 编写原子、可测量的�
 | `references/ai-eval-dimensions.md` | AI 模型评估技法（4 维度评估表 + 评测集设计 + 验收判据写法） | Generate AI/算法类功能验收标准时（按需） |
 | `references/ac-selfcheck.md` | 验收标准自检技法（GWT 完整性/阈值量化/4 类覆盖/可构造输入/追溯/deep_check 纪律） | Generate 完 AC 后/Audit 前逐条自检时（按需） |
 
+## 产品质量增强（L1 必须）
+
+每个 P0 功能至少有一条正常和一条异常验收，Given/When/Then 的阈值必须来自目标、规则或明确决策；不能用编号数字冒充阈值。送审前记录可证伪条件和停止/回退判据，空泛的“快速、稳定、体验好”必须改成可判定结果。
+
 ## 完成标准
 
 每个 P0 FEA 至少有一条主流程 `AC-XXX` 与一条异常/边界 `AC-XXX`；每条 AC 是原子的且为 Given/When/Then；每个可量化结果都有追溯到已确认 G-XXX 的阈值；无测试用例或实现细节泄漏；AC 触发条件与预期结果与 BR/VL/EX 一致；阻断性未知项阻止确认；授权人工批准该基线。

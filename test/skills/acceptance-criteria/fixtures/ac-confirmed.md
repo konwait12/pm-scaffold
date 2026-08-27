@@ -2,6 +2,7 @@
 artifact_id: AC-HIRE-001
 version: v0.1
 status: ready_for_human_review
+quality_contract_version: "1"
 owner: PM-Office
 business_fact_owner: VP of Talent
 goal_decision_owner: VP of Talent
@@ -186,3 +187,12 @@ AC 进入 ready_for_human_review 必须满足：
 | 性能 | 2 | 3 | 0 | 5 |
 | 全局 | 0 | 0 | 1 | 1 |
 | **合计** | **27** | **12** | **2** | **41** |
+## 产品质量增强记录
+
+| 项目 | 结论 | 知识状态 | 来源/位置 | 判断人 | 复核触发 |
+|---|---|---|---|---|---|
+| 受影响角色与结果 | 验收覆盖候选人主流程和异常重试 | FACT | FEA-001 §功能 | PM | 功能变化 |
+| 采用方案与被排除替代 | 采用 Given/When/Then，不用“体验好”判定 | DECISION | AC-001 §标准 | PM | 验收方式变化 |
+| 价值-成本-风险 | 阈值来自目标，成本与风险待测试确认 | UNKNOWN | G-001 §目标 | PM | 指标变化 |
+| 失败边界与回退 | 异常验收失败则回退到草稿 | FACT | EX-001 §恢复 | PM | 恢复策略变化 |
+| 可证伪条件/停止条件 | 阈值无来源时不得进入确认 | DECISION | AC-001 §来源 | 业务负责人 | 目标变化 |

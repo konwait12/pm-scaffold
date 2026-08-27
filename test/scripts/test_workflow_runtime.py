@@ -168,6 +168,43 @@ def write_valid_issue_record(req: Path) -> None:
     )
 
 
+def write_confirmed_feasibility_analysis(req: Path) -> None:
+    """Create a confirmed feasibility-analysis artifact + matching ReviewRecord.
+
+    feasibility-analysis is the predecessor of project-background-goal (立项首项);
+    a confirmed stub must carry a real reviewer + review record + hash anchor or
+    branch_validator fails the gate.
+    """
+    fa = req / "001-business-requirements/00-feasibility-analysis/feasibility-report.md"
+    fa.parent.mkdir(parents=True, exist_ok=True)
+    fa.write_text(
+        "---\nartifact_id: FA-T-001\nstatus: confirmed\nreviewer: Real Reviewer\n---\n"
+        "# 可行性分析\n\n## 结论\n\n可行。\n## 技术可行性\n\n技术栈可复用。\n",
+        encoding="utf-8",
+    )
+    review_dir = req / "99-review"
+    review_dir.mkdir(parents=True, exist_ok=True)
+    record = review_dir / "review-feasibility-analysis-test.md"
+    record.write_text(
+        "# Review: 可行性分析\n\n"
+        "- work_item: feasibility-analysis\n"
+        "- artifact: 001-business-requirements/00-feasibility-analysis/feasibility-report.md\n"
+        "- decision: approve\n"
+        "- reviewer: Real Reviewer\n"
+        "- reviewed_at: 2026-08-20T00:00:00+00:00\n",
+        encoding="utf-8",
+    )
+    import hash_anchor as _anchor
+    _anchor.record_anchor(
+        req,
+        artifact="001-business-requirements/00-feasibility-analysis/feasibility-report.md",
+        artifact_id="FA-T-001",
+        reviewer="Real Reviewer",
+        review_record=str(record.relative_to(req).as_posix()),
+        sha256=workflow_registry.artifact_content_hash(fa.read_text(encoding="utf-8")),
+    )
+
+
 def build_gate_req(temp: Path) -> Path:
     """Build a minimal REQ dir whose project-background-goal artifact passes
     DoR/DoD, branch_validator, and traceability — isolating the issue-record
@@ -183,6 +220,8 @@ def build_gate_req(temp: Path) -> Path:
     (req / "00-input/SRC-001.md").write_text(
         "# 需求来源（测试）\n业务方代表A 提出的测试需求。\n", encoding="utf-8",
     )
+    # feasibility-analysis 是 project-background-goal 的前置（立项首项）。
+    write_confirmed_feasibility_analysis(req)
     fixture = ROOT / "test/skills/project-background-goal/fixtures/hire-website-confirmed.md"
     text = fixture.read_text(encoding="utf-8")
     text = re.sub(r"(?m)^status:\s*\S+", "status: ready_for_human_review", text, count=1)
@@ -192,10 +231,10 @@ def build_gate_req(temp: Path) -> Path:
 
 class WorkflowRuntimeTest(unittest.TestCase):
     def test_registry_paths_and_order(self) -> None:
-        # L2 完整档 = 现有 13 项（不含 L0 的 mini-prd）
+        # L2 完整档 = 16 项（15 上游 + prd-assembly；不含 L0 的 mini-prd）
         items = workflow_registry.work_items_for_tier("L2")
-        self.assertEqual([item["order"] for item in items], list(range(1, 14)))
-        self.assertEqual(len({item["id"] for item in items}), 13)
+        self.assertEqual([item["order"] for item in items], list(range(1, 17)))
+        self.assertEqual(len({item["id"] for item in items}), 16)
         for item in items:
             self.assertTrue((ROOT / item["skill_path"] / "SKILL.md").is_file())
             self.assertTrue((ROOT / item["skill_path"] / "scripts/validate_artifact.py").is_file())
@@ -206,8 +245,8 @@ class WorkflowRuntimeTest(unittest.TestCase):
         items = {item["id"]: item for item in registry["work_items"]}
         artifacts = {artifact["id"]: artifact for artifact in registry["artifact_types"]}
 
-        # 14 = 13 主干产物 + L0 的 mini-prd
-        self.assertEqual(len(artifacts), 14)
+        # 17 = 16 主干产物 + L0 的 mini-prd
+        self.assertEqual(len(artifacts), 17)
         self.assertIn("mini-prd", artifacts)
         self.assertEqual(
             {output for item in items.values() for output in item["required_outputs"]},
@@ -229,7 +268,7 @@ class WorkflowRuntimeTest(unittest.TestCase):
         capabilities = registry["internal_capabilities"]
         self.assertEqual({cap["id"] for cap in capabilities}, {"delivery-review"})
         self.assertEqual(capabilities[0]["parent_work_item"], "prd-assembly")
-        self.assertEqual(len(parents), 14)
+        self.assertEqual(len(parents), 17)
 
     def test_support_skills_have_single_authoritative_location(self) -> None:
         expected = {
@@ -271,7 +310,7 @@ class WorkflowRuntimeTest(unittest.TestCase):
             )
             result = orchestrator.build_status(req)
             self.assertEqual(result["active_work_item"], "project-background-goal")
-            self.assertEqual(result["next_work_item"], "project-background-goal")
+            self.assertEqual(result["next_work_item"], "feasibility-analysis")
 
     def test_init_root_isolated_from_repository(self) -> None:
         with tempfile.TemporaryDirectory() as temp:
@@ -315,8 +354,8 @@ class WorkflowRuntimeTest(unittest.TestCase):
         with tempfile.TemporaryDirectory() as temp:
             req = Path(temp) / "REQ-REFLOW"
             for rel, artifact_id in (
-                ("001-business-requirements/02-user-journey/user-journey.md", "UJ-T-001"),
-                ("001-business-requirements/03-user-stories/user-stories.md", "US-T-001"),
+                ("001-business-requirements/03-user-journey/user-journey.md", "UJ-T-001"),
+                ("001-business-requirements/04-user-stories/user-stories.md", "US-T-001"),
             ):
                 path = req / rel
                 path.parent.mkdir(parents=True, exist_ok=True)
@@ -350,7 +389,7 @@ class WorkflowRuntimeTest(unittest.TestCase):
             req = Path(temp)
             rows = {
                 "001-business-requirements/01-background-goal/background-goal.md": "| G-001 | Goal |\n",
-                "001-business-requirements/02-user-journey/user-journey.md": "| ST-001 | G-001 | Story |\n",
+                "001-business-requirements/03-user-journey/user-journey.md": "| ST-001 | G-001 | Story |\n",
                 "002-product-requirements/03-page-design/page-design.md": "| FEA-001 | ST-001 | Feature |\n",
                 "002-product-requirements/02-functional-flow/functional-flow.md": "| FUN-001 | FEA-001 | Function |\n| AC-001 | FUN-001 | G-001 | Then success |\n| BR-001 | FUN-001 | Rule |\n",
             }
@@ -367,7 +406,7 @@ class WorkflowRuntimeTest(unittest.TestCase):
             req = Path(temp)
             rows = {
                 "001-business-requirements/01-background-goal/background-goal.md": "| G1 | Goal |\n",
-                "001-business-requirements/02-user-journey/user-journey.md": "| ST-001 | G1 | Story |\n",
+                "001-business-requirements/03-user-journey/user-journey.md": "| ST-001 | G1 | Story |\n",
                 "002-product-requirements/03-page-design/page-design.md": "| FEA-001 | ST-001 | Feature |\n",
                 "002-product-requirements/02-functional-flow/functional-flow.md": "| FUN-001 | FEA-001 | Function |\n| AC-001 | FUN-001 | Then success |\n| BR-001 | FUN-001 | Rule |\n",
             }
@@ -459,6 +498,8 @@ class WorkflowRuntimeTest(unittest.TestCase):
             # entry_material DoR: bg approval requires >= 1 registered source
             (req / "00-input").mkdir(parents=True, exist_ok=True)
             (req / "00-input/SRC-001.md").write_text("# 需求来源（测试）\n业务方代表A 提出的邀约转化率优化需求。\n", encoding="utf-8")
+            # feasibility-analysis 是 project-background-goal 的前置（立项首项）。
+            write_confirmed_feasibility_analysis(req)
             # B3 每阶段强制收口：issue-record 必须存在且含 bg 收口行，
             # 且结构必须通过 issue-record 校验器（pipeline gate 强制）。
             write_valid_issue_record(req)

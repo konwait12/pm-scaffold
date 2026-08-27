@@ -9,13 +9,13 @@
 
 | 步骤 | 命令 / 路径 | 命中条件 |
 |---|---|---|
-| 1 | `which lark-cli` | macOS PATH 已注入 Trae 插件 bin 时返回 0 且 stdout 非空 |
+| 1 | `which lark-cli` | macOS PATH 已注入宿主插件 bin 时返回 0 且 stdout 非空 |
 | 2 | `PM_SCAFFOLD_LARK_PLUGIN_ROOT/<ver>/bin/lark-cli` | 仅当显式配置环境变量时扫描插件版本目录；不依赖任何个人绝对路径 |
 | 3 | `lark-cli --version`（timeout=5s） | 捕获 stdout 作为 `version` 字段 |
 
-**刻意不跑 `lark-cli auth status`**：Trae 托管外部凭证注入下实测报
+**刻意不跑 `lark-cli auth status`**：宿主环境托管外部凭证注入下可能报
 "Credential management is not supported" —— 用 `--version` 判断可执行性即可，
-凭证可用性由 Trae 注入、auth 状态无法本地校验。
+凭证可用性由宿主环境注入，auth 状态无法本地校验。
 
 返回结构（与任务规格严格一致）：
 
@@ -81,7 +81,7 @@
 
 - **前提 1**：`feishu-enabled.json` 存在且 `enabled: true`。
 - **前提 2**：lark-cli 在 PATH 中可执行（`which lark-cli` 命中）。
-- **前提 3**：lark-cli 凭证由 Trae 外部注入（不依赖本地 `auth status`）。
+- **前提 3**：lark-cli 凭证由宿主环境注入（不依赖本地 `auth status`）。
 - **后续步骤（不在本增量范围内）**：
   - `feishu_fetch.py`（已存在）按本配置读取飞书文档 → 落 `00-input/SRC-*.md`；
   - `prd_publish.py`（已存在）按本配置发布 `prd.md` 到飞书文档。

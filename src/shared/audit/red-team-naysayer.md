@@ -1,6 +1,6 @@
 # 红队压力测试（Red-Team Naysayer）
 
-> 蒸馏来源：G1 `pm-chief-naysayer`（亲读核实，路径见 [prd-pm-skills-verified.md](../../../../../docs/prd-pm-skills-verified.md)）。
+> 本指南提供独立、可验证的反向质疑方法；不依赖任何本地索引或特定工具。
 > 定位：与 `adversarial-agent-prompt.md`（对抗 agent 协议）互补——本文档提供**更锋利的红队立场与铁律**，用于 PRD / issue-record / 决策记录的逻辑压力测试。
 > 触发：产物 `ready_for_human_review` 前作者自查，或 Human Gate 前评审人选用。**advisory 级：红队只提问、不下结论、不改状态——由人决定。**
 

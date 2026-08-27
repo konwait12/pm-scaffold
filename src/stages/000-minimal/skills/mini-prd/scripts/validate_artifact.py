@@ -35,6 +35,7 @@ def _bootstrap_scripts() -> None:
 
 _bootstrap_scripts()
 from validation_errors import make_issue
+from product_quality import validate_quality_record
 
 try:
     from workflow_registry import artifact_content_hash
@@ -209,6 +210,12 @@ def validate(path: Path) -> dict[str, object]:
         if any(p in body for p in PENDING):
             warnings.append("Confirmed mini-prd still contains 待确认 markers in body")
 
+    quality_errors, quality_warnings = validate_quality_record(
+        text, required=(meta.get("quality_contract_version") == "1" and status in {"ready_for_human_review", "confirmed"})
+    )
+    errors.extend(quality_errors)
+    warnings.extend(quality_warnings)
+
     # 内容密度：禁止指针引用（详见 XX-XXX）
     pointer_refs = re.findall(r"(?:详见|内容见)\s*[`\[]?\s*[A-Za-z][A-Za-z0-9_\-]{0,40}", text)
     if pointer_refs:
@@ -231,6 +238,7 @@ _MINI_ERROR_RULES = [
     ("Confirmed artifact has unresolved confirmation fields:", "miniprd.unresolved_confirmation"),
     ("Content-density gate failed:", "miniprd.pointer_only_content"),
     ("Meaningful-content gate failed:", "miniprd.empty_content"),
+    ("产品质量增强记录", "miniprd.product_quality"),
     ("Source-trace gate failed:", "miniprd.source_trace"),
     ("Hash declaration invalid:", "miniprd.hash_format"),
     ("Hash integrity failed:", "miniprd.hash_mismatch"),

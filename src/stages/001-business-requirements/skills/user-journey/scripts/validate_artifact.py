@@ -34,6 +34,7 @@ def _bootstrap_scripts() -> None:
 
 _bootstrap_scripts()
 from validation_errors import make_issue
+from product_quality import validate_quality_record
 
 
 ARTIFACT_NAME = "user-journey.md"
@@ -253,6 +254,11 @@ def validate(path: Path) -> dict[str, object]:
             "No knowledge-state tags (FACT/DECISION/AI_INFERENCE/UNKNOWN) found in user journey"
         )
 
+    quality_errors, quality_warnings = validate_quality_record(
+        text, required=(meta.get("quality_contract_version") == "1" and status in {"ready_for_human_review", "confirmed"})
+    )
+    errors.extend(quality_errors)
+    warnings.extend(quality_warnings)
     return {"ok": not errors, "errors": errors, "warnings": warnings,
             "issues": _make_issues(errors, warnings, path)}
 

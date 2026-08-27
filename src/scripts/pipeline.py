@@ -22,6 +22,7 @@ from workflow_registry import (
     read_frontmatter,
     resolve_work_item,
     assert_work_item_in_tier,
+    canonical_applicability_evidence,
     require_persisted_tier,
     resolve_branch_capability,
     resume_work_item_for_tier,
@@ -32,6 +33,7 @@ from workflow_registry import (
 
 import audit_log
 import hash_anchor
+from l0_prd_projection import build_projection, write_projection
 
 
 def run_script_json(script: Path, target: Path, *extra_args: str) -> dict:
@@ -111,6 +113,80 @@ ENTRY_SIGNAL_KEYWORDS = {
     "rules": ("规则", "条件", "触发", "计算", "权限"),
 }
 
+# 需求难度是用户在入口处选择的交互维度，和持久化 process tier 分开。
+# 难度只用于决定是否展示档位建议：低难度不打开档位建议入口；中/高难度
+# 才展示一个可审计的建议。建议永远不会写入 process_tier，也不会创建目录。
+DIFFICULTY_LEVELS = {"low", "medium", "high"}
+
+
+def normalize_difficulty(value: str | None) -> str | None:
+    """Normalize CLI/frontmatter difficulty values without guessing missing input."""
+    if not value:
+        return None
+    aliases = {"低": "low", "中": "medium", "高": "high", "低难度": "low",
+               "中难度": "medium", "高难度": "high"}
+    normalized = aliases.get(value.strip().lower(), value.strip().lower())
+    return normalized if normalized in DIFFICULTY_LEVELS else None
+
+
+def tier_recommendation(req_dir: Path, difficulty: str | None) -> dict:
+    """Return a non-authoritative tier suggestion for the difficulty entry.
+
+    The recommendation is deliberately read-only.  A human must still pass
+    ``--process-tier`` to ``init``; no recommendation is allowed to mutate the
+    intake decision or switch an existing requirement between tiers.
+    """
+    level = normalize_difficulty(difficulty)
+    if level is None:
+        return {
+            "triggered": False,
+            "difficulty": difficulty or "未选择",
+            "recommendation": None,
+            "selection_required": False,
+            "reason": "未选择需求难度，不展示档位建议入口。",
+        }
+    if level == "low":
+        return {
+            "triggered": False,
+            "difficulty": level,
+            "recommendation": None,
+            "selection_required": False,
+            "reason": "低难度需求不触发档位建议入口；如需创建 REQ，直接由人工确认 L0。",
+        }
+    if level == "high":
+        return {
+            "triggered": True,
+            "difficulty": level,
+            "recommendation": "L2",
+            "selection_required": True,
+            "reason": "高难度默认建议完整状态化路径 L2；仍需人工确认。",
+        }
+
+    # 中难度默认建议 L1；输入中已出现状态、异常、校验、多角色、敏感或
+    # 多系统信号时，建议升级 L2。这里只提供提示，不代替资格矩阵。
+    input_dir = req_dir / "00-input"
+    text = ""
+    if input_dir.is_dir():
+        for path in sorted(input_dir.glob("SRC-*.md")):
+            text += path.read_text(encoding="utf-8", errors="ignore") + "\n"
+    hard_signals = ("状态", "状态机", "异常", "恢复", "校验", "权限", "PII", "敏感",
+                    "合规", "多角色", "多系统", "迁移", "资金")
+    if any(signal in text for signal in hard_signals):
+        return {
+            "triggered": True,
+            "difficulty": level,
+            "recommendation": "L2",
+            "selection_required": True,
+            "reason": "中难度材料命中状态/风险/多系统等升级信号，建议 L2；需人工确认。",
+        }
+    return {
+        "triggered": True,
+        "difficulty": level,
+        "recommendation": "L1",
+        "selection_required": True,
+        "reason": "中难度且暂未命中硬升级信号，建议受限标准路径 L1；需人工确认。",
+    }
+
 
 def entry_content_signals(req_dir: Path) -> dict[str, bool]:
     """Read 00-input material content and detect the 6 entry-assessment signals."""
@@ -170,7 +246,7 @@ def _detect_feishu_capability() -> dict:
         2. 可选兜底：检查 ``PM_SCAFFOLD_LARK_PLUGIN_ROOT/<ver>/bin/lark-cli``；
         3. ``lark_cli`` 为真时跑 ``lark-cli --version`` 捕获 stdout。
 
-    刻意不跑 ``lark-cli auth status``：Trae 托管外部凭证注入下实测报
+    刻意不跑 ``lark-cli auth status``：宿主环境托管外部凭证注入下可能报
     "Credential management is not supported" —— 用 ``--version`` 判断可执行性即可。
     """
     lark_plugin = LARK_PLUGIN_ROOT is not None and LARK_PLUGIN_ROOT.is_dir()
@@ -221,12 +297,35 @@ def _lark_plugin_version_str() -> str:
     return versions[0] if versions else ""
 
 
+def _stdin_interactive() -> bool:
+    """True only when stdin is a real TTY with readable input available.
+
+    CI runners and sandbox shells often expose a pseudo-TTY with no input
+    stream; ``input()`` would block forever there.  ``select()`` with a short
+    timeout detects a TTY that actually has pending data (or EOF), and the
+    Windows ``msvcrt.kbhit()`` branch keeps the behavior cross-platform.
+    """
+    if not sys.stdin.isatty():
+        return False
+    try:
+        import msvcrt  # Windows
+        return bool(msvcrt.kbhit())
+    except ImportError:
+        pass
+    try:
+        import select
+        ready, _, _ = select.select([sys.stdin], [], [], 0.2)
+        return bool(ready)
+    except (OSError, ValueError):
+        return False
+
+
 def _prompt_feishu_integration(req_dir: Path) -> None:
     """init 完成后扫描飞书能力并询问是否启用，落盘 00-input/feishu-enabled.json。
 
     - 检测到 lark-cli 或 lark 插件：
-        - TTY：主动询问 [y/N]，y 写 ``enabled:true``，N/默认写 ``enabled:false``；
-        - 非 TTY：跳过询问，打印能力扫描结果，写默认 ``enabled:false``。
+        - TTY 且 stdin 有输入：主动询问 [y/N]，y 写 ``enabled:true``，N/默认写 ``enabled:false``；
+        - 非 TTY / 伪 TTY 无输入：跳过询问，打印能力扫描结果，写默认 ``enabled:false``。
     - 未检测到：不询问，写 ``{"enabled": false, "reason": "..."}``。
     """
     feishu = _detect_feishu_capability()
@@ -240,7 +339,7 @@ def _prompt_feishu_integration(req_dir: Path) -> None:
         if feishu.get("lark_plugin"):
             parts.append(f"飞书插件 v{plugin_ver or 'unknown'} 可用")
         print(f"  飞书能力扫描：检测到 {'; '.join(parts)}")
-        if sys.stdin.isatty():
+        if _stdin_interactive():
             answer = input(
                 "  检测到飞书能力，是否启用飞书集成？"
                 "本项目将以 lark-cli 为来源读取飞书文档/发布 PRD。[y/N] "
@@ -264,13 +363,18 @@ def _prompt_feishu_integration(req_dir: Path) -> None:
     )
 
 
-def init_requirement(name: str | None, root: Path | None = None, process_tier: str | None = None) -> int:
+def init_requirement(name: str | None, root: Path | None = None, process_tier: str | None = None,
+                     difficulty: str | None = None) -> int:
     """Create a requirement skeleton from the registry (REQ-NNN-topic-name)."""
     if not name:
         print("ERROR: init requires a requirement name like REQ-NNN-my-feature", file=sys.stderr)
         return 1
     if process_tier not in {"L0", "L1", "L2"}:
         print("ERROR: init requires explicit --process-tier L0|L1|L2", file=sys.stderr)
+        return 1
+    normalized_difficulty = normalize_difficulty(difficulty)
+    if difficulty is not None and normalized_difficulty is None:
+        print("ERROR: --difficulty must be low|medium|high（低|中|高）", file=sys.stderr)
         return 1
     if not re.fullmatch(r"REQ-\d{3}[A-Za-z0-9_-]*", name):
         print(f"ERROR: invalid requirement name '{name}' (expect REQ-NNN-topic)", file=sys.stderr)
@@ -290,7 +394,13 @@ def init_requirement(name: str | None, root: Path | None = None, process_tier: s
     if not intake_template.is_file():
         print(f"ERROR: intake decision template not found: {intake_template}", file=sys.stderr)
         return 1
-    intake_text = intake_template.read_text(encoding="utf-8").replace("{PROCESS_TIER}", process_tier).replace("{REQ_NAME}", name)
+    recommendation = tier_recommendation(req_dir, normalized_difficulty)
+    intake_text = (intake_template.read_text(encoding="utf-8")
+                   .replace("{PROCESS_TIER}", process_tier)
+                   .replace("{REQ_NAME}", name)
+                   .replace("{DIFFICULTY_LEVEL}", normalized_difficulty or "待人工选择")
+                   .replace("{TIER_RECOMMENDATION}", recommendation["recommendation"] or "不触发")
+                   .replace("{TIER_SELECTION_MODE}", "人工确认（建议不可自动生效）"))
     (req_dir / "00-input/intake-decision.md").write_text(intake_text, encoding="utf-8")
     # authorized-reviewers skeleton: AI must never fill a real reviewer here
     (req_dir / "00-input" / "authorized-reviewers.json").write_text(
@@ -377,6 +487,20 @@ def init_requirement(name: str | None, root: Path | None = None, process_tier: s
     print(f"Created {req_dir}")
     print(f"  Next: put source materials in {req_dir}/00-input/, then run")
     print(f"        python3 src/scripts/pipeline.py {req_dir} status")
+    # B4 fix: pre-warn about product_owner-only work items so the reviewer
+    # registry is configured with both roles up front, avoiding mid-flow
+    # approval interruptions (roles: functional-flow/page-design/interaction-
+    # rules/field-rules/validation-rules/state-machine/exception-handling).
+    if process_tier in {"L1", "L2"}:
+        po_only = [
+            i["id"] for i in work_items_for_tier(process_tier)
+            if i.get("reviewer_roles") == ["product_owner"]
+        ]
+        if po_only:
+            print("  NOTE: 以下 work item 仅接受 product_owner 角色审批："
+                  + ", ".join(po_only))
+            print("        建议在 00-input/authorized-reviewers.json 为评审人预配")
+            print("        business_owner + product_owner 双角色，避免审批中断。")
     # 飞书能力扫描 + 主动询问（仅 init 一次；非 TTY 自动写默认 false）
     _prompt_feishu_integration(req_dir)
     return 0
@@ -402,10 +526,14 @@ def machine_gate(req_dir: Path, item: dict) -> dict:
     issue_record = {"ok": True, "skipped": process_tier == "L0"}
     if process_tier != "L0":
         issue_record = check_issue_record(req_dir)
+    applicability = {"ok": True, "skipped": item["id"] != "prd-assembly"}
+    if item["id"] == "prd-assembly":
+        applicability = canonical_applicability_evidence(req_dir)
     ok = (result["dor_pass"] and result["dod_pass"] and bool(cross.get("ok"))
-          and bool(records.get("ok")) and bool(prop.get("ok")) and bool(issue_record.get("ok")))
+          and bool(records.get("ok")) and bool(prop.get("ok")) and bool(issue_record.get("ok"))
+          and bool(applicability.get("ok")))
     return {"ok": ok, "work_item": result, "cross_trace": cross, "records": records,
-            "property": prop, "issue_record": issue_record}
+            "property": prop, "issue_record": issue_record, "applicability": applicability}
 
 
 def load_authorized_reviewer(req_dir: Path, reviewer_id: str, reviewer: str, reviewer_role: str) -> dict | None:
@@ -559,6 +687,17 @@ def review(req_dir: Path, item: dict, decision: str, reviewer: str, reviewer_id:
     review_dir.mkdir(parents=True, exist_ok=True)
     now = datetime.now(timezone.utc).replace(microsecond=0).isoformat()
     artifact_text = artifact.read_text(encoding="utf-8")
+    # L0 remains a single human approval.  Before recording that approval, build
+    # the canonical PRD in memory from the mini-prd plus durable intake matrix.
+    # A missing/placeholder matrix fails before ReviewRecord, audit, anchor, or
+    # any status mutation is written.
+    l0_projection: tuple[str, dict] | None = None
+    if decision == "approve" and item["id"] == "mini-prd" and tier_for_req(req_dir) == "L0":
+        try:
+            l0_projection = build_projection(artifact, artifact_text, reviewer=reviewer, confirmed_at=now)
+        except (OSError, ValueError) as projection_err:
+            print(f"ERROR: cannot project L0 mini-prd into canonical PRD: {projection_err}", file=sys.stderr)
+            return 1
     artifact_hash = artifact_content_hash(artifact_text)
     artifact_meta = re.search(r"(?m)^version:\s*[\"']?([^\s\"']+)", artifact_text)
     artifact_version = artifact_meta.group(1) if artifact_meta else "unknown"
@@ -658,11 +797,42 @@ def review(req_dir: Path, item: dict, decision: str, reviewer: str, reviewer_id:
     text = re.sub(r"(?m)^status:\s*\S+", f"status: {target_status}", text, count=1)
     if re.search(r"(?m)^reviewer:", text):
         text = re.sub(r"(?m)^reviewer:.*$", f"reviewer: {reviewer}", text, count=1)
+    else:
+        # B1 fix: templates without a reviewer field (e.g. feasibility-report /
+        # project-scope frontmatter) would otherwise stay reviewer-less after
+        # approval, tripping branch_validator's confirmed.no_valid_reviewer and
+        # forcing a full reflow cycle.  Always stamp the real reviewer on review.
+        text = re.sub(r"(?m)^(status:\s*\S+)$", f"\\1\nreviewer: {reviewer}", text, count=1)
     if re.search(r"(?m)^reviewed_at:", text):
         text = re.sub(r"(?m)^reviewed_at:.*$", f"reviewed_at: {now}", text, count=1)
     if decision == "approve" and re.search(r"(?m)^confirmed_at:", text):
         text = re.sub(r"(?m)^confirmed_at:.*$", f"confirmed_at: {now}", text, count=1)
     artifact.write_text(text, encoding="utf-8")
+    if l0_projection is not None:
+        projection_path = req_dir / "003-prd-output" / "prd.md"
+        try:
+            write_projection(
+                artifact,
+                projection_path,
+                req_dir / "003-prd-output" / "prd-assembly-manifest.json",
+                reviewer=reviewer,
+                confirmed_at=now,
+                projection=l0_projection,
+            )
+            projection_meta = read_frontmatter(projection_path)
+            hash_anchor.record_anchor(
+                req_dir,
+                artifact=str(projection_path.relative_to(req_dir).as_posix()),
+                artifact_id=projection_meta.get("artifact_id") or "prd-assembly",
+                reviewer=reviewer,
+                review_record=str(record.relative_to(req_dir).as_posix()),
+                sha256=artifact_content_hash(projection_path.read_text(encoding="utf-8")),
+            )
+        except OSError as projection_err:
+            # The projection was fully preflighted.  A filesystem failure is still
+            # surfaced loudly rather than claiming an L0 delivery completed.
+            print(f"ERROR: failed to publish L0 canonical PRD projection: {projection_err}", file=sys.stderr)
+            return 1
     print(f"Recorded {decision}: {record.relative_to(req_dir)}")
     return 0 if decision == "approve" else 2
 
@@ -814,8 +984,10 @@ def main() -> int:
         )
         init_parser.add_argument("--process-tier", required=True, choices=["L0", "L1", "L2"],
                                  help="Persist the REQ process tier in 00-input/intake-decision.md")
+        init_parser.add_argument("--difficulty", choices=["low", "medium", "high"], default=None,
+                                 help="Optional entry difficulty; medium/high show a non-authoritative tier recommendation")
         init_args = init_parser.parse_args(sys.argv[2:])
-        return init_requirement(init_args.name, init_args.root, init_args.process_tier)
+        return init_requirement(init_args.name, init_args.root, init_args.process_tier, init_args.difficulty)
     # E2E-001: `pipeline.py reviewer add <req_dir> --id <id> --name <name> --roles r1,r2`
     #          / `pipeline.py reviewer list <req_dir>` — 提供登记评审人的 CLI 入口，
     #          摆脱"手改 00-input/authorized-reviewers.json"的痛点。
@@ -833,11 +1005,16 @@ def main() -> int:
     parser.add_argument("--reviewer-id")
     parser.add_argument("--reviewer-role")
     parser.add_argument("--apply", action="store_true", help="reflow: actually flip downstream to superseded (default is dry-run)")
+    parser.add_argument("--no-cascade", action="store_true",
+                        help="reflow (B6): apply the change WITHOUT flipping downstream to superseded — "
+                             "for metadata/traceability-only fixes. A change record is still written for audit.")
     parser.add_argument("--comments", default="")
     parser.add_argument("--reason", default="", help="B12: required for reverse transitions (--decision changes); recorded in the change record")
     parser.add_argument("--json", action="store_true")
     parser.add_argument("--process-tier", choices=["L0", "L1", "L2"], default=None,
                         help="status/entry preview only; gate/review/reflow always use persisted intake tier")
+    parser.add_argument("--difficulty", choices=["low", "medium", "high"], default=None,
+                        help="entry only: low hides tier suggestion; medium/high show a human-review suggestion")
     args = parser.parse_args()
     if not args.req_dir.is_dir():
         print(f"ERROR: {args.req_dir} is not a directory", file=sys.stderr)
@@ -918,6 +1095,14 @@ def main() -> int:
             elif sum(entry_content_signals(args.req_dir).values()) < 2:
                 entry_blocked = "材料成熟度 L1：建议补料或 requirement-restate（需求复述）确认理解"
 
+        # 初始化时记录的难度是入口默认值；命令行参数只允许在只读 entry
+        # 预览中显式覆盖，不会改写 intake，也不会改变持久化档位。
+        persisted_difficulty = None
+        decision_path = args.req_dir / "00-input/intake-decision.md"
+        if decision_path.is_file():
+            persisted_difficulty = read_frontmatter(decision_path).get("difficulty_level")
+        difficulty = args.difficulty or persisted_difficulty
+        recommendation = tier_recommendation(args.req_dir, difficulty)
         print(json.dumps({
             "requirement": result["requirement"],
             "source_count": src_count,
@@ -936,6 +1121,7 @@ def main() -> int:
             "persisted_tier": persisted,
             "tier_preview": args.process_tier,
             "tier_source": "intake-decision" if (args.req_dir / "00-input/intake-decision.md").is_file() else "legacy-compat",
+            "difficulty_entry": recommendation,
         }, ensure_ascii=False, indent=2))
         return 0
     if args.action == "backfill":
@@ -957,7 +1143,9 @@ def main() -> int:
         print(json.dumps(result, ensure_ascii=False, indent=2))
         return 0 if result["ok"] else 1
     if args.action == "reflow":
-        results = {"work_item": item["id"], "impact": [], "applied": bool(args.apply), "superseded": []}
+        no_cascade = bool(getattr(args, "no_cascade", False))
+        results = {"work_item": item["id"], "impact": [], "applied": bool(args.apply),
+                   "superseded": [], "no_cascade": no_cascade}
         pending_updates: list[tuple[Path, str]] = []
         for downstream in work_items_for_tier(tier_for_req(args.req_dir)):
             if downstream["order"] > item["order"]:
@@ -967,13 +1155,20 @@ def main() -> int:
                     fm = re.search(r"(?m)^status:\s*[\"']?([\w-]+)", text)
                     status = fm.group(1) if fm else "unknown"
                     if status in ("confirmed", "ready_for_human_review"):
-                        action = "superseded" if args.apply else "will become superseded on apply"
+                        # B6: --no-cascade keeps downstream confirmed — the
+                        # change is metadata/traceability-only, so the existing
+                        # confirmations remain valid; only a change record is
+                        # written for audit.
+                        if no_cascade:
+                            action = "kept (no-cascade)"
+                        else:
+                            action = "superseded" if args.apply else "will become superseded on apply"
                         results["impact"].append({"id": downstream["id"], "status": status, "action": action})
-                        if args.apply:
+                        if args.apply and not no_cascade:
                             new_text = re.sub(r"(?m)^status:\s*\S+", "status: superseded", text, count=1)
                             pending_updates.append((dart, new_text))
                             results["superseded"].append(downstream["id"])
-        if args.apply and results["superseded"]:
+        if args.apply and (results["superseded"] or no_cascade):
             now = datetime.now(timezone.utc).replace(microsecond=0).isoformat()
             review_dir = args.req_dir / "99-review"
             review_dir.mkdir(parents=True, exist_ok=True)
@@ -988,15 +1183,19 @@ def main() -> int:
                 # B12: reverse transitions (`* → superseded`) carry the same
                 # audit fields as `--decision changes` (from/to/reason/changed_*).
                 f"- from_status: confirmed/ready_for_human_review",
-                f"- to_status: superseded",
+                f"- to_status: superseded" if not no_cascade else "- to_status: unchanged (no-cascade)",
                 f"- reason: {args.reason or 'reflow triggered by upstream change'}",
                 f"- changed_at: {now}",
                 f"- changed_by: reflow (machine-executed, human-initiated)",
-                f"- superseded: {', '.join(results['superseded'])}", "",
+                f"- superseded: {', '.join(results['superseded']) or 'none (no-cascade)'}", "",
                 "- decision_id: 待填写（DEC-NNN，对齐 src/templates/others/decision-record.md）",
                 "- decider: 待填写", "- rationale: 待填写", "",
-                "Downstream artifacts were flipped to `superseded`; they must be re-validated",
-                "after the earliest affected work item is re-confirmed.", "",
+                ("Downstream artifacts were flipped to `superseded`; they must be re-validated"
+                 "after the earliest affected work item is re-confirmed."
+                 if not no_cascade else
+                 "no-cascade: downstream confirmations kept valid (metadata/traceability-only fix);"
+                 "verify gate on the changed work item still passes."),
+                "",
             ])
             # Pre-write all outputs, then publish the audit event, then atomically
             # replace each artifact. A failed preflight or event append leaves all

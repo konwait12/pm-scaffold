@@ -1,6 +1,6 @@
 # 可点击原型技法参考（Prototype Techniques）
 
-> 来源吸收：Trae `interactive-demo-factory` 与 `flow2demo` 两个 skill 的成熟技法，以及用户自制 skill `pm-phase-4.5-prototype` 的「先出页面清单经人工确认、再生成单文件 HTML」分步流程，经适配后作为 page-design 的可选落地能力。
+> 本文将相关实践转化为本项目的可选方法，不引入外部运行时依赖。
 > 定位：page-design 产出页面骨架文本（页面与步骤描述表格）是权威；本文档提供"把文字需求（页面骨架 + 交互/业务规则）转成可点击 HTML 原型"的技法，原型是 UX 的落地产物（UX 与原型一体），不是替代文本规则。
 > 触发：当 P0 功能流程 ≥ 3 页、或涉及状态分支、或需要利益相关方评审视觉/交互时，生成可点击原型。**分两步走：先出页面清单经人工确认，确认后才生成单文件 HTML**；主流程与全部分支场景（含异常/边界态）都要覆盖。
 
@@ -121,7 +121,7 @@ requirements/REQ-XXX/99-review/support/prototype/
 
 ## 10. B 端 SaaS 审美自检（to B）
 
-> 来源吸收：PRD to Prototype skillhub 的"审美自检清单 + PC 端 SaaS 风格指引"，经适配后作为 to B 原型的视觉质量参考。仅当 page-design 生成 to B SaaS 原型时按需加载，不设全局闸门。
+> 本文将相关实践转化为本项目的可选方法，不引入外部运行时依赖。
 
 ### 10.1 PC 端 SaaS 风格指引
 

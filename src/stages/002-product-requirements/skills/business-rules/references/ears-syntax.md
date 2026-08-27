@@ -1,6 +1,6 @@
 # EARS 需求句式参考（EARS Syntax）
 
-> 来源吸收：Trae `ai-prd-writer` skill 的 EARS（Easy Approach to Requirements Syntax）句式与 REQ-ID 分类，适配为 business-rules 规则表述的统一句式标准。
+> 本文将相关实践转化为本项目的可选方法，不引入外部运行时依赖。
 > 定位：BR/VL/状态/异常等规则描述使用 EARS 五句式，消除歧义、提升可测试性，与 AC 的 Given/When/Then 互补（EARS 定义规则，GWT 定义验收）。
 
 ## 1. EARS 五种句式

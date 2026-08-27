@@ -1,6 +1,6 @@
 # DDD 设计指南（PRD → 领域设计交接）
 
-> 蒸馏来源：E2 `prd-to-ddd-design`（亲读核实，路径见 [prd-pm-skills-verified.md](../../../../../docs/prd-pm-skills-verified.md)）。
+> 本指南提供独立、可验证的领域交接提示；不依赖任何本地索引或特定工具。
 > 定位：与 `domain-mapping-hint.md`（信号→候选映射表）互补——本文档提供**从 PRD 到可实施 DDD 设计的 7 阶段方法**，作为研发接手 PRD 后的可选设计交接提示。
 > 触发：prd.md confirmed 后、研发开始领域建模/技术设计时按需加载。**advisory 级，不设闸门、不动流程引擎、不新增 work_item。**
 

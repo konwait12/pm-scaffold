@@ -10,7 +10,7 @@
 
 - 本文件只解决「已有内容怎么摆、怎么裁」；**不解决「缺什么内容」**——缺内容时不得自行补齐。
 - 缺内容 → 路由回最早受影响的 work item（Preflight/Clarify 已覆盖），或标 `待确认`（UNK-XXX / Q- 引用）。
-- 外部 skill 的「直接访谈用户 → 直接写 PRD」行为（discovery 提问、起草 schema、生成草稿）**不属于本项目**：本项目的访谈与生成发生在上游 12 个独立 work_item，prd-assembly 只做聚合 + 审计。
+- 外部 skill 的「直接访谈用户 → 直接写 PRD」行为（discovery 提问、起草 schema、生成草稿）**不属于本项目**：本项目的访谈与生成发生在上游 15 个独立 work_item（L2）/ 9 个（L1）/ 1 个（L0），prd-assembly 只做聚合 + 审计。
 
 ---
 
@@ -73,19 +73,24 @@
 
 ## 3. 上游产物 → PRD 章节映射表
 
-| PRD 章节（output-contract §0-§12） | 内容来源 | 外部 skill 对应章节 |
+| PRD 章节（output-contract §1-§11） | 内容来源 | 外部 skill 对应章节 |
 |---|---|---|
-| §1 项目背景与目标 | project-background-goal verbatim | Problem Statement |
-| §2 用户旅程与用户故事 | user-journey / user-stories verbatim | User Stories + Acceptance Criteria |
-| §3 功能流程与页面状态 | functional-flow / page-design / interaction-rules / state-machine verbatim | User Experience & Functionality |
-| §4 分功能描述（FEA/BR/IX/VL/EX/AC） | feature-list / functional-flow / business-rules / interaction-rules / validation-rules / exception-handling / acceptance-criteria verbatim | Requirements + IR/BR 规范 |
-| §5 按需章节（字段/埋点/依赖/未决） | 上游非空才落章 | Implementation（依赖部分） |
-| §6 追溯矩阵 G→ST→FEA→FUN→AC/BR | 机器生成（traceability_check） | — |
-| §7/§8 正反向追溯检查 | 机器生成 | — |
-| §9 不一致报告 | 交叉审计 + review-taxonomy 标签 | Risk Analysis（冲突侧） |
-| §10 事实与决定 | 各 work item 汇总（FACT/DECISION/ASSUMPTION） | Risks & Roadmap / Decision Log |
-| §11 Constitution Compliance | 6 条硬宪法检查 | — |
-| §12 验收依据与变更记录 | AC 基线 + 版本历史 | Acceptance Criteria |
+| §1 项目背景与目标（含立项依据 = 可行性分析摘要） | project-background-goal + feasibility-analysis | Problem Statement |
+| §2 项目范围（In/Out/Deferred/Conditional + 假设 + 依赖 + 风险姿态） | **project-scope verbatim**（**唯一上游**） | Non-Goals / Scope Baseline |
+| §3 用户与用户旅程 | user-journey / user-stories | User Stories + Acceptance Criteria |
+| §4 用户故事与优先级 | user-stories | User Stories + Acceptance Criteria |
+| §5 功能清单 | feature-list | Requirements |
+| §6 功能流程 | functional-flow | User Experience & Functionality |
+| §7 页面与体验 | page-design（L2 only） | User Experience & Functionality |
+| §8 交互规则 | interaction-rules（L2 only） | IR 规范 |
+| §9 业务规则（容器） | — | Requirements |
+| §9.1 计算与流程规则 | business-rules | — |
+| §9.2 字段清单（名称/类型/长度/必填/默认值/唯一性/来源） | **field-rules verbatim**（**唯一上游；L2 only**） | — |
+| §9.3 字段校验 | validation-rules；VL-XXX 行引用 field-rules 的 F-XXX | — |
+| §9.4 状态变化 | state-machine（L2 only） | — |
+| §9.5 异常处理与恢复 | exception-handling（L2 only） | — |
+| §10 验收标准 | acceptance-criteria | Acceptance Criteria |
+| §11 依赖与待决业务问题 | assembly 汇总（仅存在真实 Q-/UNK-/ISS-/DEC- 时） | — |
 
 ---
 

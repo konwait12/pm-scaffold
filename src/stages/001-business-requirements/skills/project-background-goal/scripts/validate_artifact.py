@@ -27,6 +27,7 @@ def _bootstrap_scripts() -> None:
 
 _bootstrap_scripts()
 from validation_errors import make_issue
+from product_quality import validate_quality_record
 
 
 REQUIRED_FRONTMATTER = {
@@ -192,6 +193,18 @@ def validate(path: Path) -> dict[str, object]:
             message=w,
             blocking=False,
         ))
+    quality_errors, quality_warnings = validate_quality_record(
+        text, required=(metadata.get("quality_contract_version") == "1" and status in {"ready_for_human_review", "confirmed"})
+    )
+    errors.extend(quality_errors)
+    warnings.extend(quality_warnings)
+    for message in quality_errors:
+        issues.append(make_issue(severity="HIGH", check_id="background.product_quality",
+                                 family="project_background_goal", location=str(path), message=message))
+    for message in quality_warnings:
+        issues.append(make_issue(severity="MEDIUM", check_id="background.product_quality",
+                                 family="project_background_goal", location=str(path), message=message,
+                                 blocking=False))
     return {"ok": not errors, "errors": errors, "warnings": warnings, "issues": issues}
 
 

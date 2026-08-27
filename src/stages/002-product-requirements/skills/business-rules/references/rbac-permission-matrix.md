@@ -1,6 +1,6 @@
 # RBAC 权限矩阵技法参考（RBAC Permission Matrix）
 
-> 来源吸收：Trae `product-design-0to1` skill Step 6.5「RBAC 权限矩阵」+ `prd-development` skill 的权限控制表，作为 business-rules 的可选 to B 落地能力。
+> 本文将相关实践转化为本项目的可选方法，不引入外部运行时依赖。
 > 定位：business-rules 产出的 BR-XXX 业务规则文本是权威；本文档提供"把权限规则结构化为功能权限矩阵 + 数据权限规则两张表"的技法，增强权限差异可见性。
 > 触发：当需求涉及多角色、权限差异、审批流或 to B 多租户场景时使用。**按需加载，不设全局闸门**。
 

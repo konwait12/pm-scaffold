@@ -1,0 +1,123 @@
+def tier_l1_html() -> str:
+    return r"""
+<section class="flow-card"><div class="tier-intro l1"><div class="lead"><h3>L1 主流程 · 受限标准交付 <span class="badge">L1 · 10 项</span></h3><p>9 个上游（含立项首项 FA + 范围基线 SCOPE）+ 1 次受控装配。页面设计 / 交互规则 / 字段规则 / 校验规则 / 状态机 / 异常处理 必须有具体不适用事实依据；一旦实际适用即升级 L2。</p></div><div class="out"><b>最终交付</b><code>prd.md</code> + <code>manifest</code><br>10 项已确认 · 来源块 · 哈希链</div></div>
+  <div class="legend"><span><i class="lg term"></i> 开始 / 结束</span><span><i class="lg"></i> 处理</span><span><i class="lg io"></i> 输入 / 输出</span><span><i class="lg dec"></i> 判断</span><span><i class="lg opt"></i> Hybrid 优化</span><span><i class="lg loop"></i> 分支 / 回流</span></div>
+<svg viewBox="0 0 1380 1180" xmlns="http://www.w3.org/2000/svg">
+  <defs><marker id="l1a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#555"/></marker><marker id="l1r" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#A23B3B"/></marker><marker id="l1o" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#92580A"/></marker></defs>
+  <rect x="495" y="20" width="390" height="50" rx="25" fill="#FEF3C7" stroke="#C98A1B" stroke-width="2"/><text x="690" y="51" text-anchor="middle" font-size="14" font-weight="700" fill="#92580A">开始 · 受限但可实施的需求</text>
+  <line x1="690" y1="70" x2="690" y2="112" stroke="#555" stroke-width="1.5" marker-end="url(#l1a)"/>
+  <rect x="410" y="114" width="560" height="86" rx="8" fill="#FFFCF2" stroke="#92580A" stroke-width="1.8" stroke-dasharray="6 4"/><text x="690" y="140" text-anchor="middle" font-size="13" font-weight="700" fill="#92580A">初始化 + 入口排除矩阵（迁移）</text><text x="690" y="160" text-anchor="middle" font-size="10.5" fill="#92580A">init --process-tier L1 + 写入 intake-decision.md</text><text x="690" y="178" text-anchor="middle" font-size="10.5" fill="#92580A">6 项 L2-only 能力必须逐项记录具体不适用事实 + 来源</text><text x="690" y="194" text-anchor="middle" font-size="10" fill="#A23B3B">缺一项事实依据 → 拒绝装配，升级 L2</text>
+  <line x1="690" y1="200" x2="690" y2="240" stroke="#555" stroke-width="1.5" marker-end="url(#l1a)"/>
+  <g font-size="11" fill="#222">
+    <rect x="20" y="244" width="200" height="68" rx="7" fill="#FFFCF2" stroke="#C98A1B"/><text x="120" y="266" text-anchor="middle" font-weight="700" font-size="12">① 可行性分析</text><text x="120" y="284" text-anchor="middle" fill="#666">feasibility-analysis</text><text x="120" y="301" text-anchor="middle" fill="#888" font-size="9.5">立项首项 · 4 维评估</text>
+    <rect x="232" y="244" width="200" height="68" rx="7" fill="#FFFCF2" stroke="#C98A1B"/><text x="332" y="266" text-anchor="middle" font-weight="700" font-size="12">② 业务背景与目标</text><text x="332" y="284" text-anchor="middle" fill="#666">background-goal</text><text x="332" y="301" text-anchor="middle" fill="#888" font-size="9.5">项目来源 / 目标</text>
+    <rect x="444" y="244" width="200" height="68" rx="7" fill="#FFFCF2" stroke="#C98A1B"/><text x="544" y="266" text-anchor="middle" font-weight="700" font-size="12">③ 项目范围</text><text x="544" y="284" text-anchor="middle" fill="#666">project-scope</text><text x="544" y="301" text-anchor="middle" fill="#888" font-size="9.5">In/Out/Def/Cond</text>
+    <rect x="656" y="244" width="200" height="68" rx="7" fill="#FFFCF2" stroke="#C98A1B"/><text x="756" y="266" text-anchor="middle" font-weight="700" font-size="12">④ 用户旅程</text><text x="756" y="284" text-anchor="middle" fill="#666">user-journey</text><text x="756" y="301" text-anchor="middle" fill="#888" font-size="9.5">触点 / 路径 / 异常</text>
+    <rect x="868" y="244" width="200" height="68" rx="7" fill="#FFFCF2" stroke="#C98A1B"/><text x="968" y="266" text-anchor="middle" font-weight="700" font-size="12">⑤ 用户故事</text><text x="968" y="284" text-anchor="middle" fill="#666">user-stories</text><text x="968" y="301" text-anchor="middle" fill="#888" font-size="9.5">角色 / Gherkin</text>
+    <rect x="1080" y="244" width="200" height="68" rx="7" fill="#FFFCF2" stroke="#C98A1B"/><text x="1180" y="266" text-anchor="middle" font-weight="700" font-size="12">⑥ 功能清单</text><text x="1180" y="284" text-anchor="middle" fill="#666">feature-list</text><text x="1180" y="301" text-anchor="middle" fill="#888" font-size="9.5">功能点 / 边界</text>
+  </g>
+  <path d="M120 312 H332 H544 H756 H968 H1180" fill="none" stroke="#555" stroke-width="1.5" marker-end="url(#l1a)"/>
+  <path d="M120 278 C40 278 40 410 40 410 H120" fill="none" stroke="#A23B3B" stroke-width="1.4" stroke-dasharray="6 4" marker-end="url(#l1r)"/><text x="-10" y="380" font-size="10" fill="#A23B3B" transform="translate(60 0)">不立项 · 退出</text>
+  <path d="M544 312 C544 360 120 360 120 312" fill="none" stroke="#92580A" stroke-width="1.3" stroke-dasharray="5 3" marker-end="url(#l1o)"/><text x="280" y="354" font-size="10" fill="#92580A">范围变化 → 回流 ① FA</text>
+  <g font-size="11" fill="#222">
+    <rect x="232" y="412" width="200" height="68" rx="7" fill="#FFFCF2" stroke="#C98A1B"/><text x="332" y="434" text-anchor="middle" font-weight="700" font-size="12">⑦ 功能流程</text><text x="332" y="452" text-anchor="middle" fill="#666">functional-flow</text><text x="332" y="469" text-anchor="middle" fill="#888" font-size="9.5">主路径 / 分支 / 跳转</text>
+    <rect x="444" y="412" width="200" height="68" rx="7" fill="#FFFCF2" stroke="#C98A1B"/><text x="544" y="434" text-anchor="middle" font-weight="700" font-size="12">⑧ 业务规则</text><text x="544" y="452" text-anchor="middle" fill="#666">business-rules</text><text x="544" y="469" text-anchor="middle" fill="#888" font-size="9.5">计算公式 / 阈值 / 边界</text>
+    <rect x="656" y="412" width="200" height="68" rx="7" fill="#FFFCF2" stroke="#C98A1B"/><text x="756" y="434" text-anchor="middle" font-weight="700" font-size="12">⑨ 验收标准</text><text x="756" y="452" text-anchor="middle" fill="#666">acceptance-criteria</text><text x="756" y="469" text-anchor="middle" fill="#888" font-size="9.5">Given/When/Then · 边界</text>
+  </g>
+  <path d="M1180 312 C1300 312 1300 446 856 446" fill="none" stroke="#555" stroke-width="1.5" marker-end="url(#l1a)"/>
+  <path d="M332 480 H544 H756" fill="none" stroke="#555" stroke-width="1.5" marker-end="url(#l1a)"/>
+  <line x1="544" y1="480" x2="544" y2="528" stroke="#555" stroke-width="1.5" marker-end="url(#l1a)"/>
+  <rect x="410" y="530" width="560" height="96" rx="8" fill="#F6F4FF" stroke="#654ACB" stroke-width="1.8" stroke-dasharray="6 4"/><text x="690" y="556" text-anchor="middle" font-size="13" font-weight="700" fill="#3A2E8F">⑩ PRD 汇总 · Hybrid REBI</text><text x="690" y="576" text-anchor="middle" font-size="10.5" fill="#555">9 个已确认上游 → manifest + 嵌入来源块</text><text x="690" y="595" text-anchor="middle" font-size="10.5" fill="#555">12 个 canonical 章节：§1–§6 / §8.1 / §10 填充业务内容</text><text x="690" y="611" text-anchor="middle" font-size="10" fill="#555">§7 / §8.2-§8.3 / §9 显示「本期不适用 + 承接事实」</text><text x="690" y="623" text-anchor="middle" font-size="10" fill="#A23B3B">状态：仅产出草稿，等待评审人二次确认</text>
+  <line x1="690" y1="626" x2="690" y2="666" stroke="#555" stroke-width="1.5" marker-end="url(#l1a)"/>
+  <rect x="410" y="668" width="560" height="80" rx="8" fill="#E6F9EE" stroke="#0F8A4A" stroke-width="1.8"/><text x="690" y="694" text-anchor="middle" font-size="13" font-weight="700" fill="#0F8A4A">每项闸门 → 人工评审 → 已确认</text><text x="690" y="714" text-anchor="middle" font-size="10.5" fill="#555">B3 收口表 · 问题清单保留</text><text x="690" y="732" text-anchor="middle" font-size="10" fill="#555">失败语义保持 100% · 评审记录 + 哈希锚点写入</text>
+  <line x1="690" y1="748" x2="690" y2="788" stroke="#555" stroke-width="1.5" marker-end="url(#l1a)"/>
+  <rect x="490" y="790" width="400" height="54" rx="27" fill="#E6F9EE" stroke="#0F8A4A" stroke-width="2"/><text x="690" y="822" text-anchor="middle" font-size="14" font-weight="700" fill="#0F8A4A">结束 · 交付 L1 PRD + manifest</text>
+  <rect x="1080" y="552" width="270" height="186" rx="8" fill="#FDF0F0" stroke="#E5A8A8" stroke-width="1.4"/><text x="1215" y="576" text-anchor="middle" font-size="12" font-weight="700" fill="#A23B3B">L1 升级判定（命中即停）</text><text x="1215" y="600" text-anchor="middle" font-size="10.5" fill="#7A2A2A">入口排除依据缺失</text><text x="1215" y="618" text-anchor="middle" font-size="10.5" fill="#7A2A2A">任一上游产生：</text><text x="1215" y="634" text-anchor="middle" font-size="10.5" fill="#7A2A2A">新增页面 / 新交互 / 新字段</text><text x="1215" y="650" text-anchor="middle" font-size="10.5" fill="#7A2A2A">新状态 / 新失败路径</text><text x="1215" y="674" text-anchor="middle" font-size="10.5" fill="#A23B3B">停止装配，升级 L2</text><text x="1215" y="700" text-anchor="middle" font-size="10" fill="#A23B3B" font-weight="700">回流机制：</text><text x="1215" y="718" text-anchor="middle" font-size="10.5" fill="#7A2A2A">已确认产物被变更 →</text><text x="1215" y="734" text-anchor="middle" font-size="10.5" fill="#7A2A2A">哈希差异 → 退回修改</text>
+  <path d="M1080 600 C990 600 990 246 1086 246" fill="none" stroke="#A23B3B" stroke-width="1.5" stroke-dasharray="7 4" marker-end="url(#l1r)"/>
+  <rect x="20" y="880" width="280" height="146" rx="8" fill="#FFF6E6" stroke="#C98A1B" stroke-width="1.4"/><text x="160" y="904" text-anchor="middle" font-size="12" font-weight="700" fill="#92580A">分支线图例</text><text x="40" y="932" font-size="10.5" fill="#555">① 不立项退出 · 红虚线 →</text><text x="40" y="954" font-size="10.5" fill="#555">② 范围变化回流 · 橙虚线 → ①</text><text x="40" y="976" font-size="10.5" fill="#555">③ 升级 L2 判定 · 红虚线回流 →</text><text x="40" y="998" font-size="10.5" fill="#555">④ 哈希重绑回路 · 已确认链不破</text>
+</svg>
+  <div class="opt-grid">
+    <div class="opt-card"><span class="opt-tag">HYBRID · 迁移</span><b>入口排除矩阵</b><div class="opt-body">L1 不只是「少做几项」。intake 必须给出 6 项 L2-only 能力（PD/IX/FIELDS/VL/STATE/EX）的具体不适用事实 + 来源；缺一即拒绝装配。</div></div>
+    <div class="opt-card"><span class="opt-tag">REBI · 哈希回绑</span><b>PRD 汇总同步重新绑定</b><div class="opt-body">L1 PRD 汇总一次性把 9 上游内容 SHA-256 写入 manifest + 嵌入 PRD 来源块；上游变更 → 自动回绑整条链。</div></div>
+    <div class="opt-card"><span class="opt-tag">分支回流</span><b>立项/范围/升级 三类回路</b><div class="opt-body">① 不立项退出（红）；② 范围变化回流 ① FA（橙）；③ 升级 L2 判定（红虚回流）；④ 哈希重绑回路（已确认链不破）。</div></div>
+  </div>
+</section>
+"""
+
+
+def tier_l2_html() -> str:
+    return r"""
+<section class="flow-card"><div class="tier-intro l2"><div class="lead"><h3>L2 主流程 · 完整状态化交付 <span class="badge">L2 · 15 项</span></h3><p>15 项 work item 全量启用，覆盖立项、范围、页面、交互、字段、校验、状态、异常处理、合规或多系统需求。一次性迁移建骨架 + 内容变更重绑哈希锚点贯穿全程。</p></div><div class="out"><b>最终交付</b><code>prd.md</code> + <code>manifest</code><br>15 项已确认 · 14 来源块 · 双向追溯</div></div>
+  <div class="legend"><span><i class="lg term"></i> 开始 / 结束</span><span><i class="lg"></i> 处理</span><span><i class="lg io"></i> 输入 / 输出</span><span><i class="lg dec"></i> 判断</span><span><i class="lg opt"></i> Hybrid 优化</span><span><i class="lg loop"></i> REBI / REFLOW</span></div>
+<svg viewBox="0 0 1500 1500" xmlns="http://www.w3.org/2000/svg">
+  <defs><marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#555"/></marker><marker id="arR" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#A23B3B"/></marker><marker id="arG" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#0F8A4A"/></marker><marker id="arA" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#92580A"/></marker></defs>
+  <rect x="590" y="14" width="320" height="44" rx="22" fill="#E6F9EE" stroke="#0F8A4A" stroke-width="2"/><text x="750" y="40" text-anchor="middle" font-size="14" font-weight="700" fill="#0F8A4A">开始 · 新需求 L2</text>
+  <line x1="750" y1="58" x2="750" y2="92" stroke="#555" stroke-width="1.5" marker-end="url(#ar)"/>
+  <rect x="590" y="94" width="320" height="64" rx="8" fill="#FFFCF2" stroke="#92580A" stroke-width="1.8" stroke-dasharray="6 4"/><text x="750" y="118" text-anchor="middle" font-size="13" font-weight="700" fill="#92580A">初始化：init --process-tier L2（迁移）</text><text x="750" y="138" text-anchor="middle" font-size="10.5" fill="#92580A">目录 + 摄入决策 + 15 项骨架一次到位</text>
+  <line x1="750" y1="158" x2="750" y2="192" stroke="#555" stroke-width="1.5" marker-end="url(#ar)"/>
+  <polygon points="710,194 790,194 780,250 700,250" fill="#EAF4FF" stroke="#5A9BD6" stroke-width="1.8"/><text x="750" y="218" text-anchor="middle" font-size="11.5" font-weight="700" fill="#1F5A8B">输入 · SRC-001/002/003</text><text x="750" y="236" text-anchor="middle" font-size="10" fill="#3A6E9E">BRD + 合规章节 + 用户手册</text>
+  <line x1="750" y1="250" x2="750" y2="286" stroke="#555" stroke-width="1.5" marker-end="url(#ar)"/>
+  <g font-size="10.5" fill="#222">
+    <rect x="20" y="288" width="200" height="68" rx="7" fill="#EEEFFF" stroke="#654ACB"/><text x="120" y="308" text-anchor="middle" font-weight="700" font-size="12">① 可行性分析</text><text x="120" y="326" text-anchor="middle" fill="#666">FA · feasibility</text><text x="120" y="343" text-anchor="middle" fill="#888" font-size="9.5">立项首项 · 4 维评估</text>
+    <rect x="232" y="288" width="200" height="68" rx="7" fill="#EEEFFF" stroke="#654ACB"/><text x="332" y="308" text-anchor="middle" font-weight="700" font-size="12">② 业务背景与目标</text><text x="332" y="326" text-anchor="middle" fill="#666">BG · background</text><text x="332" y="343" text-anchor="middle" fill="#888" font-size="9.5">项目来源 / 目标</text>
+    <rect x="444" y="288" width="200" height="68" rx="7" fill="#EEEFFF" stroke="#654ACB"/><text x="544" y="308" text-anchor="middle" font-weight="700" font-size="12">③ 项目范围</text><text x="544" y="326" text-anchor="middle" fill="#666">SCOPE · scope</text><text x="544" y="343" text-anchor="middle" fill="#888" font-size="9.5">In/Out/Def/Cond</text>
+    <rect x="656" y="288" width="200" height="68" rx="7" fill="#EEEFFF" stroke="#654ACB"/><text x="756" y="308" text-anchor="middle" font-weight="700" font-size="12">④ 用户旅程</text><text x="756" y="326" text-anchor="middle" fill="#666">UJ · journey</text><text x="756" y="343" text-anchor="middle" fill="#888" font-size="9.5">触点 / 路径</text>
+    <rect x="868" y="288" width="200" height="68" rx="7" fill="#EEEFFF" stroke="#654ACB"/><text x="968" y="308" text-anchor="middle" font-weight="700" font-size="12">⑤ 用户故事</text><text x="968" y="326" text-anchor="middle" fill="#666">US · stories</text><text x="968" y="343" text-anchor="middle" fill="#888" font-size="9.5">角色 / Gherkin</text>
+    <rect x="1080" y="288" width="200" height="68" rx="7" fill="#EEEFFF" stroke="#654ACB"/><text x="1180" y="308" text-anchor="middle" font-weight="700" font-size="12">⑥ 功能清单</text><text x="1180" y="326" text-anchor="middle" fill="#666">FE · features</text><text x="1180" y="343" text-anchor="middle" fill="#888" font-size="9.5">功能点 / 边界</text>
+    <rect x="1292" y="288" width="200" height="68" rx="7" fill="#EEEFFF" stroke="#654ACB"/><text x="1392" y="308" text-anchor="middle" font-weight="700" font-size="12">⑦ 功能流程</text><text x="1392" y="326" text-anchor="middle" fill="#666">FF · flow</text><text x="1392" y="343" text-anchor="middle" fill="#888" font-size="9.5">主路径 / 分支</text>
+  </g>
+  <path d="M120 356 H332 H544 H756 H968 H1180 H1392" fill="none" stroke="#555" stroke-width="1.4" marker-end="url(#ar)"/>
+  <path d="M120 322 C40 322 40 460 40 460 H120" fill="none" stroke="#A23B3B" stroke-width="1.4" stroke-dasharray="6 4" marker-end="url(#arR)"/><text x="-90" y="430" font-size="10" fill="#A23B3B" transform="translate(150 0)">不立项 · 退出</text>
+  <path d="M544 356 C544 400 120 400 120 322" fill="none" stroke="#92580A" stroke-width="1.3" stroke-dasharray="5 3" marker-end="url(#arA)"/><text x="280" y="394" font-size="10" fill="#92580A">范围变化 → 回流 ① FA</text>
+  <g font-size="10.5" fill="#222">
+    <rect x="20" y="402" width="200" height="68" rx="7" fill="#EEEFFF" stroke="#654ACB"/><text x="120" y="422" text-anchor="middle" font-weight="700" font-size="12">⑧ 页面设计</text><text x="120" y="440" text-anchor="middle" fill="#666">PD · page-design</text><text x="120" y="457" text-anchor="middle" fill="#888" font-size="9.5">页面 / 区块 / 字段</text>
+    <rect x="232" y="402" width="200" height="68" rx="7" fill="#EEEFFF" stroke="#654ACB"/><text x="332" y="422" text-anchor="middle" font-weight="700" font-size="12">⑨ 交互规则</text><text x="332" y="440" text-anchor="middle" fill="#666">IX · interaction</text><text x="332" y="457" text-anchor="middle" fill="#888" font-size="9.5">手势 / 反馈 / 动画</text>
+    <rect x="444" y="402" width="200" height="68" rx="7" fill="#EEEFFF" stroke="#654ACB"/><text x="544" y="422" text-anchor="middle" font-weight="700" font-size="12">⑩ 业务规则</text><text x="544" y="440" text-anchor="middle" fill="#666">BR · business</text><text x="544" y="457" text-anchor="middle" fill="#888" font-size="9.5">计算 / 阈值 / 边界</text>
+    <rect x="656" y="402" width="200" height="68" rx="7" fill="#EEEFFF" stroke="#654ACB"/><text x="756" y="422" text-anchor="middle" font-weight="700" font-size="12">⑪ 字段规则说明</text><text x="756" y="440" text-anchor="middle" fill="#666">FIELDS · field-rules</text><text x="756" y="457" text-anchor="middle" fill="#888" font-size="9.5">字段 / 类型 / 必填</text>
+    <rect x="868" y="402" width="200" height="68" rx="7" fill="#EEEFFF" stroke="#654ACB"/><text x="968" y="422" text-anchor="middle" font-weight="700" font-size="12">⑫ 校验规则</text><text x="968" y="440" text-anchor="middle" fill="#666">VL · validation</text><text x="968" y="457" text-anchor="middle" fill="#888" font-size="9.5">引用 F-XXX 校验</text>
+    <rect x="1080" y="402" width="200" height="68" rx="7" fill="#EEEFFF" stroke="#654ACB"/><text x="1180" y="422" text-anchor="middle" font-weight="700" font-size="12">⑬ 状态机</text><text x="1180" y="440" text-anchor="middle" fill="#666">STATE · state-machine</text><text x="1180" y="457" text-anchor="middle" fill="#888" font-size="9.5">状态 / 迁移 / 守卫</text>
+    <rect x="1292" y="402" width="200" height="68" rx="7" fill="#EEEFFF" stroke="#654ACB"/><text x="1392" y="422" text-anchor="middle" font-weight="700" font-size="12">⑭ 异常处理</text><text x="1392" y="440" text-anchor="middle" fill="#666">EX · exception</text><text x="1392" y="457" text-anchor="middle" fill="#888" font-size="9.5">失败兜底 / 文案</text>
+  </g>
+  <path d="M120 470 H332 H544 H756 H968 H1180 H1392" fill="none" stroke="#555" stroke-width="1.4" marker-end="url(#ar)"/>
+  <path d="M968 470 C460 440 380 1000 220 1000" fill="none" stroke="#92580A" stroke-width="1.3" stroke-dasharray="5 3" marker-end="url(#arA)"/><text x="500" y="700" font-size="10" fill="#92580A">无新字段 → 仅保留规则</text>
+  <rect x="540" y="498" width="420" height="74" rx="8" fill="#FFFCF2" stroke="#92580A" stroke-width="1.8" stroke-dasharray="6 4"/>
+  <text x="750" y="520" text-anchor="middle" font-size="13" font-weight="700" fill="#92580A">⑮ PRD 汇总 · 哈希锚点重绑</text>
+  <text x="750" y="540" text-anchor="middle" font-size="10.5" fill="#555">14 个 canonical 章节 + 14 个来源块</text>
+  <text x="750" y="557" text-anchor="middle" font-size="10" fill="#A23B3B">状态：仅产出草稿，等待评审人二次确认</text>
+  <line x1="750" y1="572" x2="750" y2="608" stroke="#555" stroke-width="1.5" marker-end="url(#ar)"/>
+  <polygon points="750,610 870,668 750,726 630,668" fill="#FEF9EC" stroke="#C98A1B" stroke-width="1.8"/><text x="750" y="656" text-anchor="middle" font-size="12" font-weight="700" fill="#92580A">机器闸门 · 就绪/完成定义</text><text x="750" y="674" text-anchor="middle" font-size="10" fill="#92580A">六态检查 · 双向追溯 · 哈希</text><text x="750" y="690" text-anchor="middle" font-size="10" fill="#92580A">B3 收口 · 问题清单保留</text>
+  <path d="M630 668 C280 668 220 290 16 322" fill="none" stroke="#A23B3B" stroke-width="1.5" stroke-dasharray="6 4" marker-end="url(#arR)"/><text x="160" y="608" font-size="10" fill="#A23B3B">否 · 修复后回到对应项</text>
+  <line x1="750" y1="726" x2="750" y2="768" stroke="#0F8A4A" stroke-width="1.5" marker-end="url(#arG)"/><text x="762" y="748" font-size="10" fill="#0F8A4A">是</text>
+  <rect x="590" y="770" width="320" height="66" rx="8" fill="#F0FBF5" stroke="#0F8A4A" stroke-width="1.8"/><text x="750" y="792" text-anchor="middle" font-size="13" font-weight="700" fill="#0F8A4A">人工评审关</text><text x="750" y="811" text-anchor="middle" font-size="10.5" fill="#0F8A4A">真实评审人按"通过 / 退回修改"</text><text x="750" y="826" text-anchor="middle" font-size="10" fill="#A23B3B">宪法 #1：AI 永远不会替你按</text>
+  <line x1="750" y1="836" x2="750" y2="874" stroke="#0F8A4A" stroke-width="1.5" marker-end="url(#arG)"/>
+  <rect x="590" y="876" width="320" height="64" rx="8" fill="#E6F9EE" stroke="#0F8A4A" stroke-width="1.8"/><text x="750" y="898" text-anchor="middle" font-size="13" font-weight="700" fill="#0F8A4A">评审记录 + 哈希 + 审计事件</text><text x="750" y="917" text-anchor="middle" font-size="10.5" fill="#555">15 个锚点 · 链条完整</text>
+  <line x1="750" y1="940" x2="750" y2="976" stroke="#555" stroke-width="1.5" marker-end="url(#ar)"/>
+  <polygon points="750,978 870,1036 750,1094 630,1036" fill="#FEF9EC" stroke="#C98A1B" stroke-width="1.8"/><text x="750" y="1024" text-anchor="middle" font-size="12" font-weight="700" fill="#92580A">15 项是否全部确认？</text><text x="750" y="1042" text-anchor="middle" font-size="10" fill="#92580A">完成标志=True · 工作流有效=True</text>
+  <path d="M630 1036 C220 1036 220 436 16 436" fill="none" stroke="#A23B3B" stroke-width="1.5" stroke-dasharray="6 4" marker-end="url(#arR)"/><text x="160" y="996" font-size="10" fill="#A23B3B">否 · 取下一工作项继续</text>
+  <line x1="750" y1="1094" x2="750" y2="1132" stroke="#555" stroke-width="1.5" marker-end="url(#ar)"/><text x="762" y="1114" font-size="10" fill="#0F8A4A">是</text>
+  <rect x="530" y="1134" width="440" height="64" rx="8" fill="#F6F4FF" stroke="#654ACB" stroke-width="1.8" stroke-dasharray="5 4"/><text x="750" y="1156" text-anchor="middle" font-size="13" font-weight="700" fill="#3A2E8F">prd.md + manifest + 哈希锚点 + 审计</text><text x="750" y="1175" text-anchor="middle" font-size="10.5" fill="#555">三关全过 · 一致性 · 注册表 · 测试</text>
+  <line x1="750" y1="1198" x2="750" y2="1238" stroke="#555" stroke-width="1.5" marker-end="url(#ar)"/>
+  <rect x="590" y="1240" width="320" height="44" rx="22" fill="#E6F9EE" stroke="#0F8A4A" stroke-width="2"/><text x="750" y="1268" text-anchor="middle" font-size="14" font-weight="700" fill="#0F8A4A">结束 · 交付 prd.md</text>
+  <rect x="1240" y="870" width="240" height="280" rx="8" fill="#FDF0F0" stroke="#A23B3B" stroke-width="1.5" stroke-dasharray="6 4"/>
+  <text x="1360" y="892" text-anchor="middle" font-size="12" font-weight="700" fill="#A23B3B">回流 / 哈希重绑 回路</text>
+  <text x="1360" y="916" text-anchor="middle" font-size="10" font-weight="700" fill="#A23B3B">① 已确认产物被变更时</text>
+  <text x="1252" y="934" text-anchor="middle" font-size="10" fill="#7A2A2A">  · 哈希差异被检测</text>
+  <text x="1252" y="950" text-anchor="middle" font-size="10" fill="#7A2A2A">  · 决策 = 退回修改</text>
+  <text x="1252" y="966" text-anchor="middle" font-size="10" fill="#7A2A2A">  · 状态回到草稿</text>
+  <text x="1252" y="982" text-anchor="middle" font-size="10" fill="#7A2A2A">  · 补追溯 / 修正</text>
+  <text x="1252" y="998" text-anchor="middle" font-size="10" fill="#7A2A2A">  · 重跑闸门 → 重新确认</text>
+  <text x="1252" y="1014" text-anchor="middle" font-size="10" fill="#7A2A2A">  · 哈希锚点重新绑定</text>
+  <text x="1360" y="1034" text-anchor="middle" font-size="10" font-weight="700" fill="#A23B3B">② PRD 汇总 哈希 重绑</text>
+  <text x="1252" y="1052" text-anchor="middle" font-size="10" fill="#7A2A2A">  · 来源块重新嵌入</text>
+  <text x="1252" y="1068" text-anchor="middle" font-size="10" fill="#7A2A2A">  · 装配清单重写</text>
+  <text x="1252" y="1084" text-anchor="middle" font-size="10" fill="#7A2A2A">  · 记录锚点重挂入链</text>
+  <text x="1252" y="1100" text-anchor="middle" font-size="10" fill="#7A2A2A">  · 范围变化 → 回流 ① FA</text>
+  <text x="1360" y="1122" text-anchor="middle" font-size="10.5" font-weight="700" fill="#0F8A4A">→ 链条保持完整不破</text>
+</svg>
+  <div class="opt-grid">
+    <div class="opt-card"><span class="opt-tag">HYBRID · 迁移</span><b>init 时一次性建好 15 项骨架</b><div class="opt-body">L2 不再逐项 init。骨架一次到位，由注册表驱动；后续只在每个工作项跑生成 → 闸门 → 人工评审关。</div></div>
+    <div class="opt-card"><span class="opt-tag">REBI · 产物</span><b>已确认产物内容变更 → 退回修改 → 重闸门 → 重确认</b><div class="opt-body">补追溯 / 修正 → 内容哈希改变 → 用「退回修改」决策写变更记录 → 重新跑闸门 → 重新由人工确认 → 记录锚点重新绑定。</div></div>
+    <div class="opt-card"><span class="opt-tag">REBI · PRD</span><b>PRD 汇总 哈希重绑 全链</b><div class="opt-body">上游哈希重绑后触发 PRD 汇总 闸门失败 → 重新嵌入来源块 → 重写 manifest 内容哈希 → 记录锚点重挂入链，链不破。</div></div>
+  </div>
+</section>
+"""

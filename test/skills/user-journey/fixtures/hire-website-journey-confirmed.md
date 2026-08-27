@@ -12,6 +12,7 @@ REQ-001 实际只完成 `project-background-goal`（`requirements/REQ-001-hire-w
 artifact_id: JS-HIRE-001
 version: v1.0
 status: ready_for_human_review
+quality_contract_version: "1"
 owner: PM-Office
 business_fact_owner: VP of Talent
 goal_decision_owner: VP of Talent
@@ -205,3 +206,12 @@ source_ids: BG-HIRE-002, SRC-001, SRC-002, SRC-003
 |---|---|---|---|
 | v0.1 | 初始候选（基于 BG-HIRE-002 confirmed v1.0） | 6 阶段生命周期 + 5 角色旅程 + 12 故事卡片 + 覆盖矩阵 | 已升级 v1.0 |
 | v1.0 | 人工评审确认 | CL-001（独立"沟通"阶段确认）；DEC-003（手机端 P2 澄清）；§10 下游交接填写 | **已确认** |
+## 产品质量增强记录
+
+| 项目 | 结论 | 知识状态 | 来源/位置 | 判断人 | 复核触发 |
+|---|---|---|---|---|---|
+| 受影响角色与结果 | 候选人完成申请，招聘方获得可评估资料 | FACT | SRC-001 §角色 | PM | 角色变化 |
+| 采用方案与被排除替代 | 采用分阶段旅程；不把功能列表提前写入旅程 | DECISION | BG-001 §范围 | PM | 范围变化 |
+| 价值-成本-风险 | 减少申请中断；成本和基线待业务确认 | UNKNOWN | BG-001 §目标 | 业务负责人 | 指标确认 |
+| 失败边界与回退 | 网络中断后允许恢复到上一步 | FACT | SRC-001 §流程 | PM | 恢复策略变化 |
+| 可证伪条件/停止条件 | 若访谈无法支持该痛点，停止扩展功能 | DECISION | UJ-001 §机会 | PM | 研究反证 |

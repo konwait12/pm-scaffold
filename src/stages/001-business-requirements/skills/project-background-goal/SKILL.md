@@ -108,6 +108,10 @@ description: Turn raw requirement materials into a sourced, human-confirmed busi
 | `references/background-4elements.md` | 背景四要素（用户+场景+问题+量化数据）写作指引 + 达标示例 | Generate 背景/目标章节、Audit/评审核对背景完整性时（按需） |
 | `src/shared/audit/evidence-four-dimension-check.md` | FACT 证据的来源/规模/匹配/方向检查 | Intake、Audit 与 Human Gate 前（必查） |
 
+## 产品质量增强（L1 必须）
+
+除背景事实和目标外，送审前填写“产品质量增强记录”：受影响角色与结果、采用方案与被排除替代、价值-成本-风险、失败边界与回退、可证伪条件/停止条件。每行标注知识状态、来源/位置、判断人和复核触发。缺少证据停在 `needs_user_input`，不以“提升体验”“风险可控”或 `N/A` 代替。
+
 ## 完成标准（Completion）
 
 所有承载需求的来源均已体现或被注明排除原因；背景、现状、问题、目标与方案彼此区分；实质性主张可追溯；阻断性未知阻止确认；且获得授权的人类批准了基线。

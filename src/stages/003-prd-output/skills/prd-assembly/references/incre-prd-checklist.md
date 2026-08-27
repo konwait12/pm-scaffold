@@ -1,6 +1,6 @@
 # PRD 增量协作高频遗漏检查清单
 
-> 蒸馏来源：A4 `incremental-prd-collaboration`（亲读核实，路径见 [prd-pm-skills-verified.md](../../../../../docs/prd-pm-skills-verified.md)）。
+> 本清单沉淀为独立、可验证的增量评审原则；不依赖任何本地索引或特定工具。
 > 用途：prd-assembly §Red-Review 阶段对 PRD 做"高频遗漏"压力测试，确保产物满足 L0-L2 共性质量要求。
 > 适用阶段：prd-assembly `Audit`（评审评审）之前。
 
@@ -108,7 +108,7 @@ PRD 描述的是**业务意图/规则/状态/文案/验收**，**不默认滑向
 ```
 PRD 完成后 → §Red-Review 阶段：
 1. 按 §2 逐项勾选 → 标记适用项与不适用项
-2. 不适用项须在 5 项内写明理由（"本期不适用，因为 X"）
+2. 不适用项须在适用性块中写明具体事实依据、来源、判断人和时间；禁止只写“本期不适用”或泛化 N/A
 3. 适用项未覆盖的 → 在 issue-record.md 登记 ISS-NNN（带 owner 与关闭条件）
 4. 全部勾完 + ISS 登记完 → 进入 §Human Gate
 ```

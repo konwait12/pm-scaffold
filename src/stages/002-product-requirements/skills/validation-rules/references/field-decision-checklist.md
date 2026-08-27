@@ -1,6 +1,6 @@
 # 字段决策清单技法参考（Field Decision Checklist）
 
-> 来源吸收：Trae `product-design-0to1` skill Step 5.5「字段决策清单 + AI 推断显式化」+ `prd-development` skill 的核心字段说明，作为 validation-rules 的可选 to B 落地能力。
+> 本文将相关实践转化为本项目的可选方法，不引入外部运行时依赖。
 > 定位：validation-rules 产出的 VL-XXX 字段定义文本是权威；本文档提供"把字段中非用户明示的细节显式化为决策清单，交人工拍板"的技法，确保 AI 推断可被人工裁决。
 > 触发：当字段涉及状态、权限、枚举、多租户归属等非用户明示细节时使用。**按需加载，不设全局闸门**。
 

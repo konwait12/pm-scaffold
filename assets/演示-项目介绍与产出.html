@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>需求管理脚手架 · 项目演示</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{
+    font-family:"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+    background:#f6f5f1;color:#1f2a37;line-height:1.7;font-size:15px;
+  }
+  .wrap{max-width:1000px;margin:0 auto;padding:32px 28px 70px;}
+
+  /* 顶部 */
+  .top{padding:20px 0 18px;border-bottom:1px solid #d9d6cd;margin-bottom:28px;}
+  .top .lbl{font-size:12px;color:#8a8578;letter-spacing:.06em;}
+  .top h1{font-size:26px;font-weight:700;margin-top:4px;color:#1f2a37;}
+  .top .lead{font-size:14.5px;color:#4a5568;margin-top:8px;max-width:780px;}
+  .top .lead b{color:#1f2a37;}
+
+  /* 区块 */
+  .sec{margin-top:36px;}
+  .sec-h{font-size:18px;font-weight:700;margin-bottom:4px;display:flex;align-items:baseline;gap:10px;}
+  .sec-h .n{font-size:13px;color:#a06a1f;font-weight:600;}
+  .sec-d{font-size:13.5px;color:#6b7280;margin-bottom:18px;}
+
+  /* 第一部分：导航图 */
+  .pipe{background:#fff;border:1px solid #e3e0d5;border-radius:10px;padding:22px 22px;}
+  .pipe-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;}
+  .pipe-cell{border:1px solid #e3e0d5;border-radius:8px;padding:14px 14px;background:#fcfbf7;}
+  .pipe-cell .pc-no{font-size:11px;color:#a06a1f;font-weight:700;letter-spacing:.08em;}
+  .pipe-cell .pc-t{font-size:15px;font-weight:700;margin-top:4px;}
+  .pipe-cell .pc-l{font-size:12.5px;color:#6b7280;margin-top:6px;line-height:1.7;}
+  .pipe-cell .pc-l .k{display:inline-block;background:#f4eedd;color:#8a5f1e;border-radius:3px;padding:0 5px;font-size:11px;margin-right:3px;}
+
+  .steps{margin-top:16px;border:1px solid #e3e0d5;border-radius:8px;overflow:hidden;}
+  .step{display:flex;align-items:flex-start;gap:12px;padding:9px 16px;border-bottom:1px solid #f0ede3;font-size:13.5px;}
+  .step:last-child{border-bottom:none;}
+  .step .sid{
+    flex:0 0 32px;height:24px;border-radius:4px;background:#f4eedd;color:#8a5f1e;
+    font-size:11.5px;font-weight:700;display:flex;align-items:center;justify-content:center;
+  }
+  .step .snm{flex:0 0 130px;font-weight:600;}
+  .step .sds{flex:1;color:#4a5568;font-size:13px;}
+
+  /* 第二部分：真实产出 */
+  .out{display:grid;grid-template-columns:1fr 1.4fr;gap:16px;}
+  .panel{background:#fff;border:1px solid #e3e0d5;border-radius:10px;padding:20px 20px;}
+  .panel h3{font-size:14.5px;font-weight:700;margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid #ece9de;}
+  .stat{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px dashed #ece9de;font-size:13.5px;}
+  .stat:last-child{border-bottom:none;}
+  .stat .k{color:#6b7280;}
+  .stat .v{font-weight:700;}
+  .stat .v small{font-weight:400;color:#8a8578;font-size:12px;}
+
+  /* 真实样张（业务规则） */
+  .real-sample{background:#fff;border:1px solid #e3e0d5;border-radius:10px;overflow:hidden;}
+  .real-sample .rs-head{
+    background:#1f2a37;color:#fff;padding:10px 16px;font-size:13px;display:flex;justify-content:space-between;align-items:center;
+  }
+  .real-sample .rs-head .rs-where{font-size:11.5px;color:#f4eedd;}
+  .real-sample table{width:100%;border-collapse:collapse;font-size:12.5px;}
+  .real-sample th{
+    background:#f9f7f0;text-align:left;padding:8px 10px;font-weight:700;color:#4a5568;
+    border-bottom:1px solid #e3e0d5;font-size:12px;
+  }
+  .real-sample td{padding:9px 10px;border-bottom:1px solid #f0ede3;vertical-align:top;line-height:1.65;}
+  .real-sample tr:last-child td{border-bottom:none;}
+  .real-sample .id{font-family:ui-monospace,Menlo,monospace;color:#a06a1f;font-weight:600;font-size:12px;}
+  .real-sample .src{font-size:11.5px;color:#8a8578;}
+  .real-sample .src b{color:#4a5568;}
+
+  /* 验收样张 */
+  .ac-sample{background:#fff;border:1px solid #e3e0d5;border-radius:10px;overflow:hidden;margin-top:14px;}
+  .ac-sample .ac-head{background:#2f7d5a;color:#fff;padding:10px 16px;font-size:13px;display:flex;justify-content:space-between;}
+  .ac-sample .ac-head .ac-where{font-size:11.5px;color:#e2efe9;}
+  .ac-sample table{width:100%;border-collapse:collapse;font-size:12.5px;}
+  .ac-sample th{background:#f9f7f0;text-align:left;padding:8px 10px;font-weight:700;color:#4a5568;border-bottom:1px solid #e3e0d5;font-size:12px;}
+  .ac-sample td{padding:9px 10px;border-bottom:1px solid #f0ede3;vertical-align:top;line-height:1.65;}
+  .ac-sample tr:last-child td{border-bottom:none;}
+  .ac-sample .id{font-family:ui-monospace,Menlo,monospace;color:#2f7d5a;font-weight:600;font-size:12px;}
+  .ac-sample .th{font-size:11.5px;color:#8a8578;}
+
+  /* 第三部分：密度与准确性 */
+  .quality{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+  .qbox{background:#fff;border:1px solid #e3e0d5;border-radius:10px;padding:20px;}
+  .qbox h3{font-size:14.5px;font-weight:700;margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid #ece9de;}
+  .qrow{padding:8px 0;border-bottom:1px dashed #ece9de;font-size:13.5px;display:flex;gap:10px;}
+  .qrow:last-child{border-bottom:none;}
+  .qrow .qk{flex:0 0 90px;font-weight:600;color:#1f2a37;}
+  .qrow .qv{flex:1;color:#4a5568;}
+  .qrow .qv .ok{color:#2f7d5a;font-weight:600;}
+  .qrow .qv .no{color:#a64a3a;font-weight:600;}
+
+  .compare{margin-top:14px;border:1px solid #e3e0d5;border-radius:8px;overflow:hidden;}
+  .compare-row{display:grid;grid-template-columns:1fr 1fr;}
+  .compare-cell{padding:12px 14px;font-size:12.5px;}
+  .compare-cell.bad{background:#faf7f3;}
+  .compare-cell.good{background:#f0f7f3;}
+  .compare-cell .ct{font-weight:700;margin-bottom:6px;font-size:13px;}
+  .compare-cell ul{list-style:none;color:#4a5568;}
+  .compare-cell li{padding:2px 0 2px 14px;position:relative;}
+  .compare-cell li::before{content:"";position:absolute;left:0;top:10px;width:6px;height:6px;border-radius:50%;}
+  .compare-cell.bad li::before{background:#a64a3a;}
+  .compare-cell.good li::before{background:#2f7d5a;}
+
+  /* 第四部分：分档 */
+  .tiers{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;}
+  .tier{background:#fff;border:1px solid #e3e0d5;border-radius:10px;padding:18px 16px;}
+  .tier .tn{font-size:12px;font-weight:700;letter-spacing:.04em;padding:3px 8px;border-radius:4px;display:inline-block;}
+  .tier.fast .tn{background:#e4f0ea;color:#2f7d5a;}
+  .tier.mid .tn{background:#f4eedd;color:#8a5f1e;}
+  .tier.full .tn{background:#f5e2dd;color:#a64a3a;}
+  .tier h4{font-size:15px;font-weight:700;margin:10px 0 6px;}
+  .tier p{font-size:12.8px;color:#6b7280;margin-bottom:8px;}
+  .tier .eg{font-size:12.5px;color:#1f2a37;padding:8px 10px;background:#fcfbf7;border-radius:5px;border-left:3px solid #a06a1f;}
+  .tier .eg b{color:#a06a1f;}
+
+  /* 第五部分：原则 */
+  .prin{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+  .pbox{background:#fff;border:1px solid #e3e0d5;border-radius:10px;padding:18px 20px;}
+  .pbox h3{font-size:14.5px;font-weight:700;margin-bottom:8px;}
+  .pbox p{font-size:13px;color:#4a5568;}
+  .pbox p b{color:#1f2a37;}
+
+  footer{margin-top:40px;text-align:center;font-size:12px;color:#8a8578;border-top:1px solid #d9d6cd;padding-top:20px;}
+
+  @media (max-width:760px){
+    .pipe-row,.out,.quality,.tiers,.prin,.compare-row{grid-template-columns:1fr;}
+    .step{flex-wrap:wrap;}
+    .step .snm{flex:0 0 100%;}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- 顶部 -->
+  <div class="top">
+    <div class="lbl">项目介绍 · 现场演示</div>
+    <h1>需求管理脚手架</h1>
+    <div class="lead">
+      把一个业务需求，按固定环节问清楚、逐条确认，产出一本<b>完整、可追溯、工程可直接开工</b>的需求说明书。
+      下面以<b>活动红点提醒</b>这个真实需求为例，看它怎么走完，产出什么。
+    </div>
+  </div>
+
+  <!-- 一、流程导航 -->
+  <div class="sec">
+    <div class="sec-h"><span class="n">一</span>需求怎么走完</div>
+    <div class="sec-d">三个阶段、十一个环节。每个环节都要业务负责人确认，才进下一步。</div>
+
+    <div class="pipe">
+      <div class="pipe-row">
+        <div class="pipe-cell">
+          <div class="pc-no">阶段一 · 业务需求</div>
+          <div class="pc-t">把"为什么做"问清楚</div>
+          <div class="pc-l">
+            <span class="k">背景目标</span><span class="k">用户旅程</span><span class="k">用户故事</span>
+            <br>目标 / 痛点 / 衡量指标 / 范围边界
+          </div>
+        </div>
+        <div class="pipe-cell">
+          <div class="pc-no">阶段二 · 产品需求</div>
+          <div class="pc-t">把"做什么"想清楚</div>
+          <div class="pc-l">
+            <span class="k">功能清单</span><span class="k">流程</span><span class="k">页面</span><span class="k">规则</span><span class="k">验收</span>
+            <br>功能点 / 主流程 / 异常 / 业务规则 / 验收口径
+          </div>
+        </div>
+        <div class="pipe-cell">
+          <div class="pc-no">阶段三 · 说明书产出</div>
+          <div class="pc-t">把全部内容汇总</div>
+          <div class="pc-l">
+            <span class="k">需求说明书</span>
+            <br>逐字内嵌上游内容，一本自包含文档
+          </div>
+        </div>
+      </div>
+
+      <div class="steps">
+        <div class="step"><div class="sid">01</div><div class="snm">项目背景与目标</div><div class="sds">为什么做、目标、衡量指标、约束</div></div>
+        <div class="step"><div class="sid">02</div><div class="snm">用户旅程</div><div class="sds">用户从接触到完成的全过程</div></div>
+        <div class="step"><div class="sid">03</div><div class="snm">用户故事</div><div class="sds">谁在什么场景下要什么结果</div></div>
+        <div class="step"><div class="sid">04</div><div class="snm">功能清单</div><div class="sds">全部功能点登记，含优先级</div></div>
+        <div class="step"><div class="sid">05</div><div class="snm">功能流程</div><div class="sds">主流程、分支、异常</div></div>
+        <div class="step"><div class="sid">06</div><div class="snm">页面与交互</div><div class="sds">页面结构、操作反馈、跳转</div></div>
+        <div class="step"><div class="sid">07</div><div class="snm">业务规则</div><div class="sds">触发条件、计算规则，逐条编号</div></div>
+        <div class="step"><div class="sid">08</div><div class="snm">数据校验</div><div class="sds">字段定义、校验规则</div></div>
+        <div class="step"><div class="sid">09</div><div class="snm">状态与异常</div><div class="sds">状态变化、异常处理</div></div>
+        <div class="step"><div class="sid">10</div><div class="snm">验收标准</div><div class="sds">每条功能可测：什么条件算通过</div></div>
+        <div class="step"><div class="sid">11</div><div class="snm">说明书汇总</div><div class="sds">以上内容逐字内嵌成一本 PRD</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 二、真实产出 -->
+  <div class="sec">
+    <div class="sec-h"><span class="n">二</span>产出什么（真实案例）</div>
+    <div class="sec-d">REQ-001「全平台活动红点提醒体系」走完整通道，产出 1 本 PRD。下面是实际数字与真实内容片段。</div>
+
+    <div class="out">
+      <div class="panel">
+        <h3>产出物概览</h3>
+        <div class="stat"><span class="k">文档规模</span><span class="v">约 2500 行</span></div>
+        <div class="stat"><span class="k">正文章节</span><span class="v">13 章</span></div>
+        <div class="stat"><span class="k">内嵌上游</span><span class="v">12 份产物 <small>全文逐字内嵌</small></span></div>
+        <div class="stat"><span class="k">业务规则</span><span class="v">15 条 <small>BR-001~015</small></span></div>
+        <div class="stat"><span class="k">验收标准</span><span class="v">20 条 <small>AC-001~020</small></span></div>
+        <div class="stat"><span class="k">功能流程</span><span class="v">4 张主流程</span></div>
+        <div class="stat"><span class="k">追溯关联</span><span class="v">192 条</span></div>
+        <div class="stat"><span class="k">校验</span><span class="v">96 项通过 <small>0 失败</small></span></div>
+      </div>
+
+      <div class="panel">
+        <h3>说明书目录（实际章节）</h3>
+        <div class="stat"><span class="k">01 项目背景与目标</span><span class="v" style="color:#2f7d5a">已填写</span></div>
+        <div class="stat"><span class="k">02 用户旅程</span><span class="v" style="color:#2f7d5a">已填写</span></div>
+        <div class="stat"><span class="k">03 用户故事与范围</span><span class="v" style="color:#2f7d5a">已填写</span></div>
+        <div class="stat"><span class="k">04 功能清单</span><span class="v" style="color:#2f7d5a">已填写</span></div>
+        <div class="stat"><span class="k">05 功能流程</span><span class="v" style="color:#2f7d5a">已填写</span></div>
+        <div class="stat"><span class="k">06 页面设计</span><span class="v" style="color:#2f7d5a">已填写</span></div>
+        <div class="stat"><span class="k">07 交互规则</span><span class="v" style="color:#2f7d5a">已填写</span></div>
+        <div class="stat"><span class="k">08 业务规则</span><span class="v" style="color:#2f7d5a">已填写</span></div>
+        <div class="stat"><span class="k">09 校验规则</span><span class="v" style="color:#2f7d5a">已填写</span></div>
+        <div class="stat"><span class="k">10 状态变化</span><span class="v" style="color:#2f7d5a">已填写</span></div>
+        <div class="stat"><span class="k">11 异常处理</span><span class="v" style="color:#2f7d5a">已填写</span></div>
+        <div class="stat"><span class="k">12 验收标准</span><span class="v" style="color:#2f7d5a">已填写</span></div>
+        <div class="stat"><span class="k">13 事实与决定</span><span class="v" style="color:#2f7d5a">已填写</span></div>
+      </div>
+    </div>
+
+    <!-- 真实业务规则样张 -->
+    <div class="real-sample" style="margin-top:16px;">
+      <div class="rs-head">
+        <span>说明书第 08 章 · 业务规则（节选 6/15 条）</span>
+        <span class="rs-where">来源：REQ-001 PRD §08</span>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th style="width:64px;">编号</th>
+            <th>规则描述（条件 + 行为）</th>
+            <th style="width:90px;">所属功能</th>
+            <th style="width:140px;">来源</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="id">BR-001</td>
+            <td>当活动开始时间距当前时间<b>恰为 24 小时</b>，且活动未取消/未改期，且该活动"DAY-1 提醒"开关开启时，系统为每位已预约用户创建一条未读红点记录（粒度：用户×活动×场景）；任一前置不满足则不触发。</td>
+            <td>FEA-001</td>
+            <td class="src">ST-001 / FF-001 §2.1 / B-01</td>
+          </tr>
+          <tr>
+            <td class="id">BR-005</td>
+            <td>当同一活动已存在 ≥1 个未读红点场景时，系统将新触发的场景<b>合并入既有红点</b>，不新增红点数量、不展示数量；当该活动尚无未读红点时，新建单一红点。</td>
+            <td>FEA-005</td>
+            <td class="src">ST-004 / Q-004 / B-02</td>
+          </tr>
+          <tr>
+            <td class="id">BR-006</td>
+            <td>当用户对某活动任一有效详情（活动详情/行程单详情/TKU Page）完成有效查看时，系统将该用户×该活动的<b>全部场景红点一次性清除</b>；已读写入失败则本次不清除、下次进入重试。</td>
+            <td>FEA-005</td>
+            <td class="src">ST-004 / Q-004 / EX-02</td>
+          </tr>
+          <tr>
+            <td class="id">BR-007</td>
+            <td>当用户进入活动详情/行程单详情/TKU Page 任一有效入口时，系统判定为有效查看：<b>进入即算、不计浏览时长</b>、不因快速退出撤销。</td>
+            <td>FEA-006</td>
+            <td class="src">ST-002 / Q-005 / CLS-FF-001</td>
+          </tr>
+          <tr>
+            <td class="id">BR-011</td>
+            <td>当用户未登录时，系统在三入口均<b>不显示红点、不攒积</b>、登录后不补显示；未登录的红点状态请求返回空集合。</td>
+            <td>FEA-008</td>
+            <td class="src">ST-010 / Q-003 / B-09</td>
+          </tr>
+          <tr>
+            <td class="id">BR-014</td>
+            <td>当活动取消/改期时，系统<b>即时清除</b>该活动全部相关红点、不残留误导客人；清除失败则重试。</td>
+            <td>FEA-010</td>
+            <td class="src">ST-008 / Q-008 / EX-05</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- 真实验收样张 -->
+    <div class="ac-sample">
+      <div class="ac-head">
+        <span>说明书第 12 章 · 验收标准（节选 4/20 条）</span>
+        <span class="ac-where">来源：REQ-001 PRD §12</span>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th style="width:64px;">编号</th>
+            <th>验收口径（Given / When / Then）</th>
+            <th style="width:120px;">量化阈值</th>
+            <th style="width:80px;">优先级</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="id">AC-001</td>
+            <td>Given 已预约该活动且已登录的用户，活动未取消，DAY-1 开关开启，距活动开始恰为 24 小时；<b>When</b> DAY-1 触发事件到达；<b>Then</b> 状态源为该用户×该活动创建 1 条未读红点记录</td>
+            <td class="th">创建 1 条</td>
+            <td class="th">P0</td>
+          </tr>
+          <tr>
+            <td class="id">AC-002</td>
+            <td>Given 距活动开始恰为 24 小时，事件推送接口不可用；<b>When</b> DAY-1 触发事件到达；<b>Then</b> 状态源不生成红点，三入口不报错（降级）</td>
+            <td class="th">新增 0 条 / 报错 0</td>
+            <td class="th">P0</td>
+          </tr>
+          <tr>
+            <td class="id">AC-003</td>
+            <td>Given 距活动开始超 24 小时或活动已开始/已结束；<b>When</b> DAY-1 触发事件到达；<b>Then</b> 状态源不创建任何红点记录</td>
+            <td class="th">新增 0 条</td>
+            <td class="th">P0</td>
+          </tr>
+          <tr>
+            <td class="id">AC-006</td>
+            <td>Given 同一活动已有 1 条未读红点；<b>When</b> 新场景触发；<b>Then</b> 红点总数仍为 1，不累加（聚合）</td>
+            <td class="th">总数 = 1</td>
+            <td class="th">P0</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- 三、密度与准确性 -->
+  <div class="sec">
+    <div class="sec-h"><span class="n">三</span>结果的密度与准确性</div>
+    <div class="sec-d">不仅要有内容，还得每一句都站得住。这是这套机制和"一页纸需求"最大的区别。</div>
+
+    <div class="quality">
+      <div class="qbox">
+        <h3>内容密度</h3>
+        <div class="qrow"><div class="qk">无空占位</div><div class="qv">每个章节都有实质内容，<span class="ok">不写"待补充"</span>凑数</div></div>
+        <div class="qrow"><div class="qk">逐条编号</div><div class="qv">规则、验收、异常全部带 ID（BR-001、AC-001）<span class="ok">可逐条引用</span></div></div>
+        <div class="qrow"><div class="qk">量化阈值</div><div class="qv">验收写"创建 1 条""新增 0 条"，<span class="ok">不写"体验要好"</span></div></div>
+        <div class="qrow"><div class="qk">边界明确</div><div class="qv">恰为 24h 触发、超 24h 不触发，<span class="ok">不写"提前一点"</span></div></div>
+      </div>
+
+      <div class="qbox">
+        <h3>内容准确性</h3>
+        <div class="qrow"><div class="qk">每条标来源</div><div class="qv">BR-001 来自 ST-001 / FF-001 §2.1 / B-01，<span class="ok">事后查得到</span></div></div>
+        <div class="qrow"><div class="qk">事实与决策区分</div><div class="qv">FCT 是事实、DEC 是决策，<span class="ok">不混为一谈</span></div></div>
+        <div class="qrow"><div class="qk">AI 推断显式标</div><div class="qv">AI 推断的内容标 AI_INFERENCE，<span class="ok">不假装是业务确认</span></div></div>
+        <div class="qrow"><div class="qk">不编造</div><div class="qv">信息不足处显式标"待确认"，<span class="no">不写一个编出来的数字</span></div></div>
+      </div>
+    </div>
+
+    <div class="compare">
+      <div class="compare-row">
+        <div class="compare-cell bad">
+          <div class="ct">常见的需求传递</div>
+          <ul>
+            <li>口头说一句"加个红点提醒"</li>
+            <li>规则"详见附件 / 看群里截图"</li>
+            <li>验收写"体验顺畅"</li>
+            <li>改版后旧文档失效，没人知道对错</li>
+            <li>工程按自己理解做，做错返工</li>
+          </ul>
+        </div>
+        <div class="compare-cell good">
+          <div class="ct">本项目的产出</div>
+          <ul>
+            <li>一本自包含说明书，10 万字</li>
+            <li>15 条业务规则逐条编号、带来源</li>
+            <li>20 条验收标准，每条可测可判</li>
+            <li>事实 / 决策 / 推断明确区分</li>
+            <li>工程直接照做，验收照测</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 四、分档 -->
+  <div class="sec">
+    <div class="sec-h"><span class="n">四</span>需求多大，流程多细</div>
+    <div class="sec-d">不搞一刀切。小改不空跑，大工程不漏项。</div>
+
+    <div class="tiers">
+      <div class="tier fast">
+        <span class="tn">快速通道</span>
+        <h4>小改 · 4 环节</h4>
+        <p>改文案、调配置、修小问题。登记 → 判断 → 起草 → 确认，当天定。</p>
+        <div class="eg">例子：<b>活动提醒文字调整</b></div>
+      </div>
+      <div class="tier mid">
+        <span class="tn">标准通道</span>
+        <h4>新功能 · 7 环节</h4>
+        <p>新增一个完整功能。覆盖背景、故事、清单、流程、规则、验收。</p>
+        <div class="eg">例子：<b>活动取消后自动提醒客人</b></div>
+      </div>
+      <div class="tier full">
+        <span class="tn">完整通道</span>
+        <h4>大工程 · 13 环节</h4>
+        <p>跨模块、多角色、涉数据合规。全链路逐步确认，不漏项。</p>
+        <div class="eg">例子：<b>全平台红点提醒体系</b></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 五、原则 -->
+  <div class="sec">
+    <div class="sec-h"><span class="n">五</span>不变的几条原则</div>
+    <div class="sec-d">流程会变、工具会变，这几条不会变。</div>
+
+    <div class="prin">
+      <div class="pbox">
+        <h3>机器不拍板</h3>
+        <p>系统只负责梳理、提问、整理。<b>所有确认由业务负责人完成</b>，决定权始终在人。</p>
+      </div>
+      <div class="pbox">
+        <h3>每步有人确认</h3>
+        <p>每个环节结束都要业务负责人点头，<b>确认了才进下一步</b>，不让问题悄悄传到后面。</p>
+      </div>
+      <div class="pbox">
+        <h3>产出自包含</h3>
+        <p>说明书不写"详见别处"。<b>该知道的全在文档里</b>，换人接手也能看明白。</p>
+      </div>
+      <div class="pbox">
+        <h3>每句话可追溯</h3>
+        <p>每条规则、每个决策都标来源与时间。<b>事后追问查得到</b>，不会变成"谁说的不知道"。</p>
+      </div>
+    </div>
+  </div>
+
+  <footer>需求管理脚手架 · 现场演示 · 可随时打开真实 PRD 对照</footer>
+</div>
+</body>
+</html>

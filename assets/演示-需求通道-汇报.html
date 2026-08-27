@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>需求怎么变成一本说明书 —— 演示</title>
+<style>
+  :root{
+    --ink:#1c2430;
+    --ink-soft:#4a5668;
+    --paper:#f7f5f0;
+    --card:#ffffff;
+    --line:#e3ded3;
+    --deep:#16324a;
+    --deep2:#0f2436;
+    --accent:#c8862d;
+    --accent-soft:#f3e3c8;
+    --green:#2e7d5b;
+    --green-soft:#e2efe9;
+    --amber:#b07a2a;
+    --amber-soft:#f6ecd9;
+    --red:#a64a3a;
+    --red-soft:#f5e2dd;
+    --shadow:0 10px 30px rgba(22,50,74,.10), 0 2px 8px rgba(22,50,74,.06);
+    --radius:14px;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{
+    font-family:"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+    background:var(--paper);
+    color:var(--ink);
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+  }
+  .grain::before{
+    content:"";position:fixed;inset:0;pointer-events:none;z-index:60;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E");
+  }
+
+  /* ---------- Hero ---------- */
+  header.hero{
+    background:
+      radial-gradient(1100px 420px at 85% -10%, rgba(200,134,45,.16), transparent 60%),
+      linear-gradient(160deg, var(--deep2) 0%, var(--deep) 62%, #1d3a55 100%);
+    color:#fdfbf7;
+    padding:64px 56px 56px;
+    position:relative;
+    overflow:hidden;
+  }
+  header.hero .kicker{
+    display:inline-block;font-size:13px;letter-spacing:.28em;color:var(--accent);
+    border:1px solid rgba(200,134,45,.5);border-radius:999px;padding:5px 16px;margin-bottom:26px;
+    background:rgba(200,134,45,.08);
+  }
+  header.hero h1{
+    font-size:44px;font-weight:700;letter-spacing:.01em;line-height:1.25;max-width:820px;
+  }
+  header.hero h1 .em{
+    color:var(--accent);position:relative;
+  }
+  header.hero p.sub{
+    margin-top:18px;font-size:17px;color:rgba(253,251,247,.78);max-width:720px;
+  }
+  .hero-deco{
+    position:absolute;right:-40px;top:10px;opacity:.10;pointer-events:none;
+    font-size:300px;line-height:1;font-weight:800;letter-spacing:-.06em;color:#fff;
+    transform:rotate(8deg);
+  }
+
+  /* ---------- Stage: three lanes ---------- */
+  .wrap{max-width:1180px;margin:0 auto;padding:44px 32px 80px;}
+  .section-title{
+    font-size:13px;letter-spacing:.22em;color:var(--accent);font-weight:700;margin-bottom:10px;
+  }
+  .section-head{font-size:26px;font-weight:700;margin-bottom:6px;}
+  .section-desc{color:var(--ink-soft);font-size:15px;margin-bottom:28px;}
+
+  .lanes{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;}
+  .lane{
+    background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:26px 24px;cursor:pointer;position:relative;transition:all .25s ease;
+    box-shadow:0 2px 6px rgba(22,50,74,.05);
+  }
+  .lane:hover{transform:translateY(-4px);box-shadow:var(--shadow);border-color:#c9c2b2;}
+  .lane.active{
+    border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft), var(--shadow);transform:translateY(-4px);
+  }
+  .lane .badge{
+    display:inline-flex;align-items:center;gap:8px;font-size:12px;font-weight:700;
+    padding:4px 12px;border-radius:999px;letter-spacing:.05em;margin-bottom:14px;
+  }
+  .lane .badge .dot{width:8px;height:8px;border-radius:50%;}
+  .lane .b-fast{background:var(--green-soft);color:var(--green);}
+  .lane .b-fast .dot{background:var(--green);}
+  .lane .b-mid{background:var(--amber-soft);color:var(--amber);}
+  .lane .b-mid .dot{background:var(--amber);}
+  .lane .b-full{background:var(--red-soft);color:var(--red);}
+  .lane .b-full .dot{background:var(--red);}
+  .lane h3{font-size:20px;font-weight:700;margin-bottom:6px;}
+  .lane .tag{color:var(--accent);font-size:13px;font-weight:600;margin-bottom:12px;}
+  .lane ul{list-style:none;font-size:14px;color:var(--ink-soft);}
+  .lane ul li{padding:4px 0 4px 22px;position:relative;}
+  .lane ul li::before{content:"";position:absolute;left:4px;top:13px;width:8px;height:8px;border-radius:2px;background:var(--accent-soft);border:1px solid var(--accent);}
+  .lane .foot{margin-top:18px;padding-top:14px;border-top:1px dashed var(--line);font-size:13px;color:var(--ink-soft);}
+  .lane .foot b{color:var(--ink);}
+  .lane .arrow-hint{
+    position:absolute;bottom:-14px;left:50%;transform:translateX(-50%) translateY(6px);
+    opacity:0;transition:all .25s ease;color:var(--accent);font-size:20px;background:var(--card);
+    border:1px solid var(--line);border-radius:999px;width:30px;height:30px;display:flex;align-items:center;justify-content:center;
+  }
+  .lane.active .arrow-hint{opacity:1;transform:translateX(-50%) translateY(0);}
+
+  /* ---------- Flow simulation ---------- */
+  .flow{display:none;margin-top:34px;background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;}
+  .flow.show{display:block;animation:fadeUp .4s ease;}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+  .flow-head{
+    display:flex;align-items:center;justify-content:space-between;gap:16px;
+    padding:20px 26px;background:linear-gradient(180deg,#fbfaf6,#f5f2ea);
+    border-bottom:1px solid var(--line);
+  }
+  .flow-head .fh-l{display:flex;align-items:center;gap:14px;}
+  .flow-head .fh-title{font-size:18px;font-weight:700;}
+  .flow-head .fh-sub{font-size:13px;color:var(--ink-soft);}
+  .flow-head .fh-count{font-size:13px;color:var(--ink-soft);white-space:nowrap;}
+  .flow-head .fh-count b{color:var(--accent);font-size:18px;}
+
+  .steps{padding:12px 26px 8px;}
+  .step{
+    display:flex;gap:16px;padding:16px 0;position:relative;opacity:.35;transition:all .4s ease;
+  }
+  .step.done{opacity:1;}
+  .step.playing .s-node{animation:pulseNode .7s ease;}
+  @keyframes pulseNode{
+    0%{transform:scale(1)}40%{transform:scale(1.25)}100%{transform:scale(1)}
+  }
+  .step::before{
+    content:"";position:absolute;left:17px;top:44px;bottom:-8px;width:2px;
+    background:linear-gradient(180deg,var(--accent),var(--accent-soft));
+  }
+  .step:last-child::before{display:none;}
+  .s-node{
+    flex:0 0 34px;width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+    font-size:14px;font-weight:700;background:var(--card);border:2px solid var(--line);color:var(--ink-soft);z-index:1;
+  }
+  .step.done .s-node{background:var(--deep);border-color:var(--deep);color:#fff;}
+  .step.done.actor .s-node{background:var(--accent);border-color:var(--accent);color:#fff;}
+  .s-body{flex:1;padding-top:2px;}
+  .s-title{font-size:15px;font-weight:700;}
+  .s-actor{display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--ink-soft);margin-top:3px;}
+  .s-actor .who{background:var(--accent-soft);color:#8a5f1e;border-radius:999px;padding:1px 10px;font-weight:600;}
+  .s-actor .who.ai{background:var(--deep2);color:#cfdce8;}
+  .s-actor .who.owner{background:var(--green-soft);color:var(--green);}
+  .s-out{font-size:13px;color:var(--ink-soft);margin-top:5px;padding-left:1px;}
+  .s-out b{color:var(--ink);font-weight:600;}
+  .s-check{
+    margin-top:8px;font-size:12.5px;color:var(--green);display:flex;gap:6px;align-items:flex-start;
+    opacity:0;max-height:0;overflow:hidden;transition:all .35s ease;
+  }
+  .step.done .s-check{opacity:1;max-height:40px;}
+  .s-check .tick{flex:0 0 16px;width:16px;height:16px;border-radius:50%;background:var(--green);color:#fff;font-size:11px;display:flex;align-items:center;justify-content:center;margin-top:1px;}
+
+  /* ---------- Output preview ---------- */
+  .outbook{
+    margin:8px 26px 26px;border:1px solid var(--line);border-radius:12px;overflow:hidden;
+    background:#fdfcf9;
+  }
+  .outbook .ob-head{
+    background:var(--deep);color:#fff;padding:14px 22px;display:flex;align-items:center;gap:12px;
+  }
+  .outbook .ob-head .ic{font-size:18px;}
+  .outbook .ob-title{font-size:15px;font-weight:700;}
+  .outbook .ob-sub{font-size:12px;color:rgba(255,255,255,.7);}
+  .outbook .ob-chapters{padding:10px 0;}
+  .ob-chapter{
+    display:flex;align-items:center;gap:12px;padding:8px 22px;font-size:13.5px;color:var(--ink);
+    border-bottom:1px dashed var(--line);
+  }
+  .ob-chapter:last-child{border-bottom:none;}
+  .ob-chapter .num{flex:0 0 26px;width:26px;height:26px;border-radius:8px;background:var(--accent-soft);color:#8a5f1e;font-weight:700;display:flex;align-items:center;justify-content:center;font-size:12px;}
+  .ob-chapter .t{flex:1;}
+  .ob-chapter .status-tag{font-size:11.5px;color:var(--green);font-weight:600;}
+
+  /* ---------- Bottom proof ---------- */
+  .proof{
+    margin-top:44px;display:grid;grid-template-columns:repeat(4,1fr);gap:22px;
+  }
+  .proof .item{
+    background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:22px;
+  }
+  .proof .item .ic{font-size:24px;margin-bottom:10px;}
+  .proof .item h4{font-size:15px;font-weight:700;margin-bottom:6px;}
+  .proof .item p{font-size:13px;color:var(--ink-soft);}
+
+  footer{
+    text-align:center;padding:34px;font-size:12.5px;color:#9aa1ad;border-top:1px solid var(--line);
+  }
+  .btn-reset{
+    margin-left:auto;background:var(--card);border:1px solid var(--line);color:var(--ink-soft);
+    padding:6px 16px;border-radius:999px;font-size:13px;cursor:pointer;transition:all .2s;
+  }
+  .btn-reset:hover{border-color:var(--accent);color:var(--accent);}
+
+  @media (max-width:900px){
+    .lanes{grid-template-columns:1fr;}
+    .proof{grid-template-columns:1fr 1fr;}
+    header.hero{padding:44px 26px;}
+    header.hero h1{font-size:32px;}
+  }
+</style>
+</head>
+<body class="grain">
+
+<header class="hero">
+  <div class="hero-deco">卷</div>
+  <span class="kicker">需求管理 · 汇报演示</span>
+  <h1>一个需求进来，<br>怎么变成一本<span class="em">谁都看得懂</span>的说明书</h1>
+  <p class="sub">点击下方三个真实业务例子，演示系统如何按需求的大小，自动安排合适的梳理过程——每个环节都有专人确认，最终交付一份自包含的需求说明书。</p>
+</header>
+
+<div class="wrap">
+
+  <!-- Three lanes -->
+  <div class="section-title">STEP 1 · 先看三条通道</div>
+  <div class="section-head">需求大小不同，梳理方式不同</div>
+  <div class="section-desc">系统先判断需求是「小改」「新功能」还是「大工程」，再决定花多大力气把它问清楚。点击任一条通道开始演示。</div>
+
+  <div class="lanes">
+    <div class="lane" data-lane="fast">
+      <span class="badge b-fast"><span class="dot"></span>快速通道</span>
+      <h3>小改 · 1 天</h3>
+      <div class="tag">例子：活动提醒文字调整</div>
+      <ul>
+        <li>改文案、调配置、修一处小问题</li>
+        <li>一份简版说明，关键人点个头</li>
+        <li>当天就能定，不拖</li>
+      </ul>
+      <div class="foot">梳理环节 <b>4 步</b> · 产出 <b>1 份简版说明书</b></div>
+      <div class="arrow-hint">▼</div>
+    </div>
+
+    <div class="lane" data-lane="mid">
+      <span class="badge b-mid"><span class="dot"></span>标准通道</span>
+      <h3>新功能 · 约 1 周</h3>
+      <div class="tag">例子：活动取消后自动提醒客人</div>
+      <ul>
+        <li>新增一个完整的小功能</li>
+        <li>走 7 个核心环节，每个环节有人确认</li>
+        <li>说明书覆盖来龙去脉与验收口径</li>
+      </ul>
+      <div class="foot">梳理环节 <b>7 步</b> · 产出 <b>1 份标准说明书</b></div>
+      <div class="arrow-hint">▼</div>
+    </div>
+
+    <div class="lane" data-lane="full">
+      <span class="badge b-full"><span class="dot"></span>完整通道</span>
+      <h3>大工程 · 数周</h3>
+      <div class="tag">例子：全平台红点提醒体系</div>
+      <ul>
+        <li>跨模块、多角色、涉数据与合规</li>
+        <li>全部 13 个环节逐步确认、逐步定稿</li>
+        <li>说明书自带对照表，工程可直接开工</li>
+      </ul>
+      <div class="foot">梳理环节 <b>13 步</b> · 产出 <b>1 份完整说明书</b></div>
+      <div class="arrow-hint">▼</div>
+    </div>
+  </div>
+
+  <!-- Flow simulation (filled by JS) -->
+  <div class="flow" id="flow">
+    <div class="flow-head">
+      <div class="fh-l">
+        <div class="fh-title" id="fhTitle">—</div>
+        <div class="fh-sub" id="fhSub">—</div>
+      </div>
+      <div class="fh-count">环节 <b id="fhCount">0</b> / <span id="fhTotal">0</span></div>
+      <button class="btn-reset" id="btnReset">重新演示</button>
+    </div>
+    <div class="steps" id="steps"></div>
+    <div class="outbook" id="outbook" style="display:none;">
+      <div class="ob-head">
+        <span class="ic">📗</span>
+        <div>
+          <div class="ob-title">需求说明书 · 已定稿</div>
+          <div class="ob-sub" id="obSub">—</div>
+        </div>
+      </div>
+      <div class="ob-chapters" id="obChapters"></div>
+    </div>
+  </div>
+
+  <!-- Bottom proof -->
+  <div class="section-title" style="margin-top:44px;">STEP 2 · 这套机制守住了什么</div>
+  <div class="proof">
+    <div class="item"><div class="ic">👤</div><h4>事事有人确认</h4><p>每个环节结束都要业务负责人明确点头，机器不替人做决定。</p></div>
+    <div class="item"><div class="ic">📚</div><h4>说明书自带一切</h4><p>最终文档不写"详见别处"，打开就能看懂，工程可直接照着做。</p></div>
+    <div class="item"><div class="ic">🧾</div><h4>来龙去脉可查</h4><p>每条规则、每个要求都标注出处与依据，事后追问查得到。</p></div>
+    <div class="item"><div class="ic">🛡️</div><h4>大改不闯祸</h4><p>复杂需求强制走完整通道，该想的问题一个都漏不掉。</p></div>
+  </div>
+
+</div>
+
+<footer>需求管理脚手架 · 汇报演示 · 以结果为导向 · 不涉及技术细节</footer>
+
+<script>
+const DATA = {
+  fast:{
+    title:"快速通道 · 活动提醒文字调整",
+    sub:"改一处提醒文案，不影响任何业务规则",
+    steps:[
+      {t:"需求登记", who:"owner", whoText:"业务提出人", out:"一句话说清：把『活动即将开始』改成『距活动开始不到1天』", check:"需求一句话能说清"},
+      {t:"影响判断", who:"ai", whoText:"系统判断", out:"仅 1 处文案展示位，无规则、无流程、无数据改动", check:"确认只动文案，不碰其他"},
+      {t:"简版说明", who:"ai", whoText:"系统起草", out:"写清改什么、为什么改、影响范围、怎么验收、改坏了怎么退回", check:"5 项必备内容齐全"},
+      {t:"负责人确认", who:"owner", whoText:"业务负责人", out:"业务负责人亲自确认后定稿，当天生效", check:"确认即定稿"}
+    ],
+    chapters:[
+      ["改什么","已填写"],["为什么改","已填写"],["影响范围","已填写"],["验收口径","已填写"],["回退方式","已填写"]
+    ]
+  },
+  mid:{
+    title:"标准通道 · 活动取消后自动提醒客人",
+    sub:"新增一个完整的小功能，7 个环节逐步确认",
+    steps:[
+      {t:"需求登记", who:"owner", whoText:"业务提出人", out:"活动取消后，已预约客人要收到提醒，别白跑一趟", check:"需求一句话能说清"},
+      {t:"背景与目标", who:"owner", whoText:"业务负责人", out:"为什么现在才做？目标是什么？衡量效果用什么指标", check:"目标可衡量"},
+      {t:"用户故事", who:"owner", whoText:"业务负责人", out:"谁在用？在什么场景？想要什么结果（客人视角）", check:"角色与场景明确"},
+      {t:"功能清单", who:"ai", whoText:"系统梳理", out:"拆成完整功能点：取消通知、通知渠道、已读状态……", check:"功能点无遗漏"},
+      {t:"流程走查", who:"ai", whoText:"系统梳理", out:"把『取消→通知→客人看到』整条路径走一遍，含异常情况", check:"主流程 + 异常路径都覆盖"},
+      {t:"业务规则", who:"owner", whoText:"业务负责人", out:"什么情况必须通知？什么情况不通知？通知发几次？", check:"规则逐条确认"},
+      {t:"汇总定稿", who:"owner", whoText:"业务负责人", out:"整理成标准说明书，附上验收标准，业务负责人终审", check:"验收标准可测，终审定稿"}
+    ],
+    chapters:[
+      ["项目背景与目标","已填写"],["用户故事","已填写"],["功能清单","已填写"],
+      ["功能流程","已填写"],["业务规则","已填写"],["验收标准","已填写"],["追溯对照表","已生成"]
+    ]
+  },
+  full:{
+    title:"完整通道 · 全平台红点提醒体系",
+    sub:"跨模块、多角色、涉数据合规，13 个环节逐步确认",
+    steps:[
+      {t:"需求登记", who:"owner", whoText:"业务提出人", out:"客人对活动信息感知弱，要建立一套完整的提醒体系", check:"需求一句话能说清"},
+      {t:"背景与目标", who:"owner", whoText:"业务负责人", out:"现状、目标、KPI、约束条件全部写明", check:"目标可衡量，约束明确"},
+      {t:"用户旅程", who:"ai", whoText:"系统梳理", out:"客人从受邀→预约→活动前→到场→反馈，全程走一遍", check:"旅程覆盖全生命周期"},
+      {t:"用户故事", who:"owner", whoText:"业务负责人", out:"客人/运营/顾问多方视角的故事与范围边界（做什么、不做什么）", check:"范围边界明确"},
+      {t:"功能清单", who:"ai", whoText:"系统梳理", out:"全部功能点登记造册，标注优先级", check:"功能点无遗漏"},
+      {t:"流程走查", who:"ai", whoText:"系统梳理", out:"主流程、分支流程、异常流程完整走查", check:"分支与异常全覆盖"},
+      {t:"页面与交互", who:"owner", whoText:"业务负责人", out:"提醒出现在哪些位置、点击后到哪、怎么反馈", check:"体验路径完整"},
+      {t:"业务规则", who:"owner", whoText:"业务负责人", out:"触发规则、聚合规则、配置规则逐条确认", check:"规则逐条确认"},
+      {t:"数据与校验", who:"owner", whoText:"业务负责人", out:"涉及哪些字段、数据怎么校验、合规要求逐项核实", check:"数据合规已核实"},
+      {t:"状态与异常", who:"ai", whoText:"系统梳理", out:"红点从出现到消失的状态变化，及各种失败情况处理", check:"状态与异常完整"},
+      {t:"验收标准", who:"owner", whoText:"业务负责人", out:"每项功能有可测的验收标准（什么条件下算通过）", check:"验收标准可测"},
+      {t:"汇总定稿", who:"ai", whoText:"系统整理", out:"全部内容整理成完整说明书，附追溯对照表", check:"内容齐全无遗漏"},
+      {t:"终审确认", who:"owner", whoText:"业务负责人", out:"业务负责人逐章终审，确认后定稿交付工程", check:"终审定稿"}
+    ],
+    chapters:[
+      ["项目背景与目标","已填写"],["用户旅程","已填写"],["用户故事","已填写"],["功能清单","已填写"],
+      ["功能流程","已填写"],["页面与交互","已填写"],["业务规则","已填写"],["数据与校验","已填写"],
+      ["状态与异常","已填写"],["验收标准","已填写"],["追溯对照表","已生成"]
+    ]
+  }
+};
+
+const laneEls = document.querySelectorAll('.lane');
+const flowEl = document.getElementById('flow');
+const stepsEl = document.getElementById('steps');
+const outbookEl = document.getElementById('outbook');
+const obChaptersEl = document.getElementById('obChapters');
+const btnReset = document.getElementById('btnReset');
+let playing = false;
+
+function playLane(key){
+  const d = DATA[key];
+  // mark lane active
+  laneEls.forEach(l=>l.classList.toggle('active', l.dataset.lane===key));
+  // heading
+  document.getElementById('fhTitle').textContent = d.title;
+  document.getElementById('fhSub').textContent = d.sub;
+  document.getElementById('fhTotal').textContent = d.steps.length;
+  document.getElementById('fhCount').textContent = 0;
+  outbookEl.style.display='none';
+  flowEl.classList.add('show');
+  // build steps
+  stepsEl.innerHTML = '';
+  d.steps.forEach((s,i)=>{
+    const el = document.createElement('div');
+    el.className='step';
+    const whoCls = s.who==='ai' ? 'ai' : (s.who==='owner' ? 'owner' : '');
+    el.innerHTML = `
+      <div class="s-node">${i+1}</div>
+      <div class="s-body">
+        <div class="s-title">${s.t}</div>
+        <div class="s-actor"><span class="who ${whoCls}">${s.whoText}</span> 负责</div>
+        <div class="s-out">${s.out}</div>
+        <div class="s-check"><span class="tick">✓</span><span>${s.check}</span></div>
+      </div>`;
+    stepsEl.appendChild(el);
+  });
+  // animate
+  const steps = stepsEl.querySelectorAll('.step');
+  playing = true;
+  steps.forEach((el,i)=>{
+    setTimeout(()=>{
+      el.classList.add('playing');
+      setTimeout(()=>{
+        el.classList.remove('playing');
+        el.classList.add('done');
+        document.getElementById('fhCount').textContent = i+1;
+        if(i===steps.length-1){ showBook(d); }
+      }, 650);
+    }, i*750);
+  });
+  // reset old timers on re-click
+  setTimeout(()=>{ playing=false; }, d.steps.length*750+900);
+}
+
+function showBook(d){
+  document.getElementById('obSub').textContent = d.title + ' · 全部环节确认完毕';
+  obChaptersEl.innerHTML = '';
+  d.chapters.forEach(([t,st])=>{
+    const el=document.createElement('div');
+    el.className='ob-chapter';
+    el.innerHTML = `<span class="num">✓</span><span class="t">${t}</span><span class="status-tag">${st}</span>`;
+    obChaptersEl.appendChild(el);
+  });
+  outbookEl.style.display='block';
+  outbookEl.scrollIntoView({behavior:'smooth', block:'nearest'});
+}
+
+laneEls.forEach(l=>{
+  l.addEventListener('click', ()=>playLane(l.dataset.lane));
+});
+btnReset.addEventListener('click', ()=>{
+  stepsEl.innerHTML='';
+  outbookEl.style.display='none';
+  flowEl.classList.remove('show');
+  laneEls.forEach(l=>l.classList.remove('active'));
+});
+</script>
+</body>
+</html>

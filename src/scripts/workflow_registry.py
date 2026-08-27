@@ -62,10 +62,17 @@ VALID_TIERS = {"L0", "L1", "L2"}
 L1_L2_ONLY_FIELDS = {
     "l2_only_pd": "PD 页面/原型",
     "l2_only_ix": "IX 交互规则",
+    "l2_only_fields": "FIELDS 字段规则",
     "l2_only_vl": "VL 校验规则",
     "l2_only_state": "STATE 状态机",
     "l2_only_ex": "EX 异常处理",
 }
+
+CANONICAL_PRD_APPLICABILITY = (
+    "项目背景", "项目范围", "用户旅程", "用户故事", "功能清单", "功能流程",
+    "原型/UX", "交互规则", "业务规则", "计算与流程规则", "字段清单", "校验规则",
+    "状态变化", "异常处理", "验收依据", "按需章节",
+)
 
 
 def persisted_tier(req_dir: Path) -> tuple[str, str]:
@@ -120,6 +127,55 @@ def l1_exclusion_evidence(req_dir: Path) -> dict[str, object]:
             or not factual_anchor
         ):
             issues.append(f"{label} requires not_applicable plus a specific fact in intake-decision.md")
+    return {"ok": not issues, "skipped": False, "issues": issues}
+
+
+def canonical_applicability_evidence(req_dir: Path) -> dict[str, object]:
+    """Validate the durable canonical-PRD applicability matrix for new REQs.
+
+    This is intentionally a final-delivery gate, not a replacement for a work
+    item's own validator.  Legacy REQs without the v1 marker remain readable;
+    newly initialized REQs must turn every template row into an auditable
+    decision before they can deliver a PRD.
+    """
+    decision = req_dir / "00-input" / "intake-decision.md"
+    if not decision.is_file():
+        return {"ok": True, "skipped": True, "issues": []}
+    meta = read_frontmatter(decision)
+    if meta.get("applicability_contract_version") != "1":
+        return {"ok": True, "skipped": True, "issues": []}
+    rows: dict[str, list[str]] = {}
+    for line in decision.read_text(encoding="utf-8").splitlines():
+        if not line.lstrip().startswith("|"):
+            continue
+        cells = [cell.strip() for cell in line.strip().strip("|").split("|")]
+        if len(cells) != 8 or cells[0] == "章节" or not cells[0].startswith("§"):
+            continue
+        key = re.sub(r"^§\d+(?:\.\d+)?\s*", "", cells[0]).strip()
+        if key in CANONICAL_PRD_APPLICABILITY:
+            rows[key] = cells
+    pending = {"", "待填写", "待判断", "待确认", "YYYY-MM-DD", "N/A", "NA", "暂无", "本期不做", "本期不适用"}
+    issues: list[str] = []
+    for title in CANONICAL_PRD_APPLICABILITY:
+        cells = rows.get(title)
+        if not cells:
+            issues.append(f"canonical PRD applicability matrix is missing {title}")
+            continue
+        status, basis, source, decided_by, decided_at, decision_text, review_trigger = cells[1:]
+        if status not in {"required", "conditional", "not_applicable"}:
+            issues.append(f"canonical PRD applicability {title} has invalid status")
+            continue
+        absent = [label for label, value in (
+            ("basis", basis), ("source", source), ("decided_by", decided_by),
+            ("decided_at", decided_at), ("review_trigger", review_trigger),
+        ) if value.strip() in pending]
+        if absent:
+            issues.append(f"canonical PRD applicability {title} is incomplete: {', '.join(absent)}")
+        if status == "not_applicable" and basis.strip() in {"N/A", "NA", "暂无", "本期不做", "本期不适用", "无"}:
+            issues.append(f"canonical PRD not_applicable {title} requires a factual basis")
+        if status == "conditional" and ("触发条件" not in decision_text or "当前判断" not in decision_text
+                                          or "待判断" in decision_text):
+            issues.append(f"canonical PRD conditional applicability {title} needs trigger and current judgment")
     return {"ok": not issues, "skipped": False, "issues": issues}
 
 
@@ -178,9 +234,20 @@ def resolve_work_item(work_item: str | None = None, wave: int | None = None) -> 
 
 
 def artifact_dirs(req_dir: Path, item: dict) -> list[Path]:
+    """Canonical + legacy artifact directories for a work_item.
+
+    ``legacy_artifact_dir`` may be a single string (pre-v7 merged layout, e.g.
+    ``02_journey-stories``) or a list (directory renumberings such as v7→v8
+    that moved ``02-user-journey`` → ``03-user-journey`` and kept confirmed
+    REQs at the old path). ``find_artifact`` searches them in order so existing
+    confirmed artifacts stay locatable after registry renumbering.
+    """
     dirs = [req_dir / item["artifact_dir"]]
-    if item.get("legacy_artifact_dir"):
-        dirs.append(req_dir / item["legacy_artifact_dir"])
+    legacy = item.get("legacy_artifact_dir")
+    if isinstance(legacy, str):
+        legacy = [legacy]
+    for path in legacy or []:
+        dirs.append(req_dir / path)
     return dirs
 
 

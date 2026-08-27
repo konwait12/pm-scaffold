@@ -6,6 +6,7 @@
 artifact_id: JS-TEST-EDGE
 version: v0.1
 status: ready_for_human_review
+quality_contract_version: "1"
 owner: PM-Office
 business_fact_owner: Test Owner
 goal_decision_owner: Test Owner
@@ -124,3 +125,12 @@ journey_summary: 4阶段×3角色×5 stories
 | 版本 | 变更 | 状态 |
 |---|---|---|
 | v0.1 | 初始 | 待确认 |
+## 产品质量增强记录
+
+| 项目 | 结论 | 知识状态 | 来源/位置 | 判断人 | 复核触发 |
+|---|---|---|---|---|---|
+| 受影响角色与结果 | 两类角色各有独立故事结果 | FACT | UJ-001 §角色 | PM | 角色变化 |
+| 采用方案与被排除替代 | 按角色拆分故事，不合并需求 | DECISION | ST-001 §覆盖 | PM | 故事合并 |
+| 价值-成本-风险 | 多角色价值明确，成本与风险仍需确认 | UNKNOWN | SRC-001 §证据 | PM | 研发评估 |
+| 失败边界与回退 | 候选人提交失败可恢复，招聘方筛选失败回队列 | FACT | UJ-001 §异常 | PM | 异常变化 |
+| 可证伪条件/停止条件 | 访谈无法支持角色差异时停止扩展 | DECISION | UJ-001 §机会 | PM | 研究反证 |

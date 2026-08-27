@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>入口与阶段一 · 需求管理脚手架</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{
+    font-family:"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+    background:#f6f5f1;color:#1f2a37;line-height:1.7;font-size:15px;
+  }
+  .wrap{max-width:1100px;margin:0 auto;padding:34px 28px 80px;}
+
+  /* 顶部 */
+  .top{padding:18px 0 22px;border-bottom:1px solid #d9d6cd;margin-bottom:30px;}
+  .top .lbl{font-size:12px;color:#8a8578;letter-spacing:.06em;}
+  .top h1{font-size:26px;font-weight:700;margin-top:6px;}
+  .top .lead{font-size:14.5px;color:#4a5568;margin-top:8px;max-width:780px;}
+
+  /* 区块 */
+  .sec{margin-top:36px;}
+  .sec-h{font-size:18px;font-weight:700;margin-bottom:6px;display:flex;align-items:baseline;gap:10px;}
+  .sec-h .n{font-size:13px;color:#a06a1f;font-weight:600;}
+  .sec-d{font-size:13.5px;color:#6b7280;margin-bottom:18px;}
+
+  /* 入口部分 */
+  .entry-box{background:#fff;border:1px solid #e3e0d5;border-radius:10px;padding:24px;}
+  .entry-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;}
+  .entry-cell{border:1px solid #e3e0d5;border-radius:8px;padding:16px;background:#fcfbf7;}
+  .entry-cell .e-no{font-size:11px;color:#a06a1f;font-weight:700;letter-spacing:.08em;}
+  .entry-cell .e-t{font-size:14.5px;font-weight:700;margin-top:3px;}
+  .entry-cell .e-d{font-size:12.8px;color:#6b7280;margin-top:8px;line-height:1.7;}
+
+  .scoring{margin-top:18px;background:#fff;border:1px solid #e3e0d5;border-radius:10px;overflow:hidden;}
+  .scoring .sc-h{background:#1f2a37;color:#fff;padding:10px 16px;font-size:13px;font-weight:600;}
+  .scoring table{width:100%;border-collapse:collapse;font-size:12.8px;}
+  .scoring th{background:#f9f7f0;text-align:left;padding:9px 14px;font-weight:600;color:#4a5568;border-bottom:1px solid #e3e0d5;font-size:12.5px;}
+  .scoring td{padding:8px 14px;border-bottom:1px solid #f0ede3;}
+  .scoring tr:last-child td{border-bottom:none;}
+  .scoring .score{font-family:ui-monospace,Menlo,monospace;color:#a06a1f;font-weight:700;}
+
+  .tier-decide{margin-top:18px;display:grid;grid-template-columns:repeat(3,1fr);gap:12px;}
+  .tier-card{background:#fff;border:1px solid #e3e0d5;border-radius:10px;padding:18px;}
+  .tier-card .tc-tag{font-size:11px;font-weight:700;letter-spacing:.06em;padding:3px 10px;border-radius:4px;display:inline-block;}
+  .tier-card.fast .tc-tag{background:#e4f0ea;color:#2f7d5a;}
+  .tier-card.mid .tc-tag{background:#f4eedd;color:#8a5f1e;}
+  .tier-card.full .tc-tag{background:#f5e2dd;color:#a64a3a;}
+  .tier-card h4{font-size:14.5px;font-weight:700;margin:10px 0 6px;}
+  .tier-card p{font-size:12.8px;color:#6b7280;}
+  .tier-card .tc-num{margin-top:10px;padding:8px 10px;background:#fcfbf7;border-radius:5px;font-size:12.5px;color:#1f2a37;}
+  .tier-card .tc-num b{color:#a06a1f;}
+
+  /* 阶段一导航 */
+  .stage1{background:#1f2a37;color:#fff;border-radius:10px;padding:22px 24px;margin-top:18px;}
+  .stage1 .s1-t{font-size:13px;color:#a06a1f;font-weight:700;letter-spacing:.08em;}
+  .stage1 h2{font-size:22px;font-weight:700;margin-top:4px;}
+  .stage1 .s1-d{font-size:13.5px;color:rgba(255,255,255,.75);margin-top:8px;max-width:780px;}
+  .stage1 .s1-stats{display:flex;gap:24px;margin-top:14px;flex-wrap:wrap;}
+  .stage1 .s1-stat{font-size:12.5px;color:rgba(255,255,255,.75);}
+  .stage1 .s1-stat b{color:#fff;font-size:16px;display:block;margin-top:2px;}
+
+  .pipeline{display:flex;gap:10px;margin-top:18px;}
+  .pipe-step{flex:1;background:#fff;border:1px solid #e3e0d5;border-radius:8px;padding:14px;}
+  .pipe-step .ps-no{font-size:11px;color:#a06a1f;font-weight:700;letter-spacing:.08em;}
+  .pipe-step .ps-n{font-size:14px;font-weight:700;margin-top:3px;}
+  .pipe-step .ps-s{font-size:11.5px;color:#a06a1f;margin-top:6px;font-family:ui-monospace,Menlo,monospace;}
+  .pipe-step .ps-d{font-size:12.3px;color:#6b7280;margin-top:6px;line-height:1.65;}
+
+  /* 技能详细卡片 */
+  .skill{background:#fff;border:1px solid #e3e0d5;border-radius:10px;margin-top:20px;overflow:hidden;}
+  .skill-head{display:flex;justify-content:space-between;align-items:flex-start;padding:18px 22px;background:linear-gradient(180deg,#fbfaf4,#f5f2ea);border-bottom:1px solid #e3e0d5;}
+  .skill-head .sh-l{flex:1;}
+  .skill-head .sh-no{font-size:11px;color:#a06a1f;font-weight:700;letter-spacing:.08em;}
+  .skill-head .sh-t{font-size:17px;font-weight:700;margin-top:3px;}
+  .skill-head .sh-s{font-size:12px;color:#a06a1f;margin-top:4px;font-family:ui-monospace,Menlo,monospace;}
+  .skill-head .sh-d{font-size:13px;color:#6b7280;margin-top:8px;line-height:1.7;max-width:680px;}
+  .skill-head .sh-r{text-align:right;font-size:12px;color:#6b7280;flex-shrink:0;padding-left:20px;}
+  .skill-head .sh-r b{display:block;font-size:14px;color:#1f2a37;margin-top:2px;}
+
+  .skill-body{padding:18px 22px;}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+  .panel-lite{background:#fcfbf7;border:1px solid #e3e0d5;border-radius:8px;padding:14px 16px;}
+  .panel-lite h4{font-size:13px;font-weight:700;margin-bottom:8px;color:#1f2a37;display:flex;align-items:center;gap:6px;}
+  .panel-lite p{font-size:12.5px;color:#4a5568;line-height:1.7;}
+  .panel-lite ul{list-style:none;margin-top:6px;}
+  .panel-lite li{padding:3px 0 3px 14px;position:relative;font-size:12.5px;color:#4a5568;}
+  .panel-lite li::before{content:"";position:absolute;left:2px;top:11px;width:6px;height:6px;border-radius:50%;background:#a06a1f;}
+
+  /* 8 阶段循环 */
+  .cycle{margin-top:14px;background:#fcfbf7;border:1px solid #e3e0d5;border-radius:8px;padding:14px 16px;}
+  .cycle h4{font-size:13px;font-weight:700;margin-bottom:10px;}
+  .cycle-row{display:grid;grid-template-columns:repeat(8,1fr);gap:6px;}
+  .cyc{background:#fff;border:1px solid #e3e0d5;border-radius:5px;padding:6px 6px;text-align:center;font-size:11px;}
+  .cyc .cyc-no{font-size:10px;color:#a06a1f;font-weight:700;}
+  .cyc .cyc-t{font-size:11.5px;font-weight:700;margin-top:1px;}
+  .cyc .cyc-c{font-size:10.5px;color:#6b7280;margin-top:2px;}
+
+  /* 产物组成 */
+  .output{margin-top:14px;background:#fcfbf7;border:1px solid #e3e0d5;border-radius:8px;padding:14px 16px;}
+  .output h4{font-size:13px;font-weight:700;margin-bottom:10px;}
+  .output table{width:100%;border-collapse:collapse;font-size:12.3px;}
+  .output th{background:#f9f7f0;text-align:left;padding:6px 10px;font-weight:600;color:#4a5568;font-size:11.5px;border-bottom:1px solid #e3e0d5;}
+  .output td{padding:6px 10px;border-bottom:1px solid #f0ede3;vertical-align:top;}
+  .output tr:last-child td{border-bottom:none;}
+  .output .sec-num{font-family:ui-monospace,Menlo,monospace;color:#a06a1f;font-weight:700;font-size:12px;width:40px;}
+  .output .req{width:46px;text-align:center;font-weight:700;font-size:11px;}
+  .output .req.y{color:#2f7d5a;}
+  .output .req.o{color:#8a5f1e;}
+
+  /* 参考文档清单 */
+  .refs{margin-top:14px;background:#fcfbf7;border:1px solid #e3e0d5;border-radius:8px;padding:14px 16px;}
+  .refs h4{font-size:13px;font-weight:700;margin-bottom:8px;}
+  .refs .ref-row{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;}
+  .ref{background:#fff;border:1px solid #e3e0d5;border-radius:4px;padding:6px 8px;font-size:11.5px;color:#4a5568;}
+  .ref .rf-n{color:#a06a1f;font-family:ui-monospace,Menlo,monospace;font-size:11px;font-weight:600;}
+  .ref .rf-c{font-size:10.5px;color:#6b7280;margin-top:2px;}
+
+  /* 反模式 */
+  .anti{margin-top:14px;background:#faf7f3;border:1px solid #e3e0d5;border-radius:8px;padding:14px 16px;}
+  .anti h4{font-size:13px;font-weight:700;margin-bottom:10px;color:#a64a3a;}
+  .anti-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+  .anti-col .ac-t{font-size:12px;font-weight:700;margin-bottom:6px;}
+  .anti-col.bad .ac-t{color:#a64a3a;}
+  .anti-col.good .ac-t{color:#2f7d5a;}
+  .anti-col ul{list-style:none;}
+  .anti-col li{padding:3px 0 3px 14px;position:relative;font-size:12.3px;color:#4a5568;}
+  .anti-col.bad li::before{content:"✕";position:absolute;left:0;top:3px;color:#a64a3a;font-size:11px;}
+  .anti-col.good li::before{content:"✓";position:absolute;left:0;top:3px;color:#2f7d5a;font-size:11px;}
+
+  /* L0 全流程一览 */
+  .l0-overview{background:#f0f7f3;border:1px solid #cfe1d6;border-radius:10px;padding:20px 22px;margin-top:24px;}
+  .l0-overview .l0-t{font-size:13px;font-weight:700;color:#2f7d5a;letter-spacing:.04em;}
+  .l0-overview h3{font-size:16px;font-weight:700;margin-top:4px;color:#1f2a37;}
+  .l0-overview .l0-d{font-size:13px;color:#4a5568;margin-top:8px;}
+  .l0-flow{margin-top:14px;background:#fff;border-radius:8px;padding:14px;display:flex;gap:8px;flex-wrap:wrap;}
+  .l0-f{background:#fcfbf7;border:1px solid #cfe1d6;border-radius:6px;padding:8px 12px;font-size:12.5px;flex:1;min-width:120px;}
+  .l0-f .lf-n{font-size:11px;color:#2f7d5a;font-weight:700;}
+  .l0-f .lf-t{font-weight:700;margin-top:2px;color:#1f2a37;font-size:13px;}
+  .l0-f .lf-s{font-size:11px;color:#6b7280;margin-top:2px;font-family:ui-monospace,Menlo,monospace;}
+
+  footer{margin-top:40px;text-align:center;font-size:12px;color:#8a8578;border-top:1px solid #d9d6cd;padding-top:20px;}
+
+  @media (max-width:760px){
+    .entry-row,.tier-decide,.grid2,.anti-grid,.ref-row{grid-template-columns:1fr;}
+    .cycle-row{grid-template-columns:repeat(2,1fr);}
+    .pipeline{flex-wrap:wrap;}
+    .skill-head{flex-direction:column;}
+    .skill-head .sh-r{text-align:left;padding-left:0;padding-top:10px;border-top:1px dashed #d9d6cd;margin-top:10px;}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- 顶部 -->
+  <div class="top">
+    <div class="lbl">项目演示 · 入口与阶段一</div>
+    <h1>需求管理脚手架</h1>
+    <div class="lead">需求怎么进来，按什么流程梳理，阶段一有哪些 skill，每个 skill 包含什么内容、按什么循环运行、产出什么产物。三档需求的差异。</div>
+  </div>
+
+  <!-- ============ 一、入口 ============ -->
+  <div class="sec">
+    <div class="sec-h"><span class="n">一</span>入口</div>
+    <div class="sec-d">需求从进入到定档，三个判断点由业务负责人确认。</div>
+
+    <div class="entry-box">
+      <div class="entry-row">
+        <div class="entry-cell">
+          <div class="e-no">步骤 1</div>
+          <div class="e-t">登记来源</div>
+          <div class="e-d">所有原始材料（邮件、BRD、会议纪要、聊天）登记为 SRC-001 起，每个来源标注类型、提供者、时间、位置。</div>
+        </div>
+        <div class="entry-cell">
+          <div class="e-no">步骤 2</div>
+          <div class="e-t">6 维评分</div>
+          <div class="e-d">按 6 个维度评估需求复杂度：影响模块数 / 角色数 / 状态复杂度 / 异常路径数 / 合规资金 / 改动体量，每维 0/1/2 分。</div>
+        </div>
+        <div class="entry-cell">
+          <div class="e-no">步骤 3</div>
+          <div class="e-t">用户选档</div>
+          <div class="e-d">AI 推荐档位（基于总分），但业务负责人必须显式选择 L0 / L1 / L2，写进 REQ frontmatter 持久化。</div>
+        </div>
+      </div>
+
+      <div class="scoring" style="margin-top:18px;">
+        <div class="sc-h">6 维评分表</div>
+        <table>
+          <thead>
+            <tr><th>维度</th><th>0 分</th><th>1 分</th><th>2 分</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>影响模块数</td><td>≤1 模块</td><td>2-3 模块同端</td><td>多端 / 多服务</td></tr>
+            <tr><td>角色数</td><td>单一角色</td><td>2 类角色</td><td>≥3 角色 / 含外部</td></tr>
+            <tr><td>状态复杂度</td><td>无 / 单状态翻转</td><td>2-3 状态</td><td>≥4 状态 / 状态机必备</td></tr>
+            <tr><td>异常路径</td><td>无</td><td>1-2 条</td><td>≥3 条 / 含合规资金</td></tr>
+            <tr><td>合规 / 资金</td><td>无</td><td>含数据合规</td><td>含资金 / 跨境 / PII</td></tr>
+            <tr><td>改动体量</td><td>≤1 文件 / ≤10 行</td><td>中等</td><td>大改（≥1 模块）</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="tier-decide">
+        <div class="tier-card fast">
+          <span class="tc-tag">L0 · 快速通道</span>
+          <h4>总分 0-4</h4>
+          <p>小改 / 文案 / 配置 / Bug 修复。单产物 skill 一气呵成。</p>
+          <div class="tc-num">环节数：<b>1</b>（mini-prd）</div>
+        </div>
+        <div class="tier-card mid">
+          <span class="tc-tag">L1 · 标准通道</span>
+          <h4>总分 5-8</h4>
+          <p>单模块新功能 / 单一主流程。复用现有 7 产物 + 工序裁剪。</p>
+          <div class="tc-num">环节数：<b>7</b>（BG/UJ/US/FL/FF/BR/AC + PRD）</div>
+        </div>
+        <div class="tier-card full">
+          <span class="tc-tag">L2 · 完整通道</span>
+          <h4>总分 9-12</h4>
+          <p>多角色 / 合规 / 状态机 / 多端。现有 13 产物全链路。</p>
+          <div class="tc-num">环节数：<b>13</b>（12 上游 + prd-assembly）</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ 二、阶段一 ============ -->
+  <div class="sec">
+    <div class="sec-h"><span class="n">二</span>阶段一：业务需求</div>
+    <div class="sec-d">在设计系统之前，先把业务需求说明白：为什么需要、谁参与、业务事件如何发展、什么结果最重要。阶段一是所有后续阶段的基础。</div>
+
+    <div class="stage1">
+      <div class="s1-t">阶段一目标</div>
+      <h2>把"为什么做"问清楚</h2>
+      <div class="s1-d">在设计任何功能、页面、字段之前，先说明业务需求：今天发生了什么、谁参与、什么结果最重要。</div>
+      <div class="s1-stats">
+        <div class="s1-stat">work_item 数<b>4</b></div>
+        <div class="s1-stat">下游依赖<b>阶段二全部 9 个 work_item</b></div>
+        <div class="s1-stat">进入条件<b>1 个已登记来源 + 1 个业务事实 owner</b></div>
+        <div class="s1-stat">核心问题<b>3 个：为什么、谁参与、达成什么</b></div>
+      </div>
+    </div>
+
+    <!-- 阶段一 4 步流程 -->
+    <div class="pipeline">
+      <div class="pipe-step">
+        <div class="ps-no">SKILL 1</div>
+        <div class="ps-n">需求重举</div>
+        <div class="ps-s">requirement-restate</div>
+        <div class="ps-d">用 stakeholder 原话复述需求，标 CONFLICT/UNKNOWN 并路由 issue-record。过程记录不进 PRD。</div>
+      </div>
+      <div class="pipe-step">
+        <div class="ps-no">SKILL 2</div>
+        <div class="ps-n">项目背景与目标</div>
+        <div class="ps-s">project-background-goal</div>
+        <div class="ps-d">把原始材料变成有来源、有人确认的业务背景与目标基线。</div>
+      </div>
+      <div class="pipe-step">
+        <div class="ps-no">SKILL 3</div>
+        <div class="ps-n">用户旅程</div>
+        <div class="ps-s">user-journey</div>
+        <div class="ps-d">绘制角色×阶段的旅程图，含触点、行为、痛点、情绪曲线、机会。</div>
+      </div>
+      <div class="pipe-step">
+        <div class="ps-no">SKILL 4</div>
+        <div class="ps-n">用户故事</div>
+        <div class="ps-s">user-stories</div>
+        <div class="ps-d">把旅程翻译成 As a/I want/so that 卡片 + MoSCoW + 范围基线。</div>
+      </div>
+    </div>
+
+    <!-- ============ Skill 1: requirement-restate ============ -->
+    <div class="skill">
+      <div class="skill-head">
+        <div class="sh-l">
+          <div class="sh-no">SKILL 1 · 能力型（output_kind=process）</div>
+          <div class="sh-t">需求重举（Requirement Restate）</div>
+          <div class="sh-s">requirement-restate</div>
+          <div class="sh-d">用 stakeholder 自己的话 verbatim 复述需求，建立"我们真的同意了吗"的检查点。过程记录（RR-NNN）<b>永远不进 PRD 正文</b>，只作为共享理解检查点喂给后续工作项。</div>
+        </div>
+        <div class="sh-r">阶段一最前<b>支持能力</b><br>必含于多源歧义场景</div>
+      </div>
+      <div class="skill-body">
+
+        <!-- 8 阶段循环 -->
+        <div class="cycle">
+          <h4>8 阶段循环（Preflight → Commit）</h4>
+          <div class="cycle-row">
+            <div class="cyc"><div class="cyc-no">1</div><div class="cyc-t">Preflight</div><div class="cyc-c">判定成熟度 L0-L4</div></div>
+            <div class="cyc"><div class="cyc-no">2</div><div class="cyc-t">Intake</div><div class="cyc-c">逐源 verbatim 提取</div></div>
+            <div class="cyc"><div class="cyc-no">3</div><div class="cyc-t">Think</div><div class="cyc-c">6 透镜分析</div></div>
+            <div class="cyc"><div class="cyc-no">4</div><div class="cyc-t">Clarify</div><div class="cyc-c">≤5 问题/轮</div></div>
+            <div class="cyc"><div class="cyc-no">5</div><div class="cyc-t">Generate</div><div class="cyc-c">填模板</div></div>
+            <div class="cyc"><div class="cyc-no">6</div><div class="cyc-t">Audit</div><div class="cyc-c">自审 + B3 收口</div></div>
+            <div class="cyc"><div class="cyc-no">7</div><div class="cyc-t">Human Gate</div><div class="cyc-c">stakeholder 确认</div></div>
+            <div class="cyc"><div class="cyc-no">8</div><div class="cyc-t">Commit</div><div class="cyc-c">pipeline review</div></div>
+          </div>
+        </div>
+
+        <!-- 产出组成 -->
+        <div class="output">
+          <h4>产物组成（requirement-restate.md）</h4>
+          <table>
+            <thead>
+              <tr><th style="width:40px;">§</th><th>章节</th><th>必填</th><th>说明</th></tr>
+            </thead>
+            <tbody>
+              <tr><td class="sec-num">1</td><td>项目元数据</td><td><span class="req y">✓</span></td><td>项目 ID / 名称 / 关联上游 / 评审版本</td></tr>
+              <tr><td class="sec-num">2</td><td>来源清单（SRC-IDs）</td><td><span class="req y">✓</span></td><td>每个来源标注类型 / 提供者 / 时间 / 位置</td></tr>
+              <tr><td class="sec-num">3</td><td>重述需求清单（RR-XXX）</td><td><span class="req y">✓</span></td><td>每行：restated / original_phrase / source / knowledge_state / confidence</td></tr>
+              <tr><td class="sec-num">4</td><td>冲突清单（CONFLICT → ISS-XXX）</td><td><span class="req y">✓</span></td><td>只标记不解决，路由 issue-record</td></tr>
+              <tr><td class="sec-num">5</td><td>未知清单（UNKNOWN → Q-XXX / ISS-XXX）</td><td><span class="req y">✓</span></td><td>阻塞项 + 建议提问 + 关联源</td></tr>
+              <tr><td class="sec-num">6</td><td>stakeholder 自查反馈位</td><td><span class="req y">✓</span></td><td>"是的/部分/不是" 三态勾选 + 备注 + 签名</td></tr>
+              <tr><td class="sec-num">7</td><td>来源追溯</td><td><span class="req y">✓</span></td><td>每条主张反向追踪到来源陈述</td></tr>
+              <tr><td class="sec-num">8</td><td>待确认问题</td><td><span class="req y">✓</span></td><td>集中存放 Q-XXX</td></tr>
+              <tr><td class="sec-num">9</td><td>Constitution Compliance</td><td><span class="req y">✓</span></td><td>自审记录</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- 参考文档 -->
+        <div class="refs">
+          <h4>加载参考文档（11 份）</h4>
+          <div class="ref-row">
+            <div class="ref"><div class="rf-n">thinking-framework.md</div><div class="rf-c">必读 · 思考透镜</div></div>
+            <div class="ref"><div class="rf-n">output-contract.md</div><div class="rf-c">Draft 前</div></div>
+            <div class="ref"><div class="rf-n">audit-checklist.md</div><div class="rf-c">Audit 前</div></div>
+            <div class="ref"><div class="rf-n">reviewer-checklist.md</div><div class="rf-c">Human Gate 前</div></div>
+            <div class="ref"><div class="rf-n">source-handling.md</div><div class="rf-c">Intake 时</div></div>
+            <div class="ref"><div class="rf-n">question-patterns.md</div><div class="rf-c">Clarify 提问时</div></div>
+            <div class="ref"><div class="rf-n">anti-patterns.md</div><div class="rf-c">Generate 对照</div></div>
+            <div class="ref"><div class="rf-n">gap-checklist-14d.md</div><div class="rf-c">14 维缺口扫描</div></div>
+            <div class="ref"><div class="rf-n">fact-ledger.md</div><div class="rf-c">多源冲突仲裁</div></div>
+            <div class="ref"><div class="rf-n">interview-synthesis.md</div><div class="rf-c">访谈原话提炼</div></div>
+            <div class="ref"><div class="rf-n">assets/template</div><div class="rf-c">过程记录模板</div></div>
+          </div>
+        </div>
+
+        <!-- 反模式 -->
+        <div class="anti">
+          <h4>反模式</h4>
+          <div class="anti-grid">
+            <div class="anti-col bad">
+              <div class="ac-t">不要</div>
+              <ul>
+                <li>用自己的话重述诉求</li>
+                <li>隐藏来源（"业务方说要…"）</li>
+                <li>在重述阶段解决冲突</li>
+                <li>把 AI 推断当 stakeholder 原话</li>
+                <li>让过程记录以 confirmed 交付</li>
+              </ul>
+            </div>
+            <div class="anti-col good">
+              <div class="ac-t">要做</div>
+              <ul>
+                <li>用 stakeholder 原话，能引用就引原文</li>
+                <li>始终引用 SRC-ID 具体到段落/时间戳</li>
+                <li>标 CONFLICT 并路由 issue-record</li>
+                <li>重述只含来源支持的内容</li>
+                <li>记录最高 ready_for_human_review</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ============ Skill 2: project-background-goal ============ -->
+    <div class="skill">
+      <div class="skill-head">
+        <div class="sh-l">
+          <div class="sh-no">SKILL 2 · 产物型</div>
+          <div class="sh-t">项目背景与目标（Project Background and Goal）</div>
+          <div class="sh-s">project-background-goal</div>
+          <div class="sh-d">把原始材料变成有来源、有人确认的业务背景与目标基线。说明需求为什么存在、今天发生了什么、什么问题重要、涉及哪些人、预期达成什么结果。</div>
+        </div>
+        <div class="sh-r">阶段一第一个产物<b>必跑</b><br>L1/L2 都在用</div>
+      </div>
+      <div class="skill-body">
+
+        <div class="cycle">
+          <h4>8 阶段循环</h4>
+          <div class="cycle-row">
+            <div class="cyc"><div class="cyc-no">1</div><div class="cyc-t">Preflight</div><div class="cyc-c">L0-L4 成熟度</div></div>
+            <div class="cyc"><div class="cyc-no">2</div><div class="cyc-t">Intake</div><div class="cyc-c">逐字提取来源</div></div>
+            <div class="cyc"><div class="cyc-no">3</div><div class="cyc-t">Think</div><div class="cyc-c">6 透镜</div></div>
+            <div class="cyc"><div class="cyc-no">4</div><div class="cyc-t">Clarify</div><div class="cyc-c">≤5 问题/轮</div></div>
+            <div class="cyc"><div class="cyc-no">5</div><div class="cyc-t">Generate</div><div class="cyc-c">填模板</div></div>
+            <div class="cyc"><div class="cyc-no">6</div><div class="cyc-t">Audit</div><div class="cyc-c">自审 + B3</div></div>
+            <div class="cyc"><div class="cyc-no">7</div><div class="cyc-t">Human Gate</div><div class="cyc-c">业务事实 owner</div></div>
+            <div class="cyc"><div class="cyc-no">8</div><div class="cyc-t">Commit</div><div class="cyc-c">pipeline review</div></div>
+          </div>
+        </div>
+
+        <div class="output">
+          <h4>产物组成（background-goal.md）</h4>
+          <table>
+            <thead>
+              <tr><th style="width:40px;">§</th><th>章节</th><th>必填</th><th>说明</th></tr>
+            </thead>
+            <tbody>
+              <tr><td class="sec-num">0</td><td>预检输入充分度判定</td><td><span class="req y">✓</span></td><td>L0-L4 成熟度标注</td></tr>
+              <tr><td class="sec-num">1</td><td>需求来源与触发</td><td><span class="req y">✓</span></td><td>SRC-ID 列表 + 触发背景</td></tr>
+              <tr><td class="sec-num">2</td><td>项目与需求背景</td><td><span class="req y">✓</span></td><td>业务环境 + 本需求定位 + 为什么现在需要</td></tr>
+              <tr><td class="sec-num">3</td><td>当前现状与已有做法</td><td><span class="req y">✓</span></td><td>现状 / 缺口 / 仍有效</td></tr>
+              <tr><td class="sec-num">4</td><td>核心问题与证据</td><td><span class="req y">✓</span></td><td>问题 + 影响 + 证据来源</td></tr>
+              <tr><td class="sec-num">5</td><td>目标与成功判断</td><td><span class="req y">✓</span></td><td>目标 ID + 未来期望 + 成功判断</td></tr>
+              <tr><td class="sec-num">6</td><td>角色与干系人</td><td><span class="req y">✓</span></td><td>角色 + 责任 + 决策权</td></tr>
+              <tr><td class="sec-num">7</td><td>约束与依赖</td><td><span class="req y">✓</span></td><td>硬约束 + 软约束 + 依赖</td></tr>
+              <tr><td class="sec-num">8</td><td>初步边界与非目标</td><td><span class="req y">✓</span></td><td>本期不做 + 暂搁</td></tr>
+              <tr><td class="sec-num">9</td><td>事实与决定</td><td><span class="req y">✓</span></td><td>FCT + DEC 表</td></tr>
+              <tr><td class="sec-num">10</td><td>假设 / AI 推断 / 未知 / 冲突</td><td><span class="req y">✓</span></td><td>6 态分类明确标注</td></tr>
+              <tr><td class="sec-num">11</td><td>待确认问题</td><td><span class="req y">✓</span></td><td>Q-XXX 列表</td></tr>
+              <tr><td class="sec-num">12</td><td>来源追溯</td><td><span class="req y">✓</span></td><td>每条主张反向追溯</td></tr>
+              <tr><td class="sec-num">13</td><td>Clarifications</td><td><span class="req y">✓</span></td><td>每个 session 一行</td></tr>
+              <tr><td class="sec-num">14</td><td>Constitution Compliance</td><td><span class="req y">✓</span></td><td>自审</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="refs">
+          <h4>加载参考文档（13 份）</h4>
+          <div class="ref-row">
+            <div class="ref"><div class="rf-n">thinking-framework.md</div><div class="rf-c">必读 · 思考透镜</div></div>
+            <div class="ref"><div class="rf-n">output-contract.md</div><div class="rf-c">Draft 前</div></div>
+            <div class="ref"><div class="rf-n">audit-checklist.md</div><div class="rf-c">Audit 前</div></div>
+            <div class="ref"><div class="rf-n">reviewer-checklist.md</div><div class="rf-c">Human Gate 前</div></div>
+            <div class="ref"><div class="rf-n">source-handling.md</div><div class="rf-c">Intake 时</div></div>
+            <div class="ref"><div class="rf-n">question-patterns.md</div><div class="rf-c">Clarify 提问</div></div>
+            <div class="ref"><div class="rf-n">anti-patterns.md</div><div class="rf-c">Generate 对照</div></div>
+            <div class="ref"><div class="rf-n">elicitation-techniques.md</div><div class="rf-c">稀疏来源时</div></div>
+            <div class="ref"><div class="rf-n">background-4elements.md</div><div class="rf-c">背景写作指引</div></div>
+            <div class="ref"><div class="rf-n">stakeholder-4class.md</div><div class="rf-c">角色分类</div></div>
+            <div class="ref"><div class="rf-n">stakeholder-power-interest.md</div><div class="rf-c">权力利益方格</div></div>
+            <div class="ref"><div class="rf-n">business-constraint-taxonomy.md</div><div class="rf-c">约束五分类</div></div>
+            <div class="ref"><div class="rf-n">value-complexity-matrix.md</div><div class="rf-c">目标优先级</div></div>
+            <div class="ref"><div class="rf-n">positioning-stxswot.md</div><div class="rf-c">定位 ST×SWOT</div></div>
+            <div class="ref"><div class="rf-n">planning-report.md</div><div class="rf-c">立项汇报</div></div>
+          </div>
+        </div>
+
+        <div class="anti">
+          <h4>反模式</h4>
+          <div class="anti-grid">
+            <div class="anti-col bad">
+              <div class="ac-t">不要</div>
+              <ul>
+                <li>把"我们需要一个 X 应用"当问题陈述</li>
+                <li>列 20 个目标不设优先级</li>
+                <li>复制粘贴 BRD 不标知识状态</li>
+                <li>BRD 提到什么角色就只写什么角色</li>
+                <li>一段话来源写 3 页背景</li>
+              </ul>
+            </div>
+            <div class="anti-col good">
+              <div class="ac-t">要做</div>
+              <ul>
+                <li>问"哪些可观察结果会改变"</li>
+                <li>3-5 个目标 + 可衡量基线 + 目标值</li>
+                <li>每条标 FACT/DECISION/AI_IN 等</li>
+                <li>从工作流推断角色并标 AI_INFERENCE</li>
+                <li>按输入密度调整输出规模</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ============ Skill 3: user-journey ============ -->
+    <div class="skill">
+      <div class="skill-head">
+        <div class="sh-l">
+          <div class="sh-no">SKILL 3 · 产物型</div>
+          <div class="sh-t">用户旅程（User Journey）</div>
+          <div class="sh-s">user-journey</div>
+          <div class="sh-d">通过角色视角绘制用户完成生命周期目标所经历的路程/阶段，识别每个阶段的行为、触点、痛点与情绪波动，将痛点转化为机会。</div>
+        </div>
+        <div class="sh-r">背景目标之后<b>必跑</b><br>三档都展开</div>
+      </div>
+      <div class="skill-body">
+
+        <div class="cycle">
+          <h4>8 阶段循环</h4>
+          <div class="cycle-row">
+            <div class="cyc"><div class="cyc-no">1</div><div class="cyc-t">Preflight</div><div class="cyc-c">L0-L4 成熟度</div></div>
+            <div class="cyc"><div class="cyc-no">2</div><div class="cyc-t">Intake</div><div class="cyc-c">逐角色提取</div></div>
+            <div class="cyc"><div class="cyc-no">3</div><div class="cyc-t">Think</div><div class="cyc-c">6 透镜</div></div>
+            <div class="cyc"><div class="cyc-no">4</div><div class="cyc-t">Clarify</div><div class="cyc-c">≤5 问题/轮</div></div>
+            <div class="cyc"><div class="cyc-no">5</div><div class="cyc-t">Generate</div><div class="cyc-c">旅程图</div></div>
+            <div class="cyc"><div class="cyc-no">6</div><div class="cyc-t">Audit</div><div class="cyc-c">完整性校验</div></div>
+            <div class="cyc"><div class="cyc-no">7</div><div class="cyc-t">Human Gate</div><div class="cyc-c">业务/产品 owner</div></div>
+            <div class="cyc"><div class="cyc-no">8</div><div class="cyc-t">Commit</div><div class="cyc-c">pipeline review</div></div>
+          </div>
+        </div>
+
+        <div class="output">
+          <h4>产物组成（user-journey.md）</h4>
+          <table>
+            <thead>
+              <tr><th style="width:40px;">§</th><th>章节</th><th>必填</th><th>说明</th></tr>
+            </thead>
+            <tbody>
+              <tr><td class="sec-num">0</td><td>预检输入充分度判定</td><td><span class="req y">✓</span></td><td>成熟度 + 上游链状态</td></tr>
+              <tr><td class="sec-num">1</td><td>业务生命周期分解</td><td><span class="req y">✓</span></td><td>阶段 / 描述 / 触发事件 / 涉及角色 / 来源</td></tr>
+              <tr><td class="sec-num">2</td><td>用户旅程图</td><td><span class="req y">✓</span></td><td>阶段 × 角色矩阵，含触发/动作/触点/痛点/期望/类型/来源/知识状态</td></tr>
+              <tr><td class="sec-num">3</td><td>情绪曲线与关键时刻（MOT）</td><td><span class="req y">✓</span></td><td>沿旅程标记情绪高/中/低，关联痛点</td></tr>
+              <tr><td class="sec-num">4</td><td>路径多样性</td><td><span class="req y">✓</span></td><td>主路径 / 分支路径 / 异常退出路径</td></tr>
+              <tr><td class="sec-num">5</td><td>痛点→机会</td><td><span class="req y">✓</span></td><td>每个痛点对应 ≥1 可量化机会</td></tr>
+              <tr><td class="sec-num">6</td><td>角色画像</td><td><span class="req o">○</span></td><td>每个角色的目标、行为特征、情绪基</td></tr>
+              <tr><td class="sec-num">7</td><td>触点矩阵</td><td><span class="req o">○</span></td><td>触点 × 角色 × 阶段 三维</td></tr>
+              <tr><td class="sec-num">8</td><td>旅程级指标</td><td><span class="req o">○</span></td><td>4 类指标（达成 / 满意度 / 转化 / 错误恢复）</td></tr>
+              <tr><td class="sec-num">9</td><td>假设 / AI 推断 / 未知 / 冲突</td><td><span class="req y">✓</span></td><td>6 态分类</td></tr>
+              <tr><td class="sec-num">10</td><td>待确认问题</td><td><span class="req y">✓</span></td><td>Q-XXX</td></tr>
+              <tr><td class="sec-num">11</td><td>来源追溯</td><td><span class="req y">✓</span></td><td>每条旅程追溯到来源</td></tr>
+              <tr><td class="sec-num">12</td><td>Clarifications</td><td><span class="req y">✓</span></td><td>每个 session 一行</td></tr>
+              <tr><td class="sec-num">13</td><td>Constitution Compliance</td><td><span class="req y">✓</span></td><td>自审</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="refs">
+          <h4>加载参考文档（9 份）</h4>
+          <div class="ref-row">
+            <div class="ref"><div class="rf-n">thinking-framework.md</div><div class="rf-c">必读 · 思考透镜</div></div>
+            <div class="ref"><div class="rf-n">output-contract.md</div><div class="rf-c">Draft 前</div></div>
+            <div class="ref"><div class="rf-n">audit-checklist.md</div><div class="rf-c">Audit 前</div></div>
+            <div class="ref"><div class="rf-n">reviewer-checklist.md</div><div class="rf-c">Human Gate 前</div></div>
+            <div class="ref"><div class="rf-n">source-handling.md</div><div class="rf-c">Intake 时</div></div>
+            <div class="ref"><div class="rf-n">question-patterns.md</div><div class="rf-c">Clarify 提问</div></div>
+            <div class="ref"><div class="rf-n">anti-patterns.md</div><div class="rf-c">Generate 对照</div></div>
+            <div class="ref"><div class="rf-n">journey-matrix-and-mot.md</div><div class="rf-c">矩阵与关键时刻</div></div>
+            <div class="ref"><div class="rf-n">journey-error-recovery-and-metrics.md</div><div class="rf-c">错误恢复与指标</div></div>
+            <div class="ref"><div class="rf-n">journey-behavior-vs-feature-jtbd.md</div><div class="rf-c">行为 ≠ 功能</div></div>
+          </div>
+        </div>
+
+        <div class="anti">
+          <h4>反模式</h4>
+          <div class="anti-grid">
+            <div class="anti-col bad">
+              <div class="ac-t">不要</div>
+              <ul>
+                <li>画一条"完美用户"路径</li>
+                <li>把情绪写成"满意/不满意"</li>
+                <li>每角色只有一个情绪高/低点</li>
+                <li>痛点写"体验不好"</li>
+                <li>把机会写成功能方案</li>
+                <li>把"用户行为"画成"产品功能"</li>
+              </ul>
+            </div>
+            <div class="anti-col good">
+              <div class="ac-t">要做</div>
+              <ul>
+                <li>覆盖主路径 + 分支 + 异常退出</li>
+                <li>用具体可观察行为描述情绪</li>
+                <li>沿旅程多点标注情绪变化</li>
+                <li>写具体行为：在第3步找不到导出按钮</li>
+                <li>写可衡量改进：减少50%表单时长</li>
+                <li>主语始终是角色、动词可观察</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ============ Skill 4: user-stories ============ -->
+    <div class="skill">
+      <div class="skill-head">
+        <div class="sh-l">
+          <div class="sh-no">SKILL 4 · 产物型</div>
+          <div class="sh-t">用户故事与范围基线（User Stories）</div>
+          <div class="sh-s">user-stories</div>
+          <div class="sh-d">把已确认的用户旅程转化为规范格式的故事卡片、MoSCoW 优先级与范围基线（In/Out/Deferred/Conditional）。每个故事必须可追溯到旅程中的某个痛点或机会。</div>
+        </div>
+        <div class="sh-r">阶段一最后一个产物<b>必跑</b><br>下游接 feature-list</div>
+      </div>
+      <div class="skill-body">
+
+        <div class="cycle">
+          <h4>8 阶段循环</h4>
+          <div class="cycle-row">
+            <div class="cyc"><div class="cyc-no">1</div><div class="cyc-t">Preflight</div><div class="cyc-c">L0-L4 成熟度</div></div>
+            <div class="cyc"><div class="cyc-no">2</div><div class="cyc-t">Intake</div><div class="cyc-c">从旅程提取候选</div></div>
+            <div class="cyc"><div class="cyc-no">3</div><div class="cyc-t">Think</div><div class="cyc-c">6 透镜</div></div>
+            <div class="cyc"><div class="cyc-no">4</div><div class="cyc-t">Clarify</div><div class="cyc-c">≤5 问题/轮</div></div>
+            <div class="cyc"><div class="cyc-no">5</div><div class="cyc-t">Generate</div><div class="cyc-c">故事卡片</div></div>
+            <div class="cyc"><div class="cyc-no">6</div><div class="cyc-t">Audit</div><div class="cyc-c">覆盖矩阵校验</div></div>
+            <div class="cyc"><div class="cyc-no">7</div><div class="cyc-t">Human Gate</div><div class="cyc-c">产品/业务 owner</div></div>
+            <div class="cyc"><div class="cyc-no">8</div><div class="cyc-t">Commit</div><div class="cyc-c">pipeline review</div></div>
+          </div>
+        </div>
+
+        <div class="output">
+          <h4>产物组成（user-stories.md）</h4>
+          <table>
+            <thead>
+              <tr><th style="width:40px;">§</th><th>章节</th><th>必填</th><th>说明</th></tr>
+            </thead>
+            <tbody>
+              <tr><td class="sec-num">0</td><td>预检输入充分度判定</td><td><span class="req y">✓</span></td><td>成熟度 + 上游链状态</td></tr>
+              <tr><td class="sec-num">1</td><td>故事卡片清单（ST-XXX）</td><td><span class="req y">✓</span></td><td>每张：角色 / As a / I want / so that / 验收条件 / 来源 / MoSCoW</td></tr>
+              <tr><td class="sec-num">2</td><td>MoSCoW 优先级分布</td><td><span class="req y">✓</span></td><td>Must / Should / Could / Won't 各自的理由</td></tr>
+              <tr><td class="sec-num">3</td><td>范围基线</td><td><span class="req y">✓</span></td><td>In（本版必须）/ Out（本版不做）/ Deferred / Conditional</td></tr>
+              <tr><td class="sec-num">4</td><td>旅程→故事覆盖矩阵</td><td><span class="req y">✓</span></td><td>每个旅程痛点/机会 → ST-XXX</td></tr>
+              <tr><td class="sec-num">5</td><td>假设 / AI 推断 / 未知 / 冲突</td><td><span class="req y">✓</span></td><td>6 态分类</td></tr>
+              <tr><td class="sec-num">6</td><td>待确认问题</td><td><span class="req y">✓</span></td><td>Q-XXX</td></tr>
+              <tr><td class="sec-num">7</td><td>来源追溯</td><td><span class="req y">✓</span></td><td>每个故事回溯到旅程节点</td></tr>
+              <tr><td class="sec-num">8</td><td>Clarifications</td><td><span class="req y">✓</span></td><td>每个 session 一行</td></tr>
+              <tr><td class="sec-num">9</td><td>Constitution Compliance</td><td><span class="req y">✓</span></td><td>自审</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="refs">
+          <h4>加载参考文档（10 份）</h4>
+          <div class="ref-row">
+            <div class="ref"><div class="rf-n">thinking-framework.md</div><div class="rf-c">必读 · 思考透镜</div></div>
+            <div class="ref"><div class="rf-n">output-contract.md</div><div class="rf-c">Draft 前</div></div>
+            <div class="ref"><div class="rf-n">audit-checklist.md</div><div class="rf-c">Audit 前</div></div>
+            <div class="ref"><div class="rf-n">reviewer-checklist.md</div><div class="rf-c">Human Gate 前</div></div>
+            <div class="ref"><div class="rf-n">source-handling.md</div><div class="rf-c">Intake 时</div></div>
+            <div class="ref"><div class="rf-n">question-patterns.md</div><div class="rf-c">Clarify 提问</div></div>
+            <div class="ref"><div class="rf-n">anti-patterns.md</div><div class="rf-c">Generate 对照</div></div>
+            <div class="ref"><div class="rf-n">use-case-spec-template.md</div><div class="rf-c">UML 用例规格</div></div>
+            <div class="ref"><div class="rf-n">job-story-and-moat.md</div><div class="rf-c">JTBD + 护城河</div></div>
+            <div class="ref"><div class="rf-n">scenario-5elements.md</div><div class="rf-c">情景五要素</div></div>
+            <div class="ref"><div class="rf-n">user-story-4elements.md</div><div class="rf-c">故事四要素</div></div>
+          </div>
+        </div>
+
+        <div class="anti">
+          <h4>反模式</h4>
+          <div class="anti-grid">
+            <div class="anti-col bad">
+              <div class="ac-t">不要</div>
+              <ul>
+                <li>把故事写成功能描述</li>
+                <li>所有故事都是 Must</li>
+                <li>一个故事覆盖多个诉求</li>
+                <li>把旅程无来源机会写成故事</li>
+                <li>把 Out 故事直接删掉</li>
+                <li>不做旅程→故事覆盖矩阵</li>
+              </ul>
+            </div>
+            <div class="anti-col good">
+              <div class="ac-t">要做</div>
+              <ul>
+                <li>写用户视角的结果</li>
+                <li>Must = 缺失则旅程失败</li>
+                <li>一个故事对应一个可测试结果</li>
+                <li>机会无来源时标 UNKNOWN</li>
+                <li>Out 进 Out 列表，Deferred 进 Deferred</li>
+                <li>逐行对照确保每个痛点有故事承接</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ============ 三、L0 全流程一览 ============ -->
+  <div class="sec">
+    <div class="sec-h"><span class="n">三</span>L0 Light 全流程一览</div>
+    <div class="sec-d">L0 单产物 skill 一气呵成，不展开阶段一/二/三，<b>不对用户讲故事，只列全流程</b>。</div>
+
+    <div class="l0-overview">
+      <div class="l0-t">L0 LIGHT · 快速通道</div>
+      <h3>mini-prd 单产物 skill</h3>
+      <div class="l0-d">适用：单点改动 / 文案调整 / 配置改动 / Bug 修复。1 个产物，6 节模板（改什么/为什么/影响/验收/回滚），6 条校验器硬规则。</div>
+      <div class="l0-flow">
+        <div class="l0-f"><div class="lf-n">1</div><div class="lf-t">登记</div><div class="lf-s">intake</div></div>
+        <div class="l0-f"><div class="lf-n">2</div><div class="lf-t">起草</div><div class="lf-s">generate</div></div>
+        <div class="l0-f"><div class="lf-n">3</div><div class="lf-t">自审</div><div class="lf-s">audit</div></div>
+        <div class="l0-f"><div class="lf-n">4</div><div class="lf-t">确认</div><div class="lf-s">confirm</div></div>
+      </div>
+    </div>
+
+  </div>
+
+  <footer>需求管理脚手架 · 入口与阶段一 · 项目演示</footer>
+</div>
+</body>
+</html>

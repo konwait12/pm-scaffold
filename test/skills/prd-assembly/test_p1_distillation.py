@@ -32,7 +32,7 @@ def _fm_with(status: str = "ready_for_human_review") -> str:
         "process_tier: \"L2\"\n"
         "issue_in_prd: false\n"
         'upstream_artifact_ids: ["BG-001"]\n'
-        "upstream_work_item_statuses: \"project-background-goal user-journey user-stories feature-list functional-flow page-design interaction-rules business-rules validation-rules state-machine exception-handling acceptance-criteria\"\n"
+        "upstream_work_item_statuses: \"feasibility-analysis project-background-goal project-scope user-journey user-stories feature-list functional-flow page-design interaction-rules business-rules field-rules validation-rules state-machine exception-handling acceptance-criteria\"\n"
         "---\n"
     )
 

@@ -1,6 +1,6 @@
 # MRC 门禁与确认信号技法参考（Confirmation Signal Technique）
 
-> 来源吸收：Trae `prd-to-prototype` skill 模块一「需求澄清」的 MRC 门禁 + 白/灰/黑确认信号识别 + 业务需求汇总确认表，作为 shared/clarify 的可选落地能力（供 issue-record / requirement-restate 复用）。
+> 本文将相关实践转化为本项目的可选方法，不引入外部运行时依赖。
 > 定位：各 skill 的 Clarify 阶段文本是权威；本文档提供"用完整度阈值与确认信号识别驱动澄清收敛"的技法，增强人工确认质量。
 > 触发：当 Clarify 阶段需判断澄清完整度、或用户回复需判定是否真正确认时使用。**按需加载，不设全局闸门**。
 

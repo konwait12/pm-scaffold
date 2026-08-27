@@ -56,7 +56,7 @@ T_WORK_ITEM = {
         "predecessors": list, "reviewer_roles": list,
     },
     "opt": {
-        "legacy_wave": int, "legacy_artifact_dir": str, "human_gate": bool,
+        "legacy_wave": int, "legacy_artifact_dir": (str, list), "human_gate": bool,
         "tiers": list,  # Process Tier：["L0"]/["L1","L2"]/["L2"]；缺省 = L2 完整档
     },
 }

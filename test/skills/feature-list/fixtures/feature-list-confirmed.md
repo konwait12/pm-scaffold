@@ -2,6 +2,7 @@
 artifact_id: FEA-HIRE-001
 version: v0.1
 status: ready_for_human_review
+quality_contract_version: "1"
 owner: PM-Office
 business_fact_owner: VP of Talent
 goal_decision_owner: VP of Talent
@@ -182,3 +183,12 @@ upstream_artifact_id: "ST-HIRE-001, ST-HIRE-002, ST-HIRE-003, ST-HIRE-004, ST-HI
 - FEA 优先级划分（P0/P1/P2）与排期决策由业务方（VP of Talent）拍板 → **DECISION**
 - FEA-018 推荐算法的预期点击提升率属模型效果推断 → **AI_INFERENCE**
 - 加拿大劳动法对薪酬展示区间的具体要求待法务确认 → **UNKNOWN**
+## 产品质量增强记录
+
+| 项目 | 结论 | 知识状态 | 来源/位置 | 判断人 | 复核触发 |
+|---|---|---|---|---|---|
+| 受影响角色与结果 | P0 功能支撑候选人完成申请 | FACT | ST-001 §故事 | PM | 故事变化 |
+| 采用方案与被排除替代 | 先做单一提交功能，批量导入延期 | DECISION | FEA-001 §范围 | 业务负责人 | 范围变化 |
+| 价值-成本-风险 | 价值来自 Must 故事，成本待研发评估，风险 UNKNOWN | UNKNOWN | ST-001 §优先级 | PM | 研发评估 |
+| 失败边界与回退 | 提交失败不产生重复记录，允许重试 | FACT | FEA-001 §边界 | PM | 数据语义变化 |
+| 可证伪条件/停止条件 | 若故事被降级，P0 功能重新排序 | DECISION | ST-001 §决策 | 业务负责人 | 优先级变化 |

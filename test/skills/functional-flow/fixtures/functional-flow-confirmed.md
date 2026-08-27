@@ -2,6 +2,7 @@
 artifact_id: FL-HIRE-001
 version: v0.1
 status: ready_for_human_review
+quality_contract_version: "1"
 owner: PM-Office
 business_fact_owner: VP of Talent
 goal_decision_owner: VP of Talent
@@ -237,3 +238,12 @@ graph TD
 - 重试次数（如 F-001-2 重试 1 次、F-002-2 重试 3 次）与超时阈值（3s）为技术实现决定 → **DECISION**
 - FUN-005 邮件推荐的"每周一 09:00 推送"执行时点属运营假设 → **AI_INFERENCE**
 - 各流程的 SLA 指标（如搜索 P99 < 800ms）的具体验收口径待性能基线确认 → **UNKNOWN**
+## 产品质量增强记录
+
+| 项目 | 结论 | 知识状态 | 来源/位置 | 判断人 | 复核触发 |
+|---|---|---|---|---|---|
+| 受影响角色与结果 | 候选人提交后获得明确成功或失败结果 | FACT | FEA-001 §功能 | PM | 入口变化 |
+| 采用方案与被排除替代 | 采用主/分支/异常三段流程，不把异常隐藏在说明中 | DECISION | FUN-001 §流程 | PM | 分支变化 |
+| 价值-成本-风险 | 主流程价值明确，成本和风险待研发确认 | UNKNOWN | FEA-001 §优先级 | PM | 研发评估 |
+| 失败边界与回退 | 网络失败回到重试节点 | FACT | FUN-001 §异常 | PM | 恢复变化 |
+| 可证伪条件/停止条件 | 若异常路径无法复现，流程不得进入确认 | DECISION | FUN-001 §验收 | PM | 测试反证 |

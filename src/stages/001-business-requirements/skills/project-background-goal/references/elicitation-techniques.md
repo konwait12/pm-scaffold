@@ -1,6 +1,6 @@
 # 需求采集技法参考（Elicitation Techniques）
 
-> 来源吸收：Trae `requirements-gathering` skill 的 elicitation techniques，适配为 project-background-goal Intake/Clarify 环节的主动引导技法。
+> 本文将相关实践转化为本项目的可选方法，不引入外部运行时依赖。
 > 定位：Intake 阶段在登记来源之后、澄清之前，若原始材料信息不足（角色、场景、目标缺失），用本技法主动向业务方采集，而非被动等材料。
 
 ## 1. 采集技法速选

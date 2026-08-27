@@ -1,6 +1,6 @@
 # 高保真原型技法参考（High-Fidelity Prototype）
 
-> 来源吸收：Trae `frontend-design` skill 的 BOLD aesthetic direction 设计哲学与硬规则（避 AI-slop、反 Inter/Arial、反纯紫渐变、可访问对比度等），以及 `web-artifacts-builder` / `interactive-demo-factory` 的单文件 HTML 落地技法，经适配后作为 page-design 的**可选附件**落地能力。
+> 本文将相关实践转化为本项目的可选方法，不引入外部运行时依赖。
 > 定位：page-design 的权威产物是页面与步骤描述表格（文本骨架）；高保真原型是该文本骨架的**可选高保真可视化附件**，用于在 ready_for_human_review 后向利益相关方做视觉/观感沟通——**互补，不替代**。区别于 `references/prototype-techniques.md`：后者产"逻辑 100% 忠于输入的可点击 demo"（中保真、状态机驱动）；本文档产"视觉方向鲜明、可指代品牌气质的高保真 mockup"（高保真、设计语言驱动）。
 > 触发：①产物已进入 `ready_for_human_review` 状态、文本骨架与跳转表自审通过；②用户/PM 主动请求"出原型 / 做截图 / 给一版视觉"；③Agent 先自检能力——本地具备 `frontend-design` 或 `web-artifacts-builder` skill 或同类前端能力时才启用，否则**只交付文本骨架**，不硬出 HTML。
 

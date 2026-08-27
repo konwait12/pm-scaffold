@@ -1,16 +1,16 @@
 # PRD Skill 精华整合实施计划（to B 偏向）
 
-> 场景：Skill 开发 · scene#18
-> 目标：将团队自带 13 个 PRD skill 的精华能力，以最小侵入方式融入现有 PM 脚手架，强化 to B 场景，不引发大规模重构。
-> 状态：**待人工确认**（确认后按 §八 实施顺序执行）
+> 场景：产品需求能力整合（历史计划）
+> 目标：将经过评估的 PRD 能力以最小侵入方式融入现有 PM 脚手架，强化 to B 场景，不引发大规模重构。
+> 状态：**历史记录**；现行规则以 `docs/tier-l0-l1-rebuild-plan.md` 为准。
 
 ---
 
-## 一、调研结论：13 个团队 PRD skill 能力盘点
+## 一、调研结论：PRD 能力盘点
 
 按与现有脚手架的 to B 契合度从高到低排序。脚手架特征：三阶段、19 skill、强人工确认、事件溯源审计、知识状态标注（FACT/DECISION/ASSUMPTION/AI_INFERENCE/UNKNOWN/CONFLICT）、产物为中文 `prd.md`、PRD-only（不做技术架构/测试用例/研发任务拆分）。
 
-| # | 团队 skill | to B 契合度 | 核心能力（可复用精华） | 处置 |
+| # | 能力模块 | to B 契合度 | 核心能力（可复用精华） | 处置 |
 |---|---|---|---|---|
 | 1 | product-design-0to1 | ★★★ 原生适配 | AI 推断显式化（对应 AI_INFERENCE）、`[TODO:]` 占位（对应 UNKNOWN）、回退即重生成（对应事件溯源）、RBAC 权限矩阵、字段决策清单、泳道图+状态机、埋点规划、领域偏移检测 | 重点融入 |
 | 2 | prd-development | ★★★ 原生适配 | 功能说明五要素（前置条件/实现逻辑/核心字段含**状态生命周期**/数据校验）、交互流程五段式（触发/执行中/成功/失败/边界）、大纲确认卡点、写作四原则（具体可执行/开发视角/无歧义/`[待确认]`）、用户故事四字段+"并且则拆分" | 重点融入 |
@@ -57,7 +57,7 @@
 3. 任何模板的 frontmatter 字段（`src/templates/`）
 4. 任何 `validate_artifact.py` 的 AST 校验字段引用
 
-**为什么安全**：注册表契约（`registry_contract_check.py`）的 E3_drift 检查只校验"模板 frontmatter 字段 ↔ validate_artifact.py AST 引用"的闭环。本计划只注入 `references/` 参考文档与 `thinking-core.md`/`review-taxonomy.md` 的章节内容，不新增 frontmatter 字段，因此**不触发 E3_drift，`registry_contract_check` 保持绿灯**。这与 `thinking-core.md §5` 已有的"表达层技法注册"机制完全一致（该机制已吸收 Trae 生态 skill 的 prototype-techniques/rule-writing-format/prototype-embedding 三技法，是脚手架既定的外部精华吸收通道）。
+**为什么安全**：注册表契约（`registry_contract_check.py`）的 E3_drift 检查只校验"模板 frontmatter 字段 ↔ validate_artifact.py AST 引用"的闭环。本计划只注入 `references/` 参考文档与 `thinking-core.md`/`review-taxonomy.md` 的章节内容，不新增 frontmatter 字段，因此**不触发 E3_drift，`registry_contract_check` 保持绿灯**。这与 `thinking-core.md §5` 的"表达层技法注册"机制一致：可复用技法以独立参考文档方式沉淀，不改变主流程契约。
 
 ### 三档接入方式
 
@@ -71,7 +71,7 @@
 
 ## 四、模块映射表（精华 → 接入点 → to B 适配）
 
-| 精华能力 | 来源 skill | 接入档位 | 接入点（文件路径） | to B 适配 | 接入物 |
+| 精华能力 | 能力主题 | 接入档位 | 接入点（文件路径） | to B 适配 | 接入物 |
 |---|---|---|---|---|---|
 | AI 推断显式化、`[TODO:]` 占位、回退即重生成 | product-design-0to1 | A 档 | `thinking-core.md §1.5/§1.6 注释` + `contracts.md` 知识状态引用 | 原生 | 补充技法说明（脚手架已支持 AI_INFERENCE/UNKNOWN，强化用法指引） |
 | 大纲确认卡点 | prd-development | A 档 | `thinking-core.md §2` 新增 lens "大纲确认门禁" | 原生 | 新 lens：功能要点一句话概括→人工确认→方可展开细节 |
@@ -130,7 +130,7 @@
 **追加章节**（不改主干）：
 - `src/stages/002-product-requirements/skills/page-design/references/prototype-techniques.md` 追加 §10「B 端 SaaS 审美自检」
 
-> 每个 B 档文件遵循 `prototype-techniques.md` 既定格式：来源吸收说明 → 输入映射（外部 skill 输入 → 脚手架对应产物）→ 工作流程 → 核心硬规则 → 边界（Do Not）→ 质量自检清单。所有文件标注"按需加载，不设全局闸门"。
+> 每个 B 档文件遵循 `prototype-techniques.md` 既定格式：能力背景说明 → 输入映射（候选能力输入 → 脚手架对应产物）→ 工作流程 → 核心硬规则 → 边界（Do Not）→ 质量自检清单。所有文件标注“按需加载，不设全局闸门”。
 
 ### C 档 · 审计层（新增 1 个文件 + 追加 3 个文件条目）
 **新增文件**：

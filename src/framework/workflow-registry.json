@@ -14,7 +14,9 @@
       "name": "业务需求阶段",
       "path": "src/stages/001-business-requirements",
       "work_items": [
+        "feasibility-analysis",
         "project-background-goal",
+        "project-scope",
         "user-journey",
         "user-stories"
       ]
@@ -29,6 +31,7 @@
         "page-design",
         "interaction-rules",
         "business-rules",
+        "field-rules",
         "validation-rules",
         "state-machine",
         "exception-handling",
@@ -67,9 +70,32 @@
       "human_gate": true
     },
     {
+      "id": "feasibility-analysis",
+      "name": "可行性分析",
+      "order": 1,
+      "stage": "001-business-requirements",
+      "skill_path": "src/stages/001-business-requirements/skills/feasibility-analysis",
+      "artifact_dir": "001-business-requirements/00-feasibility-analysis",
+      "artifact_file": "feasibility-report.md",
+      "artifact_prefix": "FA-",
+      "required_outputs": [
+        "feasibility-report"
+      ],
+      "predecessors": [],
+      "reviewer_roles": [
+        "business_owner"
+      ],
+      "human_gate": true,
+      "legacy_wave": 0,
+      "tiers": [
+        "L1",
+        "L2"
+      ]
+    },
+    {
       "id": "project-background-goal",
       "name": "项目背景与目标",
-      "order": 1,
+      "order": 2,
       "stage": "001-business-requirements",
       "skill_path": "src/stages/001-business-requirements/skills/project-background-goal",
       "artifact_dir": "001-business-requirements/01-background-goal",
@@ -78,7 +104,36 @@
       "required_outputs": [
         "project-background-goals"
       ],
-      "predecessors": [],
+      "predecessors": [
+        "feasibility-analysis"
+      ],
+      "reviewer_roles": [
+        "business_owner",
+        "product_owner"
+      ],
+      "human_gate": true,
+      "legacy_wave": 1,
+      "legacy_artifact_dir": "01_background-goal",
+      "tiers": [
+        "L1",
+        "L2"
+      ]
+    },
+    {
+      "id": "project-scope",
+      "name": "项目范围",
+      "order": 3,
+      "stage": "001-business-requirements",
+      "skill_path": "src/stages/001-business-requirements/skills/project-scope",
+      "artifact_dir": "001-business-requirements/02-project-scope",
+      "artifact_file": "project-scope.md",
+      "artifact_prefix": "SCOPE-",
+      "required_outputs": [
+        "project-scope"
+      ],
+      "predecessors": [
+        "project-background-goal"
+      ],
       "reviewer_roles": [
         "business_owner",
         "product_owner"
@@ -94,17 +149,17 @@
     {
       "id": "user-journey",
       "name": "用户旅程",
-      "order": 2,
+      "order": 4,
       "stage": "001-business-requirements",
       "skill_path": "src/stages/001-business-requirements/skills/user-journey",
-      "artifact_dir": "001-business-requirements/02-user-journey",
+      "artifact_dir": "001-business-requirements/03-user-journey",
       "artifact_file": "user-journey.md",
       "artifact_prefix": "UJ-",
       "required_outputs": [
         "user-journey"
       ],
       "predecessors": [
-        "project-background-goal"
+        "project-scope"
       ],
       "reviewer_roles": [
         "business_owner",
@@ -112,7 +167,10 @@
       ],
       "human_gate": true,
       "legacy_wave": 2,
-      "legacy_artifact_dir": "02_journey-stories",
+      "legacy_artifact_dir": [
+        "001-business-requirements/02-user-journey",
+        "02_journey-stories"
+      ],
       "tiers": [
         "L1",
         "L2"
@@ -121,10 +179,10 @@
     {
       "id": "user-stories",
       "name": "用户故事与范围基线",
-      "order": 3,
+      "order": 5,
       "stage": "001-business-requirements",
       "skill_path": "src/stages/001-business-requirements/skills/user-stories",
-      "artifact_dir": "001-business-requirements/03-user-stories",
+      "artifact_dir": "001-business-requirements/04-user-stories",
       "artifact_file": "user-stories.md",
       "artifact_prefix": "US-",
       "required_outputs": [
@@ -139,7 +197,10 @@
       ],
       "human_gate": true,
       "legacy_wave": 3,
-      "legacy_artifact_dir": "02_journey-stories",
+      "legacy_artifact_dir": [
+        "001-business-requirements/03-user-stories",
+        "02_journey-stories"
+      ],
       "tiers": [
         "L1",
         "L2"
@@ -148,7 +209,7 @@
     {
       "id": "feature-list",
       "name": "功能清单",
-      "order": 4,
+      "order": 6,
       "stage": "002-product-requirements",
       "skill_path": "src/stages/002-product-requirements/skills/feature-list",
       "artifact_dir": "002-product-requirements/01-feature-list",
@@ -175,7 +236,7 @@
     {
       "id": "functional-flow",
       "name": "功能流程",
-      "order": 5,
+      "order": 7,
       "stage": "002-product-requirements",
       "skill_path": "src/stages/002-product-requirements/skills/functional-flow",
       "artifact_dir": "002-product-requirements/02-functional-flow",
@@ -201,7 +262,7 @@
     {
       "id": "page-design",
       "name": "页面设计与原型",
-      "order": 6,
+      "order": 8,
       "stage": "002-product-requirements",
       "skill_path": "src/stages/002-product-requirements/skills/page-design",
       "artifact_dir": "002-product-requirements/03-page-design",
@@ -226,7 +287,7 @@
     {
       "id": "interaction-rules",
       "name": "交互规则",
-      "order": 7,
+      "order": 9,
       "stage": "002-product-requirements",
       "skill_path": "src/stages/002-product-requirements/skills/interaction-rules",
       "artifact_dir": "002-product-requirements/04-interaction-rules",
@@ -251,7 +312,7 @@
     {
       "id": "business-rules",
       "name": "业务规则",
-      "order": 8,
+      "order": 10,
       "stage": "002-product-requirements",
       "skill_path": "src/stages/002-product-requirements/skills/business-rules",
       "artifact_dir": "002-product-requirements/05-business-rules",
@@ -276,16 +337,16 @@
       ]
     },
     {
-      "id": "validation-rules",
-      "name": "字段与校验规则",
-      "order": 9,
+      "id": "field-rules",
+      "name": "字段规则说明",
+      "order": 11,
       "stage": "002-product-requirements",
-      "skill_path": "src/stages/002-product-requirements/skills/validation-rules",
-      "artifact_dir": "002-product-requirements/06-validation-rules",
-      "artifact_file": "validation-rules.md",
-      "artifact_prefix": "VL-",
+      "skill_path": "src/stages/002-product-requirements/skills/field-rules",
+      "artifact_dir": "002-product-requirements/06-field-rules",
+      "artifact_file": "field-rules.md",
+      "artifact_prefix": "FIELDS-",
       "required_outputs": [
-        "validation-rules"
+        "field-rules"
       ],
       "predecessors": [
         "business-rules"
@@ -301,12 +362,40 @@
       ]
     },
     {
+      "id": "validation-rules",
+      "name": "字段与校验规则",
+      "order": 12,
+      "stage": "002-product-requirements",
+      "skill_path": "src/stages/002-product-requirements/skills/validation-rules",
+      "artifact_dir": "002-product-requirements/07-validation-rules",
+      "artifact_file": "validation-rules.md",
+      "artifact_prefix": "VL-",
+      "required_outputs": [
+        "validation-rules"
+      ],
+      "predecessors": [
+        "field-rules"
+      ],
+      "reviewer_roles": [
+        "product_owner"
+      ],
+      "human_gate": true,
+      "legacy_wave": 9,
+      "legacy_artifact_dir": [
+        "002-product-requirements/06-validation-rules",
+        "02_function-description"
+      ],
+      "tiers": [
+        "L2"
+      ]
+    },
+    {
       "id": "state-machine",
       "name": "状态变化",
-      "order": 10,
+      "order": 13,
       "stage": "002-product-requirements",
       "skill_path": "src/stages/002-product-requirements/skills/state-machine",
-      "artifact_dir": "002-product-requirements/07-state-machine",
+      "artifact_dir": "002-product-requirements/08-state-machine",
       "artifact_file": "state-machine.md",
       "artifact_prefix": "STATE-",
       "required_outputs": [
@@ -320,7 +409,10 @@
       ],
       "human_gate": true,
       "legacy_wave": 10,
-      "legacy_artifact_dir": "02_function-description",
+      "legacy_artifact_dir": [
+        "002-product-requirements/07-state-machine",
+        "02_function-description"
+      ],
       "tiers": [
         "L2"
       ]
@@ -328,10 +420,10 @@
     {
       "id": "exception-handling",
       "name": "异常与失败处理",
-      "order": 11,
+      "order": 14,
       "stage": "002-product-requirements",
       "skill_path": "src/stages/002-product-requirements/skills/exception-handling",
-      "artifact_dir": "002-product-requirements/08-exception-handling",
+      "artifact_dir": "002-product-requirements/09-exception-handling",
       "artifact_file": "exception-handling.md",
       "artifact_prefix": "EX-",
       "required_outputs": [
@@ -345,7 +437,10 @@
       ],
       "human_gate": true,
       "legacy_wave": 11,
-      "legacy_artifact_dir": "02_function-description",
+      "legacy_artifact_dir": [
+        "002-product-requirements/08-exception-handling",
+        "02_function-description"
+      ],
       "tiers": [
         "L2"
       ]
@@ -353,10 +448,10 @@
     {
       "id": "acceptance-criteria",
       "name": "验收标准",
-      "order": 12,
+      "order": 15,
       "stage": "002-product-requirements",
       "skill_path": "src/stages/002-product-requirements/skills/acceptance-criteria",
-      "artifact_dir": "002-product-requirements/09-acceptance-criteria",
+      "artifact_dir": "002-product-requirements/10-acceptance-criteria",
       "artifact_file": "acceptance-criteria.md",
       "artifact_prefix": "AC-",
       "required_outputs": [
@@ -372,7 +467,10 @@
       ],
       "human_gate": true,
       "legacy_wave": 12,
-      "legacy_artifact_dir": "02_function-description",
+      "legacy_artifact_dir": [
+        "002-product-requirements/09-acceptance-criteria",
+        "02_function-description"
+      ],
       "tiers": [
         "L1",
         "L2"
@@ -381,7 +479,7 @@
     {
       "id": "prd-assembly",
       "name": "PRD 汇总",
-      "order": 13,
+      "order": 16,
       "stage": "003-prd-output",
       "skill_path": "src/stages/003-prd-output/skills/prd-assembly",
       "artifact_dir": "003-prd-output",
@@ -391,7 +489,9 @@
         "final-prd"
       ],
       "predecessors": [
+        "feasibility-analysis",
         "project-background-goal",
+        "project-scope",
         "user-journey",
         "user-stories",
         "feature-list",
@@ -399,6 +499,7 @@
         "page-design",
         "interaction-rules",
         "business-rules",
+        "field-rules",
         "validation-rules",
         "state-machine",
         "exception-handling",
@@ -427,12 +528,32 @@
   ],
   "artifact_types": [
     {
+      "id": "feasibility-report",
+      "name": "可行性分析报告",
+      "producer": "feasibility-analysis",
+      "artifact_file": "001-business-requirements/00-feasibility-analysis/feasibility-report.md",
+      "prd_destination": "§1 立项背景（含市场/技术/投入产出/风险四维评估）",
+      "depends_on": []
+    },
+    {
       "id": "project-background-goals",
       "name": "项目背景与目标基线",
       "producer": "project-background-goal",
       "artifact_file": "001-business-requirements/01-background-goal/background-goal.md",
-      "prd_destination": "项目背景、现状、问题、目标、角色、约束与范围依据",
-      "depends_on": []
+      "prd_destination": "§1.2 项目背景、现状、问题、目标、角色",
+      "depends_on": [
+        "feasibility-report"
+      ]
+    },
+    {
+      "id": "project-scope",
+      "name": "项目范围基线",
+      "producer": "project-scope",
+      "artifact_file": "001-business-requirements/02-project-scope/project-scope.md",
+      "prd_destination": "§2 项目范围（In/Out/Deferred/Conditional + 假设 + 依赖）",
+      "depends_on": [
+        "project-background-goals"
+      ]
     },
     {
       "id": "user-journey",
@@ -446,10 +567,10 @@
     },
     {
       "id": "user-stories",
-      "name": "用户故事与范围基线",
+      "name": "用户故事",
       "producer": "user-stories",
-      "artifact_file": "001-business-requirements/03-user-stories/user-stories.md",
-      "prd_destination": "用户故事、MoSCoW 优先级、范围基线（In/Out/Deferred/Conditional）",
+      "artifact_file": "001-business-requirements/04-user-stories/user-stories.md",
+      "prd_destination": "§3.2 用户故事、MoSCoW 优先级、Story Map",
       "depends_on": [
         "user-journey"
       ]
@@ -505,13 +626,23 @@
       ]
     },
     {
-      "id": "validation-rules",
-      "name": "字段与校验规则 VL",
-      "producer": "validation-rules",
-      "artifact_file": "002-product-requirements/06-validation-rules/validation-rules.md",
-      "prd_destination": "字段定义 VL-XXX、错误提示、BR 追溯",
+      "id": "field-rules",
+      "name": "字段规则说明 FIELDS",
+      "producer": "field-rules",
+      "artifact_file": "002-product-requirements/06-field-rules/field-rules.md",
+      "prd_destination": "§8.2 字段清单（名称/类型/长度/必填/默认值/唯一性/来源/关联校验 VL）",
       "depends_on": [
         "business-rules"
+      ]
+    },
+    {
+      "id": "validation-rules",
+      "name": "字段校验规则 VL",
+      "producer": "validation-rules",
+      "artifact_file": "002-product-requirements/07-validation-rules/validation-rules.md",
+      "prd_destination": "§8.3 校验规则 VL-XXX、错误提示、BR 追溯、关联字段 FIELDS-XXX",
+      "depends_on": [
+        "field-rules"
       ]
     },
     {
@@ -552,7 +683,9 @@
       "artifact_file": "003-prd-output/prd.md",
       "prd_destination": "最终唯一产品交付 prd.md",
       "depends_on": [
+        "feasibility-report",
         "project-background-goals",
+        "project-scope",
         "user-journey",
         "user-stories",
         "feature-list",
@@ -560,6 +693,7 @@
         "page-design",
         "interaction-rules",
         "business-rules",
+        "field-rules",
         "validation-rules",
         "state-machine",
         "exception-handling",
@@ -590,19 +724,6 @@
       "output_kind": "artifact"
     },
     {
-      "id": "feasibility-analysis",
-      "skill_path": "src/support-skills/feasibility-analysis",
-      "trigger": "进入主干前评估可行性（市场/技术/投入产出/风险）",
-      "applicable_stages": [
-        "001-business-requirements"
-      ],
-      "output_location": "99-review/support/",
-      "resume_work_item": "project-background-goal",
-      "responsible_role": "business_owner",
-      "name": "可行性分析",
-      "output_kind": "artifact"
-    },
-    {
       "id": "requirement-restate",
       "name": "需求重举（复述确认，单模式能力）",
       "skill_path": "src/stages/001-business-requirements/skills/requirement-restate",
@@ -626,7 +747,11 @@
       ],
       "output_location": "99-review/support/",
       "resume_work_item": "project-background-goal",
-      "resume_work_item_by_tier": {"L0": "mini-prd", "L1": "project-background-goal", "L2": "project-background-goal"},
+      "resume_work_item_by_tier": {
+        "L0": "mini-prd",
+        "L1": "project-background-goal",
+        "L2": "project-background-goal"
+      },
       "responsible_role": "business_owner",
       "output_kind": "process"
     },

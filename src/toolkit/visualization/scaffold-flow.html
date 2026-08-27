@@ -174,6 +174,20 @@ td code,th code{font-family:"SF Mono",Menlo,monospace;font-size:11.5px;backgroun
 .tier-notes{font-size:12px;color:#555;margin-top:9px;line-height:1.6}
 .tier-notes b{color:#333}
 .tier-shared{margin-top:12px;padding:10px 12px;border:1px dashed #C9C2EE;background:#FAFAFC;font-size:12px;color:#555}
+.tier-jump{display:inline-block;margin-top:10px;font-size:12px;font-weight:700;color:#3A2E8F;text-decoration:none}
+.tier-jump:hover{text-decoration:underline}
+.difficulty-entry{border:1px solid #DADADA;border-radius:10px;padding:14px 16px;background:#FAFAFA;margin-bottom:14px}
+.difficulty-title{font-size:13px;font-weight:700;color:#333;margin-bottom:8px}
+.difficulty-options,.human-tier-options{display:flex;gap:8px;flex-wrap:wrap}
+.difficulty-btn,.human-tier-btn{border:1px solid #D5D8DC;background:#fff;color:#444;border-radius:8px;padding:8px 14px;font-size:12px;font-weight:600;cursor:pointer}
+.difficulty-btn:hover,.human-tier-btn:hover{border-color:#654ACB;background:#F6F4FF;color:#3A2E8F}
+.difficulty-btn.active{border-color:#654ACB;background:#EEEFFF;color:#3A2E8F}
+.tier-entry{margin-top:12px;padding:12px 14px;border:1px solid #C9C2EE;background:#F8F7FF;border-radius:9px}
+.tier-entry[hidden]{display:none}
+.tier-entry-title{font-size:12.5px;font-weight:700;color:#3A2E8F}
+.tier-entry-note{font-size:11.5px;color:#555;margin:3px 0 9px}
+.human-tier-btn.selected{border-color:#0F8A4A;background:#E6F9EE;color:#0F8A4A}
+#sec-tier-flow{display:none}
 @media (max-width:700px){.tier-step{white-space:normal}.tier-arrow{display:none}}
 .tier-switcher{display:flex;align-items:stretch;gap:8px;margin:18px 0 20px;padding:6px;background:#F0EFF8;border:1px solid #DDD9F2;border-radius:12px;position:sticky;top:12px;z-index:20}
 .tier-tab{flex:1;border:1px solid transparent;border-radius:8px;background:transparent;padding:10px 14px;text-align:left;cursor:pointer;color:#555;font:inherit;transition:background .15s,border-color .15s,color .15s}
@@ -201,22 +215,24 @@ footer{margin-top:24px;text-align:center;color:#888;font-size:11px;padding-top:1
   <div class="side-title">PM Scaffold 驾驶舱</div>
   <div class="side-sub">v0.6.1 · L0/L1/L2 分档 · registry-driven</div>
   <button class="tut-btn" id="tut-open">📖 新手教程 · 从这里开始</button>
-    <a href="#sec-flow" class="nav-item" data-target="sec-flow"><span class="nav-n">01</span>主程序流程图</a>
-    <a href="#sec-tier-flow" class="nav-item" data-target="sec-tier-flow"><span class="nav-n">01A</span>三档交付路径</a>
-    <a href="#sec-cmd" class="nav-item" data-target="sec-cmd"><span class="nav-n">02</span>命令全集</a>
-    <a href="#sec-cycle" class="nav-item" data-target="sec-cycle"><span class="nav-n">03</span>8 步执行循环</a>
-    <a href="#sec-states" class="nav-item" data-target="sec-states"><span class="nav-n">04</span>六态知识标注</a>
-    <a href="#sec-gates" class="nav-item" data-target="sec-gates"><span class="nav-n">05</span>机器闸门矩阵</a>
-    <a href="#sec-skills" class="nav-item" data-target="sec-skills"><span class="nav-n">06</span>Skill 全景说明书</a>
-    <a href="#sec-artifacts" class="nav-item" data-target="sec-artifacts"><span class="nav-n">07</span>产物说明书</a>
-    <a href="#sec-scripts" class="nav-item" data-target="sec-scripts"><span class="nav-n">08</span>脚本说明书</a>
-    <a href="#sec-shared" class="nav-item" data-target="sec-shared"><span class="nav-n">09</span>共享机制</a>
-    <a href="#sec-templates" class="nav-item" data-target="sec-templates"><span class="nav-n">10</span>产物模板</a>
-    <a href="#sec-branches" class="nav-item" data-target="sec-branches"><span class="nav-n">11</span>分支 Skill 触发矩阵</a>
-    <a href="#sec-tree" class="nav-item" data-target="sec-tree"><span class="nav-n">12</span>文件完整架构</a>
-    <a href="#sec-kpi" class="nav-item" data-target="sec-kpi"><span class="nav-n">13</span>测试与质量基线</a>
-    <a href="#sec-feishu" class="nav-item" data-target="sec-feishu"><span class="nav-n">14</span>飞书集成与结果对比</a>
-    <a href="#sec-integration" class="nav-item" data-target="sec-integration"><span class="nav-n">15</span>Skill 精华整合（两轮）</a>
+    <a href="#sec-tier-select" class="nav-item" data-target="sec-tier-select"><span class="nav-n">01</span>先选档位：L0 / L1 / L2</a>
+    <a href="#sec-flow" class="nav-item" data-target="sec-flow"><span class="nav-n">02</span>查看所选档位链路</a>
+    <a href="#sec-global-control" class="nav-item" data-target="sec-global-control"><span class="nav-n">03</span>全局控制（所有档位共用）</a>
+    <a href="#sec-stage-one" class="nav-item" data-target="sec-stage-one"><span class="nav-n">04</span>阶段一：业务需求链</a>
+    <a href="#sec-cmd" class="nav-item" data-target="sec-cmd"><span class="nav-n">05</span>命令全集</a>
+    <a href="#sec-cycle" class="nav-item" data-target="sec-cycle"><span class="nav-n">06</span>8 步执行循环</a>
+    <a href="#sec-states" class="nav-item" data-target="sec-states"><span class="nav-n">07</span>六态知识标注</a>
+    <a href="#sec-gates" class="nav-item" data-target="sec-gates"><span class="nav-n">08</span>机器闸门矩阵</a>
+    <a href="#sec-skills" class="nav-item" data-target="sec-skills"><span class="nav-n">09</span>Skill 全景说明书</a>
+    <a href="#sec-artifacts" class="nav-item" data-target="sec-artifacts"><span class="nav-n">10</span>产物说明书</a>
+    <a href="#sec-scripts" class="nav-item" data-target="sec-scripts"><span class="nav-n">11</span>脚本说明书</a>
+    <a href="#sec-shared" class="nav-item" data-target="sec-shared"><span class="nav-n">12</span>共享机制</a>
+    <a href="#sec-templates" class="nav-item" data-target="sec-templates"><span class="nav-n">13</span>产物模板</a>
+    <a href="#sec-branches" class="nav-item" data-target="sec-branches"><span class="nav-n">14</span>分支 Skill 触发矩阵</a>
+    <a href="#sec-tree" class="nav-item" data-target="sec-tree"><span class="nav-n">15</span>文件完整架构</a>
+    <a href="#sec-kpi" class="nav-item" data-target="sec-kpi"><span class="nav-n">16</span>测试与质量基线</a>
+    <a href="#sec-feishu" class="nav-item" data-target="sec-feishu"><span class="nav-n">17</span>飞书集成与结果对比</a>
+    <a href="#sec-integration" class="nav-item" data-target="sec-integration"><span class="nav-n">18</span>Skill 精华整合（两轮）</a>
 </nav>
 <div class="content">
 <header>
@@ -225,33 +241,61 @@ footer{margin-top:24px;text-align:center;color:#888;font-size:11px;padding-top:1
   <div class="tags">
     <span class="tag green">● 测试以当前运行结果为准</span>
     <span class="tag">3 阶段</span>
-    <span class="tag">分档交付：L0 1 项 · L1 8 项 · L2 13 项</span>
+    <span class="tag">分档交付：L0 1 项 · L1 10 项 · L2 15 项</span>
     <span class="tag">9 共享模块</span>
     <span class="tag amber">Loop 闭环：级联失效 / 双向追溯 / 防篡改</span>
     <span class="tag">飞书闭环：取料 → 生成 → 发布</span>
     <span class="tag">产物快照对比</span>
   </div>
 </header>
+<section id="sec-tier-select">
+  <h2>1. 先选难度，再看档位链路 <span class="badge">建议不等于自动切档</span></h2>
+  <div class="desc">每个 REQ 先由人工选择需求难度：低难度不触发档位建议；中/高难度才显示一个 L1/L2 建议。建议只是入口提示，不会自动切档；人工最终选择后，才由 <code>pipeline.py init --process-tier L0|L1|L2</code> 写入 <code>00-input/intake-decision.md</code>。档位决定目录、work item、证据和最终交付物；命中硬升级条件时停止低档位并升级。</div>
+  <div class="difficulty-entry" aria-label="需求难度入口">
+    <div class="difficulty-title">需求难度（人工选择）</div>
+    <div class="difficulty-options" role="group" aria-label="需求难度">
+      <button class="difficulty-btn" type="button" data-difficulty="low">低难度</button>
+      <button class="difficulty-btn" type="button" data-difficulty="medium">中难度</button>
+      <button class="difficulty-btn" type="button" data-difficulty="high">高难度</button>
+    </div>
+    <div class="tier-entry" id="tier-entry" hidden>
+      <div class="tier-entry-title" id="tier-entry-title">档位建议</div>
+      <div class="tier-entry-note" id="tier-entry-note">建议仅供参考；请人工选择最终档位。</div>
+      <div class="human-tier-options" role="group" aria-label="人工选择交付档位">
+        <button class="human-tier-btn" type="button" data-tier-pick="l0">人工选择 L0 · 快速单点</button>
+        <button class="human-tier-btn" type="button" data-tier-pick="l1">人工选择 L1 · 受限标准</button>
+        <button class="human-tier-btn" type="button" data-tier-pick="l2">人工选择 L2 · 完整状态化</button>
+      </div>
+    </div>
+  </div>
+  <div class="tier-flow">
+    <div class="tier-lane l0"><div class="tier-head"><h3>L0 · 快速单点</h3><span>1 个 work item · 单一可定位变更</span></div><div class="tier-notes"><b>适用：</b>单角色、无持久状态、无 PII/资金/合规影响、简单回退。<br><b>交付：</b><code>intake-decision.md</code> + 紧凑事实采集 <code>mini-prd.md</code>；同一次人工确认中投影为完整 canonical PRD，并保留确认留痕。<br><b>不适用：</b>多模块、数据迁移、复杂异常或多角色需求。</div><a class="tier-jump" href="#sec-flow-l0" data-tier-jump="l0">查看 L0 专属链路 →</a></div>
+    <div class="tier-lane l1"><div class="tier-head"><h3>L1 · 受限标准</h3><span>8 个 work item · 7 个上游 + 装配</span></div><div class="tier-notes"><b>适用：</b>标准业务需求，且 PD / IX / VL / STATE / EX 五项 L2-only 能力均有事实化“不适用”依据。<br><b>交付：</b>7 个确认上游 + <code>prd-assembly</code>，来源块与哈希可追溯。<br><b>升级：</b>任一 L2-only 能力实际适用即升级 L2。</div><a class="tier-jump" href="#sec-flow-l1" data-tier-jump="l1">查看 L1 专属链路 →</a></div>
+    <div class="tier-lane l2"><div class="tier-head"><h3>L2 · 完整状态化</h3><span>13 个 work item · 默认完整路径</span></div><div class="tier-notes"><b>适用：</b>有状态、交互、验证、异常、合规、多系统或复杂回退需求。<br><b>交付：</b>完整产品需求链、全量 PRD、双向追溯与工程约束。<br><b>原则：</b>不以泛化 N/A 替代真实细节。</div><a class="tier-jump" href="#sec-flow-l2" data-tier-jump="l2">查看 L2 专属链路 →</a></div>
+  </div>
+  <div class="tier-shared"><b>阅读方式：</b>先由人工选择难度 → 中/高难度查看建议（低难度不触发）→ 人工确认 L0/L1/L2 → 持久化档位 → 切换标签查看对应链路。建议不能替代人工选择。</div>
+</section>
 <section id="sec-flow">
-  <h2>1. 分档主流程 <span class="badge">切换档位查看实际交付路径</span></h2>
-  <div class="desc">选择一个 process tier 后，驾驶图只展示该档真实启用的工作项、产物、闸门与结束条件。档位由 <code>00-input/intake-decision.md</code> 持久化决定；entry 的材料成熟度 L0-L4 仅用于入口判断，不能改变当前流程档位。</div>
+  <h2>2. 查看所选档位的完整链路 <span class="badge">每次只显示一个档位</span></h2>
+  <div class="desc">在上一节确定档位后，在这里切换 L0 / L1 / L2 查看该档真实启用的工作项、产物、闸门、人工确认和结束条件。档位由 <code>00-input/intake-decision.md</code> 持久化决定；entry 的材料成熟度 L0-L4 仅用于入口判断，不能改变当前流程档位。</div>
   <div class="tier-switcher" role="tablist" aria-label="流程档位">
-    <button class="tier-tab" type="button" role="tab" aria-selected="false" aria-controls="flow-l0" data-tier="l0"><span class="tier-tab-code">L0 · 1 项</span><span class="tier-tab-title">快速单点交付</span><span class="tier-tab-meta">交付 mini-prd.md</span></button>
-    <button class="tier-tab" type="button" role="tab" aria-selected="false" aria-controls="flow-l1" data-tier="l1"><span class="tier-tab-code">L1 · 8 项</span><span class="tier-tab-title">受限标准交付</span><span class="tier-tab-meta">交付可追溯 PRD</span></button>
-    <button class="tier-tab active" type="button" role="tab" aria-selected="true" aria-controls="flow-l2" data-tier="l2"><span class="tier-tab-code">L2 · 13 项</span><span class="tier-tab-title">完整状态化交付</span><span class="tier-tab-meta">全量 PRD 与工程约束</span></button>
+    <button class="tier-tab" type="button" role="tab" aria-selected="false" aria-controls="flow-l0" data-tier="l0"><span class="tier-tab-code">L0 · 1 项</span><span class="tier-tab-title">快速单点交付</span><span class="tier-tab-meta">mini-prd → canonical PRD</span></button>
+    <button class="tier-tab" type="button" role="tab" aria-selected="false" aria-controls="flow-l1" data-tier="l1"><span class="tier-tab-code">L1 · 10 项</span><span class="tier-tab-title">受限标准交付</span><span class="tier-tab-meta">交付可追溯 PRD</span></button>
+    <button class="tier-tab active" type="button" role="tab" aria-selected="true" aria-controls="flow-l2" data-tier="l2"><span class="tier-tab-code">L2 · 15 项</span><span class="tier-tab-title">完整状态化交付</span><span class="tier-tab-meta">全量 PRD 与工程约束</span></button>
   </div>
   <div class="tier-panel" id="flow-l0" role="tabpanel" data-tier-panel="l0">
-    <div class="tier-panel-intro"><div><h3>L0 主流程：快速但不省略责任</h3><p>适用于单一可定位变更、单角色、无持久状态和敏感影响的需求。唯一主产物为六节 <code>mini-prd.md</code>；没有 PRD 汇总与跨产物追溯，但人工确认、审计事件和哈希锚点都保留。</p></div><div class="tier-panel-output"><b>最终交付</b><code>00-input/intake-decision.md</code><br><code>000-minimal/mini-prd.md</code><br>ReviewRecord + hash anchor + audit event</div></div>
+    <div class="tier-panel-intro"><div><h3>L0 主流程：快速但不省略责任</h3><p>适用于单一可定位变更、单角色、无持久状态和敏感影响的需求。<code>mini-prd.md</code> 是事实采集/起草工件；同一次人工确认会将它确定性投影为与 L1/L2 相同的 canonical PRD 章节，并为每章写适用性状态。人工确认、审计事件和哈希锚点都保留。</p></div><div class="tier-panel-output"><b>最终交付</b><code>003-prd-output/prd.md</code><br><code>prd-assembly-manifest.json</code><br>mini-prd + ReviewRecord + hash anchor + audit event</div></div>
     <svg viewBox="0 0 1180 650" xmlns="http://www.w3.org/2000/svg" aria-label="L0 快速单点交付流程"><defs><marker id="l0-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#555"/></marker><marker id="l0-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#A23B3B"/></marker></defs><rect x="435" y="26" width="310" height="48" rx="24" fill="#E6F9EE" stroke="#0F8A4A" stroke-width="2"/><text x="590" y="56" text-anchor="middle" font-size="15" font-weight="700" fill="#0F8A4A">开始 · 单点低风险需求</text><line x1="590" y1="74" x2="590" y2="116" stroke="#555" stroke-width="1.5" marker-end="url(#l0-arrow)"/><rect x="420" y="118" width="340" height="64" rx="8" fill="#F5FCF7" stroke="#0F8A4A" stroke-width="1.8"/><text x="590" y="144" text-anchor="middle" font-size="14" font-weight="700" fill="#0F8A4A">init --process-tier L0</text><text x="590" y="164" text-anchor="middle" font-size="11" fill="#555">写 intake-decision.md：资格矩阵、证据、升级触发条件</text><line x1="590" y1="182" x2="590" y2="224" stroke="#555" stroke-width="1.5" marker-end="url(#l0-arrow)"/><rect x="350" y="226" width="480" height="86" rx="8" fill="#fff" stroke="#0F8A4A" stroke-width="1.8"/><text x="590" y="252" text-anchor="middle" font-size="14" font-weight="700" fill="#0F8A4A">mini-prd · 唯一 Work Item</text><text x="590" y="273" text-anchor="middle" font-size="10.5" fill="#555">变更与结果 · 证据与原因 · 范围 · 可判定验收 · 失败边界与回退 · 依赖与开放问题</text><text x="590" y="292" text-anchor="middle" font-size="10.5" fill="#555">draft → gate（真实内容/来源/验收/回退/升档信号）→ ready_for_human_review</text><line x1="590" y1="312" x2="590" y2="352" stroke="#555" stroke-width="1.5" marker-end="url(#l0-arrow)"/><rect x="410" y="354" width="360" height="62" rx="8" fill="#E6F9EE" stroke="#0F8A4A" stroke-width="1.8"/><text x="590" y="380" text-anchor="middle" font-size="14" font-weight="700" fill="#0F8A4A">business_owner 人工 review</text><text x="590" y="399" text-anchor="middle" font-size="10.5" fill="#0F8A4A">approve 才能 confirmed；changes 回到 mini-prd</text><path d="M410 386 C250 386 250 269 346 269" fill="none" stroke="#A23B3B" stroke-width="1.6" stroke-dasharray="7 4" marker-end="url(#l0-red)"/><text x="210" y="330" font-size="10.5" fill="#A23B3B">changes / gate 失败：修复后重跑</text><line x1="590" y1="416" x2="590" y2="456" stroke="#555" stroke-width="1.5" marker-end="url(#l0-arrow)"/><rect x="385" y="458" width="410" height="64" rx="8" fill="#F5FCF7" stroke="#0F8A4A" stroke-width="1.8"/><text x="590" y="484" text-anchor="middle" font-size="14" font-weight="700" fill="#0F8A4A">ReviewRecord + hash anchor + audit event</text><text x="590" y="504" text-anchor="middle" font-size="10.5" fill="#555">真实人类确认、内容哈希绑定、审计追加</text><line x1="590" y1="522" x2="590" y2="562" stroke="#555" stroke-width="1.5" marker-end="url(#l0-arrow)"/><rect x="430" y="564" width="320" height="48" rx="24" fill="#E6F9EE" stroke="#0F8A4A" stroke-width="2"/><text x="590" y="594" text-anchor="middle" font-size="15" font-weight="700" fill="#0F8A4A">结束 · 交付 mini-prd.md</text><rect x="850" y="226" width="260" height="126" rx="8" fill="#FDF0F0" stroke="#E5A8A8" stroke-width="1.4"/><text x="980" y="251" text-anchor="middle" font-size="12" font-weight="700" fill="#A23B3B">硬升级信号</text><text x="980" y="273" text-anchor="middle" font-size="10.5" fill="#7A2A2A">多模块 / PII / 资金或合规</text><text x="980" y="292" text-anchor="middle" font-size="10.5" fill="#7A2A2A">持久状态 / 数据迁移 / 复杂回退</text><text x="980" y="319" text-anchor="middle" font-size="10.5" fill="#A23B3B">命中即停止 L0，升级 L1/L2</text></svg>
-    <div class="tier-shared"><b>L0 专属章节：</b>只解释六节 mini-PRD 的可实施性与边界。它不生成 issue-record、B3 阶段收口、PRD assembly 或跨产物追溯；这些不是“跳过审计”，而是该档无跨产物链可追溯。</div>
+    <div class="tut-callout ok"><b>交付收口：</b>上图中的 <code>mini-prd</code> 是唯一主 work item，不是最终文件。<code>business_owner approve</code> 后，系统会在同一次确认中写入 <code>003-prd-output/prd.md</code> 和 <code>prd-assembly-manifest.json</code>，再为投影 PRD 记录同一份 ReviewRecord 的哈希锚点。</div>
+    <div class="tier-shared"><b>L0 专属链路：</b>六类事实先进入 mini-prd，再确定性映射到完整 canonical PRD；每个章节必须声明 required / conditional / not_applicable。L0 工作项少、治理轻，但不降低最终章节标准。</div>
   </div>
   <div class="tier-panel" id="flow-l1" role="tabpanel" data-tier-panel="l1">
-    <div class="tier-panel-intro"><div><h3>L1 主流程：受限范围内的可实施 PRD</h3><p>以七个确认上游加一次受控装配形成 PRD。L1 不是 L2 的删减副本：PD/IX/VL/STATE/EX 必须在 intake 中具备具体、可核验的不适用依据；一旦实际适用，即升级 L2。</p></div><div class="tier-panel-output"><b>最终交付</b><code>003-prd-output/prd.md</code><br><code>prd-assembly-manifest.json</code><br>8 项 confirmed 的来源块与哈希</div></div>
+    <div class="tier-panel-intro"><div><h3>L1 主流程：受限范围内的可实施 PRD</h3><p>以九个确认上游（含立项首项 FA + 范围基线 SCOPE）加一次受控装配形成 PRD。L1 不是 L2 的删减副本：PD/IX/FIELDS/VL/STATE/EX 六项 L2-only 能力必须在 intake 中具备具体、可核验的不适用依据；一旦实际适用，即升级 L2。</p></div><div class="tier-panel-output"><b>最终交付</b><code>003-prd-output/prd.md</code><br><code>prd-assembly-manifest.json</code><br>10 项 confirmed 的来源块与哈希</div></div>
     <svg viewBox="0 0 1180 900" xmlns="http://www.w3.org/2000/svg" aria-label="L1 受限标准交付流程"><defs><marker id="l1-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#555"/></marker><marker id="l1-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#A23B3B"/></marker></defs><rect x="415" y="24" width="350" height="48" rx="24" fill="#FEF3C7" stroke="#C98A1B" stroke-width="2"/><text x="590" y="54" text-anchor="middle" font-size="15" font-weight="700" fill="#92580A">开始 · 受限但可实施的需求</text><line x1="590" y1="72" x2="590" y2="110" stroke="#555" stroke-width="1.5" marker-end="url(#l1-arrow)"/><rect x="350" y="112" width="480" height="70" rx="8" fill="#FFFCF2" stroke="#C98A1B" stroke-width="1.8"/><text x="590" y="139" text-anchor="middle" font-size="14" font-weight="700" fill="#92580A">init --process-tier L1 + intake 排除依据</text><text x="590" y="160" text-anchor="middle" font-size="10.5" fill="#555">PD / IX / VL / STATE / EX 全部记录具体 not_applicable 事实</text><line x1="590" y1="182" x2="590" y2="222" stroke="#555" stroke-width="1.5" marker-end="url(#l1-arrow)"/><g font-size="11" fill="#333"><rect x="100" y="224" width="230" height="54" rx="7" fill="#FFFCF2" stroke="#C98A1B"/><text x="215" y="247" text-anchor="middle" font-weight="700">① project-background-goal</text><text x="215" y="266" text-anchor="middle" fill="#666">来源与目标基线</text><rect x="360" y="224" width="230" height="54" rx="7" fill="#FFFCF2" stroke="#C98A1B"/><text x="475" y="247" text-anchor="middle" font-weight="700">② user-journey</text><text x="475" y="266" text-anchor="middle" fill="#666">用户路径</text><rect x="620" y="224" width="230" height="54" rx="7" fill="#FFFCF2" stroke="#C98A1B"/><text x="735" y="247" text-anchor="middle" font-weight="700">③ user-stories</text><text x="735" y="266" text-anchor="middle" fill="#666">故事与目标</text><rect x="880" y="224" width="230" height="54" rx="7" fill="#FFFCF2" stroke="#C98A1B"/><text x="995" y="247" text-anchor="middle" font-weight="700">④ feature-list</text><text x="995" y="266" text-anchor="middle" fill="#666">功能范围</text></g><path d="M215 278 H475 H735 H995" fill="none" stroke="#555" stroke-width="1.5" marker-end="url(#l1-arrow)"/><path d="M995 278 V338 H215" fill="none" stroke="#555" stroke-width="1.5" marker-end="url(#l1-arrow)"/><g font-size="11" fill="#333"><rect x="100" y="340" width="230" height="54" rx="7" fill="#FFFCF2" stroke="#C98A1B"/><text x="215" y="363" text-anchor="middle" font-weight="700">⑤ functional-flow</text><text x="215" y="382" text-anchor="middle" fill="#666">功能主路径</text><rect x="360" y="340" width="230" height="54" rx="7" fill="#FFFCF2" stroke="#C98A1B"/><text x="475" y="363" text-anchor="middle" font-weight="700">⑥ business-rules</text><text x="475" y="382" text-anchor="middle" fill="#666">业务规则</text><rect x="620" y="340" width="230" height="54" rx="7" fill="#FFFCF2" stroke="#C98A1B"/><text x="735" y="363" text-anchor="middle" font-weight="700">⑦ acceptance-criteria</text><text x="735" y="382" text-anchor="middle" fill="#666">可验收标准</text></g><path d="M215 394 H475 H735" fill="none" stroke="#555" stroke-width="1.5" marker-end="url(#l1-arrow)"/><line x1="735" y1="394" x2="735" y2="448" stroke="#555" stroke-width="1.5" marker-end="url(#l1-arrow)"/><rect x="350" y="450" width="480" height="72" rx="8" fill="#fff" stroke="#C98A1B" stroke-width="1.8"/><text x="590" y="478" text-anchor="middle" font-size="14" font-weight="700" fill="#92580A">⑧ prd-assembly · 受控装配</text><text x="590" y="498" text-anchor="middle" font-size="10.5" fill="#555">仅 7 个 confirmed 上游可写入 manifest；嵌入来源块 + 路径 + 内容哈希</text><line x1="590" y1="522" x2="590" y2="566" stroke="#555" stroke-width="1.5" marker-end="url(#l1-arrow)"/><rect x="365" y="568" width="450" height="66" rx="8" fill="#E6F9EE" stroke="#0F8A4A" stroke-width="1.8"/><text x="590" y="595" text-anchor="middle" font-size="14" font-weight="700" fill="#0F8A4A">每项 gate → 人工 review → confirmed</text><text x="590" y="615" text-anchor="middle" font-size="10.5" fill="#555">B3 + issue-record 保留；manifest / PRD / 源文件必须互相一致</text><line x1="590" y1="634" x2="590" y2="676" stroke="#555" stroke-width="1.5" marker-end="url(#l1-arrow)"/><rect x="400" y="678" width="380" height="52" rx="24" fill="#E6F9EE" stroke="#0F8A4A" stroke-width="2"/><text x="590" y="710" text-anchor="middle" font-size="15" font-weight="700" fill="#0F8A4A">结束 · 交付 L1 PRD + manifest</text><rect x="850" y="470" width="260" height="112" rx="8" fill="#FDF0F0" stroke="#E5A8A8" stroke-width="1.4"/><text x="980" y="496" text-anchor="middle" font-size="12" font-weight="700" fill="#A23B3B">L1 升级判定</text><text x="980" y="518" text-anchor="middle" font-size="10.5" fill="#7A2A2A">排除依据缺失 / PD、IX、VL、</text><text x="980" y="537" text-anchor="middle" font-size="10.5" fill="#7A2A2A">STATE、EX 有任一实际适用</text><text x="980" y="561" text-anchor="middle" font-size="10.5" fill="#A23B3B">停止装配，升级 L2</text><path d="M850 526 C780 526 785 204 835 182" fill="none" stroke="#A23B3B" stroke-width="1.5" stroke-dasharray="7 4" marker-end="url(#l1-red)"/></svg>
-    <div class="tier-shared"><b>L1 专属章节：</b>七个上游的追溯链为 G → ST → FEA → FF → BR → AC；最终 PRD 只可包含 §§1–6、9.1、10。§7、§8、§9.2–§9.4 不以“本期不适用”填充，而由 intake 的事实化排除依据支撑。</div>
+    <div class="tier-shared"><b>L1 适用性链路：</b>九个上游加 prd-assembly 共 10 项；最终 PRD 与 L0/L2 使用同一 canonical 章节集合。PD / IX / FIELDS / VL / STATE / EX 是否深入由 intake 适用性矩阵决定；依据不足或实际适用即升级 L2。</div>
   </div>
   <div class="tier-panel active" id="flow-l2" role="tabpanel" data-tier-panel="l2">
-    <div class="tier-panel-intro"><div><h3>L2 主流程：完整状态化交付</h3><p>适用于状态、交互、验证、异常、合规或多系统需求。下面是完整 13 项主路径；每项都经过本项目统一的 intake、gate、人工确认与变更回流控制。</p></div><div class="tier-panel-output"><b>最终交付</b><code>003-prd-output/prd.md</code><br><code>prd-assembly-manifest.json</code><br>全量来源块、双向追溯与属性检查</div></div>
+    <div class="tier-panel-intro"><div><h3>L2 主流程：完整状态化交付</h3><p>适用于状态、交互、验证、字段、异常、合规或多系统需求。下面是完整 15 项主路径（含立项首项 FA + 范围基线 SCOPE + 字段规则 FIELDS）；每项都经过本项目统一的 intake、gate、人工确认与变更回流控制。</p></div><div class="tier-panel-output"><b>最终交付</b><code>003-prd-output/prd.md</code><br><code>prd-assembly-manifest.json</code><br>全量来源块、双向追溯与属性检查</div></div>
   <div class="legend">
     <span><i class="lg term"></i> 开始 / 结束</span>
     <span><i class="lg"></i> 处理步骤</span>
@@ -304,8 +348,8 @@ footer{margin-top:24px;text-align:center;color:#888;font-size:11px;padding-top:1
 
   <!-- entry decision -->
   <polygon points="610,240 740,310 610,380 480,310" fill="#FEF9EC" stroke="#C98A1B" stroke-width="1.8"/>
-  <text x="610" y="305" text-anchor="middle" font-size="12.5" font-weight="700" fill="#92580A">entry 成熟度判定</text>
-  <text x="610" y="323" text-anchor="middle" font-size="10.5" fill="#92580A">材料成熟度 L0-L4（与 process_tier 正交）</text>
+  <text x="610" y="305" text-anchor="middle" font-size="12.5" font-weight="700" fill="#92580A">先选需求难度</text>
+  <text x="610" y="323" text-anchor="middle" font-size="10.5" fill="#92580A">低：不触发建议；中/高：显示档位建议，仍由人工选择</text>
 
   <!-- L0 branch: brainstorming（发散收敛 · 能力） -->
   <line x1="480" y1="310" x2="368" y2="310" stroke="#C9C2EE" stroke-width="1.5" stroke-dasharray="5 4" marker-end="url(#ar-purple)"/>
@@ -430,7 +474,7 @@ footer{margin-top:24px;text-align:center;color:#888;font-size:11px;padding-top:1
   <!-- all confirmed decision -->
   <polygon points="610,1312 750,1380 610,1448 470,1380" fill="#FEF9EC" stroke="#C98A1B" stroke-width="1.8"/>
   <text x="610" y="1375" text-anchor="middle" font-size="12" font-weight="700" fill="#92580A">当前档位全部 Work Item confirmed？</text>
-  <text x="610" y="1392" text-anchor="middle" font-size="10" fill="#92580A">L0 = 1 · L1 = 8 · L2 = 13（仅 L1/L2 继续 PRD 汇总）</text>
+  <text x="610" y="1392" text-anchor="middle" font-size="10" fill="#92580A">L0 = 1 · L1 = 8 · L2 = 13（最终 PRD 三档共享同一 canonical 章节契约）</text>
 
   <!-- next work item loop -->
   <path d="M470 1380 C300 1380 300 452 498 452" fill="none" stroke="#A23B3B" stroke-width="1.6" stroke-dasharray="7 4" marker-end="url(#ar-red)"/>
@@ -440,8 +484,8 @@ footer{margin-top:24px;text-align:center;color:#888;font-size:11px;padding-top:1
   <line x1="610" y1="1448" x2="610" y2="1490" stroke="#555" stroke-width="1.5" marker-end="url(#ar)"/>
   <text x="622" y="1468" font-size="10.5" fill="#0F8A4A">是</text>
   <rect x="470" y="1492" width="280" height="52" rx="8" fill="#fff" stroke="#654ACB" stroke-width="1.8"/>
-  <text x="610" y="1513" text-anchor="middle" font-size="13" font-weight="700" fill="#3A2E8F">L1/L2：prd-assembly（PRD 汇总）→ prd.md</text>
-  <text x="610" y="1531" text-anchor="middle" font-size="10.5" fill="#666">只聚合、不发明 · 双向追溯 + 来源哈希校验；L0 在此之前交付 mini-prd.md</text>
+  <text x="610" y="1513" text-anchor="middle" font-size="13" font-weight="700" fill="#3A2E8F">L1/L2：prd-assembly；L0：确认时自动投影 → prd.md</text>
+  <text x="610" y="1531" text-anchor="middle" font-size="10.5" fill="#666">只聚合、不发明 · 三档均产出 canonical PRD + 可校验来源哈希</text>
   <line x1="610" y1="1544" x2="610" y2="1584" stroke="#555" stroke-width="1.5" marker-end="url(#ar)"/>
 
   <!-- publish decision -->
@@ -503,29 +547,51 @@ footer{margin-top:24px;text-align:center;color:#888;font-size:11px;padding-top:1
 </div>
 </section>
 <section id="sec-tier-flow">
-  <h2>1A. 三档交付路径 <span class="badge">intake-decision.md 是事实源</span></h2>
+  <h2>附录：三档交付路径摘要 <span class="badge">已并入第 1 节</span></h2>
   <div class="desc">三档不是材料成熟度的别名，而是对风险、状态、交互、验证和治理深度的持久化选择。下面列出每档实际启用的工作项、最终产物和硬升级条件；任何 gate、review、reflow 都只能沿当前档位执行。</div>
   <div class="tier-flow">
     <div class="tier-lane l0">
       <div class="tier-head"><h3>L0 · 快速单点交付</h3><span>1 个 work item · 一个可定位变更 · 单角色 · 无持久状态/敏感影响</span></div>
-      <div class="tier-steps"><span class="tier-step">init --process-tier L0</span><span class="tier-arrow">→</span><span class="tier-step">00-input/intake-decision.md</span><span class="tier-arrow">→</span><span class="tier-step">mini-prd.md（6 核心章节）</span><span class="tier-arrow">→</span><span class="tier-step">gate</span><span class="tier-arrow">→</span><span class="tier-step">business_owner review</span><span class="tier-arrow">→</span><span class="tier-step">ReviewRecord + hash anchor + audit event</span><span class="tier-arrow">→</span><span class="tier-step">交付 mini-prd.md</span></div>
-      <div class="tier-notes"><b>六节：</b>变更与预期结果、证据与原因、范围与不做什么、行为与可判定验收、失败边界与回退、依赖与开放问题。<b>不启用：</b>issue-record、B3 阶段收口、prd-assembly、跨产物追溯；但仍保留一次真实人工确认与审计留痕。命中多模块、PII、资金/合规、持久状态、数据迁移或复杂回退等硬条件时，必须升级 L1/L2。</div>
+      <div class="tier-steps"><span class="tier-step">init --process-tier L0</span><span class="tier-arrow">→</span><span class="tier-step">00-input/intake-decision.md</span><span class="tier-arrow">→</span><span class="tier-step">mini-prd.md（6 类事实）</span><span class="tier-arrow">→</span><span class="tier-step">gate</span><span class="tier-arrow">→</span><span class="tier-step">business_owner review</span><span class="tier-arrow">→</span><span class="tier-step">canonical PRD 全章节投影 + manifest</span><span class="tier-arrow">→</span><span class="tier-step">ReviewRecord + hash anchor + audit event</span><span class="tier-arrow">→</span><span class="tier-step">交付 prd.md</span></div>
+      <div class="tier-notes"><b>事实采集：</b>变更与预期结果、证据与原因、范围与不做什么、行为与可判定验收、失败边界与回退、依赖与开放问题。它不是最终 PRD 章节；同一次人工确认中投影到全量 canonical 章节并完成适用性判断。命中多模块、PII、资金/合规、持久状态、数据迁移或复杂回退等硬条件时，必须升级 L1/L2。</div>
     </div>
     <div class="tier-lane l1">
       <div class="tier-head"><h3>L1 · 受限标准交付</h3><span>8 个 work item · 7 个上游 + prd-assembly</span></div>
       <div class="tier-steps"><span class="tier-step">init --process-tier L1</span><span class="tier-arrow">→</span><span class="tier-step">intake：PD / IX / VL / STATE / EX 均有事实化 not_applicable 依据</span><span class="tier-arrow">→</span><span class="tier-step">background-goal</span><span class="tier-arrow">→</span><span class="tier-step">user-journey</span><span class="tier-arrow">→</span><span class="tier-step">user-stories</span><span class="tier-arrow">→</span><span class="tier-step">feature-list</span><span class="tier-arrow">→</span><span class="tier-step">functional-flow</span><span class="tier-arrow">→</span><span class="tier-step">business-rules</span><span class="tier-arrow">→</span><span class="tier-step">acceptance-criteria</span><span class="tier-arrow">→</span><span class="tier-step">prd-assembly → PRD + manifest</span></div>
-      <div class="tier-notes"><b>装配规则：</b>8 项均须 confirmed，来源路径与内容哈希写入 manifest，PRD 嵌入来源块且不得新增业务事实。L1 PRD 保留 §§1–6、9.1、10，省略 L2-only 的 §7、§8、§9.2–§9.4；不适用依据缺失、能力实际适用、声明 L2-only 上游或来源被篡改时，立即升级 L2。保留 issue-record 与 B3 治理。</div>
+      <div class="tier-notes"><b>装配规则：</b>10 项均须 confirmed（含立项首项 FA + 范围基线 SCOPE），来源路径与内容哈希写入 manifest，PRD 嵌入来源块且不得新增业务事实。L1 与其他档位使用同一 canonical 章节；PD / IX / FIELDS / VL / STATE / EX 由适用性矩阵决定是否需要深度来源。不适用依据缺失、能力实际适用、声明错误上游或来源被篡改时，立即升级 L2。</div>
     </div>
     <div class="tier-lane l2">
       <div class="tier-head"><h3>L2 · 完整状态化交付</h3><span>13 个 work item · 有状态、交互、验证、异常、合规或多系统需求</span></div>
       <div class="tier-steps"><span class="tier-step">init --process-tier L2</span><span class="tier-arrow">→</span><span class="tier-step">background-goal</span><span class="tier-arrow">→</span><span class="tier-step">user-journey</span><span class="tier-arrow">→</span><span class="tier-step">user-stories</span><span class="tier-arrow">→</span><span class="tier-step">feature-list</span><span class="tier-arrow">→</span><span class="tier-step">functional-flow</span><span class="tier-arrow">→</span><span class="tier-step">page-design</span><span class="tier-arrow">→</span><span class="tier-step">interaction-rules</span><span class="tier-arrow">→</span><span class="tier-step">business-rules</span><span class="tier-arrow">→</span><span class="tier-step">validation-rules</span><span class="tier-arrow">→</span><span class="tier-step">state-machine</span><span class="tier-arrow">→</span><span class="tier-step">exception-handling</span><span class="tier-arrow">→</span><span class="tier-step">acceptance-criteria</span><span class="tier-arrow">→</span><span class="tier-step">prd-assembly → confirmed prd.md</span></div>
-      <div class="tier-notes"><b>完整治理：</b>13 项逐项通过自身质量规则，保留 B3、issue-record、双向追溯、状态/字段/异常 property 检查和 PRD v8 全量来源 manifest。L2 是命中任一硬升级条件后的默认路径，不可用 L1 的“不适用”声明替代真实工程细节。</div>
+      <div class="tier-notes"><b>完整治理：</b>15 项逐项通过自身质量规则（含立项首项 FA + 范围基线 SCOPE + 字段规则 FIELDS），保留 B3、issue-record、双向追溯、状态/字段/异常 property 检查和 PRD v8 全量来源 manifest。L2 是命中任一硬升级条件后的默认路径，不可用 L1 的“不适用”声明替代真实工程细节。</div>
     </div>
   </div>
   <div class="tier-shared"><b>三档共通控制：</b>每个启用 work item 都经历 draft → gate → ready_for_human_review → 人工 review → confirmed；上游变更由 reflow 将当前档位内的下游产物标记 superseded，并回到最早受影响项。档位事实只来自 <code>00-input/intake-decision.md</code>。</div>
 </section>
+<section id="sec-global-control">
+  <h2>3. 全局控制（所有档位共用） <span class="badge">档位不同，控制底座不变</span></h2>
+  <div class="desc">档位只决定“跑哪些工作项、产出什么”；以下控制适用于 L0、L1、L2 的每一个已启用工作项。它们共同保证来源可追溯、机器先止步、人工才确认、变更可回流。</div>
+  <div class="kpi-grid">
+    <div class="kpi"><div class="n">01</div><div class="l">唯一档位事实源</div><p><code>00-input/intake-decision.md</code> 记录选择人、证据、资格矩阵与升级理由；命令不得临时覆盖。</p></div>
+    <div class="kpi"><div class="n">02</div><div class="l">机器闸门</div><p><code>gate</code> 只允许通过到 <code>ready_for_human_review</code>，不替人确认事实、范围或风险。</p></div>
+    <div class="kpi"><div class="n">03</div><div class="l">人工确认</div><p><code>review approve</code> 写入 ReviewRecord、内容哈希锚点和 audit event，形成可验证的确认留痕。</p></div>
+    <div class="kpi"><div class="n">04</div><div class="l">变更回流</div><p>上游已确认内容变化时，<code>reflow --apply</code> 级联标记下游 <code>superseded</code>，回到最早受影响项。</p></div>
+  </div>
+  <div class="tier-shared"><b>统一状态：</b>draft → gate → ready_for_human_review → confirmed；问题澄清进入 needs_user_input，人工要求修改回到 draft，任何跨档 work item 在执行前 fail-loud。</div>
+</section>
+<section id="sec-stage-one">
+  <h2>4. 阶段一：业务需求链在三档中的位置 <span class="badge">先看档位，再决定阶段一跑多深</span></h2>
+  <div class="desc">阶段一不是独立的第四条流程，而是三档链路中的业务需求入口。三个核心产物始终按依赖顺序理解：项目背景与目标 → 用户旅程 → 用户故事；L0 以 mini-PRD 承载必要事实，不强制跑完整阶段一。</div>
+  <table>
+    <tr><th>档位</th><th>阶段一如何执行</th><th>阶段一产物与下游作用</th></tr>
+    <tr><td><b>L0</b></td><td>不启动完整 001 阶段。只在 <code>mini-prd.md</code> 中记录变更、证据、范围、验收、回退和开放问题。</td><td>单一 mini-PRD；若出现多角色、旅程分叉或范围不清，升级 L1/L2 后再补齐。</td></tr>
+    <tr><td><b>L1</b></td><td>执行受限阶段一：<code>project-background-goal</code> → <code>user-journey</code> → <code>user-stories</code>，再进入功能与规则链。</td><td>BG- → UJ- → ST-；为 FEA、FF、BR、AC 和最终 PRD 提供已确认来源。</td></tr>
+    <tr><td><b>L2</b></td><td>执行完整阶段一，并把确认结果交给完整产品需求链；复杂角色、状态、交互和异常不可省略。</td><td>BG- → UJ- → ST- 作为全量链路的事实基线，继续供 FEA、FF、PD、IX、BR、VL、STATE、EX、AC 消费。</td></tr>
+  </table>
+  <div class="tier-shared"><b>阶段一的共同规则：</b>每个产物都必须有来源、知识状态、追溯编号、机器 gate 和真实人工确认；下游只能消费 confirmed 内容，不能用摘要或泛化 N/A 代替缺失事实。</div>
+</section>
 <section id="sec-cmd">
-  <h2>2. 命令全集 <span class="badge">pipeline.py 一条命令链</span></h2>
+  <h2>5. 命令全集 <span class="badge">pipeline.py 一条命令链</span></h2>
   <div class="desc">所有命令都是 <code>python3 src/scripts/pipeline.py</code> 的子命令；括号内为配套脚本。</div>
   <table>
     <tr><th>命令</th><th>做什么</th><th>关键参数 / 检查</th><th>谁能改状态</th></tr>
@@ -538,7 +604,7 @@ footer{margin-top:24px;text-align:center;color:#888;font-size:11px;padding-top:1
   </table>
 </section>
 <section id="sec-cycle">
-  <h2>3. 8 步执行循环（每项必走）<span class="badge">机器止步 ready · 人工产 confirmed</span></h2>
+  <h2>6. 8 步执行循环（每项必走）<span class="badge">机器止步 ready · 人工产 confirmed</span></h2>
   <div class="desc">每个 Work Item 都完整走一遍；Clarify 与 Reflow 是循环内部状态，不是独立主干。</div>
   <div class="cycle">
     <div class="cstep"><span class="n">1</span><div class="t">Preflight（预检）</div><div class="d">来源盘点、成熟度 L0-L4、无源即停</div></div>
@@ -560,7 +626,7 @@ footer{margin-top:24px;text-align:center;color:#888;font-size:11px;padding-top:1
   </div>
 </section>
 <section id="sec-states">
-  <h2>4. 六态知识标注 <span class="badge">证据与不确定性必须可见</span></h2>
+  <h2>7. 六态知识标注 <span class="badge">证据与不确定性必须可见</span></h2>
   <div class="desc">每条声明必须标注知识状态；<code>ready_for_human_review</code> 强制六态全覆盖且 ASSUMPTION（假设）≤ 30%。</div>
   <div class="ks-grid">
     <div class="ks fact"><span class="cn">FACT（事实）</span><span class="ce">来源明确，追 SRC-</span></div>
@@ -572,7 +638,7 @@ footer{margin-top:24px;text-align:center;color:#888;font-size:11px;padding-top:1
   </div>
 </section>
 <section id="sec-gates">
-  <h2>5. 机器闸门矩阵 <span class="badge">gate 一次跑全</span></h2>
+  <h2>8. 机器闸门矩阵 <span class="badge">gate 一次跑全</span></h2>
   <div class="desc">gate 串联五类检查；blocking 不通过则 review 拒绝批准（waiver_required 需显式 <code>--waive CODE=reason</code>）。</div>
   <table>
     <tr><th>检查</th><th>负责脚本</th><th>检查什么</th><th>失败后果</th></tr>
@@ -590,14 +656,14 @@ footer{margin-top:24px;text-align:center;color:#888;font-size:11px;padding-top:1
   <div class="desc" style="margin-top:14px;margin-bottom:0">信号层（status 可见，不自动执行动作）：<b>B1 熔断</b>（同一 work item 连续 3 轮 changes → 重新评估方向）· <b>B3 老化</b>（open 问题 7 天 flag / 14 天 escalate）· <b>范围冻结</b>（page-design / interaction-rules confirmed 后上游再评审 → 提示走 change-mgmt）。</div>
 </section>
 <section id="sec-skills">
-  <h2>6. Skill 全景说明书 <span class="badge">按档位启用：L0 1 · L1 8 · L2 13</span></h2>
+  <h2>9. Skill 全景说明书 <span class="badge">按档位启用：L0 1 · L1 10 · L2 15</span></h2>
   <div class="desc"><b>当前 registry v7</b>保留 L2 的 13 个独立 work item；运行时以 <code>00-input/intake-decision.md</code> 选择 L0（mini-PRD）、L1（7 个上游 + PRD）或 L2（完整链）。所有 skill 统一结构：<code>SKILL.md</code> + <code>references/</code> + <code>agents/openai.yaml</code> + <code>scripts/validate_artifact.py</code> + <code>README.md</code>。</div>
   <table><tr><th>档位</th><th>实际交付</th><th>治理边界</th></tr>
     <tr><td>L0</td><td><code>mini-prd</code> 一项，六个核心章节</td><td>真实人工确认、ReviewRecord、hash anchor、audit event；无 issue-record 或跨产物追溯</td></tr>
-    <tr><td>L1</td><td>7 个上游 + <code>prd-assembly</code>，共 8 项</td><td>PD/IX/VL/STATE/EX 必须在 intake 中有事实化不适用依据；保留 B3 与来源装配</td></tr>
-    <tr><td>L2</td><td>完整 13 项链</td><td>状态、交互、校验、异常、合规、多角色或多系统需求的默认完整路径</td></tr>
+    <tr><td>L1</td><td>9 个上游（含 FA + SCOPE） + <code>prd-assembly</code>，共 10 项</td><td>PD/IX/FIELDS/VL/STATE/EX 必须在 intake 中有事实化不适用依据；保留 B3 与来源装配</td></tr>
+    <tr><td>L2</td><td>完整 15 项链（含 FA + SCOPE + FIELDS）</td><td>状态、交互、字段、校验、异常、合规、多角色或多系统需求的默认完整路径</td></tr>
   </table>
-  <h3 style="margin:14px 0 8px">L2 完整主干（13 · 顺序执行，进 PRD 正文）</h3>
+  <h3 style="margin:14px 0 8px">L2 完整主干（15 · 顺序执行，进 PRD 正文）</h3>
   <table><tr><th>work_item</th><th>阶段/顺序</th><th>产物文件</th><th>ID 前缀</th><th>前置（须 confirmed）</th><th>评审角色</th><th>一句话定位</th></tr>
     <tr><td><code>project-background-goal</code>（项目背景与目标）</td><td>001 · 1</td><td><code>001-business-requirements/01-background-goal/background-goal.md</code></td><td>BG-</td><td>—（入口）</td><td>business_owner / product_owner</td><td>将原始需求材料整理为带来源、经人工确认的业务背景与目标基线，供后续旅程和产品设计使用。</td></tr>
     <tr><td><code>user-journey</code>（用户旅程）</td><td>001 · 2</td><td><code>001-business-requirements/02-user-journey/user-journey.md</code></td><td>UJ-</td><td>project-background-goal</td><td>business_owner / product_owner</td><td>构建按生命周期与角色组织的用户旅程，补充情绪映射及痛点到机会的转换；它是独立 work item，不依附父产物。</td></tr>
@@ -625,7 +691,7 @@ footer{margin-top:24px;text-align:center;color:#888;font-size:11px;padding-top:1
 </section>
 <section id="sec-artifacts">
   <h2>7. 产物说明书 <span class="badge">按档位核心产物：L0 1 · L1 8 · L2 13</span></h2>
-  <div class="desc"><b>物理定义与运行时交付不同</b>：注册表共定义 14 类主干产物（含 L0 的 mini-prd）；运行时按持久化档位只启用 L0 的 1 项、L1 的 8 项或 L2 的 13 项。每个启用产物都有独立文件、校验器、模板与路径；一个 artifact 一个位置、原地演进（v0.* 快照）。</div>
+  <div class="desc"><b>物理定义与运行时交付不同</b>：注册表共定义 16 类主干产物（含 L0 的 mini-prd）；运行时按持久化档位只启用 L0 的 1 项、L1 的 10 项或 L2 的 15 项。每个启用产物都有独立文件、校验器、模板与路径；一个 artifact 一个位置、原地演进（v0.* 快照）。</div>
   <table>
     <tr><th>产物 ID</th><th>生产者 work_item</th><th>文件路径</th><th>进入 PRD 的位置</th><th>依赖上游</th></tr>
     <tr><td><code>project-background-goals</code></td><td><code>project-background-goal</code></td><td><code>001-business-requirements/01-background-goal/background-goal.md</code></td><td>项目背景、现状、问题、目标、角色、约束与范围依据</td><td>—（源头）</td></tr>
@@ -736,13 +802,13 @@ footer{margin-top:24px;text-align:center;color:#888;font-size:11px;padding-top:1
 <!-- ================= 全景节点图（可展开） ================= -->
 <section id="sec-tree2">
   <h2>全景节点图 <span class="badge">所有节点 · 点击展开</span></h2>
-  <div class="desc">技能目录保留 L2 完整链；当前 REQ 只执行由档位事实源选中的 L0 1 项、L1 8 项或 L2 13 项。点击任意节点标题展开/收起其子节点；用下面两个按钮可展开/收起整棵树。</div>
+  <div class="desc">技能目录保留 L2 完整链；当前 REQ 只执行由档位事实源选中的 L0 1 项、L1 10 项或 L2 15 项。点击任意节点标题展开/收起其子节点；用下面两个按钮可展开/收起整棵树。</div>
   <div class="tree-actions">
     <button class="tree-btn" id="tree-expand">⤢ 展开全部</button>
     <button class="tree-btn" id="tree-collapse">⤡ 收起全部</button>
   </div>
   <div class="tree" id="tree">
-<div class="tnode t-root" data-depth="0"><div class="tnode-h"><span class="ttoggle">▸</span><span class="tbadge">总览</span><span class="tname">PM Scaffold 全景节点图</span></div><div class="tnode-d">分档交付：L0 1 项 / L1 8 项 / L2 13 项；另有按需分支、L1/L2 issue-record 常驻、能力与共享机制。节点图保留 L2 完整目录，运行时按 intake 决策裁剪。点击任意节点展开/收起。</div><div class="tchildren">
+<div class="tnode t-root" data-depth="0"><div class="tnode-h"><span class="ttoggle">▸</span><span class="tbadge">总览</span><span class="tname">PM Scaffold 全景节点图</span></div><div class="tnode-d">分档交付：L0 1 项 / L1 10 项 / L2 15 项；另有按需分支、L1/L2 issue-record 常驻、能力与共享机制。节点图保留 L2 完整目录，运行时按 intake 决策裁剪。点击任意节点展开/收起。</div><div class="tchildren">
 <div class="tnode t-entry" data-depth="1"><div class="tnode-h"><span class="ttoggle">▸</span><span class="tbadge">入口</span><span class="tname">入口探索（Stage 0）</span></div><div class="tnode-d">进入主干前的判定与理解：材料六信号判 L0-L4 → 发散/复述/可行性 → 主干 bg。</div><div class="tchildren">
 <div class="tnode t-cmd" data-depth="2"><div class="tnode-h"><span class="ttoggle leaf"></span><span class="tbadge">命令</span><span class="tname">entry 内容判定（L0-L4）</span></div><div class="tnode-d">读 00-input 内容六信号（问题/角色/约束/方案/功能/规则）判成熟度；L0/L1 输出 entry_blocked（材料不足）。</div></div><div class="tnode t-cap" data-depth="2"><div class="tnode-h"><span class="ttoggle leaf"></span><span class="tbadge">能力</span><span class="tname">需求重举能力（requirement-restate）</span></div><div class="tnode-d">output_kind=process（能力，过程记录不进 PRD）。<b>复述确认</b>：RR-NNN verbatim 复述 stakeholder 原话，多源/歧义时触发；CONFLICT→issue-record(CLS)、UNKNOWN→Q-XXX(INF)。</div></div><div class="tnode t-cap" data-depth="2"><div class="tnode-h"><span class="ttoggle leaf"></span><span class="tbadge">能力</span><span class="tname">发散收敛能力（brainstorming）</span></div><div class="tnode-d">output_kind=process（能力，过程记录不进 PRD）。<b>L0 候选发散</b>：SCN-XXX 12 维度候选 → 人工四值处置（include/exclude/defer/research）→ include 候选进 bg 输入包。</div></div><div class="tnode t-branch" data-depth="2"><div class="tnode-h"><span class="ttoggle leaf"></span><span class="tbadge">分支产物</span><span class="tname">可行性分析（feasibility-analysis）</span></div><div class="tnode-d">分支产物。四要素：市场空间 / 技术可行性 / 投入产出 / 风险评估；多方案决策矩阵为其一章。</div></div>
 </div></div><div class="tnode t-stage" data-depth="1"><div class="tnode-h"><span class="ttoggle">▸</span><span class="tbadge">阶段</span><span class="tname">001 业务需求</span></div><div class="tnode-d">业务真相与范围的源头。</div><div class="tchildren">
@@ -781,7 +847,7 @@ PM Scaffold · 文件完整架构
 ├─ skills/pm-scaffold/SKILL.md  打包清单（对外安装入口）
 ├─ src/
 │  ├─ framework/                治理层（Agent 先读这里）
-│  │  ├─ workflow-registry.json  ★ 机器注册表（schema v7：L2 13 项；L1 8 / L0 1 由 intake 决策裁剪）
+│  │  ├─ workflow-registry.json  ★ 机器注册表（schema v7：L2 15 项；L1 10 / L0 1 由 intake 决策裁剪）
 │  │  ├─ constitution.md         8 条硬宪法（含 v0.4.0 第 7/8 条：事件日志防篡改 + 校验器统一错误格式）
 │  │  ├─ contracts.md            六态知识标注 + 确认不变式 + AuditEvent/ProjectionCache/ValidatorIssue/RegistryContract 扩展契约（v0.4.0）
 │  │  ├─ workflow.md             8 步循环 + Entry And Exit
@@ -807,7 +873,7 @@ PM Scaffold · 文件完整架构
 │  │  ├─ feishu_fetch.py        飞书取料（lark-cli → 清洗 → 脱敏 → 登记）
 │  │  ├─ prd_publish.py         飞书发布（doc-id 写回 frontmatter）
 │  │  └─ snapshot_cases.py      产物快照对比（--record / --check）
-│  ├─ stages/                   3 阶段；L2 完整链 13 项，L1 8 项，L0 1 项（无嵌套 skills/ 子目录）
+│  ├─ stages/                   3 阶段；L2 完整链 15 项，L1 10 项，L0 1 项（无嵌套 skills/ 子目录）
 │  │  ├─ 001-business-requirements/skills/    4 skill
 │  │  │  ├─ project-background-goal/    ① 项目背景与目标
 │  │  │  ├─ user-journey/               ② 用户旅程（v0.5.0 新拆）
@@ -834,7 +900,7 @@ PM Scaffold · 文件完整架构
 │  │  ├─ change-management/ traceability/ decision-log/
 │  │  └─ capability-fragments/ intake-routing/ project-init/
 │  ├─ templates/                13 独立产物模板 + resolver.py + 3 旧模板（deprecated）
-│  └─ toolkit/                  外部工具指南（lark-cli / Figma / Mermaid）
+│  └─ toolkit/                  工具适配指南（lark-cli / Figma / Mermaid）
 │     └─ visualization/         流程图 HTML（本文件所在）
 └─ test/
    ├─ scripts/                  集成/运行时测试（workflow_runtime / cross_skill / tamper）
@@ -957,24 +1023,23 @@ PM Scaffold · 文件完整架构
 
 <h4>1.2 它由哪些部分组成</h4>
 <ul>
-  <li><b>按档位启用的 Skill 集合</b>：L0 仅 <code>mini-prd</code>；L1 为 7 个上游加 <code>prd-assembly</code>（共 8 项）；L2 为完整 13 项链。另有 3 个按需分支、L1/L2 常驻的 <code>issue-record</code> 与 2 个能力 skill。每个主干 skill 都自带执行协议、参考知识库与机器校验器，实际启用集合以 <code>workflow-registry.json</code> 和持久化 <code>00-input/intake-decision.md</code> 为准。</li>
+  <li><b>按档位启用的 Skill 集合</b>：L0 仅 <code>mini-prd</code>；L1 为 9 个上游加 <code>prd-assembly</code>（共 10 项）；L2 为完整 15 项链（含立项首项 FA + 范围基线 SCOPE + 字段规则 FIELDS）。另有 3 个按需分支、L1/L2 常驻的 <code>issue-record</code> 与 2 个能力 skill。每个主干 skill 都自带执行协议、参考知识库与机器校验器，实际启用集合以 <code>workflow-registry.json</code> 和持久化 <code>00-input/intake-decision.md</code> 为准。</li>
   <li><b>18 个脚本</b>（在 src/scripts/）：pipeline.py（命令入口：init / status / entry / gate / review / reflow）、orchestrator.py（状态机 + 信号层）、dor_check.py（闸门检查）、workflow_registry.py（注册表访问器）、consistency_check.py（跨文档一致性）、traceability_check.py（双向追溯）、property_check.py（逻辑完备）、branch_validator.py（评审记录与哈希校验）、migrate_layout_v2.py（布局迁移）、audit_log.py（SHA-256 链事件日志）、projection_cache.py（投影缓存）、registry_contract_check.py（注册表契约关卡）、validation_errors.py（统一错误格式）、hash_anchor.py（哈希锚点）、desensitize_check.py（脱敏检查）、feishu_fetch.py（飞书取料）、prd_publish.py（飞书发布）、snapshot_cases.py（快照对比）。全部只用 Python 标准库，AI 不需要装任何第三方包。</li>
   <li><b>9 个共享机制</b>（在 src/shared/）：audit（审查闸门）、human-gate（人工闸门）、clarify（澄清循环）、change-management（变更回流）、traceability（追溯）、decision-log（决策记录）、capability-fragments（能力片段）、intake-routing（入口路由）、project-init（项目初始化）。它们横向服务所有阶段，是脚手架的「公共服务」。（注：brainstorming 现已独立为 001 stage 的能力 skill，不再归入 shared。）</li>
 </ul>
 
 <h4>1.3 最终产出的 prd.md 长什么样</h4>
-<p>跑完整个流程，你在 <code>requirements/REQ-XXX/003-prd-output/prd.md</code> 拿到唯一交付物。它由 9 节组成（7 正文 + 需求追溯矩阵附录 + 自审记录附录，对照产物模板；校验章节由机器在 gate 时产出并进 99-review 评审记录）：</p>
+<p>跑完整个流程，你在 <code>requirements/REQ-XXX/003-prd-output/prd.md</code> 拿到唯一最终交付物。L0、L1、L2 都使用同一套 canonical PRD 章节；档位只改变证据深度、工作项数量和治理强度。每章都带 <code>required</code>、<code>conditional</code> 或 <code>not_applicable</code> 适用性判断，后者必须给出事实依据、来源、判断人和时间。</p>
 <table>
   <tr><th>章节</th><th>内容</th></tr>
-  <tr><td>§1 项目背景与目标</td><td>从 project-background-goal 已确认产物完整引用</td></tr>
-  <tr><td>§2 业务角色、用户旅程与用户故事</td><td>从 user-journey + user-stories 已确认产物完整引用</td></tr>
-  <tr><td>§3 功能范围、功能流程与关键状态</td><td>从 feature-list / functional-flow / page-design / interaction-rules 已确认产物引用</td></tr>
-  <tr><td>§4 分功能描述</td><td>从 business-rules / validation-rules / state-machine / exception-handling 已确认产物完整引用（FEA / FL / BR / VL / SM / EX）</td></tr>
-  <tr><td>§5 按需章节</td><td>字段规则、埋点需求、依赖与约束、未决问题与风险——没内容就标「本期不适用」</td></tr>
-  <tr><td>§6 事实与决定</td><td>汇总各工作项的关键事实与人类决定</td></tr>
-  <tr><td>§7 验收依据</td><td>关键验收基准（汇总 acceptance-criteria 已确认 AC）</td></tr>
-  <tr><td>附录 · 需求追溯矩阵</td><td>目标 G → 故事 ST → 功能 FEA → 功能详述 FUN → 验收 AC → 业务规则 BR 六列表，每一条验收都能链回它验证的目标</td></tr>
-  <tr><td>附录 · 自审记录（Constitution Compliance）</td><td>对照原则的自查表（业务事实分离、AI 不替业务决定、来源可追溯、冲突显式保留并关闭）</td></tr>
+  <tr><td>§1–§2 项目背景、项目范围</td><td>目标、问题、边界和回退依据</td></tr>
+  <tr><td>§3–§4 用户旅程、用户故事</td><td>受影响角色、路径与用户价值</td></tr>
+  <tr><td>§5–§6 功能清单、功能流程</td><td>可实施功能和可观察的行为路径</td></tr>
+  <tr><td>§7–§8 原型/UX、交互规则</td><td>页面与交互事实；不适用时保留事实化章节判断</td></tr>
+  <tr><td>§9 业务规则</td><td>§9.1 计算与流程规则、§9.2 校验规则、§9.3 状态变化、§9.4 异常处理</td></tr>
+  <tr><td>§10 验收依据</td><td>可判定的验收条件与结果</td></tr>
+  <tr><td>§11 按需章节</td><td>竞品、字段、埋点、可行性、术语和职责等按需事实；没有事实时也必须写可审计的 not_applicable 判断</td></tr>
+  <tr><td>需求追溯矩阵、自审记录</td><td>每项结论可回溯到确认来源，并声明业务事实、人工决定和未决项</td></tr>
 </table>
 <div class="tut-callout ok"><b>它为什么可信</b>：AI 写的每一句话都必须标注「这是事实 / 这是你的决定 / 这是假设 / 这是 AI 推断 / 这是未知 / 这里有冲突」；AI 永远只能把产物推到「待你评审」，<code>已确认</code> 这个状态全项目只有你跑确认命令才能写。</div>
 
@@ -1463,7 +1528,7 @@ ERROR: waiver_required issue 'xxx' needs --waive CODE=&lt;reason&gt;
 <ul>
   <li><b>原型两步流程</b>（page-design 的可选落地能力）：<b>先出页面清单经人工确认，确认后才生成单文件 HTML</b>。页面清单从已确认的 page-design 提取（每行可追溯 FEA/IX/BR），编号 P01 起，你确认覆盖完整后，AI 才生成自包含的交互原型，落盘到 <code>99-review/support/prototype/</code>，命名 <code>[REQ-XXX-功能名]-交互原型-v1.0.html</code>。硬规则：不发明页面、分支必须指向清单内页面、状态依赖目标页先弹确认。</li>
   <li><b>参考图还原</b>（image2html 技法）：输入含 UI 参考图 / 竞品截图时走高保真路径——<b>不得把整张图贴成页面背景</b>，导航、卡片、按钮、表格一律用 HTML/CSS 重建；位图只用于照片、地图、复杂插画、品牌视觉；图标用 SVG。还原时参考图是证据（FACT），但「照图还原的布局是否满足业务」未确认——还原解读必须标 AI_INFERENCE 交你确认；竞品截图登记 SRC-* 进入来源追溯；参考图只提升视觉保真，不改变逻辑保真（不因图发明页面或状态）。</li>
-  <li><b>PRD 结构参考</b>（prd-assembly 的呈现方法论）：吸收 prd / prd-writer 等 skill 的章节骨架——Executive Summary 三段式、用户故事 + AC 分组、风险分析、验收清单——但<b>只借鉴结构、零内容发明</b>：每一章都必须能指出「上游产物哪一段提供」，指不出来的章节就是空壳，宁缺勿造。支持三个变体：standard（完整版）/ executive（高管版，只留摘要）/ technical（工程师版，全量 AC/BR/IX）——任何变体都只做保留/省略，不新增内容。</li>
+  <li><b>PRD 结构参考</b>（prd-assembly 的呈现方法论）：吸收外部 PRD skill 的结构方法，但<b>只借鉴结构、零内容发明</b>。canonical PRD 是唯一正式交付；高管视图和技术视图只能是只读投影，不能删改或替代 canonical 章节。</li>
 </ul>
 
       </div>
@@ -1473,8 +1538,20 @@ ERROR: waiver_required issue 'xxx' needs --waive CODE=&lt;reason&gt;
 
 <script>
 (function(){
+  // Keep the legacy SVG's terminal label aligned with the canonical L0
+  // projection contract while preserving the existing diagram geometry.
+  Array.prototype.forEach.call(document.querySelectorAll('#flow-l0 svg text'), function(node){
+    if (node.textContent.indexOf('结束 · 交付 mini-prd.md') !== -1) {
+      node.textContent = '结束 · 交付 canonical prd.md';
+    }
+  });
   var tabs = Array.prototype.slice.call(document.querySelectorAll('.tier-tab'));
   var panels = Array.prototype.slice.call(document.querySelectorAll('.tier-panel'));
+  var difficultyButtons = Array.prototype.slice.call(document.querySelectorAll('.difficulty-btn'));
+  var tierEntry = document.getElementById('tier-entry');
+  var tierEntryTitle = document.getElementById('tier-entry-title');
+  var tierEntryNote = document.getElementById('tier-entry-note');
+  var tierPickButtons = Array.prototype.slice.call(document.querySelectorAll('[data-tier-pick]'));
   function choose(tier, updateHash){
     var found = tabs.some(function(tab){ return tab.dataset.tier === tier; });
     if (!found) tier = 'l2';
@@ -1500,6 +1577,31 @@ ERROR: waiver_required issue 'xxx' needs --waive CODE=&lt;reason&gt;
       tabs[next].focus();
       choose(tabs[next].dataset.tier, true);
     });
+  });
+  difficultyButtons.forEach(function(button){
+    button.addEventListener('click', function(){
+      var level = button.dataset.difficulty;
+      difficultyButtons.forEach(function(item){ item.classList.toggle('active', item === button); });
+      if (level === 'low') {
+        tierEntry.hidden = true;
+        return;
+      }
+      var suggested = level === 'high' ? 'L2' : 'L1';
+      tierEntry.hidden = false;
+      tierEntryTitle.textContent = level === 'high' ? '高难度建议：L2 完整状态化' : '中难度建议：L1 受限标准';
+      tierEntryNote.textContent = '这是机器提示，不会自动切档；请在下面人工选择最终档位，再由 init --process-tier 写入 intake。';
+      tierPickButtons.forEach(function(item){ item.classList.toggle('selected', item.dataset.tierPick === suggested.toLowerCase()); });
+    });
+  });
+  tierPickButtons.forEach(function(button){
+    button.addEventListener('click', function(){
+      tierPickButtons.forEach(function(item){ item.classList.toggle('selected', item === button); });
+      choose(button.dataset.tierPick, true);
+      document.getElementById('sec-flow').scrollIntoView({behavior:'smooth', block:'start'});
+    });
+  });
+  document.querySelectorAll('[data-tier-jump]').forEach(function(link){
+    link.addEventListener('click', function(){ choose(link.dataset.tierJump, true); });
   });
   var match = location.hash.match(/^#sec-flow-(l0|l1|l2)$/);
   choose(match ? match[1] : 'l2', false);

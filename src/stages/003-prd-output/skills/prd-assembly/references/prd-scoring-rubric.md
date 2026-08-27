@@ -1,6 +1,6 @@
 # PRD 评分卡参考（PRD Scoring Rubric）
 
-> 来源吸收：Trae `prd-reviewer` skill 的「10 分制 7 模块评分体系 + 17 项快速检查清单 + 三大禁忌」，经 to B 适配（剔除 tapd 地址/设计师等待定工具字段，改为"产物路径+评审人"；保留背景四要素/量化目标/灰度/报表/风险合规完整扣分规则）后作为 prd-assembly Human Gate 的参考工具。
+> 本文将相关实践转化为本项目的可选方法，不引入外部运行时依赖。
 > 定位：prd-assembly 产出的 prd.md 与 review-taxonomy 裁决是权威；本文档是**advisory 级参考工具，不写入产物状态机、不影响 gate 阻断行为**。
 > 触发：PRD 汇总 Human Gate 前，评审人可选用于量化自检。**按需加载，不设全局闸门，advisory 级**。
 
@@ -10,7 +10,7 @@
 
 ## 0.1 蒸馏说明
 
-蒸馏自 workbuddy `prd-reviewer` skill（10 分 7 模块 + 3 红线 + 17 检查）+ `incremental-prd-collaboration` 高频遗漏清单 + `incre-prd-checklist.md`。本文档是**advisory 级**，prd-assembly validate_artifact.py 是**结构级**——两者互补不互替代。
+本文将相关评审实践转化为本项目的 advisory 检查，不引入外部运行时依赖。
 
 ## 1. 三大禁忌（评分红线，吸收自 prd-reviewer）
 

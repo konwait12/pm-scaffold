@@ -4,7 +4,7 @@
 
 高成熟度材料可以减少起草量，但下游工作项必须等待 `workflow-registry.json` 中全部前置项形成有效的已确认基线；缺失上游内容必须补齐，不能被静默跳过。
 
-材料成熟度与工序档位相互独立。材料成熟度分为 L0 模糊输入、L1 业务需求、L2 业务方案、L3 产品方案、L4 详细规格，并应呈现给人工确认。成熟度 L0（无来源或仅一行想法）触发 `brainstorming`：生成 SCN-XXX 候选并由人工处置，仅 `include` 候选进入输入包；多源措辞不一致或存在歧义时触发 `requirement-restate`。需要保存路由记录时使用 `src/templates/others/entry-assessment.md`。
+材料成熟度与工序档位相互独立。入口先由人工选择需求难度：低难度不触发档位建议；中/高难度才显示 L1/L2 建议。建议仅供参考，最终必须由人工选择并通过 `init --process-tier` 持久化，系统不会自动切档。材料成熟度分为 L0 模糊输入、L1 业务需求、L2 业务方案、L3 产品方案、L4 详细规格，并应呈现给人工确认。成熟度 L0（无来源或仅一行想法）触发 `brainstorming`：生成 SCN-XXX 候选并由人工处置，仅 `include` 候选进入输入包；多源措辞不一致或存在歧义时触发 `requirement-restate`。需要保存路由记录时使用 `src/templates/others/entry-assessment.md`。
 
 ## 工序档位
 

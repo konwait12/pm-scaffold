@@ -19,7 +19,7 @@
 | D3 | AI 6 维评分给推荐 + 用户必选（改档无需理由） | 拍板 3 |
 | D4 | 档位在 Intake 入口一次性决定，写入 REQ frontmatter | 拍板 4 |
 | D5 | 一套 src 多档位，不复制 src-lite/mid/full | 拍板 5 |
-| D6 | L0 = 一个 skill 一气呵成（workbuddy 风格） | 拍板 6 |
+| D6 | L0 = 一个 skill 一气呵成（紧凑工作流） | 拍板 6 |
 | D7 | 图中产物都要有；加入的其他产物不影响 | 图指示 |
 | D8 | 可行性分析 **进 PRD 为按需附录** | 拍板 7 |
 | D9 | 问题清单（ISS-NNN）**默认不进 PRD**，进 issue-record.md；Intake 问用户 | 拍板 7 |
@@ -177,7 +177,7 @@ REQUIRED_HEADINGS_V8_L1 = [  # L1 模式：无原型/UX 与交互规则（上游
 |---|---|---|---|
 | 适用 | 单点改动/文案/配置/Bug 修复 | 单模块新功能/单一主流程/风险可控 | 多角色/合规/状态机/多端 |
 | work_items | **1**（mini-prd） | **7**（BG→UJ→US→FL→FF→BR→AC + prd-assembly L1 模式） | **13**（现状） |
-| PRD 交付 | mini-prd.md（workbuddy 6 节） | prd.md（L1 模式，8 主干章） | prd.md（完整 10 主干章） |
+| PRD 交付 | mini-prd.md（历史六节草稿） | prd.md（L1 模式，8 主干章） | prd.md（完整 10 主干章） |
 | 治理 | 轻量：单签 ReviewRecord + hash 锚（F8） | 完整：ReviewRecord + hash + audit chain | 完整（现状） |
 | 校验器 | mini-prd 校验器（新，轻量） | 现有各产物校验器 + prd-assembly L1 headings | 现有全部（零修改） |
 | traceability_check | 不跑 | 跑（tier 集内边审计） | 跑（现状） |
@@ -188,7 +188,7 @@ REQUIRED_HEADINGS_V8_L1 = [  # L1 模式：无原型/UX 与交互规则（上游
 
 ### 3.2 L0 · mini-prd skill（新建 `src/stages/000-minimal/skills/mini-prd/`）
 
-**章节（workbuddy 6 节，D6）**：
+**章节（历史六节草稿，D6）**：
 1. 改什么（改动点：文件/页面/字段/文案 + 一句话目标）
 2. 为什么（触发来源 + 一句话证据）
 3. 影响范围（模块/角色/入口 + 回滚方式）

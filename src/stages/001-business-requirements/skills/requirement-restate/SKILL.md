@@ -114,6 +114,13 @@ Load `references/thinking-framework.md`（Common Core + 需求复述 lens）befo
 | `references/gap-checklist-14d.md` | 14 维度缺口扫描清单（结构性遗漏检测，P0/P1/P2 定级） | Intake 后 RR 定稿前扫描时（按需） |
 | `references/fact-ledger.md` | 事实台账五分型 F/D/A/W/O + 三色标注 + 来源可信度仲裁链 | Intake 多源素材/冲突仲裁时（按需） |
 | `references/interview-synthesis.md` | 访谈五步提炼法 + 问题措辞 5 铁律（口语化描述转结构化需求） | 处理访谈原话/生成 Clarify 问题时（按需） |
+| `src/shared/process-skills/references/multi-stakeholder-alignment-matrix.md` | 多 stakeholder 对齐矩阵（≥2 stakeholder 描述同一事时拆解） | Intake 多 stakeholder 冲突时（按需） |
+| `src/shared/process-skills/references/assumption-stress-test.md` | 假设反事实验证（每条 ASSUMPTION 写可证伪条件） | RR 定稿前对 ASSUMPTION/AI_INFERENCE 扫一遍（按需） |
+| `src/shared/process-skills/references/time-sensitivity-and-decision-window.md` | 时效性 5 类（决策窗 / 有效窗 / 执行窗 / 响应窗 / 变更窗） | 强时间窗 / 截止时间类诉求（按需） |
+| `src/shared/process-skills/references/value-cost-risk-triangle.md` | 价值-成本-风险三角 + 9 条硬性降级项 | 优先级定级 / 多方案取舍 / 范围扩张（按需） |
+| `src/shared/process-skills/references/latent-pain-signal.md` | 隐性痛点 4 类（沉默 / 情绪 / 迂回 / 沉默多数） | W 诉求型多 / O 意见型多 / stakeholder 沉默（按需） |
+| `src/shared/process-skills/references/decision-reversibility.md` | 决策可逆性 4 级（完全可逆 / 可逆但有成本 / 难可逆 / 不可逆） | 含合规/资金/PII/法律告知/数据迁移决策（按需） |
+| `src/shared/process-skills/references/scope-creep-defense.md` | 范围蠕变防御（O 原始 / D 衍生 / E 隐性扩展三层拆解） | 范围膨胀 / 衍生诉求多 / "以后会用到"（按需） |
 
 ## 完成标准（Completion）
 

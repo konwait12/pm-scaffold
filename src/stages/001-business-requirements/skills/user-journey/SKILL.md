@@ -108,6 +108,10 @@ description: Build a lifecycle-by-role user journey map — lifecycle model, rol
 | `references/journey-error-recovery-and-metrics.md` | 旅程错误恢复与指标技法（每步 Success Criteria 勾选 / 摩擦→缓解 / E1/E2 错误恢复四段式 / 旅程级 4 类指标） | 旅程需被验收/可测试、或含高风险异常路径、或需定义埋点指标时（按需） |
 | `references/journey-behavior-vs-feature-jtbd.md` | 用户行为≠功能技法（行为三问测试 / 一句话结果导向 JTBD 叙事 / 骨架活动 3-5 条 / 层层下钻留接口） | Intake 判行为vs功能 / Generate 前搭叙事主线 / Audit 查功能泄漏时（按需） |
 
+## 产品质量增强（L1 必须）
+
+旅程必须把角色×阶段×触点的事实与未知分开，并完成“痛点→机会→故事”的覆盖。送审前填写产品质量增强记录；多角色冲突、替代路径不清或机会无法由证据支持时，先澄清或升级，不编造用户研究结论。
+
 ## 完成标准（Completion）
 
 所有已确认角色都有完整的旅程图；每条旅程含阶段/触点/行为/痛点/情绪曲线/机会；情绪有来源依据；每个痛点对应可衡量的机会；主路径/分支/异常退出均有覆盖；旅程不包含用户故事卡片或范围基线；在启动 `user-stories` 前，获得授权的人类批准了用户旅程基线。

@@ -110,6 +110,10 @@ description: Transform confirmed user journey into story cards with MoSCoW prior
 | `references/user-story-4elements.md` | 用户故事四要素模板（角色/场景/意图/动机）强化结构化写法 | Generate 故事卡片补齐四要素时（按需） |
 | `src/shared/clarify/references/scope-negotiation-scripts.md` | In/Out/Deferred/Conditional 的范围谈判脚本 | Clarify 发生范围或优先级取舍时（必查） |
 
+## 产品质量增强（L1 必须）
+
+每个故事要说明用户结果而非功能口号，记录至少一个被排除/延期的替代范围及理由。送审前填写产品质量增强记录，并确保 MoSCoW、In/Out/Deferred/Conditional 的取舍都有来源或业务决策；不能让所有故事默认 Must。
+
 ## 完成标准（Completion）
 
 每个已确认旅程痛点/机会都有对应故事卡片；每个故事符合 As a / I want / so that 格式且可测试；MoSCoW 有清晰判定理由；范围基线（In/Out/Deferred/Conditional）有依据；每个故事回溯到旅程节点；故事不重新设计旅程或情绪映射；在启动 `feature-list` 前，获得授权的人类批准了用户故事与范围基线。

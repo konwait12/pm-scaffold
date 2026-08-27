@@ -13,7 +13,7 @@ description: 定义系统校验规则 VL-XXX——格式、范围、长度、必
 
 ## 输入与输出
 
-**输入**: 已确认的 `business-rules.md`（`BR-XXX`）、已确认的 `page-design.md` 字段定义（F-XXX）与已确认的 `feature-list.md` 功能清单。**输出**: 独立的 `validation-rules.md`，使用 `src/templates/resolver.py validation-rules.md` 解析出的模板。
+**输入**: 已确认的 `business-rules.md`（`BR-XXX`）、已确认的 `field-rules.md` 字段定义（F-XXX）与已确认的 `feature-list.md` 功能清单。**输出**: 独立的 `validation-rules.md`，使用 `src/templates/resolver.py validation-rules.md` 解析出的模板。
 
 分析前加载 `references/thinking-framework.md`（其引用 `src/framework/thinking-core.md` §1 强制透镜 + §2 检查透镜）。Draft 前加载 `references/output-contract.md`。交接前加载 `references/audit-checklist.md` 与 `references/reviewer-checklist.md`。Review 前运行 `scripts/validate_artifact.py <artifact> --json`。始终加载 `references/nfr-catalog.md`（NFR 分类，校验规则须参照此分类法）。
 
@@ -22,7 +22,8 @@ description: 定义系统校验规则 VL-XXX——格式、范围、长度、必
 ### 1. Preflight
 - "§业务规则 与字段定义都已确认吗？哪些 FEA-XXX 区块有用户输入？"
 - 枚举每个带用户输入字段的功能。写 VL 前，把任何输入未充分定义的功能标出来。
-- **若不存在任何已确认的字段定义**，返回 routing receipt 并 STOP——不要进入 Intake。
+- **若不存在任何已确认的字段定义**（来自 `field-rules` 工作项），返回 routing receipt 并 STOP——不要进入 Intake。
+- **字段结构化定义已迁移到 `field-rules` skill**：本 skill 不再写字段定义表，只写"对 F-XXX 字段的校验规则"。F-XXX 由 `field-rules` 维护；本 skill 的 VL-XXX 必须指向 F-XXX。
 
 ### 2. Intake
 - "已确认的页面/表单实际定义的输入面是什么——而不是我认为表单有什么？"
@@ -49,7 +50,7 @@ description: 定义系统校验规则 VL-XXX——格式、范围、长度、必
 - 每条 VL 携带面向用户的中文错误提示，说明"哪里错了 + 如何修改"——不得使用内部错误码。
 - 按 NFR 分类（`references/nfr-catalog.md`）为每条校验标注分类标签。
 - Status: 用 `draft`、`needs_user_input` 或 `conditional_review`——**永不 `confirmed`**。
-- 按需产出字段定义表（字段名称、类型、长度、校验规则、来源），字段须引用来源（上游 IX/FEA）与关联校验 VL-XXX。
+- **不写字段定义表**：字段结构化定义（名称 / 类型 / 长度 / 必填 / 默认值 / 唯一性 / 来源）由 `field-rules` skill 维护；本 skill 的 VL-XXX 必须引用 `field-rules` 中的 F-XXX 作为校验对象。
 
 ### 6. Audit
 - **Decidability（可判定性）**: 每条 VL 有可执行的值域；无缺格式的"校验手机号格式"。

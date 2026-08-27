@@ -3,7 +3,7 @@
 > 日期：2026-08-19  
 > 现行基线：`src/framework/workflow-registry.json`（schema v7）  
 > 审计范围：所有非 `.git` 文件、未提交改动、需求实例、模板、Skill、脚本、测试与运行时残留。  
-> 外部参考：WorkBuddy `skills-index.md` / `skills-index.csv`；GitHub `main` 与本地 HEAD 同为 `914c076`，无可合并的新上游实现。
+> 参考基线：经核验的通用工程实践。审计不依赖或披露任何本地环境、私有仓库或个人目录。
 
 ## 1. 执行摘要
 
@@ -26,7 +26,7 @@
 - 文件覆盖：执行 `find . -path './.git' -prune -o -type f -print`，覆盖 717 个非 Git 文件。源文件、文档、模板、测试、资产、需求实例、缓存和运行时产物均纳入分类检查。
 - Git 内部对象不审计内容；`.DS_Store`、`__pycache__`、`.test-output`、`requirements/` 作为卫生与数据边界检查对象。
 - 现有测试只作为一条证据线。独立证据包含临时目录初始化、飞书探测 mock、审计事件篡改、投影构建失败、reflow 提交和注册表闭包。
-- WorkBuddy 索引的 840 条记录、729 个唯一名称及自动标注仅用于发现候选能力，不视为事实或直接依赖。
+- 候选能力的自动标注仅用于发现补强方向，不视为事实或运行时依赖。
 
 ## 3. 文件覆盖与仓库卫生
 
@@ -50,7 +50,7 @@ git status --short
 | ID | 严重度 | 证据位置 | 修复与验证 |
 |---|---|---|---|
 | F-001 | High | `src/scripts/pipeline.py` | `pipeline.py init <name> --root <dir>` 现在实际写入目标根目录；`test_init_root_isolated_from_repository` 覆盖。 |
-| F-002 | High | `src/scripts/pipeline.py` | 删除 `/Users/...` 插件路径；只查 PATH 或 `PM_SCAFFOLD_LARK_PLUGIN_ROOT`。无配置和显式插件根目录均有回归测试。 |
+| F-002 | High | `src/scripts/pipeline.py` | 删除个人绝对路径插件假设；只查 PATH 或 `PM_SCAFFOLD_LARK_PLUGIN_ROOT`。无配置和显式插件根目录均有回归测试。 |
 | F-003 | High | `run_tests_win.ps1` | Windows 入口补齐与 macOS 同等的非 simulated PRD 追溯检查。 |
 | F-004 | High | `src/scripts/branch_validator.py` | 审计链无效为 CRITICAL，投影构建失败为阻断 HIGH；legacy lookup 只作诊断。 |
 | F-005 | High | `src/scripts/pipeline.py` | reflow 先收集计划、预写临时文件、追加事件，再原子替换产物；失败前不修改 live artifact。 |
@@ -58,7 +58,7 @@ git status --short
 | F-007 | Medium | `src/templates/**`、`src/templates/resolver.py` | 删除旧复合模板和重复的 per-Skill 输出模板，所有 README 指向当前 core template。 |
 | F-008 | Medium | `docs/ARCHITECTURE.md`、`README.md`、驾驶舱 | 活动说明改为 v0.6.1、13 主干/6 支持能力、动态测试数；历史仅在 CHANGELOG 保留。 |
 | F-009 | Medium | `src/templates/stage-3-prd/prd.md`、PRD validator | PRD 模板和 validator 改为独立 user journey、stories、feature、flow、page、interaction、rules、state、exception、acceptance 章节。 |
-| F-010 | Medium | 4 个现行 SKILL.md | WorkBuddy 启发的证据四维检查和范围谈判脚本已接入 project background、stories、feature list 与 PRD 汇总。 |
+| F-010 | Medium | 4 个现行 SKILL.md | 证据四维检查和范围谈判脚本已接入 project background、stories、feature list 与 PRD 汇总。 |
 
 ## 5. 架构与运行时结论
 
@@ -113,4 +113,4 @@ Result: 0 errors, 0 warnings
 - 任一新增 work item 必须同步 registry、template、validator、正负 fixture、README 和驾驶舱。
 - 任一新增外部能力必须记录来源、许可证/授权边界、超时、脱敏与失败降级策略。
 - 每次发布以实际 `run_tests_mac.sh` / Windows CI 结果更新，而不是手写通过数。
-- 不以 GitHub 项目名或 WorkBuddy 自动标签替代源码证据和人工确认。
+- 不以外部项目名或自动标签替代源码证据和人工确认。

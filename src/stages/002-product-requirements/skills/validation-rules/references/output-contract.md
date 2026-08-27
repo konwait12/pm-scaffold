@@ -6,7 +6,7 @@
 
 - 每个校验行携带稳定 ID `VL-XXX`（VL-001、VL-002、…），全局唯一、零填充、不可复用，绝不与 `BR-XXX` 混淆；允许已确认历史留下编号空洞，详见 `src/framework/id-contract.md`。
 - 每条 VL-XXX 必须有可解释追溯锚点：优先 `FUN-XXX` / `FEA-XXX`，也可为 `BR/STATE/IX/SRC/BG/G-XXX`；跨功能校验写 `GLOBAL` 并保留来源。
-- 每条 VL-XXX 的 `来源` 引用一个已确认的 `BR-XXX` / `FEA-XXX` / 字段定义（F-XXX）。
+- 每条 VL-XXX 的 `来源` 引用一个已确认的 `BR-XXX` / `FEA-XXX` / 字段定义（F-XXX，由 `field-rules` skill 维护）。
 - 检查移除后 ID 永不复用（补空会破坏审计历史）。
 
 ## 产物状态
@@ -40,28 +40,19 @@
 
 ## 必需章节
 
-对 §系统校验 区块使用 `src/templates/stage-2-product/validation-rules.md` 中的所有标题（系统校验、字段定义表、校验→业务规则追溯、事实与决定、待确认问题）。若某检查无已确认内容，写 `待确认` 并关联问题或未知 ID；不要删除标题。
+对 §系统校验 区块使用 `src/templates/stage-2-product/validation-rules.md` 中的所有标题（系统校验、校验→业务规则追溯、事实与决定、待确认问题）。若某检查无已确认内容，写 `待确认` 并关联问题或未知 ID；不要删除标题。
 
 > 占位符 `待确认` 保留在中文 PRD 约定中。译者可在纯英文产物中使用 `[NEEDS CLARIFICATION]`，只要校验器识别两种形式。
+>
+> **字段定义表已迁移到 `field-rules` skill**：本 skill 不再含"字段定义表"章节。F-XXX 字段定义（名称/类型/长度/必填/默认值/唯一性/来源）由 `field-rules` 产物独立维护；本 skill 只产出"对 F-XXX 字段的校验规则"，VL-XXX 行的"关联字段 (F)"列指向 `field-rules` 中的 F-XXX。
 
 ## 规则行结构
 
 | ID | 校验内容 | 校验规则 | 触发时机 | 错误提示 | 关联字段 (F) | 关联业务规则 (BR) | 来源 |
 |---|---|---|---|---|---|---|---|
-| VL-XXX | what is checked | executable value domain | when it fails | Chinese message (≤30 chars) | F-XXX | BR-XXX | FACT/DECISION/... |
+| VL-XXX | what is checked | executable value domain | when it fails | Chinese message (≤30 chars) | F-XXX（来自 field-rules） | BR-XXX | FACT/DECISION/... |
 
-## 字段定义表 (Field Definition Table)
-
-按需产出（P1 按需），并入老版「字段规则说明」（字段名称、类型、长度、校验规则、来源）；同域合并到本 Skill。当上游 `page-design.md` / `interaction-rules.md` 的字段定义需要补充实现级字段契约时，在 §系统校验 内产出 `字段定义表` 小节。字段级校验逻辑由 VL-XXX 承担，本表只登记字段契约，不重复撰写校验表达式。
-
-| 字段 ID | 字段名 | 类型 | 长度/范围 | 必填 | 来源（上游 IX/FUN） | 关联校验 VL-XXX |
-|---|---|---|---|---|---|---|
-| F-XXX | field name | string/int/... | length or value domain | 是/否 | IX-XXX / FEA-XXX | VL-XXX |
-
-- 每个 `F-XXX` 全局唯一、零填充，不得与 `BR-XXX` / `VL-XXX` 混淆。
-- `来源（上游 IX/FEA）` 必须引用上游已确认的 interaction-rules（IX-XXX）或 feature-list（FEA-XXX）。
-- 每个 F-XXX 至少关联一个 VL-XXX；未定义校验的字段在 `校验覆盖检查` 中标 ⚠️。
-- 表头缺「字段名/类型」或字段无来源引用时，`validate_artifact.py` 仅记 warning（不阻塞），由人工评审把关。
+> **F-XXX 由 `field-rules` skill 维护**：本表不再含字段定义表 section。F-XXX 全局唯一、零填充，不得与 `BR-XXX` / `VL-XXX` 混淆。VL-XXX 行的"关联字段 (F)"列必须引用已确认的 `field-rules` 中的 F-XXX。
 
 ## 人工职责
 

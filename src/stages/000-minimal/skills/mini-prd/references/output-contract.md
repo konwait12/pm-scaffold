@@ -1,4 +1,4 @@
-# 输出契约 · mini-prd（L0 轻量档）
+# 输出契约 · mini-prd（L0 紧凑事实采集工件）
 
 ## 状态机（Status Machine）
 与所有 Skill 相同的 6 种状态：draft → needs_user_input → conditional_review → ready_for_human_review → confirmed → superseded。
@@ -35,7 +35,16 @@
 - **验收可测**：每条验收必须可观察或可量化，并说明验证方法与判定方式；不得为满足格式伪造数字阈值。
 - **占位唯一**：`待确认` 是唯一占位符；正文各节在送审前必须真实填满。
 
+## 与最终 PRD 的关系
+
+mini-prd 的六节是输入/起草结构，不是最终 PRD 的章节集合。确认后必须使用 `src/templates/stage-3-prd/prd.md` 的 canonical 章节生成 `003-prd-output/prd.md`。固定映射见 `SKILL.md`；任何无法映射的事实都必须补证据或升级档位，不能静默丢弃。
+
+## 产品质量增强记录
+
+除六节事实外，送审版本必须包含五行“产品质量增强记录”：受影响角色与结果、采用方案与被排除替代、价值-成本-风险、失败边界与回退、可证伪条件/停止条件。每行需有结论、`FACT/DECISION/ASSUMPTION/UNKNOWN/AI_INFERENCE/CONFLICT` 知识状态、来源/位置、判断人和复核触发。该记录是 L0 对用户研究、方案评估和反向质疑能力的轻量承载，不要求虚构调研。
+
 ## 轻量治理（vs 完整治理）
 - **保留**：单签 ReviewRecord + hash 锚（宪法底线：谁批的/何时批的/批的什么版本）。
-- **裁掉**：preflight 充分度判定、七透镜 think、review-taxonomy 机器扫描、B3 收口表、issue-record 独立库、traceability_check、prd-assembly 聚合、audit chain 全链。
+- **裁掉**：preflight 充分度判定、七透镜 think、review-taxonomy 机器扫描、B3 收口表、issue-record 独立库、完整跨产物 traceability_check、L1/L2 上游 prd-assembly 工序。
+- **保留**：canonical PRD 章节适用性矩阵、来源指纹、单签 ReviewRecord、hash anchor 和 audit event。
 - 裁的是**工序**，不是**证据链**。

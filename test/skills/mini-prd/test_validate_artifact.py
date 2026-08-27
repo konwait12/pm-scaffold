@@ -141,3 +141,25 @@ def test_declared_hash_format_fails():
         assert any("Hash declaration invalid" in item for item in result["errors"])
     finally:
         tmp.unlink()
+
+
+def test_quality_contract_rejects_review_without_evidence():
+    content = _valid_mini_prd(status="ready_for_human_review", extra='quality_contract_version: "1"\n')
+    tmp = _write(content)
+    try:
+        result = validate_module.validate(tmp)
+        assert not result["ok"]
+        assert any("产品质量增强记录" in item for item in result["errors"])
+    finally:
+        tmp.unlink()
+
+
+def test_legacy_mini_prd_remains_read_only_compatible():
+    content = _valid_mini_prd(status="ready_for_human_review")
+    tmp = _write(content)
+    try:
+        result = validate_module.validate(tmp)
+        assert result["ok"], result.get("errors")
+        assert any("产品质量增强记录" in item for item in result["warnings"])
+    finally:
+        tmp.unlink()

@@ -1,0 +1,29 @@
+interface:
+  display_name: "字段规则说明 (Field Rules)"
+  short_description: "从 VL 拆出的独立字段定义表 F-XXX（名称/类型/长度/必填/默认值/唯一性/来源/关联校验 VL），作为 PRD §9.2 字段清单的唯一上游 / A standalone field definition table (F-XXX) split from validation-rules, the single upstream for the PRD §9.2 field list."
+  default_prompt: |
+    Use the field-rules Skill to produce the field definition table. For each
+    field emit F-XXX / name (cn/en/db) / type / length / required / default /
+    uniqueness / source / related VL. Do NOT write validation rules here — those
+    belong to validation-rules, which back-references each F-XXX. Never invent
+    fields without upstream evidence from feature-list / functional-flow /
+    page-design / interaction-rules. Never set the artifact status to
+    `confirmed`; only an authorized human may do that.
+
+# Agent-facing trigger examples (used by OpenAI / Anthropic Agent runtimes
+# during routing).
+trigger_examples:
+  - |
+    Use this Skill when the PRD needs an explicit field definition table (字段清单)
+    separate from validation rules, with each field traced to an F-XXX ID.
+  - |
+    Use this Skill when a stakeholder asks "这个字段的类型/长度/必填/来源是什么".
+
+should_not_trigger_examples:
+  - |
+    Do NOT use this Skill to write validation rules, state machines, or exception
+    handling. Route to the corresponding downstream Skill.
+  - |
+    Do NOT use this Skill when there are no fields to define; take the low-density
+    degradation path (sufficiency assessment + batched clarifying questions)
+    instead of fabricating a field table.

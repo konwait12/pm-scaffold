@@ -1,53 +1,84 @@
 # 输出契约 · prd-assembly
 
-## 状态机（Status Machine）
-与所有 Skill 相同的 6 种状态：draft → needs_user_input → conditional_review → ready_for_human_review → confirmed → superseded。
+## 状态机
 
-## 产物章节（Artifact Sections）
+`draft → needs_user_input → conditional_review → ready_for_human_review → confirmed → superseded`。
 
-L2 正文（10 节，干系人/研发/测试阅读；与图中 10 个主干产物一一对应）：
-1. **项目背景** (§1): 来自 `project-background-goal` verbatim（现状/问题/目标 G-XXX/KPI/约束）
-2. **项目范围** (§2): 来自 `user-stories` §项目范围基线 + `feature-list` 边界 verbatim（In/Out/Deferred/Conditional + 假设与依赖）
-3. **用户旅程** (§3): 来自 `user-journey` verbatim（生命周期/旅程图/路径覆盖）
-4. **用户故事** (§4): 来自 `user-stories` verbatim（故事卡 ST-XXX / MoSCoW / 覆盖矩阵）
-5. **功能清单** (§5): 来自 `feature-list` verbatim（FEA-XXX 总账 + ST 追溯）
-6. **功能流程** (§6): 来自 `functional-flow` verbatim（主/支/异常 Mermaid 整图）
-7. **原型/UX** (§7): 来自 `page-design` verbatim（信息架构/页面结构/原型/交互标注/状态描述；纯服务端标「本期不适用」）
-8. **交互规则** (§8): 来自 `interaction-rules` verbatim（IX-XXX 逐条 / 5 状态；纯服务端标「本期不适用」）
-9. **业务规则** (§9): 呈现合并、产物独立——9.1 计算与流程规则 ← `business-rules` verbatim；9.2 校验规则 ← `validation-rules` verbatim；9.3 状态变化 ← `state-machine` verbatim；9.4 异常处理 ← `exception-handling` verbatim
-10. **验收依据** (§10): 来自 `acceptance-criteria` verbatim（AC-XXX Given/When/Then + 量化阈值）
+## 最终 PRD 的交付边界
 
-按需章节 (§11，上游有非空内容才落章，无内容标「本期不适用」)：
-- 11.1 竞品分析 ← competitive-research；11.2 字段规则说明 ← validation-rules 字段表；11.3 埋点需求分析 ← tracking-plan；11.4 可行性分析 ← feasibility-analysis；11.5 术语表；11.6 团队职责
+`prd.md` 是面向业务、产品、设计与研发协作的需求规格，不是工作流审计包。它必须能独立说明：为什么做、做什么、不做什么、谁受影响、如何行为、何时失败、如何验收；它不得重新复制整个需求工作流。
 
-附录（评审/机器用，非正文）：
-- **需求追溯矩阵**: G→ST→FEA→FUN→AC→BR matrix（traceability_check.py 读取此表）
-- **自审记录（Constitution Compliance）**: AI 4-principle self-audit（dor_check audit_evidence 读取）
-- **问题清单**（条件）: 仅 frontmatter `issue_in_prd: true` 时生成；默认问题清单只进 issue-record.md（Intake 时问用户）
+正文保留：
 
-**不在 PRD 内**（由机器在 gate 时产出、进 99-review 评审记录，或留在项目侧）：
-- 上游产物清单 → frontmatter `upstream_artifact_ids`
-- 正向/反向追溯检查 → `traceability_check.py` 输出
-- 不一致报告 → 评审记录（review taxonomy [Contradiction]/[Gap]/… labels）
-- 变更记录 → frontmatter version/updated_at + CHANGELOG
-- 可行性分析（默认不进正文，仅 §11.4 按需）→ 项目侧 99-review/support/
-- 问题清单（默认不进 PRD）→ issue-record.md
-- 需求重举 / 流程校验器 / B3 收口表 / hash-anchor / ReviewRecord → 各自流程载体
+1. 项目背景（问题、目标、约束、成功标准、立项依据 = 可行性分析摘要）
+2. 项目范围（In / Out / Deferred / Conditional、业务假设和依赖）— **唯一上游：`project-scope`**
+3. 用户与用户旅程
+4. 用户故事与优先级
+5. 功能清单
+6. 功能流程
+7. 页面与体验（实际适用时）
+8. 交互规则（实际适用时）
+9. 业务规则、字段清单、字段校验、状态与异常（各子节按实际适用性生成）
+   - §9.1 计算与流程规则（来源：BR）
+   - §9.2 字段清单（名称 / 类型 / 长度 / 必填 / 默认值 / 唯一性 / 来源）— **唯一上游：`field-rules`（L2 only）**
+   - §9.3 字段校验（来源：VL；VL-XXX 行指向 `field-rules` 的 F-XXX）
+   - §9.4 状态变化（来源：STATE）
+   - §9.5 异常处理（来源：EX）
+10. 验收标准
+11. 依赖与待决业务问题（仅存在真实 Q-/UNK-/ISS-/DEC- 时）
 
-## 兼容（v7 → v8）
+正文中的业务声明必须保留其已有的 Trace ID 与知识状态标签。完整来源索引、选择器、文件哈希与内容哈希存入 `prd-assembly-manifest.json`；追溯报告、审查发现、问题收口、ReviewRecord、hash anchor 和 audit event 存入 `99-review/` 与 `.audit/`。
 
-- `prd_structure_version: 7`（缺省）＝存量 REQ 冻结旧 14 节结构契约（REQ-001 等），validate_artifact.py 走 `REQUIRED_HEADINGS_V7`。
-- `prd_structure_version: 8` ＝ 新 REQ 按档位装配。`process_tier: L1` 仅装配 7 个确认上游与最终 PRD（共 8 个 work item），正文包含 §1-§6、§9.1、§10；§7、§8、§9.2-§9.4 必须省略，五项 L2-only 能力的不适用事实只记录在 `intake-decision.md` 与 assembly manifest，且不得声明 L2-only 上游。L1 的 §9.1 只可承载普通业务规则，不得写入状态枚举、状态转移、状态机，或含状态、触发事件及守卫/目标状态的转移表；出现这些设计信号即须升级 L2。`L2` 时 `REQUIRED_HEADINGS_V8_L2` 全 10 节。
-- 存量 REQ 不迁移、不重跑（confirmed 不可变）。
+## 三档内容边界
 
-## 聚合规则（Aggregation Rules）
-- **内嵌完整内容，不写指针**：§1-§4 与 §6、§7 及其中的 BR/VL/STATE/EX/AC/字段表必须**逐字内嵌上游全文**（数据表整表搬运进 PRD），禁止用「详见 XX-XXX」「内容见 XX-XXX」一类的单行指针替代内容。下游消费方应能**只读 prd.md** 就拿到全部规则，无需再去翻上游文件。
-- 逐字复制上游内容，绝不转述、不概括删减、不润色成改变含义。
-- 保留全部 ID：artifact ID 依注册表（如 FL-*），正文 Trace ID 依 `src/framework/id-contract.md`（如 G-*、FUN-*、STATE-*）；兼容已确认的历史 SM-*，杜绝漂移。
-- PRD 中无新需求。
-- 不静默解决不一致。
-- 条件章节（§5.1、§5.2）仅在上游有非空内容时才落章；上游无内容时标注「本期不适用」，**不得以「详见 XX-XXX」指针了事**。
+| 档位 | 正文来源与深度 | 不得生成的内容 |
+|---|---|---|
+| L0 | 一个 confirmed mini-prd 的六类事实确定性投影；正文只保留变更、目标、范围、行为、边界、依赖和验收。 | 伪造页面、交互、字段校验、状态模型或上游链路；重复 mini-prd 全文。 |
+| L1 | 9 个确认上游：可行性分析（FA）、背景（BG）、项目范围（SCOPE）、旅程（UJ）、故事（US）、功能（FE）、流程（FF）、业务规则（BR）、验收（AC）。页面、交互、字段、校验、状态、异常仅在 intake 有明确适用事实时出现。 | 用”本期不适用”大段正文替代产品内容；将 L2-only 规则或状态模型藏入业务规则。 |
+| L2 | 15 个确认上游按章节职责整合：FA + BG + SCOPE + UJ + US + FE + FF + PD + IX + BR + FIELDS + VL + STATE + EX + AC。保留完整页面、交互、规则、字段、校验、状态、异常与验收。 | 15 份上游全文连续拼接；同一规则在摘要、全文和追溯表三次出现。 |
 
-## RTM 格式（RTM Format）
-| Goal (G) | Story (ST) | Feature (FEA) | Function (FUN) | Acceptance (AC) | Applicable evidence |
-每行 = 一条核心追溯链。P0 项必须有 G→ST→FEA→FUN→AC；BR/VL/STATE/EX/PD/IX 仅在适用时附入，不强制线性穿越。
+## 明确不在 `prd.md` 的内容
+
+- Agent instruction、预检成熟度、产品质量增强记录、Clarifications 会话；
+- FACT/DECISION/ASSUMPTION/UNKNOWN/CONFLICT 的全量登记册与 Constitution Compliance 自审表；
+- Human Gate、ReviewRecord、B3 收口、评审 taxonomy、hash anchor、source hash、manifest 细节；
+- 正向/反向追溯报告、完整 RTM、问题清单全文、下游交接过程、生成版本摘要；
+- 任意上游产物的完整 source block 或原文镜像。
+
+这些材料仍是项目治理事实，但属于项目侧证据，不是读者版 PRD 章节。
+
+## 聚合规则
+
+1. **确定性选择，不发明**：只选择已确认上游中的业务正文、规则、表格、流程、状态、异常和验收条目。源段落选择记录在 manifest；找不到必需事实就阻断并回流，不补写。
+2. **按职责去重**：同一事实只在最合适的正文位置出现。流程章描述顺序，规则章描述约束，验收章描述判定条件。
+3. **禁止两种极端**：禁止“详见 XX”替代正文，也禁止全文复制上游以规避总结取舍。
+4. **适用性是输入，不是装配猜测**：`required`、`conditional`、`not_applicable` 必须来自持久化 intake 决策或确认上游。`not_applicable` 至少记录事实依据与来源；`conditional` 还需触发条件、当前判断和复审触发点。
+5. **按需章节零占位**：没有已确认内容时不生成第 11 章或其子节；不得输出空表、`待确认` 伪内容或泛化 N/A。
+6. **保留 ID，不保留冗余**：保留 G/ST/FEA/FUN/PD/IX/BR/VL/STATE/EX/AC 等业务 Trace ID；不要求将审计矩阵复制到正文。
+
+## manifest 契约
+
+v8 真实 REQ 的 `003-prd-output/prd-assembly-manifest.json` 必须包含：
+
+- `schema_version: 2`、`process_tier`；
+- 每个本档确认上游的 `work_item`、`artifact_id`、`path`、`status: confirmed`、`content_sha256`；
+- 非空 `target_sections` 与 `selectors`，用于说明该来源被投影到哪些 PRD 章节；
+- 不包含 source body，且不要求 `prd.md` 含 source block。
+
+**`content_sha256` 算法（B3 明示）**：必须使用与校验器一致的**规范化哈希** `artifact_content_hash`（见 `src/scripts/workflow_registry.py`），而非原始文件的裸 SHA-256。规范化规则：将每行 `^(status|reviewer|reviewed_at|confirmed_at): ...` 替换为 `\1: <review-metadata>` 后，对规范化文本计算 SHA-256。示例（伪代码）：
+
+```text
+canonical = re.sub(r"(?m)^(status|reviewer|reviewed_at|confirmed_at):.*$",
+                   r"\1: <review-metadata>", source_text)
+content_sha256 = sha256(canonical.encode("utf-8")).hexdigest()
+```
+
+用原始 `shasum -a 256` 计算会与校验器不匹配，导致 `Assembly manifest failed: ... content_sha256 does not match source file`。
+
+manifest 验证来源身份、路径边界、状态、哈希和档位；它不授权 assembly 创造业务内容。
+
+## 兼容策略
+
+- 缺少 `prd_structure_version: 8` 的 v7 存量 PRD 继续走旧 validator 契约，保持只读兼容。
+- 新 v8 PRD 采用本契约；不要求 RTM、自审记录、source block 或 §11 空壳。
+- 已 confirmed 的 PRD 不直接修改。模板/投影规则变化需通过 reflow 生成新 draft，人工批准后才成为新确认版本。

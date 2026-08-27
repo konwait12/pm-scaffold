@@ -1,6 +1,6 @@
 # 价值复杂度矩阵技法参考（Value Complexity Matrix）
 
-> 来源吸收：Trae `prd-writing-expert` skill 的「问题陈述 + 用户故事 + MoSCoW 优先级 + 价值复杂度矩阵 + 北极星指标 + Key Results」，作为 project-background-goal 的可选落地能力。
+> 本文将相关实践转化为本项目的可选方法，不引入外部运行时依赖。
 > 定位：project-background-goal 产出的 BG-XXX 目标文本是权威；本文档提供"用价值×复杂度四象限辅助需求优先级 + 定义北极星指标体系"的技法，增强目标与范围的关联。
 > 触发：当需对功能/故事排优先级、或需定义北极星指标与 Key Results 时使用。**按需加载，不设全局闸门**。
 

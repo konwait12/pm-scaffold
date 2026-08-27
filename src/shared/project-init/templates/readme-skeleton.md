@@ -11,6 +11,7 @@
 
 - **process_tier**：`{PROCESS_TIER}`（L0 / L1 / L2）· **issue_in_prd**：`待填写`（true / false）· **prd_structure_version**：`待填写`（8）
 - 唯一事实源是 `00-input/intake-decision.md`；README 仅展示其投影。资格矩阵见 `src/shared/intake-routing/references/process-tier-routing.md`。
+- 需求难度入口：低难度不触发档位建议；中/高难度仅显示 L1/L2 建议，最终档位仍由人工选择并以 `process_tier` 为准，建议不会自动切档。
 - 与材料成熟度 L0-L4 正交：成熟度看材料丰俭，档位看需求复杂度
 
 ## 当前阶段

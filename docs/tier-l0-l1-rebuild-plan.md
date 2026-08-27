@@ -2,6 +2,14 @@
 
 > 状态：2026-08-20 权威计划。本文定义当前运行时、产物和验收契约；旧计划仅用于历史追溯。
 
+## 统一 PRD 章节契约（首要规则）
+
+L0、L1、L2 的最终 PRD 均使用现有 L2/v8 模板的同一组 canonical 章节：§1 项目背景、§2 项目范围、§3 用户旅程、§4 用户故事、§5 功能清单、§6 功能流程、§7 原型/UX、§8 交互规则、§9（含 §9.1-§9.4 业务规则子节）、§10 验收依据、§11 按需章节，以及统一的追溯矩阵和自审记录。档位只改变工作项数量、证据深度、治理强度和装配路径，不改变章节编号、标题或含义。
+
+每个主章节及 §9.1-§9.4 必须声明 `required`、`conditional` 或 `not_applicable`。`not_applicable` 必须包含事实依据、来源引用、判断人和判断时间；`conditional` 必须包含触发条件、当前判断和复审触发点。禁止删除章节、泛化 N/A 或用“本期不做”替代决策。L0 的 `mini-prd` 只是紧凑事实采集/起草工件，在一次人工确认中必须确定性映射到完整 canonical PRD。
+
+入口先选择需求难度：低难度不触发档位建议；中/高难度触发 L1/L2 建议。建议只作只读提示，最终档位由人工确认并持久化到 `intake-decision.md`，不允许自动切档。
+
 ## 产物清单
 
 | 产物 | 最终调整 | 验收结果 |
@@ -22,17 +30,17 @@
 
 ## 当前判断
 
-已保留的基础改动包括注册表 tier 字段、L1 集内前置豁免、L0 单产物目录、持久化 intake 决策、跨档阻断和 L0 的 ReviewRecord/hash anchor/audit event。旧 v4 中 L0 扩为 12 个强制章节、累计评分、不可核验的 WorkBuddy 逐字移植、L1 写成 7 项（遗漏 PRD assembly）及固定测试数量均不再有效。
+已保留的基础改动包括注册表 tier 字段、L1 集内前置豁免、L0 单产物目录、持久化 intake 决策、跨档阻断和 L0 的 ReviewRecord/hash anchor/audit event。旧 v4 中 L0 扩为 12 个强制章节、累计评分、不可核验的逐字移植、L1 写成 7 项（遗漏 PRD assembly）及固定测试数量均不再有效。
 
 ## 权威交付定义
 
 ### L0
 
-适用于单一可定位变更、单角色、无持久状态、无敏感/资金/合规影响、无数据迁移且只有简单回退的需求。只生成 `mini-prd.md`，正文固定六节：变更与预期结果、证据与原因、范围与不做什么、行为与可判定验收、失败边界与回退、依赖与开放问题。适用性结论写在对应章节；不适用必须说明事实依据，不能用空洞 N/A。L0 不要求 issue-record 或跨产物追溯，但保留一次真实人工确认、ReviewRecord、hash anchor 和 audit event。
+适用于单一可定位变更、单角色、无持久状态、无敏感/资金/合规影响、无数据迁移且只有简单回退的需求。保留六类事实采集 `mini-prd.md`，但它不是最终 PRD；一次人工确认中映射到完整 canonical 章节并完成适用性判断。L0 不要求完整上游链或 issue-record，但保留一次真实人工确认、ReviewRecord、hash anchor 和 audit event。
 
 ### L1
 
-适用于标准、受限场景。七个上游为 `project-background-goal`、`user-journey`、`user-stories`、`feature-list`、`functional-flow`、`business-rules`、`acceptance-criteria`，加 `prd-assembly` 共 8 个 work item。PD、IX、VL、STATE、EX 必须在 intake 中逐项以事实说明不适用；任一项实际适用即升级 L2。L1 PRD 省略没有来源的 UX/交互/状态/异常章节，不写伪造 N/A。
+适用于标准、受限场景。七个上游为 `project-background-goal`、`user-journey`、`user-stories`、`feature-list`、`functional-flow`、`business-rules`、`acceptance-criteria`，加 `prd-assembly` 共 8 个 work item。PD、IX、VL、STATE、EX 进入适用性矩阵；只有事实化依据才能标记 `not_applicable`，任一项实际适用或依据不足即升级 L2。最终 PRD 仍保留完整 canonical 章节。
 
 ### L2
 
@@ -44,11 +52,11 @@
 2. `status` 可用 `--process-tier` 展示预览差异；`gate`、`review`、`reflow`、发布和装配只能使用持久档位，跨档 work item 在任何写操作前失败且不产生审计副作用。
 3. 路由采用资格矩阵和硬升级条件。评分（若显示）不能覆盖硬条件。
 4. L1/L2 assembly manifest 必须列出允许上游的 artifact ID、相对路径、`confirmed` 状态、内容 SHA-256 和目标章节。装配器按确定性映射嵌入源正文并写入来源块标记；源文件或来源块被改动必须失败。
-5. WorkBuddy 仅作为已核验的抽象原则索引；没有可复核原文件和授权时，不声称逐字复制。
+5. 外部参考只可沉淀为可独立验证的抽象原则；没有可复核原文件和授权时，不声称逐字复制。
 
 ## 迁移与文档
 
-既有 REQ 优先读取已有 intake；缺失时按 L2 兼容并提示补录。README、AGENTS、`src/framework/{workflow,governance,contracts}.md`、注册表说明和 `scaffold-flow.html` 必须展示当前档位命令、L0 六节、L1 八项及真实审计语义。历史计划保留，不删除用户工作区内容。
+既有 REQ 优先读取已有 intake；缺失时按 L2 兼容并提示补录。README、AGENTS、`src/framework/{workflow,governance,contracts}.md`、注册表说明和 `scaffold-flow.html` 必须展示当前档位命令、L0 六类事实采集到 canonical PRD 的投影、L1 八项及真实审计语义。历史计划保留，不删除用户工作区内容。
 
 ## 验收矩阵
 
@@ -60,4 +68,4 @@
 
 ## 默认决策
 
-不执行 12 节强制 L0，不新增不可验证的 `industry` frontmatter，不在 L1 PRD 填泛化 N/A，不删除历史计划，不复制来源不明的 WorkBuddy 文本；保留 L0 审批留痕并将其写成正式治理契约。
+不执行 12 节强制 L0，不新增不可验证的 `industry` frontmatter，不在 L1 PRD 填泛化 N/A，不删除历史计划，不复制来源不明的文本；保留 L0 审批留痕并将其写成正式治理契约。

@@ -20,7 +20,7 @@ created_at: 2026-08-11
 updated_at: 2026-08-11
 confirmed_at: ""
 upstream_artifact_ids: ["BG-HIRE-002", "UJ-HIRE-001"]
-upstream_work_item_statuses: "project-background-goal:confirmed; user-journey:confirmed; user-stories:confirmed; feature-list:confirmed; functional-flow:confirmed; page-design:confirmed; interaction-rules:confirmed; business-rules:confirmed; validation-rules:confirmed; state-machine:confirmed; exception-handling:confirmed; acceptance-criteria:confirmed"
+upstream_work_item_statuses: "feasibility-analysis:confirmed; project-background-goal:confirmed; project-scope:confirmed; user-journey:confirmed; user-stories:confirmed; feature-list:confirmed; functional-flow:confirmed; page-design:confirmed; interaction-rules:confirmed; business-rules:confirmed; field-rules:confirmed; validation-rules:confirmed; state-machine:confirmed; exception-handling:confirmed; acceptance-criteria:confirmed"
 ---
 
 # PRD（产品需求文档）

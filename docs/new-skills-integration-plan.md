@@ -1,14 +1,14 @@
 # 新批次 PRD/PM Skill 择优整合实施计划（v1）
 
-> 本计划针对 2026-08-18 13:32–13:34 新下载的 35 个 PRD/PM 类 Skill（与上一轮 scene#18 已整合的 13 个区分）。
+> 本计划是历史能力评估记录，现行规则以 `docs/tier-l0-l1-rebuild-plan.md` 为准。文中能力名称用于方法论映射，不代表运行时依赖或外部来源。
 > 目标：系统评估、择优、零改动三档注入 pm 脚手架（to B 偏向）。所有有价值能力点**一个不漏**映射到脚手架接入点。
 
 ---
 
 ## 1. 背景与范围
 
-- **上一轮已整合 13 skill**（已注入精华，勿重复）：prd-fullstack、prd-generator、prd-writer、prd-writing-expert、prd-reviewer、prd-to-design-doc、prd-to-prototype、PRD to Prototype、prd-skill、prd、prd-development、prd-review-design、product-design-0to1。
-- **本轮新批次 35 skill**（位于 `~/.workbuddy/skills/`，2026-08-18 13:32–13:34 下载）。
+- **已纳入能力主题**：已经沉淀到现有参考文档、思考透镜或审计清单的能力不重复建设。
+- **候选能力集合**：按 PRD/PM 能力主题整理的候选方法，不绑定特定目录、账号或安装批次。
 - **脚手架硬边界**：PRD-only，不做研发拆分/技术架构/测试用例/API 合约/用户手册；唯一交付物 `prd.md`。
 - **吸收通道（零改动三档）**：
   - **A 档 思想层** = `src/framework/thinking-core.md` 的 §2 检查透镜 / §3 pre-mortem 透镜 / §5 表达层技法注册表
@@ -39,7 +39,7 @@
 
 ## 3. 全量评估表（35 个）
 
-| # | Skill 目录 | 定位 | 丰厚度 | 契合度 | 重复上一轮 | to B | 处置 |
+| # | 能力主题 | 定位 | 丰厚度 | 契合度 | 已有覆盖 | to B | 处置 |
 |---|---|---|---|---|---|---|---|
 | 1 | juloko | 调研素材→框架性 PRD | 丰厚 | 高 | 否 | 原生 | 整合 |
 | 2 | product-spec-generator | 受控 PRD 生成器+grill 自检 | 丰厚 | 高 | 否 | 原生 | 整合 |
@@ -83,11 +83,11 @@
 
 ## 4. 能力点 → 脚手架接入点映射总表
 
-> 经与上一轮 13 个已注入精华去重后的**净增能力点**。每条对应一个新建技法文件/透镜登记/审计标签，**一个不漏**。
+> 经与既有能力去重后的增量能力点。每条对应一个新建技法文件、透镜登记或审计标签。
 
 ### 4.1 A 档：思想层（thinking-core 透镜/技法登记）
 
-| 编号 | 透镜/技法 | 核心内容 | 来源 skill | 注入位置 |
+| 编号 | 透镜/技法 | 核心内容 | 能力主题 | 注入位置 |
 |---|---|---|---|---|
 | A1 | 业务语言透镜 | 问题措辞 5 铁律：业务语言/给选项/先说影响/一次一类/追问为什么 | juloko | thinking-core §2 |
 | A2 | 证据追溯透镜 | deep_check 纪律：只输出问题+严重度+证据，禁止输出建议 | incremental-prd-collaboration | thinking-core §2 |
@@ -110,7 +110,7 @@
 
 ### 4.2 B 档：参考文档层（各 skill references 技法文件）
 
-| 编号 | 技法文件 | 核心内容 | 来源 skill | 接入 skill |
+| 编号 | 技法文件 | 核心内容 | 能力主题 | 接入 skill |
 |---|---|---|---|---|
 | B1 | gap-checklist-14d.md | 14 维度缺口扫描：角色权限/流程完整性/规则边界/状态机/数据字段/集成/存量迁移/性能/合规/异常/报表/审计/术语/验收 | juloko | requirement-restate |
 | B2 | fact-ledger.md | 事实台账五分型 F/D/A/W/O（事实/决议/假设/诉求/意见）+ 三色标注✅⚠️❌ + 覆盖度徽标 | juloko | requirement-restate |
@@ -157,7 +157,7 @@
 
 ### 4.3 C 档：审计层（review-taxonomy 标签 + audit-checklist 追加）
 
-| 编号 | 审计项 | 核心内容 | 来源 skill | 注入位置 |
+| 编号 | 审计项 | 核心内容 | 能力主题 | 注入位置 |
 |---|---|---|---|---|
 | C1 | 标签 `[HarddownRule]` | 硬性降级 9 条 | product-solution-evaluator | review-taxonomy.md |
 | C2 | 标签 `[P0P1P2Misgraded]` | P0/P1/P2 优先级定级错误 | product-spec-generator | review-taxonomy.md |

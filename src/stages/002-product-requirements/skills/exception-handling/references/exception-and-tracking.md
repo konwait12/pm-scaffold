@@ -1,6 +1,6 @@
 # 异常状态与埋点技法参考（Exception and Tracking）
 
-> 来源吸收：Trae `prd-to-design-doc` skill 的「异常状态处理」+ `product-design-0to1` skill Step 6.5「数据埋点规划 + 北极星/健康指标」，作为 exception-handling 与 tracking-plan 的可选落地能力。
+> 本文将相关实践转化为本项目的可选方法，不引入外部运行时依赖。
 > 定位：exception-handling 产出的 EX-XXX 与 tracking-plan 产出的埋点文本是权威；本文档提供"异常二分类 + 埋点事件表 + 核心指标"的技法，增强异常覆盖与度量可见性。
 > 触发：当异常处理需区分网络/业务异常，或需配套埋点度量时使用。**按需加载，不设全局闸门**。
 

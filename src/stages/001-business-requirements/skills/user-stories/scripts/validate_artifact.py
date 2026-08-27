@@ -34,6 +34,7 @@ def _bootstrap_scripts() -> None:
 
 _bootstrap_scripts()
 from validation_errors import make_issue
+from product_quality import validate_quality_record
 
 
 ARTIFACT_NAME = "user-stories.md"
@@ -246,6 +247,24 @@ def validate(path: Path) -> dict[str, object]:
     if not uj_ids and st_ids:
         warnings.append("No UJ-XXX journey traceability identifiers found in user stories")
 
+    # Check 3.5: ST↔G same-row link (B5 pre-check)
+    # traceability_check.REQUIRED_EDGES enforces story→goal at PRD gate; catching
+    # it here at submission time avoids a post-confirmation reflow cascade.
+    st_without_goal = []
+    for line in text.splitlines():
+        if re.match(r"^\s*\|.*\bST-\d+\b", line):
+            if not re.search(r"\bG-?\d+\b", line):
+                st_without_goal.append(
+                    re.search(r"\bST-\d+\b", line).group(0)
+                )
+    if st_without_goal:
+        errors.append(
+            "ST rows missing same-row goal link (G-XXX): "
+            + ", ".join(sorted(set(st_without_goal)))
+            + ". Each story row must carry its upstream goal ID on the same "
+            + "line (traceability required_edges story→goal)."
+        )
+
     # Check 4: Scope baseline
     scope = _scope_baseline_markers(text)
     has_scope = any(scope.values())
@@ -265,6 +284,11 @@ def validate(path: Path) -> dict[str, object]:
             "No knowledge-state tags (FACT/DECISION/AI_INFERENCE/UNKNOWN) found in user stories"
         )
 
+    quality_errors, quality_warnings = validate_quality_record(
+        text, required=(meta.get("quality_contract_version") == "1" and status in {"ready_for_human_review", "confirmed"})
+    )
+    errors.extend(quality_errors)
+    warnings.extend(quality_warnings)
     return {"ok": not errors, "errors": errors, "warnings": warnings,
             "issues": _make_issues(errors, warnings, path)}
 

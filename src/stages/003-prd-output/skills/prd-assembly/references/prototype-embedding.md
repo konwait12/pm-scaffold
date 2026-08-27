@@ -1,6 +1,6 @@
 # PRD 原型嵌入技法参考（Prototype Embedding）
 
-> 来源吸收：Trae `agile-pm-workflow` skill 的 PRD 内嵌原型技法（iframe 沙盒切片 + focus 沙盒锁定 + 版本切换器），经适配作为 prd-assembly 的可选增强。
+> 本文将相关实践转化为本项目的可选方法，不引入外部运行时依赖。
 > 定位：PRD 是唯一交付物，文本规则是权威；本技法让 PRD 的「分功能详述」章节内嵌可交互原型切片，提升沟通与评审效率。**可选启用**：仅当上游 page-design 已产出可点击原型（见 page-design 的 `prototype-techniques.md`）时使用。
 
 ## 1. 适用条件

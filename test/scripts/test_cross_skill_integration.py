@@ -42,8 +42,11 @@ sys.path.insert(0, str(SCRIPTS))
 import workflow_registry  # noqa: E402
 
 
-THIRTEEN_MAIN_ITEMS = [
+# L2 完整档 15 上游 + prd-assembly（schema_version 7：FA/SCOPE/FIELDS 已入主干）。
+MAIN_ITEMS = [
+    "feasibility-analysis",
     "project-background-goal",
+    "project-scope",
     "user-journey",
     "user-stories",
     "feature-list",
@@ -51,12 +54,14 @@ THIRTEEN_MAIN_ITEMS = [
     "page-design",
     "interaction-rules",
     "business-rules",
+    "field-rules",
     "validation-rules",
     "state-machine",
     "exception-handling",
     "acceptance-criteria",
     "prd-assembly",
 ]
+THIRTEEN_MAIN_ITEMS = MAIN_ITEMS
 
 
 class CrossSkillPipelineTest(unittest.TestCase):

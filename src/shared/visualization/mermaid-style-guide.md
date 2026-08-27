@@ -1,6 +1,6 @@
 # Mermaid 图类型选择与语法指南
 
-> 蒸馏来源：F1 `mermaid-diagram`（亲读核实）。
+> 本指南提供独立、可验证的图表表达规则；不依赖任何本地索引或特定工具。
 > 用途：项目内所有 mermaid 图的**统一规范**，避免各 skill 写出的图风格不一致。
 > 适用范围：`bg/uj/ff/state-machine/exception-handling` 等所有 skill 的 Mermaid 图输出。
 

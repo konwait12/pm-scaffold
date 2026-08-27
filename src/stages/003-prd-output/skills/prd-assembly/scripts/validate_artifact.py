@@ -80,42 +80,167 @@ REQUIRED_HEADINGS_V7 = [
     "自审记录",
 ]
 
-REQUIRED_HEADINGS_V8_L2 = [
+# New reader-facing v8 headings. Historical v8 artifacts use the prior names;
+# preserve their validation compatibility until they are reflowed and rebuilt.
+REQUIRED_HEADINGS_V8_READER_CORE = [
     "项目背景",
     "项目范围",
-    "用户旅程",
-    "用户故事",
+    "用户与用户旅程",
+    "用户故事与优先级",
     "功能清单",
     "功能流程",
-    "原型/UX",
+    "业务规则",
+    "验收标准",
+]
+REQUIRED_HEADINGS_V8_READER_L2 = [
+    *REQUIRED_HEADINGS_V8_READER_CORE[:6],
+    "页面与体验",
     "交互规则",
-    "业务规则",
-    "验收依据",
-    "需求追溯矩阵",
-    "自审记录",
+    *REQUIRED_HEADINGS_V8_READER_CORE[6:],
 ]
-
-REQUIRED_HEADINGS_V8_L1 = [
-    "项目背景",
-    "项目范围",
-    "用户旅程",
-    "用户故事",
-    "功能清单",
-    "功能流程",
-    "业务规则",
-    "验收依据",
-    "需求追溯矩阵",
-    "自审记录",
+REQUIRED_HEADINGS_V8_LEGACY_L2 = [
+    "项目背景", "项目范围", "用户旅程", "用户故事", "功能清单",
+    "功能流程", "原型/UX", "交互规则", "业务规则", "验收依据",
+    "需求追溯矩阵", "自审记录",
 ]
+REQUIRED_HEADINGS_V8_LEGACY_L1 = [
+    "项目背景", "项目范围", "用户旅程", "用户故事", "功能清单",
+    "功能流程", "业务规则", "验收依据", "需求追溯矩阵", "自审记录",
+]
+# Current reader-facing titles are used by rebuilt v8 artifacts. Existing v8
+# fixtures without reader_contract_version remain compatible during migration.
+REQUIRED_HEADINGS_V8_L2 = REQUIRED_HEADINGS_V8_READER_L2
+REQUIRED_HEADINGS_V8_L1 = list(REQUIRED_HEADINGS_V8_READER_CORE)
+REQUIRED_HEADINGS_V8_L1_LEGACY = REQUIRED_HEADINGS_V8_LEGACY_L1
 
-# These sub-sections correspond to upstream artifacts that do not exist in L1.
-# L1 applicability is decided in intake-decision.md, not represented by invented
-# "not applicable" prose in the final PRD.
-L1_FORBIDDEN_L2_ONLY_SUBSECTIONS = {
-    "校验规则",
-    "状态变化",
-    "异常处理",
-}
+# L1 has no page, interaction, validation, state, or exception upstream. Their
+# trace slots are therefore intentionally absent from reader-facing L1 output.
+L1_EXEMPT_TRACE_PREFIXES = ("PD", "IX", "VL", "SM", "STATE", "EX")
+
+APPLICABILITY_TOP_HEADINGS = tuple(dict.fromkeys(REQUIRED_HEADINGS_V8_L2 + REQUIRED_HEADINGS_V8_L1 + ["依赖与待决业务问题"]))
+APPLICABILITY_SUBSECTIONS = ("计算与流程规则", "字段清单", "校验规则", "状态变化", "异常处理", "异常处理与恢复")
+_APPLICABILITY_RE = re.compile(r"<!--\s*applicability:\s*(.*?)\s*-->", re.DOTALL)
+_APPLICABILITY_FIELDS = ("status", "basis", "source", "decided_by", "decided_at")
+_APPLICABILITY_STATUSES = {"required", "conditional", "not_applicable"}
+
+# Reader-facing v8 governance chapters.  These carry process/audit material that
+# belongs in prd-assembly-manifest.json, 99-review/, or .audit/ — never as top-level
+# chapters of the final PRD.  Legacy v8/v7 artifacts may keep them until reflow.
+GOVERNANCE_LEAK_KEYWORDS = (
+    "自审",                 # 自审记录 / 自审记录（Constitution Compliance）
+    "需求追溯矩阵",          # legacy RTM chapter
+    "追溯矩阵",
+    "clarifications",
+    "来源追溯",
+    "版本变更摘要",
+    "下游输入摘要",
+    "产品质量增强记录",
+    "constitution compliance",
+    "上游 verbatim",
+    "下游交接",
+    "阶段收口",
+    "预检输入充分度",
+    "按需章节",
+    "需求来源与触发",        # BG 上游 chapter leaked into PRD top level
+)
+
+
+def _applicability_attrs(block: str) -> dict[str, str]:
+    attrs: dict[str, str] = {}
+    for item in block.split(";"):
+        if "=" not in item:
+            continue
+        key, value = item.split("=", 1)
+        attrs[key.strip()] = value.strip()
+    return attrs
+
+
+def _has_real_value(value: str | None) -> bool:
+    if not value:
+        return False
+    normalized = value.strip()
+    return normalized not in {"", "待填写", "待判断", "待确认", "YYYY-MM-DD", "TBD", "N/A", "NA", "暂无", "本期不做"}
+
+
+def _validate_applicability_contract(text: str, meta: dict[str, str], errors: list[str], warnings: list[str]) -> None:
+    """Validate applicability for generated v8 sections only.
+
+    The reader-facing contract deliberately omits optional empty chapters.  Each
+    generated product section remains auditable, but L0/L1 are not forced to
+    manufacture L2-shaped placeholder sections merely to satisfy a count.
+    """
+    reader_v8 = meta.get("prd_structure_version") == "8" and meta.get("reader_contract_version") == "2"
+    if not reader_v8:
+        return
+    reviewable = meta.get("status") in {"ready_for_human_review", "confirmed"}
+    stripped = _strip_source_blocks(text)
+    targets: list[tuple[str, str]] = []
+    for match in re.finditer(r"^##\s+(?:\d+\.\s*)?(.+?)\s*$", stripped, re.MULTILINE):
+        title = _norm(match.group(1))
+        if title in APPLICABILITY_TOP_HEADINGS:
+            targets.append((title, stripped[match.end():]))
+    for match in re.finditer(r"^###\s+(?:9\.[1-5]\s+)?(.+?)\s*$", stripped, re.MULTILINE):
+        title = _norm(match.group(1))
+        if title in APPLICABILITY_SUBSECTIONS:
+            targets.append((title, stripped[match.end():]))
+    required = _required_headings(meta)
+    present_top = {title for title, _tail in targets}
+    missing = [title for title in required if title not in present_top]
+    if missing:
+        errors.append("Applicability contract failed: missing generated required sections: " + ", ".join(missing))
+    for title, tail in targets:
+        block_match = _APPLICABILITY_RE.search(tail)
+        if not block_match:
+            errors.append(f"Applicability contract failed: missing status block for {title}")
+            continue
+        attrs = _applicability_attrs(block_match.group(1))
+        status = attrs.get("status", "")
+        if status not in _APPLICABILITY_STATUSES:
+            errors.append(f"Applicability contract failed: {title} status must be required, conditional, or not_applicable")
+            continue
+        missing_fields = [field for field in _APPLICABILITY_FIELDS if not _has_real_value(attrs.get(field))]
+        if missing_fields:
+            errors.append(f"Applicability contract failed: {title} missing {', '.join(missing_fields)}")
+        if status == "conditional":
+            conditional_missing = [field for field in ("trigger", "current_judgment", "review_trigger") if not _has_real_value(attrs.get(field))]
+            if conditional_missing:
+                errors.append(f"Applicability contract failed: {title} conditional status missing {', '.join(conditional_missing)}")
+        if status == "not_applicable":
+            basis = attrs.get("basis", "")
+            source = attrs.get("source", "")
+            if re.search(r"^(?:N/?A|暂无|本期不做|本期不适用)$", basis, re.I) or not _has_real_value(basis):
+                errors.append(f"Applicability contract failed: {title} not_applicable requires factual basis")
+            if not _has_real_value(source) or source.lower() in {"n/a", "na", "暂无"}:
+                errors.append(f"Applicability contract failed: {title} not_applicable requires a source citation")
+        if not reviewable:
+            warnings.append(f"Applicability contract pending review for {title}")
+
+
+def _validate_governance_leak(meta: dict[str, str], text: str, errors: list[str]) -> None:
+    """Reader-facing v8 must not expose process/audit chapters as PRD top levels.
+
+    Governance material (self-review, RTM, Clarifications, provenance, quality
+    records, version summaries, upstream verbatim mirrors) lives in the manifest
+    and project-side review/audit carriers.  A top-level chapter with one of the
+    GOVERNANCE_LEAK_KEYWORDS signals that process content leaked into the
+    reader-facing product spec.
+    """
+    if meta.get("reader_contract_version") != "2":
+        return
+    stripped = _strip_source_blocks(text)
+    leaky: list[str] = []
+    for match in re.finditer(r"^##\s+(?:\d+\.\s*)?(.+?)\s*$", stripped, re.MULTILINE):
+        title = _norm(match.group(1)).lower()
+        for keyword in GOVERNANCE_LEAK_KEYWORDS:
+            if keyword in title:
+                leaky.append(match.group(1).strip())
+                break
+    if leaky:
+        errors.append(
+            "Governance leak: reader-facing v8 PRD must not carry process/audit "
+            "chapters: " + ", ".join(leaky[:6])
+            + ". Keep them in prd-assembly-manifest.json, 99-review/, and .audit/."
+        )
 
 
 def _required_headings(meta: dict) -> list[str]:
@@ -124,14 +249,24 @@ def _required_headings(meta: dict) -> list[str]:
     if version != "8":
         return REQUIRED_HEADINGS_V7  # 缺省/非 8 = 存量 v7 契约（REQ-001 等冻结）
     tier = meta.get("process_tier", "L2").upper()
-    if tier == "L1":
+    if meta.get("reader_contract_version") != "2":
+        if tier == "L1":
+            return REQUIRED_HEADINGS_V8_LEGACY_L1
+        return REQUIRED_HEADINGS_V8_LEGACY_L2
+    if tier in {"L0", "L1"}:
         return REQUIRED_HEADINGS_V8_L1
     return REQUIRED_HEADINGS_V8_L2
 
 
-# 12 upstream work_item IDs that must be confirmed (L2 完整档全量)
+# Upstream work_item IDs that must be confirmed per tier.  Kept in sync with
+# workflow-registry.json schema_version 7 membership (L2 = 15, L1 = 9).
+# A REQ whose tier upstreams were created before the schema-7 upgrade fails
+# D5.2 until the new upstream artifacts are produced and confirmed — this is a
+# real governance state, not a validation bug, and must not be hidden.
 UPSTREAM_WORK_ITEMS = [
+    "feasibility-analysis",     # FA
     "project-background-goal",  # G
+    "project-scope",            # PS
     "user-journey",             # UJ
     "user-stories",             # US
     "feature-list",             # ST → FEA
@@ -139,16 +274,19 @@ UPSTREAM_WORK_ITEMS = [
     "page-design",              # PD
     "interaction-rules",         # IX
     "business-rules",           # BR
+    "field-rules",              # FR
     "validation-rules",         # VL
     "state-machine",            # SM
     "exception-handling",       # EX
     "acceptance-criteria",       # AC
 ]
 
-# L1 标准档：仅 7 个上游 work_item（page-design/interaction-rules/validation-rules/
-# state-machine/exception-handling 不参与）；L2 完整档 = 全 12。
+# L1 标准档：9 个上游 work_item（page-design/interaction-rules/field-rules/
+# validation-rules/state-machine/exception-handling 不参与）；L2 完整档 = 全 15。
 UPSTREAM_WORK_ITEMS_L1 = [
+    "feasibility-analysis",     # FA
     "project-background-goal",  # G
+    "project-scope",            # PS
     "user-journey",             # UJ
     "user-stories",             # US
     "feature-list",             # ST → FEA
@@ -157,9 +295,15 @@ UPSTREAM_WORK_ITEMS_L1 = [
     "acceptance-criteria",      # AC
 ]
 
+# L0 has a compact evidence chain, not a reduced final-PRD contract.  Its
+# single confirmed mini-prd is deterministically projected into that contract.
+UPSTREAM_WORK_ITEMS_L0 = ["mini-prd"]
+
 
 def _upstream_work_items(meta: dict) -> list[str]:
     tier = meta.get("process_tier", "L2").upper()
+    if tier == "L0":
+        return UPSTREAM_WORK_ITEMS_L0
     if tier == "L1":
         return UPSTREAM_WORK_ITEMS_L1
     return UPSTREAM_WORK_ITEMS
@@ -286,6 +430,28 @@ def _sections(text: str) -> dict[str, str]:
     return result
 
 
+def _l1_embedded_l2only_rule_ids(business_rules: str) -> list[str]:
+    """Return real L2-only rule IDs (VL/STATE/EX) that L1 must route to L2.
+
+    Only the rule-ID column or the rule-description column counts as *defining*
+    an L2-only rule.  Trace-anchor references in later table columns (追溯锚点 /
+    来源) point at existing upstream behavior and are not new L2-only rules —
+    treating them as violations would break every confirmed L1 PRD whose BR
+    table cites EX-xx anchors from the functional-flow artifact.
+    """
+    ids: set[str] = set()
+    for line in business_rules.splitlines():
+        if line.lstrip().startswith("|"):
+            cells = [cell.strip() for cell in line.strip().strip("|").split("|")]
+            if len(cells) >= 2:
+                if re.fullmatch(r"(?:VL|STATE|EX)-\d+", cells[0]):
+                    ids.add(cells[0])
+                ids.update(re.findall(r"\b(?:VL|STATE|EX)-\d+\b", cells[1]))
+                continue
+        ids.update(re.findall(r"\b(?:VL|STATE|EX)-\d+\b", line))
+    return sorted(ids)
+
+
 def _l1_state_machine_signals(business_rules: str) -> list[str]:
     """Return structured state-machine signals that L1 must route to L2.
 
@@ -293,6 +459,10 @@ def _l1_state_machine_signals(business_rules: str) -> list[str]:
     deliberately looks for an explicit state model or a state-transition table,
     rather than treating every occurrence of the word "状态" as a violation.
     """
+    # Applicability metadata is governance, not a business state model. Exclude
+    # comments before scanning so words such as "状态" and "守卫" in the
+    # review-trigger field cannot cause a false upgrade.
+    business_rules = re.sub(r"<!--.*?-->", "", business_rules, flags=re.DOTALL)
     signals: list[str] = []
     if re.search(r"状态机|状态枚举|状态转移", business_rules):
         signals.append("explicit state-model terminology")
@@ -364,17 +534,75 @@ def _source_block(text: str, work_item: str, artifact_id: str) -> tuple[str, str
     return (match.group(1).lower(), match.group(2).strip()) if match else None
 
 
-def _validate_assembly_manifest(path: Path, text: str, meta: dict[str, str], errors: list[str]) -> None:
-    """Verify v8 PRD source provenance when the artifact lives in a REQ tree.
-
-    Legacy standalone fixtures remain structural tests. A v8 PRD placed in a real
-    REQ directory, however, must carry an assembly manifest and exact source
-    blocks so a manually summarised or post-assembly-modified PRD cannot pass.
-    """
+def _validate_assembly_manifest(path: Path, text: str, meta: dict[str, str],
+                                errors: list[str], warnings: list[str]) -> None:
+    """Validate v8 provenance sidecar without requiring copied source bodies."""
+    reader_v8 = meta.get("prd_structure_version") == "8" and meta.get("reader_contract_version") == "2"
     req_dir = _req_dir_for(path)
     if not req_dir or meta.get("prd_structure_version") != "8":
         return
-    if meta.get("status") not in {"ready_for_human_review", "confirmed"}:
+    if reader_v8:
+        manifest_path = path.parent / "prd-assembly-manifest.json"
+        if not manifest_path.is_file():
+            errors.append("Assembly manifest failed: reader-facing v8 requires 003-prd-output/prd-assembly-manifest.json")
+            return
+        try:
+            manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError) as exc:
+            errors.append(f"Assembly manifest failed: cannot parse manifest: {exc}")
+            return
+        tier = meta.get("process_tier", "L2").upper()
+        expected = _upstream_work_items(meta)
+        if manifest.get("schema_version") != 2 or manifest.get("process_tier", "").upper() != tier:
+            errors.append("Assembly manifest failed: reader-facing v8 requires schema_version=2 and matching process_tier")
+        sources = manifest.get("sources")
+        if not isinstance(sources, list):
+            errors.append("Assembly manifest failed: sources must be a list")
+            return
+        by_item = {source.get("work_item"): source for source in sources if isinstance(source, dict)}
+        missing = [item for item in expected if item not in by_item]
+        unexpected = [item for item in by_item if item not in expected]
+        if missing:
+            # Controlled legacy fallback (option B): a REQ created before the
+            # schema-7 upstream split legitimately lacks the new upstreams; the
+            # projection records this in the manifest and PRD frontmatter.  This
+            # is tolerated for drafts only — the D5.2 gate still requires the
+            # full tier set before any ready_for_human_review/confirmed state.
+            if meta.get("legacy_fallback") == "true" and manifest.get("legacy_fallback") is True:
+                warnings.append(
+                    "Assembly manifest legacy_fallback: missing tier sources: "
+                    + ", ".join(missing)
+                    + " — produce the missing upstreams and reflow before human approval."
+                )
+            else:
+                errors.append("Assembly manifest failed: missing tier sources: " + ", ".join(missing))
+        if unexpected:
+            errors.append("Assembly manifest failed: out-of-tier sources: " + ", ".join(str(item) for item in unexpected))
+        for work_item in expected:
+            source = by_item.get(work_item)
+            if not isinstance(source, dict):
+                continue
+            required = ("artifact_id", "path", "status", "content_sha256", "target_sections", "selectors")
+            absent = [field for field in required if not source.get(field)]
+            if absent:
+                errors.append(f"Assembly manifest failed: {work_item} missing fields: {', '.join(absent)}")
+                continue
+            source_path = _safe_source_path(req_dir, source["path"])
+            if source_path is None or not source_path.is_file():
+                errors.append(f"Assembly manifest failed: {work_item} source path is missing or escapes REQ: {source['path']}")
+                continue
+            source_text = source_path.read_text(encoding="utf-8")
+            source_meta = parse_frontmatter(source_text)
+            if source["status"] != "confirmed" or source_meta.get("status") != "confirmed":
+                errors.append(f"Assembly manifest failed: {work_item} must be confirmed")
+            if source_meta.get("artifact_id") != source["artifact_id"]:
+                errors.append(f"Assembly manifest failed: {work_item} artifact_id does not match source frontmatter")
+            if source["content_sha256"].lower() != artifact_content_hash(source_text).lower():
+                errors.append(f"Assembly manifest failed: {work_item} content_sha256 does not match source file")
+            if not isinstance(source["target_sections"], list) or not source["target_sections"]:
+                errors.append(f"Assembly manifest failed: {work_item} needs non-empty target_sections")
+            if not isinstance(source["selectors"], list) or not source["selectors"]:
+                errors.append(f"Assembly manifest failed: {work_item} needs non-empty selectors")
         return
     manifest_path = path.parent / "prd-assembly-manifest.json"
     if not manifest_path.is_file():
@@ -387,8 +615,8 @@ def _validate_assembly_manifest(path: Path, text: str, meta: dict[str, str], err
         return
     tier = meta.get("process_tier", "L2").upper()
     expected = _upstream_work_items(meta)
-    if manifest.get("schema_version") != 1 or manifest.get("process_tier", "").upper() != tier:
-        errors.append("Assembly manifest failed: schema_version=1 and matching process_tier are required")
+    if manifest.get("schema_version") not in {1, 2} or manifest.get("process_tier", "").upper() != tier:
+        errors.append("Assembly manifest failed: schema_version 1/2 and matching process_tier are required")
     sources = manifest.get("sources")
     if not isinstance(sources, list):
         errors.append("Assembly manifest failed: sources must be a list")
@@ -412,7 +640,7 @@ def _validate_assembly_manifest(path: Path, text: str, meta: dict[str, str], err
         source = by_item.get(work_item)
         if not source:
             continue
-        required = ("artifact_id", "path", "status", "content_sha256", "target_section")
+        required = ("artifact_id", "path", "status", "content_sha256")
         absent = [field for field in required if not source.get(field)]
         if absent:
             errors.append(f"Assembly manifest failed: {work_item} missing fields: {', '.join(absent)}")
@@ -473,24 +701,30 @@ def validate(path: Path) -> dict[str, object]:
     if missing_h:
         errors.append(f"Missing required headings: {', '.join(missing_h)}")
 
-    if meta.get("prd_structure_version") == "8" and meta.get("process_tier", "L2").upper() == "L1":
-        forbidden = [
-            match.group(1).strip()
-            for match in re.finditer(r"^###\s+(?:9\.[2-4]\s+)?(.+?)\s*$", text, re.MULTILINE)
-            if _norm(match.group(1)) in L1_FORBIDDEN_L2_ONLY_SUBSECTIONS
-        ]
-        if forbidden:
-            errors.append(
-                "L1 PRD must omit L2-only business-rule sub-sections rather than mark them not applicable: "
-                + ", ".join(forbidden)
-            )
-
     sections = _sections(text)
-    if meta.get("prd_structure_version") == "8" and meta.get("process_tier", "L2").upper() == "L1":
-        state_machine_signals = _l1_state_machine_signals(sections.get("业务规则", ""))
+    _validate_applicability_contract(text, meta, errors, warnings)
+    _validate_governance_leak(meta, text, errors)
+
+    is_reader_v8 = (
+        meta.get("prd_structure_version") == "8"
+        and meta.get("reader_contract_version") == "2"
+    )
+    is_l1 = is_reader_v8 and meta.get("process_tier", "L2").upper() == "L1"
+    if is_l1:
+        # L1 has no L2-only upstreams. Real L2-only IDs or state-machine
+        # structure must trigger an upgrade instead of being hidden in §9.1.
+        business_rules = sections.get("业务规则", "")
+        l2only_rules = _l1_embedded_l2only_rule_ids(business_rules)
+        if l2only_rules:
+            errors.append(
+                "L1 PRD must not embed real L2-only rules (VL/STATE/EX): "
+                + ", ".join(sorted(set(l2only_rules)))
+                + ". Record applicability in intake-decision.md and upgrade the REQ to L2."
+            )
+        state_machine_signals = _l1_state_machine_signals(business_rules)
         if state_machine_signals:
             errors.append(
-                "L1 PRD must not model L2-only state-machine behavior in §9.1: "
+                "L1 PRD must not model L2-only state-machine behavior: "
                 + ", ".join(state_machine_signals)
                 + ". Record the applicability evidence in intake-decision.md and upgrade the REQ to L2."
             )
@@ -504,7 +738,7 @@ def validate(path: Path) -> dict[str, object]:
     # Every declared upstream ID must be a real trace token; placeholder or
     # malformed IDs make the PRD impossible to audit back to source artifacts.
     upstream_value = meta.get("upstream_artifact_ids", "")
-    upstream_ids = re.findall(r"\b(?:G|BG|UJ|US|FEA|FUN|FL|FF|PD|IX|BR|VL|STATE|SM|EX|AC|PRD|SRC)-[A-Za-z0-9]+(?:-[A-Za-z0-9]+)*\b", upstream_value)
+    upstream_ids = re.findall(r"\b(?:G|BG|UJ|US|FEA|FUN|FL|FF|PD|IX|BR|VL|STATE|SM|EX|AC|PRD|MP|SRC)-[A-Za-z0-9]+(?:-[A-Za-z0-9]+)*\b", upstream_value)
     if status in {"ready_for_human_review", "confirmed"} and not upstream_ids:
         errors.append("Source-trace gate failed: upstream_artifact_ids must contain at least one valid artifact ID")
     if upstream_value and re.search(r"(?:待确认|TBD|TODO|XXX|\[\])", upstream_value, re.I):
@@ -518,10 +752,11 @@ def validate(path: Path) -> dict[str, object]:
         if declared.lower() != computed.lower():
             errors.append(f"Hash integrity failed: {declared_key} does not match canonical artifact content (expected {computed[:12]}…)")
 
-    if "RTM" not in text and "需求追溯矩阵" not in text:
+    # RTM is a project-side audit artifact in v8. Legacy/v7 remains strict.
+    if meta.get("prd_structure_version") != "8" and "RTM" not in text and "需求追溯矩阵" not in text:
         errors.append("No RTM (Requirements Traceability Matrix) found")
 
-    _validate_assembly_manifest(path, text, meta, errors)
+    _validate_assembly_manifest(path, text, meta, errors, warnings)
 
     if status == "confirmed":
         unresolved = [k for k in ("business_fact_owner", "goal_decision_owner", "reviewer", "confirmed_at")
@@ -587,9 +822,15 @@ def validate(path: Path) -> dict[str, object]:
             "AC": bool(re.search(r"\bAC-\d+\b", text)),         # acceptance-criteria
         }
         missing_trace_ids = [k for k, v in forward_chain_ids.items() if not v]
-        # L1 标准档无 page-design/interaction-rules 上游 → PD/IX 槽位豁免（不告警）
+        # L0 is intentionally a one-source evidence chain.  Its canonical PRD
+        # has the same chapter contract, but it cannot invent upstream IDs that
+        # do not exist; the mini-prd source block and manifest are its trace.
+        if meta.get("process_tier", "L2").upper() == "L0":
+            missing_trace_ids = []
+        # L1 标准档无 L2-only 上游（PD/IX/VL/SM/EX）→ 相应 ID 槽位豁免（不告警）。
+        # PRD 汇总章节仍完整，只是这些能力以「本期不适用」承载、无真实 ID。
         if meta.get("process_tier", "L2").upper() == "L1":
-            for exempt in ("PD", "IX"):
+            for exempt in L1_EXEMPT_TRACE_PREFIXES:
                 missing_trace_ids = [k for k in missing_trace_ids if k != exempt]
         if missing_trace_ids:
             warnings.append(
@@ -597,28 +838,8 @@ def validate(path: Path) -> dict[str, object]:
                 "Expected chain: G→UJ→US→ST→FEA→FUN→PD→IX→BR→VL→SM→EX→AC"
             )
 
-        # RTM section checks
-        rtm_section = re.search(
-            r"^##\s+\d+\.\s*需求追溯矩阵\s*$(.*?)(?=^##\s+|\Z)",
-            text, re.MULTILINE | re.DOTALL
-        )
-        if rtm_section:
-            rtm_rows = [
-                l for l in rtm_section.group(1).splitlines()
-                if l.lstrip().startswith("|") and "---" not in l and "目标" not in l
-            ]
-            rtm_data = [r for r in rtm_rows if "待确认" not in r]
-            if len(rtm_data) == 0:
-                warnings.append("Semantic: RTM has no data rows; traceability matrix should be populated")
-            # RTM column count: should have ≥6 columns for full chain
-            header_match = re.search(r"^\|\s*([^|]+\|){5,}\s*[^|]+\|\s*$", rtm_section.group(1), re.MULTILINE)
-            if header_match:
-                col_count = header_match.group(0).count("|") - 1
-                if col_count < 6:
-                    warnings.append(
-                        f"Semantic (G_CROSS): RTM header has {col_count} columns, expected ≥6 "
-                        "for full traceability chain"
-                    )
+    # Reader-facing v8 does not carry a duplicate RTM. The trace report is
+    # generated from upstream artifacts plus the manifest in 99-review/.
 
         # Check for new content not in upstream
         new_content_markers = ["新增需求", "补充功能", "额外建议"]
@@ -628,25 +849,25 @@ def validate(path: Path) -> dict[str, object]:
                 "PRD assembly should only aggregate, not introduce new requirements"
             )
 
-        # Content-density gate: PRD must EMBED upstream content, not point to it.
-        # Aggregation contract requires §1-§4/§6/§7 + BR/VL/SM/EX/AC tables to be
-        # fully verbose-embedded. A single-line pointer like "详见 FD-001" delegates
-        # content upstream, leaving the PRD thin and non-self-contained → FAIL.
-        # However, "详见" inside an embedded source block IS legitimate
-        # upstream-internal cross-reference, not a PRD-level pointer. Exclude
-        # source-block bodies from this check.
-        pointer_scan_text = _strip_source_blocks(text)
-        pointer_refs = re.findall(
-            r"(?:详见|内容见)\s*[`\[]?\s*[A-Za-z][A-Za-z0-9_\-]{0,40}", pointer_scan_text
-        )
-        if pointer_refs:
-            uniq = list(dict.fromkeys(pointer_refs))
-            errors.append(
-                "Content-density gate failed: PRD delegates content via upstream "
-                f"pointers ({', '.join(uniq[:6])}) instead of embedding it verbatim. "
-                "Embed the full BR/VL/SM/EX/AC tables and story cards; do not write "
-                "'详见 XX-XXX' pointers."
+        # Content-density gate: a reader-facing PRD must contain substantive
+        # behavior/rules/acceptance content, but no longer needs verbatim source
+        # blocks. A pointer-only section remains invalid.  This gate applies to
+        # reader-facing v8 only: legacy v8/v7 artifacts legitimately pair
+        # "详见上游" pointers with embedded source blocks until reflow.
+        if is_reader_v8:
+            pointer_refs = re.findall(
+                r"(?:详见|内容见)\s*[`\[]?\s*[A-Za-z][A-Za-z0-9_\-]{0,40}", text
             )
+            if pointer_refs:
+                uniq = list(dict.fromkeys(pointer_refs))
+                errors.append(
+                    "Content-density gate failed: PRD delegates content via upstream "
+                    f"pointers ({', '.join(uniq[:6])}) instead of stating the behavior, "
+                    "rule, or acceptance condition in the final PRD."
+                )
+        reader_body = re.sub(r"<!--.*?-->", "", text, flags=re.DOTALL)
+        if not any(_meaningful(sections.get(name, "")) for name in required_headings):
+            errors.append("Meaningful-content gate failed: reader-facing PRD has no substantive product content")
 
         # R&D-review-v1 hard standards (蒸馏自 B1 prd-reviewer + G3 pm-master,
         # 完整定义见 references/prd-scoring-rubric.md §4.1). This is advisory
@@ -658,12 +879,17 @@ def validate(path: Path) -> dict[str, object]:
 
     # If an external append-only anchor exists, verify its chain and this PRD's
     # latest row. Legacy fixtures without an anchor remain valid.
+    # B2 fix: the per-artifact anchor check is enforced only once the PRD is
+    # `confirmed` — the anchor row is written by pipeline.py review (approve),
+    # so requiring it at `ready_for_human_review` created a deadlock (gate
+    # blocked approval before the anchor could ever be recorded).  The chain
+    # integrity check still runs for every status.
     req_dir = _req_dir_for(path)
     if req_dir and hash_anchor and (req_dir / "99-review" / hash_anchor.ANCHOR_FILENAME).is_file():
         chain = hash_anchor.verify_anchor_chain(req_dir)
         if not chain["ok"]:
             errors.extend(f"Hash anchor chain failed: {item}" for item in chain["issues"])
-        elif status in {"ready_for_human_review", "confirmed"} and meta.get("reviewer"):
+        elif status == "confirmed" and meta.get("reviewer"):
             current_hash = artifact_content_hash(text)
             rel = path.relative_to(req_dir).as_posix()
             check = hash_anchor.verify_artifact_anchored(req_dir, rel, current_hash, meta["reviewer"])
@@ -678,7 +904,9 @@ _PRD_ERROR_RULES = [
     ("Missing frontmatter fields:", "prd.missing_frontmatter"),
     ("Invalid status", "prd.invalid_status"),
     ("Missing required headings:", "prd.missing_headings"),
-    ("L1 PRD must not model L2-only state-machine behavior in §9.1:", "prd.l1_state_machine_bypass"),
+    ("Governance leak:", "prd.governance_leak"),
+    ("L1 PRD must not embed real L2-only", "prd.l1_embedded_l2only_rules"),
+    ("L1 PRD must not model L2-only state-machine behavior:", "prd.l1_state_machine_bypass"),
     ("No RTM", "prd.missing_rtm"),
     ("Confirmed artifact has unresolved confirmation fields:", "prd.unresolved_confirmation"),
     ("PRD DoD D5.2 failed:", "prd.d52_missing_upstream"),
@@ -693,8 +921,6 @@ _PRD_ERROR_RULES = [
 
 _PRD_WARNING_RULES = [
     ("Confirmed PRD still contains 待确认 markers", "prd.pending_markers_in_confirmed"),
-    ("RTM has no data rows", "prd.rtm_no_data"),
-    ("RTM header has", "prd.rtm_column_count"),
     ("Forward traceability incomplete", "prd.forward_trace_incomplete"),
     ("PRD contains", "prd.new_content_markers"),
 ]

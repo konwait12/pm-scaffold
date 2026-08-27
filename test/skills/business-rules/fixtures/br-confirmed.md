@@ -2,6 +2,7 @@
 artifact_id: BR-HIRE-001
 version: v0.1
 status: ready_for_human_review
+quality_contract_version: "1"
 owner: PM-Office
 business_fact_owner: VP of Talent
 goal_decision_owner: VP of Talent
@@ -180,3 +181,12 @@ upstream_artifact_id: "FEA-HIRE-001, FL-HIRE-001"
 - BR 的 EARS 句式选择与"全局 → 具体 FUN"挂接方式由 PM-Office 设计 → **DECISION**
 - BR-017"90 天未登录召回"的召回窗口属增长运营假设 → **AI_INFERENCE**
 - 加拿大各省劳动法对薪酬展示的具体条款差异待法务确认 → **UNKNOWN**
+## 产品质量增强记录
+
+| 项目 | 结论 | 知识状态 | 来源/位置 | 判断人 | 复核触发 |
+|---|---|---|---|---|---|
+| 受影响角色与结果 | 规则保证提交结果可重复判定 | FACT | FEA-001 §功能 | PM | 业务目标变化 |
+| 采用方案与被排除替代 | 采用显式规则表，不用散文描述 | DECISION | BR-001 §规则 | PM | 规则类型变化 |
+| 价值-成本-风险 | 规则降低误判风险，成本待研发评估 | UNKNOWN | BR-001 §来源 | PM | 研发评估 |
+| 失败边界与回退 | 条件不满足时拒绝并返回可重试结果 | FACT | BR-001 §例外 | PM | 例外变化 |
+| 可证伪条件/停止条件 | 若业务负责人无法确认规则，停止下游装配 | DECISION | BR-001 §决策 | 业务负责人 | 冲突来源 |
