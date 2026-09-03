@@ -1,117 +1,187 @@
 ---
 name: project-background-goal
-description: Turn raw requirement materials into a sourced, human-confirmed business background and goal baseline before journey or product design begins.
+description: Turn raw business material into a human-readable project background and goal document through a PM conversation.
 ---
 
-# 项目背景与目标（Project Background And Goal）
+# 项目背景与目标
 
-## 目的与边界（Purpose And Boundary）
+## 作用
 
-确立需求为什么存在、今天发生了什么、什么问题重要、涉及哪些人、预期达成什么结果，以及哪些约束或未知项会影响后续工作。
+这个 skill 帮产品经理回答四个问题：
 
-**不要**设计旅程、功能、页面、字段、API、架构或实现任务。业务方提供的产品方案是需要审视的证据，而不是理解业务需求的替代品。
+1. 为什么现在要做这件事？
+2. 现在是怎么做的，哪里出了问题？
+3. 做成后要改变什么结果，怎样判断成功？
+4. 哪些角色、约束和未知会影响判断？
 
-## 输入与输出（Inputs And Outputs）
+它只处理业务背景、问题、目标和边界，不写用户旅程、功能清单、页面、字段、接口、架构或实现任务。它可以脱离 pipeline、registry、下游产物和其他 skill，直接在对话中使用。
 
-输入：已登记的来源材料（会议纪要、邮件、BRD、PPT、图片）以及可识别的业务事实/目标负责人。输出：`background-goal.md`，使用 `src/templates/resolver.py background-goal.md` 解析出的模板。
+## 输入与材料边界
 
-分析前加载 `references/thinking-framework.md`（其中引用 `src/framework/thinking-core.md` §1 必用透镜）。起草前加载 `references/output-contract.md`。交接前加载 `references/audit-checklist.md` 与 `references/reviewer-checklist.md`。评审前运行 `scripts/validate_artifact.py <artifact> --json`。当来源材料稀疏时加载 `references/elicitation-techniques.md`（访谈/观察主动采集）。
+只使用 PM 在**本次任务**实际提供的原始材料，以及 PM 在本次对话中的明确回复。原始材料可以是会议纪要、口述、聊天记录、邮件、PPT、PDF、图片、流程草图、系统现状或线下做法；无需预设文件类型的分析方法，重点是理解材料本身。
 
-## 思考提示词（按阶段）（Thinking Prompts per stage）
+材料边界与执行协议：
 
-### 1. Preflight
-- "我有哪些来源？谁拥有业务事实？信息密度如何？"
-- 为每个来源登记 SRC-ID。识别 business_fact_owner（业务事实负责人）与 goal_decision_owner（目标决策负责人）。
-- **如果没有可用来源或事实负责人**，返回一张路由回执并 STOP——不要进入 Intake。
-- 评估成熟度：L0（无来源）→ L1（单一稀疏来源）→ L2（已有业务方案）→ L3（定义良好）→ L4（上游已确认）。
+- **只认本次原始材料**：不得用联网搜索、通用行业知识、模型记忆、其他项目文件、既有 PRD 或产物、计划、案例、交接文档或 skill 自带示例来补充、校正、推断或验证项目事实；它们也不能作为验证材料。
+- **推断与事实分离**：AI 可以归纳材料、判断项目类型、识别缺口并提出问题；所有推断必须与来源事实分开标识，不能自行升级为业务事实或决定。材料不足或互相冲突时，保留原意并向 PM 提问。
+- **示例不是默认输入**：任何说明性示例、演示内容或参考案例都不是默认需求，也不是 skill 的内置测试夹具。PM 若要用它们测试，必须在本轮明确指定原文材料和测试目的；否则只能作为方法示例登记，不能出现在事实、目标、角色或成功判断中。
+- **先说清本质，再谈措辞**：先用对话把「要做什么、为什么做、主题/框架和业务本质」说清楚，再处理措辞或实现细节；按阶段逐步产出，不假设一次对话就能得到最终需求文档。
+- **单点可用**：本 skill 必须能独立使用，拥有清楚的原始输入和独立输出，不依赖 pipeline、registry、下游产物、其他 skill，也不依赖任何外部工具或指定文档源。
+- **验证以原始材料为输入**：验证必须与人工期望或独立参照比对，不能拿最终 PRD、已确认产物或示例替代原始材料。中间产物可以交给下一阶段，但必须保留其候选状态和来源边界。
 
-### 2. Intake
-- "每个来源实际说了什么——而不是我认为它是什么意思？"
-- 在解读之前先逐字提取来源陈述。按 `src/framework/contracts.md` 将每条分类为 `FACT`、`DECISION`、`ASSUMPTION`、`AI_INFERENCE`、`UNKNOWN` 或 `CONFLICT`。
-- 保留来源 ID 与位置。不要把不同来源的主张合并成一条陈述。
+## 参考文档加载规则
 
-### 3. Think（应用 thinking-core.md §1 必用透镜）
-- **第一性原理（First Principles）**："我们想改变的可观察结果是什么？哪些假设伪装成了需求？"
-- **系统思维（Systems Thinking）**："哪些上游/下游系统、角色与数据会受影响？"
-- **角色视角（Role Perspective）**："对每个识别出的角色——他们获得什么、失去什么、需要改变什么？"
-- **约束分析（Constraint Analysis）**："硬约束（法律、平台、品牌、时间）有哪些？"
-- **对抗性审视（Adversarial）**："任何主张的反面是否可能成立？什么证据能推翻它？"
-- **逆向验证（Reverse Validation）**："从期望结果倒推，哪些条件必须成立？"
+参考文档不是默认全部注入的上下文。执行本 skill 时，按阶段读取以下文件；读取后再继续该阶段，不要只凭文件名猜测内容。
 
-### 4. Clarify
-- 对可发现的客观事实先尝试调研（文档、公开数据、系统日志）。
-- 将其余问题批量呈现，附带：AI 初步判断、证据、选项、影响、负责人、是否阻断标记。
-- **当某个答案可能改变问题、目标、角色、范围、成本、时间或风险时，停在 `needs_user_input`**。
-- 数量限制：每轮 Session 至多 5 个问题，按影响排序。
-- 遇到「待确认 / 冲突 / 信息缺口」信号：自动登记带来源的 issue-record `ISS-NNN`（只记录 PM/PRD 问题）；仅对业务决定、owner、接受或关闭动作提问。送审前 dor_check 会硬检查收口与引用。
-
-### 5. Generate
-- 填充模板。叙述部分放入有来源依据的内容；不确定的内容放进显式寄存器（§6-§8）。
-- 状态：使用 `draft`、`needs_user_input` 或 `conditional_review`——**绝不用 `confirmed`**。
-
-### 6. Audit
-- **完整性（Completeness）**：所有来源都体现了？所有角色都识别了？所有约束都列出了？
-- **第一性原理**：我是否不小心写成了方案而不是问题？
-- **来源保真度（Source Fidelity）**：每条主张是否都能追溯到一条来源陈述？
-- **下游可用性**：user-journey 能否无需重新调研就直接接续？
-- 运行 `scripts/validate_artifact.py <artifact> --json`。修复所有错误。警告 → 记录进 audit notes。
-- **B3 收口**：确认 issue-record 的 §13 阶段收口表已更新本 work item 行（问题数 / 收口日期 / 状态；空阶段也落行）。
-- 对 FACT、DECISION、ASSUMPTION 与 AI_INFERENCE 逐条执行四维证据检查（来源、规模、匹配、方向），见 `src/shared/audit/evidence-four-dimension-check.md`。
-
-### 7. Human Gate
-呈现：候选摘要、证据摘要（每条主张由哪些来源支撑）、未知项及其影响、所需决策、审计结果、变更摘要。
-**只有业务事实/目标负责人可以批准。** 批准会创建带 SHA-256 的 ReviewRecord。
-
-### 8. Commit / Reflow
-- 只有 `pipeline.py review --decision approve` 可以写入 `confirmed`。
-- 发生变更时：记录 delta → 更新受影响的章节 → 重新执行 Audit → 返回 Human Gate。
-- 后续出现矛盾 → 从本 Skill 的开头重新进入（不在下游打补丁）。
-
-## 反模式（Anti-Patterns）
-
-| ❌ 不要 | ✅ 要做 |
-|---|---|
-| 把"我们需要一个 X 应用"当作问题陈述 | 问"如果做了这个，哪些可观察结果会改变？" |
-| 列 20 个目标却不设优先级 | 限制为 3-5 个目标，并给出可衡量的基线与目标值 |
-| 复制粘贴 BRD 章节却不标注知识状态 | 把每条主张标注为 FACT/DECISION/ASSUMPTION 等 |
-| 因为"BRD 只提到用户"就跳过角色 | 从工作流描述推断角色，标注为 AI_INFERENCE |
-| 为一段话的来源写 3 页背景 | 按输入密度调整输出规模 |
-
-## 示例：充足输入 → 充足输出（Sufficient Input → Sufficient Output）
-
-**输入**：含业务背景、当前流程、痛点、5 个目标、4 个角色、约束的 BRD。
-**输出**：完整模板，含带来源依据的叙述 + 显式寄存器。
-
-## 示例：稀疏输入 → 降级输出（Sparse Input → Degraded Output）
-
-**输入**：Slack 消息"我们需要一个面向 VIP 客户的会议邀约系统。"
-**输出**：Intake 登记来源 → Preflight 返回 L1 → Think 识别缺失项：角色有哪些？当前流程是什么？成功指标是什么？→ Clarify 生成 3 个问题 → 停在 `needs_user_input`。
-
-## 加载参考文档（Load References）
-
-| 文件 | 用途 | 何时加载 |
+| 阶段 | 必须读取 | 按需读取 |
 |---|---|---|
-| `references/anti-patterns.md` | AI 常见反模式（写产物时对照规避） | Generate 时对照 |
-| `references/audit-checklist.md` | Audit 自审清单 | Audit 前 |
-| `references/elicitation-techniques.md` | 需求采集技法（访谈/观察，材料稀疏时用） | 材料稀疏时 |
-| `references/output-contract.md` | 产物结构与 ID 契约 | Draft 前 |
-| `references/question-patterns.md` | Clarify 提问模板（8 类句式） | Clarify 提问时 |
-| `references/reviewer-checklist.md` | 人工评审清单（Human Gate 用） | Human Gate 前 |
-| `references/source-handling.md` | 来源处理规则（SRC-* 登记与引用） | Intake/来源处理时 |
-| `references/thinking-framework.md` | 思考透镜（Common Core + 领域 lens，必读） | 每次任务开始（必读） |
-| `references/business-constraint-taxonomy.md` | 业务约束五分类技法（合规/时间/预算/组织/历史） | Generate 约束章节时（按需） |
-| `references/value-complexity-matrix.md` | 价值复杂度矩阵 + 北极星指标 | Generate 目标优先级时（按需） |
-| `references/positioning-stxswot.md` | 定位 ST×SWOT 交叉复合矩阵 + 定位声明五要素 | Generate 市场/目标章节时（按需） |
-| `references/stakeholder-power-interest.md` | 干系人权力×利益方格（四象限处理策略 + 沟通计划模板） | Generate 角色/干系人章节时（按需） |
-| `references/stakeholder-4class.md` | 干系人 4 类分类 + 高/中/低优先级 + 原始需求四维分析 | Generate 角色章节/立项分析时（按需） |
-| `references/planning-report.md` | 对齐汇报 4 要素 + 风险预案表 + 避坑检查清单 10 项 | 立项汇报/送审对齐时（按需） |
-| `references/background-4elements.md` | 背景四要素（用户+场景+问题+量化数据）写作指引 + 达标示例 | Generate 背景/目标章节、Audit/评审核对背景完整性时（按需） |
-| `src/shared/audit/evidence-four-dimension-check.md` | FACT 证据的来源/规模/匹配/方向检查 | Intake、Audit 与 Human Gate 前（必查） |
+| 预检与分析 | `references/thinking-framework.md`、`references/source-handling.md` | `references/background-4elements.md` |
+| 项目类型判断与澄清 | `references/background-by-type.md`、`references/question-patterns.md` | `references/elicitation-techniques.md`、`references/stakeholder-4class.md`、`references/stakeholder-power-interest.md` |
+| 起草主文档与治理文件 | `references/output-contract.md` | `references/business-constraint-taxonomy.md`、`references/positioning-stxswot.md`、`references/planning-report.md`、`references/value-complexity-matrix.md` |
+| AI Audit | `references/audit-checklist.md`、`references/anti-patterns.md` | `references/business-constraint-taxonomy.md`、`references/stakeholder-power-interest.md` |
+| PM/业务方评审 | `references/reviewer-checklist.md` | 与本次待确认事项直接相关的 reference |
 
-## 产品质量增强（L1 必须）
+如果按需文件与本次项目无关，不必读取。所有 reference 只提供分析、提问和审计方法，不是项目输入，不能加入案例细节或默认结论，也不能替代 PM 对事实、类型、目标和取舍的确认。
 
-除背景事实和目标外，送审前填写“产品质量增强记录”：受影响角色与结果、采用方案与被排除替代、价值-成本-风险、失败边界与回退、可证伪条件/停止条件。每行标注知识状态、来源/位置、判断人和复核触发。缺少证据停在 `needs_user_input`，不以“提升体验”“风险可控”或 `N/A` 代替。
+## 对话流程
 
-## 完成标准（Completion）
+### 1. 预检材料
 
-所有承载需求的来源均已体现或被注明排除原因；背景、现状、问题、目标与方案彼此区分；实质性主张可追溯；阻断性未知阻止确认；且获得授权的人类批准了基线。
+先理解材料描述的高层业务事件：什么条件触发、谁参与、经历哪些关键步骤、产生什么结果。业务方给出的往往只是 PPT、粗略流程、功能点或口述；先把这件事讲清楚，再分析它的背景和目标。若“要做什么、为什么做、目标结果”仍不清楚，先输出预检解读和问题，不起草完整背景目标。
+
+先向 PM 输出一份简短的材料解读，严格区分：
+
+- 来源明确说出的事实；
+- AI 根据材料得出的高层理解，包括项目想建立或改变的业务能力；
+- 业务方已经做出的决定、尚未验证的假设、互相冲突或完全未知的内容。
+
+如果材料主要是功能方案、页面、流程或客户旅程，它能证明范围、规则、角色、约束和流程，但不自动证明业务问题、紧迫性或成功目标。将可合理推出的理解标为 AI 判断，将无法得出的背景和目标明确列为待确认。
+
+如果只有一句功能请求，也不要直接扩写成项目背景；先进入澄清。
+
+### 2. AI 先判断项目类型
+
+只使用以下三种类型：
+
+- **重构**：已有系统或稳定的人工做法，要改变现状和结果；
+- **从 0 到 1**：还没有可用的目标业务能力，要把已有的线下/人工业务过程，或一个新业务服务，建立成可运行的能力；已有小程序、账号体系或其他渠道不改变这一判断；
+- **迭代**：已有目标业务能力中的局部新增或调整，目标是补一个明确的业务结果，不需要重新写完整项目章程。
+
+先给出 AI 判断、证据、信心和可能误判点。然后必须向 PM 提供三选一：
+
+我判断是【推荐类型】，依据是【证据】。请选择：重构 / 从 0 到 1 / 迭代。
+
+以 PM 的选择为准，不能自动覆盖。若 PM 选择与 AI 不同，记录 PM 的理由到治理伴随文件。
+
+### 3. 按类型澄清
+
+每轮最多问 5 个高影响问题，优先问会改变类型、目标、角色、范围、成本、时间或风险的问题。问题要带上 AI 初步判断和影响，但不要用复杂表格逼 PM 填写。
+
+提问顺序遵循渐进式原则：先确认业务本质、起点/现状和期望结果，再进入范围、约束和衡量方式；不要在背景目标尚未说清时，跳到 PRD、页面或实现细节。每个问题给出 A/B/C 三个互斥选项（可加“其他”），由 PM 选择或改写，AI 不替 PM 做决定。
+
+- **重构**：问清之前如何做、现状证据、最痛的问题、希望改变的结果，以及 before -> after 的差异。
+- **从 0 到 1**：问清没有系统时线下如何做、分几步、谁参与、每步产出什么，以及要建立的业务结果。
+- **迭代**：问清为什么现在加/改、具体要改变什么业务结果；背景目标保持短小，通常两三句话足够。
+
+不确定但不阻断的内容可以标为“待确认”；会改变业务决定的内容必须停在 needs_user_input，等待 PM 回答。
+
+#### 待确认清单的两个来源（缺一不可）
+
+**1. 材料显式未决项（优先，也最容易漏）**
+
+全量扫描原材料中**作者自己已经提出、但尚未回答**的问题与待定判断，逐条进入待确认清单。识别特征包括但不限于：
+
+- 以「？」/「?」结尾的问句，尤其是「是否……？」「要不要……？」「……沿用吗？」这类悬空判断；
+- 「待定 / TBD / 待确认 / 待讨论 / 待决策 / open / TODO」等标记；
+- 用 `--`、`---` 引出的未结论判断（例如「……前期判断 -- 是否沿用到后面常规活动？」）。
+
+扫描范围必须覆盖**全部材料载体**，不能只读结构化章节：
+
+- 正文段落与列表项（含嵌套子项、表格单元格内的批注）；
+- **图片的标题与说明文字（alt / 图注）**——流程图、架构图、旅程图的说明常含模块清单、时间轴（如 D-7 / D-1 / D）等结构化信息，必须读取并纳入「当前现状」；
+- 备注、callout、批注、脚注；
+- 表格中留空或标注「待补充」的单元格。
+
+只要这些未决项影响类型、目标、角色、范围、约束、时间或风险，就必须进入待确认清单并标注来源位置。
+
+**典型失败模式（必须避免）**：材料中已存在一张结构化的「议题表 / 问题清单」时，只搬运那张表，而漏掉散落在正文、图片说明和备注里的问句。结构化清单只是来源之一，不是全部。
+
+**2. AI 推导缺口**
+
+材料未涵盖、但本 skill 产出要求必须回答的内容。
+
+每条待确认需写明四项：事项、来源位置、责任方、不确认的后果。
+
+### 4. 生成两份文件
+
+材料足够后，生成同名文件：
+
+- background-goal.md：人和 AI 都能直接阅读的主文档，只写自然语言背景、现状、问题、目标、角色、约束、边界和参考资料；
+- background-goal.governance.md：给 AI、校验器和后续集成读取的治理伴随文件，保存类型判断、PM 选择、主张来源、知识状态、澄清记录、Audit、确认记录和主文档哈希。
+
+主文档不能出现六态表、SRC 追溯矩阵、Constitution、ReviewRecord、哈希锚点或机器化问题寄存器。参考资料只用人可读的标题和链接/位置。
+
+### 5. AI Audit
+
+生成后，AI 以“项目组成员”的视角重新阅读主文档，回答：
+
+- 我能否说清楚项目是什么、为什么做、要改变什么？
+- 当前做法和核心问题是否有证据？
+- 角色、约束和非目标是否遗漏？
+- 目标是否能判断成败，或明确挂起到待确认事项？
+- 是否把方案细节误写成业务事实？
+- **数量与列举是否自洽**：文中每个数量表述（「N 种类型」「N 项范围」「N 个模块」「N 个角色」等）与其后实际列举的项数必须一致。说 N 项就列 N 项，不允许说 4 项只列 3 项，也不允许把未命名或未识别的项计入总数而不加说明。
+- **与同级产物是否一致**：对同一事实（活动类型数量、范围项数、角色清单、时间节点），与其他已确认产物（如同项目的用户旅程）的表述必须一致。冲突时以材料证据为准并显式记录差异，不允许各自表述、互不校验。
+- **待确认是否已扫全**：是否遗漏了材料里作者自己提出的问句或待定判断（见 §3「待确认清单的两个来源」）？
+
+将 Audit 结论写入治理伴随文件，不把审计表塞进主文档。
+
+### 6. PM 确认
+
+向 PM 展示摘要、关键证据、未知项、待决策项和 Audit 结果。只有 PM/业务事实负责人确认后，治理文件才可记录 confirmed；AI 不代替确认。
+
+## 产出要求
+
+主文档使用 src/templates/stage-1-business/background-goal.md 的标题。三种类型的最低要求：
+
+| 类型 | 必须说清楚 | 目标写法 |
+|---|---|---|
+| 重构 | 现状、问题证据、before -> after | 尽量写基线、目标值、衡量方式和时间 |
+| 从 0 到 1 | 已有人工做法或首个完整业务流程、参与角色、要建立的业务过程 | 写要建立的结果和验证方式 |
+| 迭代 | 为什么加/改、加/改后做什么 | 简短、需求级，不膨胀成项目章程 |
+
+目标可以暂时没有数字，但必须明确“如何判断”或链接到治理文件中的待确认问题；禁止凭空编造指标。
+
+## 独立运行
+
+直接对话即可完成本 skill。可选地运行：
+
+```bash
+python3 scripts/validate_artifact.py path/to/background-goal.md --json
+```
+
+校验器只依赖 Python 标准库；它会自动查找同目录的 `*.governance.md`，不启动 pipeline，也不读取 registry 或下游文件。
+
+### 独立可用的边界声明
+
+- **零外部依赖**：本 skill 不依赖 pipeline / orchestrator / registry / 其它 skill 的产物或历史 PRD / PM 在场；可被任何上层（独立对话、子能力调用、项目级集成）触发。
+- **入口独立**：直接以对话形式启动——"我有这份原始材料，请帮我出项目背景与目标"即可；不要求特定 host、IDE、CLI。
+- **产物独立**：主文档（`background-goal.md`）人读自洽，治理伴随文件机器可读；下游不引用也能完成一次使用。
+- **校验器独立**：`scripts/validate_artifact.py` 仅读两个 md 文件 + Python 标准库，不连数据库、不发网络请求，可单独跑。
+- **项目级集成路径**：当本 skill 被项目级管线（如 pm-scaffold 的 pipeline/orchestrator）调用时：
+  - 由项目层负责材料分发、产物归档、PM 角色匹配、人工闸门；
+  - 项目层若有会议基线（如飞书会议原文），由项目层在治理伴随文件中显式登记（`## 项目级会议基线（可选）` 段），skill 不预设特定会议 ID；
+  - skill 不感知 001 项目、PM 角色、`pipeline.py review` 等项目层概念——这些由项目层 adapter 提供。
+
+### 与项目级耦合的零依赖要求
+
+skill 不读取 `src/framework/workflow-registry.json`、不调用 `pipeline.py`/`orchestrator.py`、不要求 `00-input/authorized-reviewers.json` 存在；不依赖项目层提供的目录布局（要求主文档与治理伴随文件同目录、同 artifact_id、同 version）。
+
+## 禁止事项
+
+- 不用成品 PRD 自证；
+- 不把 AI 推断写成事实；
+- 不替 PM 确认项目类型、范围、目标或取舍；
+- 不把功能、页面、字段、API 或技术实现写进背景目标；
+- 不为了“完整”复制一套固定长模板；
+- 不把治理记录混入人读主文档。

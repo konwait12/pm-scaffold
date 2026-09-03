@@ -1,0 +1,702 @@
+<!doctype html>
+<html lang="zh-CN" data-page-node-id="Z01MKIcBOFDXqJu7rTxiC1">
+<head data-page-node-id="INQ3TVc0LTgsWCFuEuDehs">
+<meta charset="utf-8" data-page-node-id="ei3iwP8AtKCVBWVYsYQi2F">
+<meta name="viewport" content="width=device-width, initial-scale=1" data-page-node-id="xYxSVQ88AJK9o4ep1kfikB">
+<title>用户旅程图 · User Journey Map</title>
+<style>
+  /* ===== Figma-like design tokens =====
+     单文件、零外部依赖；不引入 CDN/字体/图片/网络请求。
+     设计风格与 skill user-journey 产物一致（Figma 化：克制几何、语义色、暗色模式、
+     微动效、节点路径类型以边框/底色表达、MOT 节点金色光晕）。
+     配色与尺寸通过 CSS 变量集中，方便未来调优。
+  */
+  :root {
+    color-scheme: light dark;
+    --bg: #f5f5f5;
+    --bg-frame: #ffffff;
+    --bg-frame-hover: #fafafa;
+    --bg-soft: #fafafa;
+    --bg-section: #ffffff;
+    --bg-tile: #fafafa;
+    --border: #e5e5e5;
+    --border-strong: #d4d4d4;
+    --ink-1: #1e1e1e;
+    --ink-2: #2c2c2c;
+    --ink-3: #5e5e5e;
+    --ink-4: #8c8c8c;
+    --ink-5: #b3b3b3;
+    --accent: #18a0fb;
+    --accent-soft: #e0f2fe;
+    --warn: #f59e0b;
+    --warn-soft: #fef3c7;
+    --bad: #ef4444;
+    --bad-soft: #fee2e2;
+    --good: #10b981;
+    --good-soft: #d1fae5;
+    --purple: #8b5cf6;
+    --purple-soft: #ede9fe;
+    --gold: #b8860b;
+    --gold-soft: #fef3c7;
+    --shadow-sm: 0 1px 2px rgba(0,0,0,.04);
+    --shadow-md: 0 2px 6px rgba(0,0,0,.06);
+    --shadow-lg: 0 4px 12px rgba(0,0,0,.08);
+    --radius: 8px;
+    --radius-sm: 4px;
+    --font-sans: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+    --font-mono: "JetBrains Mono", "SF Mono", Menlo, ui-monospace, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #1e1e1e;
+      --bg-frame: #2c2c2c;
+      --bg-frame-hover: #363636;
+      --bg-soft: #232323;
+      --bg-section: #2c2c2c;
+      --bg-tile: #2a2a2a;
+      --border: #3a3a3a;
+      --border-strong: #4a4a4a;
+      --ink-1: #fafafa;
+      --ink-2: #e5e5e5;
+      --ink-3: #a3a3a3;
+      --ink-4: #737373;
+      --ink-5: #525252;
+      --accent-soft: #0c4a6e;
+      --warn-soft: #422006;
+      --bad-soft: #450a0a;
+      --good-soft: #022c22;
+      --purple-soft: #2e1065;
+      --gold-soft: #422006;
+      --shadow-sm: 0 1px 2px rgba(0,0,0,.4);
+      --shadow-md: 0 2px 8px rgba(0,0,0,.5);
+      --shadow-lg: 0 4px 16px rgba(0,0,0,.6);
+    }
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body { font: 13px/1.5 var(--font-sans); color: var(--ink-1); background: var(--bg); -webkit-font-smoothing: antialiased; }
+
+  /* ===== Top bar (Figma header strip) ===== */
+  .topbar {
+    position: sticky; top: 0; z-index: 50;
+    display: flex; align-items: center; gap: 14px;
+    padding: 12px 24px;
+    background: var(--bg-section);
+    border-bottom: 1px solid var(--border);
+    backdrop-filter: blur(8px);
+  }
+  .topbar .file-icon { width: 22px; height: 22px; border-radius: 5px; background: linear-gradient(135deg, var(--accent), #6366f1); display: grid; place-items: center; color: white; font-weight: 800; font-size: 11px; }
+  .topbar .filename { font-weight: 600; font-size: 13px; }
+  .topbar .crumb { color: var(--ink-4); font-size: 12px; margin-left: 4px; }
+  .topbar .meta-chips { margin-left: auto; display: flex; gap: 6px; }
+  .chip { font-size: 11px; padding: 3px 8px; border-radius: 4px; background: var(--bg-soft); color: var(--ink-3); border: 1px solid var(--border); }
+  .chip.brand { background: var(--accent-soft); color: var(--accent); border-color: transparent; font-weight: 600; }
+
+  /* ===== Layout ===== */
+  main { padding: 24px 24px 96px; max-width: 1400px; margin: 0 auto; }
+  .summary-card {
+    background: var(--bg-section);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px 18px;
+    margin-bottom: 20px;
+  }
+  .summary-card h1 { font-size: 15px; margin: 0 0 6px; color: var(--ink-2); font-weight: 600; }
+  .summary-card p { margin: 0; color: var(--ink-3); font-size: 12.5px; line-height: 1.6; }
+  .summary-card .narrative { margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--border); color: var(--ink-2); font-size: 12.5px; }
+
+  /* ===== Figma Frame ===== */
+  .frame { background: var(--bg-section); border: 1px solid var(--border); border-radius: var(--radius); margin-bottom: 24px; overflow: hidden; box-shadow: var(--shadow-sm); }
+  .frame-head { display: flex; align-items: center; gap: 10px; padding: 12px 16px; border-bottom: 1px solid var(--border); }
+  .frame-head .ftitle { font-size: 13px; font-weight: 600; color: var(--ink-2); }
+  .frame-head .fsub { font-size: 11px; color: var(--ink-4); margin-left: 4px; }
+  .frame-head .ftag { font-size: 10px; padding: 2px 7px; border-radius: 999px; background: var(--accent-soft); color: var(--accent); font-weight: 700; letter-spacing: 0.3px; }
+  .frame-body { padding: 20px; }
+
+  /* ===== User Flow (Figma horizontal flow) ===== */
+  .flow-wrap { overflow-x: auto; padding-bottom: 4px; }
+  .flow-grid { display: flex; flex-direction: column; gap: 18px; min-width: 1240px; position: relative; padding-top: 4px; }
+  .lane-label {
+    flex: 0 0 80px;
+    display: flex; flex-direction: column; gap: 2px; justify-content: center;
+    padding: 10px 8px;
+    font-size: 11px; font-weight: 700; color: var(--ink-3);
+    position: sticky; left: 0; background: var(--bg-section); z-index: 3;
+    border-right: 1px solid var(--border);
+  }
+  .lane-label .who { color: var(--ink-1); }
+  .lane-label .sub { font-size: 10px; color: var(--ink-4); font-weight: 500; }
+  .lane-row { display: flex; gap: 0; align-items: stretch; }
+  .lane { display: flex; flex: 1; gap: 32px; align-items: stretch; padding: 18px 14px; min-height: 130px; position: relative; border-radius: var(--radius-sm); }
+  .lane.client { background: var(--bg-soft); }
+  .lane.fa { background: var(--bg-tile); }
+
+  /* Figma Node */
+  .node {
+    position: relative; z-index: 2;
+    background: var(--bg-frame);
+    border: 1.5px solid var(--ink-3);
+    border-radius: var(--radius);
+    padding: 9px 11px 10px;
+    min-width: 124px; max-width: 144px;
+    box-shadow: var(--shadow-sm);
+    cursor: pointer;
+    transition: transform .12s ease, box-shadow .12s ease;
+    font-size: 11.5px;
+  }
+  .node:hover { transform: translateY(-1px); box-shadow: var(--shadow-md); }
+  .node.normal      { border-color: var(--accent); }
+  .node.alternative { border-color: var(--purple); border-style: dashed; }
+  .node.exception   { border-color: var(--bad); border-style: dashed; background: var(--bad-soft); }
+  .node.failure     { border-color: var(--bad); border-style: dashed; background: var(--bad-soft); }
+  .node.handoff     { border-color: var(--gold); background: var(--gold-soft); }
+  .node.recovery    { border-color: var(--ink-4); border-style: dotted; }
+  .node.mot         { border-color: var(--gold); border-width: 2.5px; box-shadow: 0 0 0 3px var(--gold-soft), var(--shadow-sm); }
+  .node .id { font-family: var(--font-mono); font-size: 10px; color: var(--ink-4); font-weight: 600; }
+  .node .title { font-weight: 600; color: var(--ink-1); margin-top: 2px; line-height: 1.35; font-size: 12px; }
+  .node .path-tag { display: inline-block; margin-top: 4px; font-size: 9px; font-weight: 700; padding: 1px 5px; border-radius: 3px; letter-spacing: 0.3px; background: var(--bg-soft); color: var(--ink-3); border: 1px solid var(--border); }
+  .node.mot::before { content: "★"; position: absolute; top: -8px; right: -6px; background: var(--gold); color: white; width: 16px; height: 16px; border-radius: 50%; font-size: 10px; display: grid; place-items: center; }
+
+  /* SVG edges overlay */
+  .flow-svg { position: absolute; inset: 0; pointer-events: none; z-index: 1; }
+
+  /* ===== Stage × Role Matrix (compact) ===== */
+  .matrix-frame { border: 1px solid var(--border); border-radius: var(--radius-sm); overflow: hidden; }
+  .matrix-grid { display: grid; grid-template-columns: 80px repeat(6, minmax(110px, 1fr)); }
+  .mx-hd { padding: 8px 10px; font-size: 11px; font-weight: 600; color: var(--ink-3); background: var(--bg-soft); border-bottom: 1px solid var(--border); border-left: 1px solid var(--border); text-align: center; position: sticky; top: 0; z-index: 2; }
+  .mx-hd.bl { border-left: 0; background: var(--bg-section); position: sticky; left: 0; z-index: 3; text-align: left; }
+  .mx-lane { padding: 8px 10px; font-size: 11px; font-weight: 700; color: var(--ink-2); border-bottom: 1px solid var(--border); border-left: 0; background: var(--bg-section); position: sticky; left: 0; z-index: 2; }
+  .mx-cell { border-bottom: 1px solid var(--border); border-left: 1px solid var(--border); padding: 6px; min-height: 64px; background: var(--bg-section); }
+  .mx-pill { display: inline-flex; align-items: center; gap: 4px; padding: 3px 8px; border-radius: 4px; font-size: 10.5px; background: var(--bg-frame); border: 1px solid var(--border); color: var(--ink-2); margin: 2px; cursor: pointer; max-width: 100%; }
+  .mx-pill:hover { background: var(--bg-frame-hover); border-color: var(--ink-4); }
+  .mx-pill .pid { font-family: var(--font-mono); font-size: 9px; color: var(--ink-4); }
+  .mx-pill.mot { border-color: var(--gold); background: var(--gold-soft); }
+  .mx-pill.normal { border-left: 3px solid var(--accent); }
+  .mx-pill.alternative { border-left: 3px solid var(--purple); }
+  .mx-pill.exception, .mx-pill.failure { border-left: 3px solid var(--bad); }
+  .mx-pill.handoff { border-left: 3px solid var(--gold); }
+
+  /* ===== Appendices (collapsed by default) ===== */
+  details.appendix { background: var(--bg-section); border: 1px solid var(--border); border-radius: var(--radius); margin-bottom: 16px; }
+  details.appendix[open] { box-shadow: var(--shadow-sm); }
+  details.appendix > summary { padding: 12px 16px; cursor: pointer; display: flex; align-items: center; gap: 10px; list-style: none; user-select: none; }
+  details.appendix > summary::-webkit-details-marker { display: none; }
+  details.appendix > summary .ftitle { font-size: 13px; font-weight: 600; color: var(--ink-2); }
+  details.appendix > summary .fsub { font-size: 11px; color: var(--ink-4); }
+  details.appendix > summary .ftag { font-size: 10px; padding: 2px 7px; border-radius: 999px; background: var(--bg-soft); color: var(--ink-3); border: 1px solid var(--border); font-weight: 600; }
+  details.appendix > summary .chev { margin-left: auto; transition: transform .15s; color: var(--ink-4); font-size: 10px; }
+  details.appendix[open] > summary .chev { transform: rotate(90deg); }
+  details.appendix .app-body { padding: 4px 16px 18px; border-top: 1px solid var(--border); }
+
+  /* Appendix tables */
+  table.t { width: 100%; border-collapse: collapse; font-size: 12px; margin-top: 10px; }
+  table.t th, table.t td { padding: 8px 10px; border: 1px solid var(--border); text-align: left; vertical-align: top; }
+  table.t thead th { background: var(--bg-soft); font-weight: 600; color: var(--ink-2); font-size: 11px; }
+  table.t tbody tr:hover { background: var(--bg-soft); }
+  table.t .col-emph { background: var(--accent-soft); }
+
+  /* Forms grid */
+  .forms { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 10px; margin-top: 10px; }
+  .form-card { padding: 10px 12px; border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--bg-frame); }
+  .form-card.ext { border-left: 3px solid var(--gold); }
+  .form-card.int { border-left: 3px solid var(--accent); }
+  .form-card .cat { font-size: 10px; font-weight: 700; color: var(--ink-4); letter-spacing: 0.5px; text-transform: uppercase; }
+  .form-card .nm { font-weight: 600; margin-top: 2px; font-size: 13px; }
+  .form-card .rule { margin-top: 4px; font-size: 11.5px; color: var(--ink-2); }
+  .form-card .where { margin-top: 4px; font-family: var(--font-mono); font-size: 10.5px; color: var(--ink-4); }
+
+  /* State machine (compact) */
+  .states { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-top: 10px; }
+  .st-card { padding: 10px 12px; min-width: 130px; border: 1.5px solid var(--ink-3); border-radius: var(--radius-sm); background: var(--bg-frame); text-align: center; }
+  .st-card.init { background: var(--accent-soft); border-color: var(--accent); }
+  .st-card.final { background: var(--good-soft); border-color: var(--good); }
+  .st-card .nm { font-weight: 600; font-size: 13px; }
+  .st-card .desc { font-size: 11px; color: var(--ink-3); margin-top: 2px; }
+  .st-edge { font-size: 11px; color: var(--ink-4); }
+  .st-edge::before { content: "→"; padding: 0 4px; color: var(--accent); font-weight: 700; }
+
+  /* Bottom node drawer */
+  .drawer { position: fixed; left: 0; right: 0; bottom: -360px; z-index: 60; background: var(--bg-section); border-top: 1px solid var(--border); box-shadow: var(--shadow-lg); transition: bottom .25s ease; max-height: 340px; }
+  .drawer.open { bottom: 0; }
+  .drawer-head { display: flex; align-items: center; gap: 10px; padding: 12px 20px; border-bottom: 1px solid var(--border); }
+  .drawer-head .ttl { font-size: 13px; font-weight: 600; }
+  .drawer-head .close { margin-left: auto; background: var(--bg-soft); border: 1px solid var(--border); padding: 4px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-3); }
+  .drawer-head .close:hover { background: var(--bg-frame-hover); }
+  .drawer-body { padding: 16px 20px; display: grid; grid-template-columns: 1fr 1fr; gap: 16px 24px; font-size: 12.5px; max-height: 280px; overflow-y: auto; }
+  .drawer-body .field-label { font-size: 10px; font-weight: 700; color: var(--ink-4); letter-spacing: 0.5px; text-transform: uppercase; }
+  .drawer-body .field-value { color: var(--ink-1); margin-top: 2px; line-height: 1.55; }
+  .drawer-body .field-ev { font-family: var(--font-mono); font-size: 11px; background: var(--bg-soft); padding: 6px 10px; border-radius: 4px; border-left: 2px solid var(--gold); grid-column: 1 / -1; }
+
+  /* Filter */
+  .filter-bar { display: flex; flex-wrap: wrap; gap: 8px; padding: 10px 16px; border-bottom: 1px solid var(--border); background: var(--bg-soft); }
+  .filter-bar .chip-btn { font: inherit; padding: 4px 10px; border-radius: 4px; border: 1px solid var(--border); background: var(--bg-frame); color: var(--ink-3); cursor: pointer; font-size: 11.5px; }
+  .filter-bar .chip-btn.on { background: var(--accent); color: white; border-color: var(--accent); }
+
+  /* Mobile */
+  @media (max-width: 760px) {
+    .topbar { flex-wrap: wrap; gap: 8px; padding: 10px 14px; }
+    main { padding: 16px 14px 80px; }
+    .flow-grid { min-width: 980px; }
+    .lane-label { flex: 0 0 70px; font-size: 10px; padding: 8px 6px; }
+    .drawer-body { grid-template-columns: 1fr; }
+  }
+  @media print {
+    .topbar, .drawer, .filter-bar, details.appendix { page-break-inside: avoid; }
+    body { background: white; }
+  }
+</style>
+</head>
+<body data-page-node-id="lldPFuF3RWUTSoomIXGiEv">
+
+<header class="topbar" data-page-node-id="VHe1CuxJ20mxrmgFVY7oyx">
+  <div class="file-icon" data-page-node-id="xjNA34p3fYdbjHi8ZbF5Do">U</div>
+  <div data-page-node-id="ACrYq755C0D10GdwIDb3lK">
+    <span class="filename" id="title" data-page-node-id="VoEUzyXoCLwolZAmbigdfk">User Journey Map</span>
+    <span class="crumb" id="crumb" data-page-node-id="O3OPybv0JGNJwkdFoRajHi">· User Journey Review Board</span>
+  </div>
+  <div class="meta-chips" id="meta-chips" data-page-node-id="OkmtLGE7GZR3hJRmAQPrfF">
+    <span class="chip brand" data-page-node-id="OSWLtmMGko5AF1bBxC1hvi">user-journey.board</span>
+    <span class="chip" id="chip-roles" data-page-node-id="mrGBoKwGgVSGEBOF8aMjhU">— 角色</span>
+    <span class="chip" id="chip-stages" data-page-node-id="oKF0QkwYa4AcBA2kzNWZRA">— 阶段</span>
+    <span class="chip" id="chip-nodes" data-page-node-id="CTpGnZsxC3bXakcz0ze1FT">— 节点</span>
+  </div>
+</header>
+
+<main data-page-node-id="DR7zlNf1ibI5QvMFRZpDV4">
+
+  <!-- 一句话叙事（由 DATA.meta.narrative 渲染） -->
+  <div class="summary-card" data-page-node-id="ff4idHlKMrTRNjldTD0XWn">
+    <h1 data-page-node-id="O9NCP3xVOt9eiPGj3BcahH">一句话叙事</h1>
+    <p id="narrative-text" data-page-node-id="qqzPrcL2iojMWhKSfFkupQ">—</p>
+  </div>
+
+  <!-- Figma Frame 1: User Flow -->
+  <section class="frame" data-page-node-id="EAunjGniexfLHvR9vmzWia">
+    <div class="frame-head" data-page-node-id="vQTiZ1cOezpL2FSgFaOZWF">
+      <span class="ftag" data-page-node-id="D3wnHoo95D7uEYlLU5sszD">FLOW</span>
+      <span class="ftitle" data-page-node-id="SoP11An7obxfM02QHaPZcM">User Flow</span>
+      <span class="fsub" data-page-node-id="2bQUfxMWEEYAHPPWt79wuO">— 水平时间线，节点 → 节点（点节点查详情）</span>
+    </div>
+    <div class="filter-bar" id="filter-bar" data-page-node-id="oDMAkm8uruIxIiUP7AqtgV">
+      <button class="chip-btn on" data-f="all" data-page-node-id="hICoNI0vtCxJul2WRoAESQ">全部</button>
+      <button class="chip-btn" data-f="client" data-page-node-id="A04635WWFi8AYM9mXn8Kuy">仅客户</button>
+      <button class="chip-btn" data-f="fa" data-page-node-id="E50luUZgmqXAs4aBobSAOK">仅 FA</button>
+      <span style="flex:1" data-page-node-id="WeMRXJjs2ppqIT93pzCtLw"></span>
+      <span style="font-size:11px;color:var(--ink-4);align-self:center" data-page-node-id="f3V3d4N4kWpDvDKHwDEdXY">图例：<span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--accent);margin:0 3px" data-page-node-id="1wfJq02iywu29gzx83if8G"></span>normal &nbsp;<span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--purple);margin:0 3px" data-page-node-id="YyAiM8MN153OqYnwIlJl6s"></span>alternative &nbsp;<span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--bad);margin:0 3px" data-page-node-id="VqbmlDob4QfkSxjfdfCxEP"></span>exception/failure &nbsp;<span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--gold);margin:0 3px" data-page-node-id="qCfx1HpdndmYmoApRV6J1k"></span>handoff &nbsp;★ MOT</span>
+    </div>
+    <div class="frame-body" data-page-node-id="Xhpse0D7jyKwy98PIJHzxf">
+      <div class="flow-wrap" id="flow-wrap" data-page-node-id="Vyu1f0Xj3T3gsufmCx5L9g">
+        <div class="flow-grid" id="flow" data-page-node-id="iRJLIeH8rK7dJw0tLASIjd"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Figma Frame 2: Stage × Role Matrix (compact) -->
+  <section class="frame" data-page-node-id="EvCDXysWBTgeml4mZzAQiY">
+    <div class="frame-head" data-page-node-id="IX2vgBoAmyGN8E0JIVVcOY">
+      <span class="ftag" data-page-node-id="iatKzAVu00o3aV7NBSRAkF">MATRIX</span>
+      <span class="ftitle" data-page-node-id="1v5x7Vx6lCsaeIcOyTVrBh">Stage × Role Matrix</span>
+      <span class="fsub" data-page-node-id="SFaZ2adyLq3nhvn9y1CsVx">— 同一旅程的另一种视图（紧凑）</span>
+    </div>
+    <div class="frame-body" data-page-node-id="Aah37BnJjxw6OutRhS5rgo">
+      <div class="matrix-frame" data-page-node-id="t5YlOLFLSmTopr4apwqYxg">
+        <div class="matrix-grid" id="matrix" data-page-node-id="hS9qwUCfEneScrFLZJG5rX"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Appendices: optional护栏产物（提供空占位骨架，调用方按需填充） -->
+  <details class="appendix" id="ax-forms" data-page-node-id="ptSLNGDEfKHJqlx7yzc7o3">
+    <summary data-page-node-id="vUVPbhmLpxBvtZhh1IWkyJ"><span class="ftag" data-page-node-id="WRLmH0oBxH2yhOzmwlKjjJ">附 1</span><span class="ftitle" data-page-node-id="6Y4Yii27NVYrHnrXEiV90f">通知 / 提醒形态清单（护栏 2）</span><span class="fsub" data-page-node-id="GEz3v2iIEniMHtGT3NniBg">外部渠道 + 站内提醒逐条枚举</span><span class="chev" data-page-node-id="GdJrgGZ9WBPDrVeGizD0kc">▸</span></summary>
+    <div class="app-body" data-page-node-id="pbFaFBOnzMw4uVVEj0lU3b"><div class="forms" id="forms" data-page-node-id="zXSn4xFKRWlGrGKJKn4F4d"></div></div>
+  </details>
+
+  <details class="appendix" id="ax-categories" data-page-node-id="3qQgQtl6cFA4pK706kuaH2">
+    <summary data-page-node-id="hNgyFD924LFI6zVkbt4rBN"><span class="ftag" data-page-node-id="LTbfMQH7FSThAu6gtB5ymH">附 2</span><span class="ftitle" data-page-node-id="5Nf0VtZzd1FTVwxsVAtw2W">多品类对照表（护栏 1）</span><span class="fsub" data-page-node-id="JMBYrwjrwPjiCBMDFo1XQi">行=维度，列=品类/变体</span><span class="chev" data-page-node-id="hWHIPkXLTEPJxVcDdXCGcg">▸</span></summary>
+    <div class="app-body" data-page-node-id="5TGjk5oR63em628cxrTyvK"><table class="t" id="cat-table" data-page-node-id="7ki3YMDDHHG1FDHYesUg49"><thead data-page-node-id="nCktXIPHNg9GrDeZJuq9V2"><tr data-page-node-id="uFG6xwXxySORxtjJ5EjBw6"><th style="width:120px" data-page-node-id="O5CIQoIIMmNYUlS9ghemvv">维度</th><th id="cat-h-1" data-page-node-id="3HfTyOApD683wbytLAtQqU">品类 1</th><th id="cat-h-2" data-page-node-id="rFV46FOSoOmn69XYrSAFaa">品类 2</th></tr></thead><tbody data-page-node-id="wJY9OKjB5hOPs10K1qe4iG"></tbody></table></div>
+  </details>
+
+  <details class="appendix" id="ax-branches" data-page-node-id="V7h1KuqlD7ADH0RVSOoylt">
+    <summary data-page-node-id="6Nt3yoIeRaGkJiPyDAimGf"><span class="ftag" data-page-node-id="tUljU6QDWoqBbjhCjlY2T3">附 3</span><span class="ftitle" data-page-node-id="jGbyUuRvsSXT8eqZWqqJtY">分支骨架（护栏 3）</span><span class="fsub" data-page-node-id="6m5vNNYevPHrxubW6DDdjj">身份 × 登录 × 资产 · TBC ≠ 裁决</span><span class="chev" data-page-node-id="T3wxQHZPQFb1cGeysIR7iG">▸</span></summary>
+    <div class="app-body" data-page-node-id="2XlLFreRZiKRZPtNp6UQLI"><table class="t" id="branch-table" data-page-node-id="QkMOJKyRbFSEcCP9qeD6BV"><thead data-page-node-id="AhfYsesASCwl2FHSebrPyn"><tr data-page-node-id="ZQFSferJvtCUHMCI0sPy0X"><th style="width:140px" data-page-node-id="HBL1OHXAJJxv9m0Gy7fByK">分支维度</th><th data-page-node-id="VXWHB0PXF1hcAwrLSiSqy0">取值</th><th data-page-node-id="zu9Mu4KGCjmZRqWrxbJPqs">影响节点</th><th data-page-node-id="nnDlCwKGrXVfTgyEeOLl5e">材料去向</th><th data-page-node-id="DkoyR8q756sxo6K7FwL5GI">状态/证据</th></tr></thead><tbody data-page-node-id="CkK978JuzI6DO3IyRxe7u2"></tbody></table></div>
+  </details>
+
+  <details class="appendix" id="ax-empty" data-page-node-id="F9USsgd2FZTinErFOdERfZ">
+    <summary data-page-node-id="poMLj352qGvwmFoNJhGsFm"><span class="ftag" data-page-node-id="SqIAmz440qLNaVCEfIfa0l">附 4</span><span class="ftitle" data-page-node-id="wgNLCKnMTLjkaxd2m4i1cG">资产空态矩阵（护栏 3）</span><span class="fsub" data-page-node-id="FTTnvuQL8wNPDyye7GTbFO">从未/曾拥有/正常 · 列表×入口去向</span><span class="chev" data-page-node-id="CQV7XwYF8GzZmsNjUQfCdx">▸</span></summary>
+    <div class="app-body" data-page-node-id="PMq3JHAKY9v0Mx4NyH9M1u"><table class="t" id="empty-table" data-page-node-id="jziokimRFKtAxDBO83BClH"><thead data-page-node-id="9A9QKh2fkYCxA1jPFH5EO1"><tr data-page-node-id="MDcVJgZqYZZLNrVobbPenM"><th style="width:160px" data-page-node-id="AY9RTDeeXTU7DzEhYdZUqg">资产状态</th><th data-page-node-id="BFJeL4jUXS8SbigE27frYY">列表</th><th data-page-node-id="ODeXHeJaSYzrc1e9OOr2mu">入口 1</th><th data-page-node-id="zWVpZHsJHP0lumTnZ9DePw">入口 2</th><th data-page-node-id="BHFidqNvnKgtQF6ohI6bhB">状态/证据</th></tr></thead><tbody data-page-node-id="KnantK6pzmO6OAuqqoytby"></tbody></table></div>
+  </details>
+
+  <details class="appendix" id="ax-states" data-page-node-id="687xCQrCrAp0NqL1C1G9Hd">
+    <summary data-page-node-id="SXSUCt24LjQTH0FBINqpig"><span class="ftag" data-page-node-id="CGYCh30cdQn7mWkAFpcjKi">附 5</span><span class="ftitle" data-page-node-id="Qhuga8pb8GvWtHGituUGZP">状态机（可选）</span><span class="fsub" data-page-node-id="k25axRlDAAB0DeaLWrF3XW">对象从创建到终止的状态迁移</span><span class="chev" data-page-node-id="aXQEoCHiOzrRtUbdN0KUXM">▸</span></summary>
+    <div class="app-body" data-page-node-id="rjLcBASesxqhYRd3WkMEci"><div class="states" id="state-flow" data-page-node-id="U1ExZzdm0MzSq4tdXiAz0Q"></div></div>
+  </details>
+
+  <!-- 数据源提示 -->
+  <details class="appendix" data-page-node-id="Resmro3vs5y9fNXYQy4i53">
+    <summary data-page-node-id="OpTxvWvbnR1nv0thjlAPEl"><span class="ftag" data-page-node-id="ujcmKGnjmvRI6FmbmPXA1Z">DATA</span><span class="ftitle" data-page-node-id="EG8tPo6mLQdGeYPqAGBjn2">数据源与替换指引</span><span class="fsub" data-page-node-id="rPf393Zn55XTfjLnGUkLoY">如何把这份板接到具体产物</span><span class="chev" data-page-node-id="um3eLYDYrpFFupMlQ2EMb7">▸</span></summary>
+    <div class="app-body" data-page-node-id="Pf3lPeWXDKStLztxJNsCOM">
+      <p style="margin:10px 0 6px;font-size:12px;color:var(--ink-2)" data-page-node-id="VbOLsI4qFXBbt8b0goGeyW">本板是中性模板，不绑定具体项目。使用时把 <code data-page-node-id="d3cMEKfVwrOP6OQDzYNIZK">DATA</code> 对象（脚本顶部）替换为当前 <code data-page-node-id="wybWB2SiGoCSfdm3JkqO1s">user-journey.md</code> 的角色 / 阶段 / 节点 / 边 / 形态 / 分类 / 分支 / 空态 / 状态机数据。数据结构（与 skill 主文档矩阵一致）如下：</p>
+      <pre style="background:var(--bg-soft);padding:10px 12px;border-radius:6px;font-family:var(--font-mono);font-size:11.5px;color:var(--ink-2);overflow-x:auto;line-height:1.55" data-page-node-id="mL5aoF6NxC4n2wyClGXxfH">DATA = {
+  meta:  { title, crumb, narrative, motIds: [] },
+  stages:  [ { idx, code, name, trig } ... ],          // 6 阶段（顺序）
+  roles:   [ { idx, code, who, goal } ... ],           // ≥1 角色
+  nodes:   [ { id, r, s, title, behavior, touch, pain, path, ev, form?, cat? } ... ],  // r/s 为 roles/stages idx
+  edges:   [ [from, to] or [from, to, "back"] ... ],  // "back" 画虚线
+  forms:   [ { id, cat:"ext|int", name, rule, nodes } ... ],  // 可选，护栏 2
+  categories: [ { dim, hbg, rtw } ... ],              // 可选，护栏 1
+  branches:   [ { dim, value, affects, given, status } ... ], // 可选，护栏 3
+  emptyStates: [ { state, list, entry, menu, status } ... ],  // 可选，护栏 3
+  states:     [ { id, name, type:"initial|normal|loopback|final", desc, trig } ... ],
+  stateEdges: [ { from, to, label } ... ]
+}</pre>
+      <p style="margin:12px 0 6px;font-size:12px;color:var(--ink-3)" data-page-node-id="bvxRplE2esd0VWaaxAD9tN">路径类型 path 取值：<code data-page-node-id="EZJTRxlOQeEJRU90CxaUpX">normal | alternative | exception | failure | handoff | recovery</code>（与 skill 一致）。MOT 节点在 <code data-page-node-id="QSTfJFicz8M5HEviT8EGet">meta.motIds</code> 列表声明（按节点 id 串）。</p>
+      <p style="margin:6px 0 0;font-size:12px;color:var(--ink-3)" data-page-node-id="rCdrsxKM9D4mDw2ACDBRQf">边界：本板不呈现页面原型/功能清单/技术实现；只读、零网络、只补已知节点；扩展性附录（护栏 1-3、状态机）按需填入，未填时折叠显示为占位。</p>
+    </div>
+  </details>
+
+</main>
+
+<!-- Node detail drawer -->
+<div class="drawer" id="drawer" data-page-node-id="O3m3sy0Pk8m7lf1GPrXcJL">
+  <div class="drawer-head" data-page-node-id="D7UFiOLLWAOVb5vCCNxzbG">
+    <span class="ttl" id="drw-id" data-page-node-id="jR9ZNfZCirLDPcvULA0uOF">—</span>
+    <span class="chip" id="drw-stage" data-page-node-id="S6WZQpIyx0OO9YRznip9Eu">—</span>
+    <span class="chip" id="drw-path" data-page-node-id="ZFap9I6rpf7efETRKbU70p">—</span>
+    <span class="chip" id="drw-cat" data-page-node-id="3vahlkJGXDVLL53HWNXPZv">—</span>
+    <button class="close" id="drw-close" data-page-node-id="KJAwvOxOMFflMicar44u9w">关闭 ✕</button>
+  </div>
+  <div class="drawer-body" data-page-node-id="G1DEmvi1In0CXNu42GOzqh">
+    <div data-page-node-id="albma1vRZHj28bGRxDFph0"><div class="field-label" data-page-node-id="ulOXPKdQGCIBQO6Antn4It">行为</div><div class="field-value" id="drw-behavior" data-page-node-id="eGHgjwMPkeWYpkTBeba1h0">—</div></div>
+    <div data-page-node-id="vu62gVzuSGkcmm9a7zpy2s"><div class="field-label" data-page-node-id="gDs9ZAITTpckvp9d6z3mGH">触点</div><div class="field-value" id="drw-touch" data-page-node-id="0ItjbIkdqvDUlpj7wkIu8z">—</div></div>
+    <div data-page-node-id="gUMyw0nCnc7CKt5r0JcBui"><div class="field-label" data-page-node-id="LrjMd3ELxCrXlqHCp7hysp">痛点</div><div class="field-value" id="drw-pain" data-page-node-id="fR68RENekCYvCLiFSJ3Smd">—</div></div>
+    <div data-page-node-id="j0Qi5bAUtHtGfT87VTpGtH"><div class="field-label" data-page-node-id="Iy3yjkA1rNnTNlqDMGfDx4">提醒形态</div><div class="field-value" id="drw-form" data-page-node-id="vMIpMs7dBWhdlqtFEJnvJc">—</div></div>
+    <div class="field-ev" id="drw-ev" data-page-node-id="lHguHbk1Ql8T78lVijka5b">—</div>
+  </div>
+</div>
+
+<script>
+/* ============================================================
+   DATA — 中性占位（待替换为 user-journey.md 角色旅程矩阵数据）
+   字段结构与 skill user-journey 角色旅程矩阵同源（id / r / s / path
+   / ev / 路径类型 / 知识状态）。为方便集成可被任意工具生成。
+   ============================================================ */
+const DATA = {
+  meta: {
+    title: "User Journey Map",
+    crumb: "· 请替换为具体产物（artifact_id + 版本）",
+    narrative: "请把 DATA.meta.narrative 替换为当前 user-journey.md 的「一句话旅程叙事」段内容。",
+    motIds: []  // 例：["FA-2","C-16","C-4"] —— 关键决策/转折节点以金色高亮
+  },
+
+  /* 阶段（顺序）：6 段标准生命周期（可按项目调整） */
+  stages: [
+    { idx: 0, code: "S1", name: "阶段 1", trig: "触发事件 1" },
+    { idx: 1, code: "S2", name: "阶段 2", trig: "触发事件 2" },
+    { idx: 2, code: "S3", name: "阶段 3", trig: "触发事件 3" },
+    { idx: 3, code: "S4", name: "阶段 4", trig: "触发事件 4" },
+    { idx: 4, code: "S5", name: "阶段 5", trig: "触发事件 5" },
+    { idx: 5, code: "S6", name: "阶段 6", trig: "触发事件 6" }
+  ],
+
+  /* 角色：r 字段 = roles[] idx；c0 = idx 0, c1 = idx 1（可扩展） */
+  roles: [
+    { idx: 0, code: "C",  who: "客户 Client", goal: "角色目标简述" },
+    { idx: 1, code: "FA", who: "FA 角色",      goal: "角色目标简述" }
+  ],
+
+  /* 节点：r/s 为 roles/stages 的 idx；path = normal | alternative | exception | failure | handoff | recovery */
+  nodes: [
+    { id: "示例-1", r: 0, s: 0, title: "示例节点 1",  behavior: "占位行为", touch: "占位触点", pain: "—", path: "normal",   ev: "SRC 证据位置", form: "", cat: "" },
+    { id: "示例-2", r: 0, s: 1, title: "示例节点 2",  behavior: "占位行为", touch: "占位触点", pain: "—", path: "normal",   ev: "SRC 证据位置", form: "", cat: "" },
+    { id: "示例-3", r: 1, s: 0, title: "示例节点 3",  behavior: "占位行为", touch: "占位触点", pain: "—", path: "normal",   ev: "SRC 证据位置", form: "", cat: "" }
+  ],
+
+  /* 边：节点 id → 节点 id（"back" 画虚线） */
+  edges: [
+    ["示例-1", "示例-2"],
+    ["示例-3", "示例-1"]
+  ],
+
+  /* 护栏 2：通知/提醒形态清单（可选） */
+  forms: [],
+
+  /* 护栏 1：多品类对照（可选；列头由 categories[0].dim 决定） */
+  categories: [],
+
+  /* 护栏 3：分支骨架（可选） */
+  branches: [],
+
+  /* 护栏 3：资产空态矩阵（可选） */
+  emptyStates: [],
+
+  /* 状态机（可选） */
+  states: [],
+  stateEdges: []
+};
+
+/* ============================================================
+   Render
+   ============================================================ */
+const $ = id => document.getElementById(id);
+const esc = v => String(v ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const state = { filter: "all" };
+
+function nodeById(id) { return DATA.nodes.find(n => n.id === id); }
+function visibleNode(n) {
+  if (state.filter === "all") return true;
+  if (state.filter === "client") return n.r === 0;
+  if (state.filter === "fa") return n.r === 1;
+  /* 扩展：按 roles[] 下标匹配 */
+  const target = DATA.roles.findIndex(r => r.who.toLowerCase().includes(state.filter));
+  return target >= 0 ? n.r === target : true;
+}
+
+function applyMeta() {
+  if (DATA.meta.title) $("title").textContent = DATA.meta.title;
+  if (DATA.meta.crumb) $("crumb").textContent = DATA.meta.crumb;
+  $("narrative-text").textContent = DATA.meta.narrative || "—";
+  $("chip-roles").textContent = `${DATA.roles.length} 角色`;
+  $("chip-stages").textContent = `${DATA.stages.length} 阶段`;
+  $("chip-nodes").textContent = `${DATA.nodes.length} 节点`;
+}
+
+function renderFlow() {
+  const fg = $("flow");
+  fg.innerHTML = "";
+  function makeRow(roleIdx, roleLabel, roleSub) {
+    let html = '<div class="lane-row">';
+    html += `<div class="lane-label"><span class="who">${esc(roleLabel)}</span><span class="sub">${esc(roleSub)}</span></div>`;
+    DATA.stages.forEach(s => {
+      const cells = DATA.nodes.filter(n => n.r === roleIdx && n.s === s.idx && visibleNode(n));
+      html += `<div class="lane ${roleIdx === 0 ? 'client' : 'fa'}" data-stage="${s.idx}" data-role="${roleIdx}">`;
+      if (cells.length === 0) html += `<div style="color:var(--ink-5);font-size:11px;align-self:center">—</div>`;
+      cells.forEach(n => { html += renderNodeEl(n); });
+      html += `</div>`;
+    });
+    html += "</div>";
+    return html;
+  }
+  fg.innerHTML = DATA.roles.map((r, i) => makeRow(i, r.who, r.goal)).join("");
+  bindNodeClicks(fg);
+  drawFlowEdges();
+}
+
+function renderNodeEl(n) {
+  const motIds = new Set(DATA.meta.motIds || []);
+  const isMot = motIds.has(n.id);
+  return `<div class="node ${esc(n.path)} ${isMot ? "mot" : ""}" data-node="${esc(n.id)}">
+    <div class="id">${esc(n.id)}</div>
+    <div class="title">${esc(n.title)}</div>
+    <span class="path-tag">${esc(n.path)}</span>
+  </div>`;
+}
+
+function bindNodeClicks(root) {
+  root.querySelectorAll(".node, .mx-pill").forEach(el => {
+    el.addEventListener("click", () => openDrawer(el.getAttribute("data-node")));
+  });
+}
+
+function drawFlowEdges() {
+  const fg = $("flow");
+  fg.querySelectorAll("svg.flow-svg").forEach(s => s.remove());
+
+  const gridRect = fg.getBoundingClientRect();
+  const boxes = {};
+  fg.querySelectorAll(".node").forEach(el => {
+    const r = el.getBoundingClientRect();
+    boxes[el.getAttribute("data-node")] = {
+      left: r.left - gridRect.left, right: r.right - gridRect.left,
+      top: r.top - gridRect.top, bottom: r.bottom - gridRect.top,
+      h: r.height
+    };
+  });
+
+  const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+  svg.setAttribute("class", "flow-svg");
+  svg.setAttribute("width", fg.scrollWidth);
+  svg.setAttribute("height", fg.scrollHeight);
+  fg.style.position = "relative";
+  fg.appendChild(svg);
+
+  const defs = document.createElementNS("http://www.w3.org/2000/svg", "defs");
+  defs.innerHTML = `
+    <marker id="arr-normal" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="#a3a3a3"/>
+    </marker>
+    <marker id="arr-back" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="#737373"/>
+    </marker>
+  `;
+  svg.appendChild(defs);
+
+  (DATA.edges || []).forEach(([from, to, type]) => {
+    const a = boxes[from], b = boxes[to];
+    if (!a || !b) return;
+    const back = type === "back";
+    const x1 = a.right + 2, y1 = a.top + a.h / 2;
+    const x2 = b.left - 2, y2 = b.top + b.h / 2;
+    const dx = Math.max(20, (x2 - x1) * 0.5);
+    const d = `M ${x1} ${y1} C ${x1 + dx} ${y1}, ${x2 - dx} ${y2}, ${x2} ${y2}`;
+    const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+    path.setAttribute("d", d);
+    path.setAttribute("fill", "none");
+    path.setAttribute("stroke", back ? "#737373" : "#a3a3a3");
+    path.setAttribute("stroke-width", "1.4");
+    if (back) path.setAttribute("stroke-dasharray", "3 3");
+    path.setAttribute("marker-end", `url(#${back ? "arr-back" : "arr-normal"})`);
+    svg.appendChild(path);
+  });
+}
+
+function renderMatrix() {
+  const m = $("matrix");
+  let html = `<div class="mx-hd bl">阶段 \\ 角色</div>`;
+  html += DATA.stages.map(s => `<div class="mx-hd">${esc(s.code)} ${esc(s.name)}</div>`).join("");
+  html += "</div>";
+  DATA.roles.forEach(r => {
+    html += `<div class="mx-lane">${esc(r.who)}</div>`;
+    DATA.stages.forEach(s => {
+      const cells = DATA.nodes.filter(n => n.r === r.idx && n.s === s.idx && visibleNode(n));
+      html += `<div class="mx-cell" data-role="${r.idx}" data-stage="${s.idx}">`;
+      html += cells.map(n => {
+        const motIds = new Set(DATA.meta.motIds || []);
+        const isMot = motIds.has(n.id);
+        const t = n.title.length > 14 ? n.title.slice(0, 14) + "…" : n.title;
+        return `<span class="mx-pill ${esc(n.path)} ${isMot ? "mot" : ""}" data-node="${esc(n.id)}" title="${esc(n.title)}">
+          <span class="pid">${esc(n.id)}</span>
+          ${esc(t)}
+        </span>`;
+      }).join("");
+      if (cells.length === 0) html += `<span style="color:var(--ink-5);font-size:10px">—</span>`;
+      html += `</div>`;
+    });
+  });
+  m.innerHTML = html;
+  bindNodeClicks(m);
+}
+
+function renderForms() {
+  if (!DATA.forms || !DATA.forms.length) { $("ax-forms").hidden = true; return; }
+  $("ax-forms").hidden = false;
+  $("forms").innerHTML = DATA.forms.map(f => `
+    <div class="form-card ${f.cat === 'int' ? 'int' : 'ext'}">
+      <div class="cat">${f.cat === "int" ? "站内提醒" : "外部渠道"} · ${esc(f.id)}</div>
+      <div class="nm">${esc(f.name)}</div>
+      <div class="rule">${esc(f.rule)}</div>
+      <div class="where">落点：${esc(f.nodes)}</div>
+    </div>
+  `).join("");
+}
+
+function renderCategories() {
+  if (!DATA.categories || !DATA.categories.length) { $("ax-categories").hidden = true; return; }
+  $("ax-categories").hidden = false;
+  const catKeys = DATA.categories[0] ? Object.keys(DATA.categories[0]).filter(k => !["dim"].includes(k)) : [];
+  $("cat-h-1").textContent = catKeys[0] || "品类 1";
+  $("cat-h-2").textContent = catKeys[1] || "品类 2";
+  const tbody = document.querySelector("#cat-table tbody");
+  tbody.innerHTML = DATA.categories.map(r => `
+    <tr>
+      <td><strong>${esc(r.dim)}</strong></td>
+      ${catKeys.map(k => `<td>${esc(r[k])}</td>`).join("")}
+    </tr>
+  `).join("");
+}
+
+function renderBranches() {
+  if (!DATA.branches || !DATA.branches.length) { $("ax-branches").hidden = true; return; }
+  $("ax-branches").hidden = false;
+  const tbody = document.querySelector("#branch-table tbody");
+  tbody.innerHTML = DATA.branches.map(b => `
+    <tr>
+      <td><strong>${esc(b.dim)}</strong></td>
+      <td>${esc(b.value)}</td>
+      <td>${esc(b.affects)}</td>
+      <td>${esc(b.given)}</td>
+      <td><em>${esc(b.status)}</em></td>
+    </tr>
+  `).join("");
+}
+
+function renderEmpty() {
+  if (!DATA.emptyStates || !DATA.emptyStates.length) { $("ax-empty").hidden = true; return; }
+  $("ax-empty").hidden = false;
+  const tbody = document.querySelector("#empty-table tbody");
+  tbody.innerHTML = DATA.emptyStates.map(e => `
+    <tr>
+      <td><strong>${esc(e.state)}</strong></td>
+      <td>${esc(e.list)}</td>
+      <td>${esc(e.entry)}</td>
+      <td>${esc(e.menu)}</td>
+      <td>${esc(e.status)}</td>
+    </tr>
+  `).join("");
+}
+
+function renderStates() {
+  if (!DATA.states || !DATA.states.length) { $("ax-states").hidden = true; return; }
+  $("ax-states").hidden = false;
+  const wrap = $("state-flow");
+  const sMap = Object.fromEntries(DATA.states.map(s => [s.id, s]));
+  let html = "";
+  (DATA.stateEdges || []).forEach(e => {
+    const s = sMap[e.from], t = sMap[e.to];
+    if (!s || !t) return;
+    html += `<div class="st-card ${esc(s.type)}"><div class="nm">${esc(s.name)}</div><div class="desc">${esc(s.desc)}<br><span style="color:var(--ink-4)">触发：${esc(s.trig || "—")}</span></div></div>`;
+    html += `<div class="st-edge">${esc(e.label || "")}</div>`;
+    html += `<div class="st-card ${esc(t.type)}"><div class="nm">${esc(t.name)}</div><div class="desc">${esc(t.desc)}<br><span style="color:var(--ink-4)">触发：${esc(t.trig || "—")}</span></div></div>`;
+  });
+  wrap.innerHTML = html;
+}
+
+function openDrawer(id) {
+  const n = nodeById(id);
+  if (!n) return;
+  const stage = DATA.stages[n.s];
+  $("drw-id").textContent = `${n.id} · ${n.title}`;
+  $("drw-stage").textContent = `${stage.code} ${stage.name}`;
+  $("drw-path").textContent = n.path;
+  $("drw-cat").textContent = n.cat || "—";
+  $("drw-behavior").textContent = n.behavior || "—";
+  $("drw-touch").textContent = n.touch || "—";
+  $("drw-pain").textContent = n.pain || "—";
+  $("drw-form").textContent = n.form || "—";
+  $("drw-ev").textContent = `证据 · ${n.ev || "—"}`;
+  $("drawer").classList.add("open");
+}
+
+$("drw-close").addEventListener("click", () => $("drawer").classList.remove("open"));
+document.addEventListener("keydown", e => { if (e.key === "Escape") $("drawer").classList.remove("open"); });
+
+document.querySelectorAll("#filter-bar [data-f]").forEach(b => {
+  b.addEventListener("click", () => {
+    document.querySelectorAll("#filter-bar [data-f]").forEach(x => x.classList.remove("on"));
+    b.classList.add("on");
+    state.filter = b.getAttribute("data-f");
+    renderFlow();
+    renderMatrix();
+  });
+});
+
+function renderAll() {
+  applyMeta();
+  renderFlow();
+  renderMatrix();
+  renderForms();
+  renderCategories();
+  renderBranches();
+  renderEmpty();
+  renderStates();
+}
+
+renderAll();
+
+let resizeT;
+window.addEventListener("resize", () => {
+  clearTimeout(resizeT);
+  resizeT = setTimeout(() => drawFlowEdges(), 100);
+});
+</script>
+</body>
+</html>

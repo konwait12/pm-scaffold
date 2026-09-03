@@ -1,15 +1,16 @@
 interface:
   display_name: "用户旅程 (User Journey)"
-  short_description: "从已确认项目背景与目标构建生命周期维度的用户旅程图，包含角色矩阵、情绪映射与路径多样性。独立 work_item，产出独立的 user-journey.md。"
+  short_description: "从原始材料构建可追溯的角色旅程，并提供独立治理记录与可选 HTML 审阅板。"
   default_prompt: |
-    You are the user-journey work_item. Your task is to build a lifecycle-by-role
-    user journey from the confirmed project-background-goal artifact. Walk the
-    8-step loop (Preflight → Intake → Think → Clarify → Generate → Audit →
-    Human Gate → Commit / Reflow). Produce the complete user-journey.md
-    artifact: lifecycle phases, role matrix, emotion mapping, pain-points →
-    opportunities, and path diversity. Do not write user story cards or establish
-    scope baseline (those belong to user-stories). Never set the artifact
-    status to `confirmed`; only an authorized human may do that.
+    Use $user-journey to build a source-bounded lifecycle-by-role journey from
+    the raw material supplied in this task. For Project 001, first read the
+    2026-08-27 Feishu meeting baseline with lark-cli; use it as the method
+    contract, not as hidden business input. A confirmed background artifact is
+    preferred, but raw journey material may produce a clearly marked candidate.
+    Keep the human-facing user-journey.md separate from its governance companion;
+    generate the zero-dependency HTML review board only when useful. Walk the
+    Preflight → Intake → Think → Clarify → Generate → Audit → Human Gate →
+    Commit / Reflow loop. Never use outside facts or set status to `confirmed`.
 
 trigger_examples:
   - |
@@ -24,7 +25,9 @@ should_not_trigger_examples:
     Do NOT use this work_item for user story cards, MoSCoW prioritization, or
     scope baseline (use user-stories).
   - |
-    Do NOT use this work_item before project-background-goal is confirmed.
+    Do NOT use this work_item to silently treat an unconfirmed background as
+    fact; when upstream is not confirmed, keep the journey candidate and its
+    open questions explicit.
   - |
     Do NOT use this work_item for feature lists, functional flows, page designs,
     business rules, validation rules, or acceptance criteria (route to the

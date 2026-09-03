@@ -1,184 +1,55 @@
-<!--
-Template for project-background-goal artifacts.
-
-Section headings (需求来源与触发, 项目与需求背景, ...) are mandatory
-Chinese forms because the artifact is consumed by Chinese business
-stakeholders. English aliases are shown in comments only; do NOT add the
-English aliases to the artifact headings themselves — the validator and
-downstream consumers match the Chinese strings.
-
-The artifact must include all sections 1–15 below, in order, with the
-Constitution Compliance section placed between downstream handoff and
-版本变更摘要. Required frontmatter is the same 10-field block used
-by validate_artifact.py.
-
-Optional sections (可选章节，校验器不要求，按需启用；材料不含对应内容时整节删除):
-  - ## 术语表（按需）            — 仅当输入材料（如 BRD）含「名词解释 / 术语表」时启用
-  - ## 涉及团队及职责总结（按需）  — 仅当输入材料含团队 / 职责信息时启用
--->
 ---
 artifact_id: BG-001
 version: v0.1
 status: draft
-quality_contract_version: "1"
+project_type: 待确认
 owner: 待确认
-business_fact_owner: 待确认
-goal_decision_owner: 待确认
-reviewer: 待确认
 created_at: 待确认
 updated_at: 待确认
-confirmed_at: 待确认
 ---
 
 # 项目背景与目标
 
-## 产品质量增强记录
+> 项目类型：待确认（重构 / 从 0 到 1 / 迭代）
+> 一句话摘要：待补充
+> 治理伴随文件：background-goal.governance.md
 
-| 项目 | 结论 | 知识状态 | 来源/位置 | 判断人 | 复核触发 |
-|---|---|---|---|---|---|
-| 受影响角色与结果 | `待确认` | `待确认` | `待确认` | `待确认` | `待确认` |
-| 采用方案与被排除替代 | `待确认` | `待确认` | `待确认` | `待确认` | `待确认` |
-| 价值-成本-风险 | `待确认` | `待确认` | `待确认` | `待确认` | `待确认` |
-| 失败边界与回退 | `待确认` | `待确认` | `待确认` | `待确认` | `待确认` |
-| 可证伪条件/停止条件 | `待确认` | `待确认` | `待确认` | `待确认` | `待确认` |
+## 一句话摘要
 
-## 0. 预检输入充分度判定
-<!-- Preflight Input Sufficiency -->
+用一句话说明谁在什么业务情境下，要解决什么问题并获得什么结果。
 
-在起草背景与目标前，先判定输入材料的充分度，并按 L0–L4 标注成熟度。仅当达到 L2 及以上时进入正文撰写；L0–L1 应转入 `intake-routing` 或 `requirement-restate` 模式。
+## 项目背景
 
-| 维度 | L0（仅想法） | L1（单条稀疏来源） | L2（业务方案已存在） | L3（需求细节明确） | L4（上游已确认） |
-|---|---|---|---|---|---|
+说明业务由来、为什么现在需要处理，以及这件事对业务的意义。只写材料支持的内容；推断或待确认内容要明确标出。
 
-## 术语表（按需）
-<!-- Optional Glossary Section — 仅当输入材料（如 BRD）含「名词解释 / 术语表」时启用本节；否则整节删除，校验器不要求。 -->
+## 当前现状与已有做法
 
-仅当 BRD 等输入材料含「名词解释 / 术语表」时启用本节：逐条摘录材料中的术语 / 缩略词定义，不自造、不改写；每条标注来源 SRC 编号。
+说明现在如何完成这件事，包括系统、人工或线下步骤。重构项目必须写清楚“之前是什么样”；从 0 到 1 项目必须写清楚线下/人工流程；迭代项目只保留与本次改动直接相关的现状。
 
-| 术语 / 缩略词 | 说明 | 来源 |
-|---|---|---|
-| 待补充 | 待补充 | SRC-001 |
+## 核心问题与证据
 
-## 1. 需求来源与触发
-<!-- Requirement Source And Trigger -->
+按“问题 -> 影响 -> 证据”描述。不要把“需要某个功能”直接当作问题。没有证据的内容写为待确认。
 
-说明需求由谁、通过什么材料、因为什么事件提出，并引用 `SRC-*`。
+## 目标与成功判断
 
-## 2. 项目与需求背景
-<!-- Project And Requirement Background -->
+说明要改变的业务结果、交付结果和成功判断。优先使用“基线 -> 目标 + 衡量方式 + 时间窗口”；暂时不能量化时，写清楚待确认的判断方式。
 
-说明业务环境、需求由来、为什么现在需要处理。
+## 角色与干系人
 
-## 3. 当前现状与已有做法
-<!-- Current State And Existing Practices -->
+列出与背景、问题和目标直接相关的角色，以及他们受到的影响、承担的责任或需要做出的决定。详细用户旅程留给下游 skill。
 
-说明当前流程、系统、人工方式或替代方案，以及仍然有效的部分。
+## 约束与依赖
 
-## 4. 核心问题与证据
-<!-- Core Problem And Evidence -->
+记录已知的时间、预算、合规、组织、数据、系统和外部依赖。未知项不要假装没有。
 
-按"问题 → 影响 → 证据来源"描述，不把预设功能当作问题。
+## 边界与非目标
 
-## 5. 目标、未来期望与成功判断
-<!-- Goal, Future Expectation And Success Judgment -->
+说明本次背景目标覆盖什么、不覆盖什么，以及哪些范围需要后续确认。这里不写功能清单。
 
-区分业务结果、交付结果和成功判断。无法量化时标记待确认，不编造指标。
+## 待确认与风险
 
-> **Fit Criterion（量化判据）提示**：每条目标/成功判断必须能回答"怎么算达成"。格式建议：`基线 → 目标 + 衡量方式 + 时间窗口`（例：邀约转化率 47% → 60%，CRM 数据，12 个月）。无法量化的目标必须显式标 `待确认` 并关联 §11 问题 ID 与 §Clarifications 的 owner（依据 Volere Fit Criterion + ISO/IEC/IEEE 29148 Verifiable 特性）。无判据的目标视为未完成。
+用自然语言列出会影响目标、范围、成本、时间或风险的未决事项，并说明不确认的后果。详细问题记录放在治理伴随文件。
 
-## 6. 用户角色与利益相关者
-<!-- User Roles And Stakeholders -->
+## 参考资料
 
-只识别与背景和目标有关的角色、责任和影响；详细旅程留给下一步。
-
-## 涉及团队及职责总结（按需）
-<!-- Optional Team & Responsibility Summary — 仅当输入材料含团队 / 职责信息时启用本节；否则整节删除，校验器不要求。 -->
-
-仅当输入材料含团队 / 职责信息时启用本节：从材料与角色关系中提取各团队 / 角色的职责边界与关联环节，不推断材料未提及的团队；每条标注来源 SRC 编号。
-
-| 团队 / 角色 | 职责 | 关联环节 | 来源 |
-|---|---|---|---|
-| 待补充 | 待补充 | 待补充 | SRC-001 |
-
-## 7. 时间、约束与依赖
-<!-- Timing, Constraints And Dependencies -->
-
-记录已知期限、资源、政策、合规、数据、系统和外部依赖。
-
-## 8. 初步边界与非目标
-<!-- Preliminary Boundaries And Non-Goals -->
-
-记录已确认或暂定的边界，明确这不是最终产品范围。
-
-## 9. 事实与决定
-<!-- Facts And Decisions -->
-
-| ID | 类型 | 内容 | 来源/决策人 | 状态 |
-|---|---|---|---|---|
-| FCT-001 | FACT | 待补充 | SRC-001 | 待确认 |
-
-## 10. 假设、AI 推断、未知与冲突
-<!-- Assumptions, AI Inferences, Unknowns And Conflicts -->
-
-| ID | 类型 | 内容 | 依据 | 影响 | 责任人 | 处理方式 |
-|---|---|---|---|---|---|---|
-| UNK-001 | UNKNOWN | 待补充 | - | 待评估 | 待确认 | 待确认 |
-
-## 11. 待确认问题
-<!-- Questions To Confirm -->
-
-| ID | 问题 | AI 初步判断与依据 | 选项/影响 | 决策人 | 阻断 | 延后风险 | 回写位置 |
-|---|---|---|---|---|---|---|---|
-| Q-001 | 待补充 | 待补充 | 待补充 | 待确认 | 是/否 | 待补充 | 待补充 |
-
-> Note: §11 lists the open question register. After the human confirms an answer, the answer is integrated back into the artifact body AND a new Clarify Session row is added to `## Clarifications` below. Open questions on §11 may be closed when their corresponding Session is logged in `## Clarifications`.
-
-## Clarifications
-
-> Logged sessions of the one-question-at-a-time Clarify loop (see `SKILL.md` § Clarify Is Its Own Loop and `references/output-contract.md` § Clarifications Session Contract).
-> One row per session. Ordered by `session_id`. Place this section between §11 待确认问题 and §12 来源追溯 so human reviewers can see "what was asked, what was answered, what changed".
-
-| session_id | category | question | ai_preliminary_judgment | options | decision_owner | blocking | deferral_risk | accepted_answer | reflow_target | integrated_at | integrated_by | audit_recheck |
-|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| 待补充 | 待补充 | 待补充 | 待补充 | 待补充 | 待补充 | 待补充 | 待补充 | 待补充 | 待补充 | 待补充 | 待补充 | 待补充 |
-
-Rules:
-
-- Only one Q+A round per row. Never combine multiple sessions.
-- `accepted_answer` MUST be filled in before the artifact reaches `ready_for_human_review`.
-- `reflow_target` MUST reference an existing section heading.
-- `audit_recheck` MUST be the last field filled; if `fail`, status flips back to `needs_user_input`.
-
-## 12. 来源追溯
-<!-- Source Traceability -->
-
-| 来源 ID | 材料/位置 | 关键内容 | 本文落位或排除理由 |
-|---|---|---|---|
-| SRC-001 | 待补充 | 待补充 | 待补充 |
-
-## 13. 下游输入摘要
-<!-- Downstream Handoff Summary -->
-
-仅在 `confirmed` 后填写供"用户旅程与用户故事"使用的背景、目标、角色线索、约束、已接受假设和未决风险；不在此处生成旅程或故事。
-
-## 14. Constitution Compliance
-
-> 本节由 `src/framework/constitution.md` 强制要求：每个主干产物模板末尾必须包含本章节，用于显式审计与项目宪法的对齐情况。
-
-| 原则 | 状态（PASS / FAIL / JUSTIFIED） | 证据 / 备注 |
-|---|---|---|
-| ① <核心原则 1> | PASS | <章节 X 已说明> |
-| ② <业务约束 1> | PASS | <章节 X 已说明> |
-| ③ <技术约束 1> | PASS | <章节 X 已说明> |
-| ④ <治理规则 1> | PASS | <章节 X 已说明> |
-
-- **PASS**：本步骤产物明确符合该原则，无需额外说明
-- **FAIL**：本步骤产物违反该原则，禁止提交人工，需回到步骤重新处理
-- **JUSTIFIED**：与原则有偏离但有充分理由，必须显式写明"偏离理由 + 影响范围 + 回归计划"
-
-## 15. 版本变更摘要
-<!-- Version Change Summary -->
-
-| 版本 | 变更原因 | 主要变化 | 人工确认状态 |
-|---|---|---|---|
-| v0.1 | 初始候选 | 首次生成 | 待确认 |
+列出实际使用过的会议、口述、PPT、图片、文档或数据来源，使用人可读的标题、日期和位置/链接。

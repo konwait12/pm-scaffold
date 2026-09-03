@@ -1,20 +1,10 @@
 #!/usr/bin/env python3
-"""Validate the user-journey.md artifact.
-
-This work_item is an independent work_item producing a standalone user-journey.md
-artifact. The validator checks the full file content for:
-  1. Lifecycle phase markers
-  2. Role matrix (at least one role identified)
-  3. Emotion mapping entries
-  4. Path diversity (main path + at least one variant)
-  5. Frontmatter and status consistency
-
-Run: python3 validate_artifact.py <user-journey.md> [--json]
-"""
+"""Validate a standalone user-journey document and its governance companion."""
 
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import re
 import sys
@@ -22,289 +12,178 @@ from pathlib import Path
 
 
 def _bootstrap_scripts() -> None:
-    import sys as _sys
-    p = Path(__file__).resolve().parent
+    p = Path(__file__).resolve()
     while p.parent != p:
-        cand = p / "src" / "scripts"
-        if (cand / "validation_errors.py").is_file():
-            if str(cand) not in _sys.path:
-                _sys.path.insert(0, str(cand))
+        candidate = p / "src" / "scripts"
+        if (candidate / "validation_errors.py").is_file():
+            if str(candidate) not in sys.path:
+                sys.path.insert(0, str(candidate))
             return
         p = p.parent
 
+
 _bootstrap_scripts()
 from validation_errors import make_issue
-from product_quality import validate_quality_record
 
 
-ARTIFACT_NAME = "user-journey.md"
-ARTIFACT_GLOBS = [
-    "requirements/*/001-business-requirements/01-user-journey/user-journey.md",
-    "requirements/*/001-business-requirements/02-user-journey-stories/user-journey.md",
-]
-SKILL_ID = "user_journey"
-CHECK_PREFIX = "uj"
-
-VALID_STATUSES = {
-    "draft",
-    "needs_user_input",
-    "conditional_review",
-    "ready_for_human_review",
-    "superseded",
-    "legacy_unverified",
-    "simulated",
+REQUIRED_FIELDS = {
+    "artifact_id", "version", "status", "owner", "business_fact_owner",
+    "goal_decision_owner", "reviewer", "created_at", "updated_at",
+    "confirmed_at", "upstream_artifact_id",
 }
-
-
-def _project_root() -> Path:
-    p = Path(__file__).resolve()
-    for parent in p.parents:
-        if (parent / "src" / "framework" / "workflow-registry.json").is_file():
-            return parent
-    return p.parents[8]
+REQUIRED_HEADINGS = [
+    "预检与摘要", "一句话旅程叙事", "业务生命周期分解", "角色旅程矩阵",
+    "路径与情绪", "触点、痛点与机会", "旅程覆盖与边界", "待确认与风险", "参考资料",
+]
+GOVERNANCE_HEADINGS = ["类型判断与输入充分度", "主张来源与知识状态", "澄清记录", "HTML 审阅板记录", "AI Audit", "PM 确认与变更"]
+# ``confirmed`` is recognized only to emit a precise rejection; this skill
+# never creates that state. ``simulated`` belongs to other artifact families.
+VALID_STATUSES = {"draft", "needs_user_input", "conditional_review", "ready_for_human_review", "confirmed", "superseded"}
+FORBIDDEN_MAIN_HEADINGS = {"事实与决定", "假设、AI 推断、未知与冲突", "来源追溯", "Constitution Compliance", "Clarifications", "产品质量增强记录"}
+# 项目级会议基线（可选）：不再硬编码特定会议 ID；若治理伴随文件登记了基线段，则校验段内 token 与原文链接。
+GOVERNANCE_BASELINE_SECTIONS = ("项目级会议基线（可选）", "001 会议基线读取记录")
+BASELINE_REQUIRED_TOKENS = ("读取命令", "四类拆分", "使用位置")
 
 
 def parse_frontmatter(text: str) -> dict[str, str]:
     text = re.sub(r"^<!--.*?-->\s*", "", text, flags=re.DOTALL)
-    m = re.match(r"\A---\s*\n(.*?)\n---\s*\n", text, re.DOTALL)
-    if not m:
+    match = re.match(r"\A---\s*\n(.*?)\n---\s*\n", text, re.DOTALL)
+    if not match:
         return {}
-    result: dict[str, str] = {}
-    for line in m.group(1).splitlines():
-        if ":" not in line or line.lstrip().startswith("#"):
-            continue
-        k, v = line.split(":", 1)
-        result[k.strip()] = v.strip().strip('"\'')
-    return result
+    values: dict[str, str] = {}
+    for line in match.group(1).splitlines():
+        if ":" in line and not line.lstrip().startswith("#"):
+            key, value = line.split(":", 1)
+            values[key.strip()] = value.strip().strip("\"'")
+    return values
 
 
-def _make_issues(errors: list[str], warnings: list[str], path: Path) -> list[dict]:
-    issues: list[dict] = []
-    for e in errors:
-        if e.startswith("File not found"):
-            cid, sev, exp, act, fix = (
-                f"{CHECK_PREFIX}.file_not_found", "CRITICAL",
-                "产物文件必须存在且可读", f"文件不存在: {e}",
-                "确认产物路径正确, 或先创建对应的 artifact 文件",
-            )
-        elif e.startswith("status 'confirmed' is not allowed"):
-            cid, sev, exp, act, fix = (
-                f"{CHECK_PREFIX}.status_confirmed", "CRITICAL",
-                "子 skill 输出永远不允许 status=confirmed",
-                f"实际状态: {e}",
-                "将状态改为 draft / ready_for_human_review 等, 由 pipeline.py review --decision approve 负责置为 confirmed",
-            )
-        elif e.startswith("Invalid status"):
-            cid, sev, exp, act, fix = (
-                f"{CHECK_PREFIX}.status_invalid", "CRITICAL",
-                "frontmatter status 必须在白名单内（且不含 confirmed）",
-                f"非法状态: {e}",
-                "修正 frontmatter 的 status 字段为合法取值",
-            )
-        elif "lifecycle" in e.lower():
-            cid, sev, exp, act, fix = (
-                f"{CHECK_PREFIX}.missing_lifecycle", "CRITICAL",
-                "用户旅程必须包含生命周期阶段定义",
-                "未发现生命周期阶段标记",
-                "在旅程中定义并标注 lifecycle phases（阶段）",
-            )
-        elif "role matrix" in e.lower() or "role" in e.lower():
-            cid, sev, exp, act, fix = (
-                f"{CHECK_PREFIX}.missing_role_matrix", "CRITICAL",
-                "用户旅程必须包含角色矩阵（至少一个角色）",
-                "未发现角色矩阵或角色定义",
-                "在旅程中添加角色矩阵或角色定义部分",
-            )
-        elif "emotion" in e.lower():
-            cid, sev, exp, act, fix = (
-                f"{CHECK_PREFIX}.missing_emotion", "CRITICAL",
-                "用户旅程必须包含情绪映射",
-                "未发现情绪映射标记",
-                "在旅程中添加情绪映射（emotion mapping）",
-            )
-        elif "path" in e.lower() and "diversity" in e.lower():
-            cid, sev, exp, act, fix = (
-                f"{CHECK_PREFIX}.missing_path_diversity", "CRITICAL",
-                "用户旅程必须包含路径多样性（主路径 + 至少一个变体）",
-                "未发现路径变体或多样性",
-                "添加主路径和至少一条变体路径（路径分叉）",
-            )
-        elif "ST-" in e or "ST-XXX" in e:
-            cid, sev, exp, act, fix = (
-                f"{CHECK_PREFIX}.story_traceability", "HIGH",
-                "用户旅程应追溯到对应的用户故事 ST-XXX",
-                "未发现 ST-XXX 故事追溯",
-                "在旅程节点或路径上标注对应的 ST-XXX 引用",
-            )
-        else:
-            cid, sev, exp, act, fix = f"{CHECK_PREFIX}.error", "CRITICAL", None, None, None
-        issues.append(make_issue(
-            severity=sev, check_id=cid, family=SKILL_ID,
-            location=str(path), message=e,
-            expected=exp, actual=act, repair_hint=fix,
-        ))
-    for w in warnings:
-        if w.startswith("No frontmatter"):
-            cid, exp, act, fix = (
-                f"{CHECK_PREFIX}.missing_frontmatter",
-                "产物应带 YAML frontmatter 以便校验状态",
-                "未发现 frontmatter",
-                "在产物头部补充 YAML frontmatter（含 status 字段）",
-            )
-        elif w.startswith("No knowledge-state tags"):
-            cid, exp, act, fix = (
-                f"{CHECK_PREFIX}.missing_ks_tags",
-                "可追溯内容应带有知识状态标签 (FACT/DECISION/AI_INFERENCE/UNKNOWN)",
-                "全文未发现任何知识状态标签",
-                "在事实/决定/推断内容旁标注 FACT / DECISION / AI_INFERENCE / UNKNOWN",
-            )
-        elif w.startswith("No SRC-"):
-            cid, exp, act, fix = (
-                f"{CHECK_PREFIX}.missing_src",
-                "旅程内容应引用来源材料 SRC-XXX",
-                "未发现 SRC-XXX 来源引用",
-                "在旅程节点中引用对应的 SRC-XXX 来源材料",
-            )
-        else:
-            cid, exp, act, fix = f"{CHECK_PREFIX}.warning", None, None, None
-        issues.append(make_issue(
-            severity="MEDIUM", check_id=cid, family=SKILL_ID,
-            location=str(path), message=w,
-            expected=exp, actual=act, repair_hint=fix, blocking=False,
-        ))
-    return issues
+def headings(text: str) -> list[str]:
+    return [re.sub(r"^\d+\.\s*", "", item.strip()) for item in re.findall(r"^##\s+(.+?)\s*$", text, re.MULTILINE)]
+
+
+def section(text: str, title: str) -> str:
+    match = re.search(rf"^##\s+{re.escape(title)}\s*$(.*?)(?=^##\s+|\Z)", text, re.MULTILINE | re.DOTALL)
+    return match.group(1).strip() if match else ""
+
+
+def issue(severity: str, check_id: str, path: Path, message: str, blocking: bool = True) -> dict[str, object]:
+    return make_issue(
+        severity=severity,
+        check_id=check_id,
+        family="user_journey",
+        location=str(path),
+        message=message,
+        expected="符合 user-journey 输出契约",
+        actual=message,
+        repair_hint="按 user-journey SKILL.md、模板和治理伴随文件修复",
+        blocking=blocking,
+    )
 
 
 def validate(path: Path) -> dict[str, object]:
-    errors: list[str] = []
-    warnings: list[str] = []
-
+    errors: list[dict[str, object]] = []
+    warnings: list[dict[str, object]] = []
     if not path.is_file():
-        return {"ok": False, "errors": [f"File not found: {path}"], "warnings": [],
-                "issues": _make_issues([f"File not found: {path}"], [], path)}
+        errors.append(issue("CRITICAL", "uj.file_not_found", path, f"File not found: {path}"))
+        return {"ok": False, "errors": [x["message"] for x in errors], "warnings": [], "issues": errors}
 
     text = path.read_text(encoding="utf-8")
     meta = parse_frontmatter(text)
-    status = meta.get("status")
-
-    if not meta:
-        warnings.append("No frontmatter found; artifact status cannot be verified")
-    elif status == "confirmed":
-        errors.append(
-            "status 'confirmed' is not allowed for this work_item output; "
-            "only pipeline.py review --decision approve may set confirmed"
-        )
+    missing = sorted(REQUIRED_FIELDS - meta.keys())
+    if missing:
+        errors.append(issue("CRITICAL", "uj.missing_frontmatter", path, f"Missing frontmatter fields: {', '.join(missing)}"))
+    status = meta.get("status", "")
+    if status == "confirmed":
+        errors.append(issue("CRITICAL", "uj.status_confirmed", path, "status 'confirmed' is not allowed; only an authorized human review may confirm it"))
     elif status and status not in VALID_STATUSES:
-        errors.append(
-            f"Invalid status '{status}'. Valid (excluding confirmed): "
-            f"{', '.join(sorted(VALID_STATUSES))}"
-        )
+        errors.append(issue("CRITICAL", "uj.invalid_status", path, f"Invalid status: {status}"))
 
-    # Check 1: Lifecycle phases present
-    lifecycle_markers = [
-        "阶段", "phase", "lifecycle", "用户旅程阶段",
-        "阶段 1", "阶段 2", "阶段一", "阶段二",
-    ]
-    if not any(marker in text for marker in lifecycle_markers):
-        errors.append("No lifecycle phase markers found in user journey")
+    document_headings = headings(text)
+    missing_headings = [title for title in REQUIRED_HEADINGS if title not in document_headings]
+    if missing_headings:
+        errors.append(issue("CRITICAL", "uj.missing_headings", path, f"Missing headings: {', '.join(missing_headings)}"))
+    forbidden = [title for title in document_headings if title in FORBIDDEN_MAIN_HEADINGS]
+    if forbidden or any(marker in text for marker in ("ReviewRecord", "SHA-256", "SRC-001 |")):
+        errors.append(issue("CRITICAL", "uj.governance_in_main", path, "Machine governance records must stay in user-journey.governance.md"))
 
-    # Check 2: Role matrix (at least one role)
-    role_markers = [
-        "角色", "role", "用户角色", "actor",
-        "用户画像", "persona",
-    ]
-    if not any(marker in text for marker in role_markers):
-        errors.append("No role matrix or role definition found in user journey")
+    if not re.search(r"角色|role|persona", text, re.IGNORECASE):
+        errors.append(issue("CRITICAL", "uj.role_missing", path, "No role definition found"))
+    if not re.search(r"阶段|phase|lifecycle", text, re.IGNORECASE):
+        errors.append(issue("CRITICAL", "uj.lifecycle_missing", path, "No lifecycle phase definition found"))
+    if not re.search(r"情绪|emotion|痛点|机会|opportunity", text, re.IGNORECASE):
+        errors.append(issue("CRITICAL", "uj.emotion_missing", path, "No emotion, pain-point, or opportunity mapping found"))
+    path_tokens = re.findall(r"normal|alternative|exception|failure|handoff|recovery|正常|备选|异常|失败|交接|恢复", text, re.IGNORECASE)
+    if len(set(token.lower() for token in path_tokens)) < 2:
+        errors.append(issue("CRITICAL", "uj.path_diversity_missing", path, "Journey must distinguish a main path and at least one variant or explicitly record its absence"))
+    if not re.search(r"(?:SRC|BG)-\d+", text):
+        warnings.append(issue("MEDIUM", "uj.source_missing", path, "No upstream/source identifier found", False))
+    if not re.search(r"FACT|DECISION|ASSUMPTION|AI_INFERENCE|UNKNOWN|CONFLICT", text):
+        warnings.append(issue("MEDIUM", "uj.knowledge_state_missing", path, "No knowledge-state label found", False))
 
-    # Check 3: Emotion mapping
-    emotion_markers = [
-        "情绪", "emotion", "情绪映射", "emotion map",
-        "pain point", "pain-point", "痛点",
-        "机会", "opportunity",
-    ]
-    if not any(marker in text for marker in emotion_markers):
-        errors.append("No emotion mapping markers found in user journey")
+    # 伴随文件定位：默认按 artifact 命名（`<stem>.governance.md`），找不到则回退到规范名（兼容旧用法）
+    companion = path.with_name(f"{path.stem}.governance.md")
+    if not companion.is_file():
+        legacy = path.with_name("user-journey.governance.md")
+        if legacy.is_file():
+            companion = legacy
+    if not companion.is_file():
+        severity = "CRITICAL" if status in {"ready_for_human_review", "confirmed"} else "MEDIUM"
+        target = errors if severity == "CRITICAL" else warnings
+        target.append(issue(severity, "uj.governance_missing", path, f"Companion file not found: {companion.name}", severity == "CRITICAL"))
+    else:
+        governance_text = companion.read_text(encoding="utf-8")
+        gov_meta = parse_frontmatter(governance_text)
+        required_gov = {"artifact_id", "main_artifact", "main_version", "main_sha256", "status", "board_artifact"}
+        missing_gov = sorted(required_gov - gov_meta.keys())
+        if missing_gov:
+            errors.append(issue("CRITICAL", "uj.governance_frontmatter_missing", companion, f"Governance companion missing: {', '.join(missing_gov)}"))
+        missing_gov_headings = [title for title in GOVERNANCE_HEADINGS if title not in headings(governance_text)]
+        if missing_gov_headings:
+            errors.append(issue("CRITICAL", "uj.governance_headings_missing", companion, f"Governance companion missing headings: {', '.join(missing_gov_headings)}"))
+        if gov_meta.get("artifact_id") and gov_meta["artifact_id"] != meta.get("artifact_id"):
+            errors.append(issue("CRITICAL", "uj.artifact_id_mismatch", companion, "Main document and governance companion have different artifact_id values"))
+        if gov_meta.get("main_version") and gov_meta["main_version"] != meta.get("version"):
+            errors.append(issue("CRITICAL", "uj.version_mismatch", companion, "Main document and governance companion have different versions"))
+        actual_hash = hashlib.sha256(text.encode("utf-8")).hexdigest()
+        recorded_hash = gov_meta.get("main_sha256", "")
+        if recorded_hash not in {"", "待确认", "待补充"} and recorded_hash != actual_hash:
+            errors.append(issue("CRITICAL", "uj.hash_mismatch", companion, "main_sha256 does not match user-journey.md"))
+        if status == "confirmed":
+            errors.append(issue("CRITICAL", "uj.status_confirmed", path, "user-journey output cannot be confirmed by the skill"))
+        if meta.get("artifact_id", "").endswith("-001"):
+            # 项目级会议基线（可选）：仅当治理伴随文件登记了基线段才校验；未登记不报错
+            meeting_section = ""
+            for title in GOVERNANCE_BASELINE_SECTIONS:
+                meeting_section = section(governance_text, title)
+                if meeting_section:
+                    break
+            if meeting_section:
+                missing_tokens = [t for t in BASELINE_REQUIRED_TOKENS if t not in meeting_section]
+                if missing_tokens:
+                    errors.append(issue("CRITICAL", "uj.meeting_baseline_incomplete", companion,
+                        f"治理伴随文件登记了项目级会议基线，但缺少必要 token：{', '.join(missing_tokens)}"))
+                if not re.search(r"https?://|feishu\.cn|lark\.cn|notion\.|confluence\.", meeting_section):
+                    warnings.append(issue("MEDIUM", "uj.meeting_baseline_no_link", companion,
+                        "项目级会议基线段未发现原文链接，请确认是否需要补充", False))
 
-    # Check 4: Path diversity (main path + variant)
-    # Look for path/branch/fork markers
-    path_markers = [
-        "路径", "path", "流程", "flow",
-        "分支", "branch", "变体", "variant",
-        "分叉", "fork",
-    ]
-    path_marker_count = sum(1 for marker in path_markers if marker in text)
-    if path_marker_count < 2:
-        errors.append(
-            "Insufficient path diversity: main path and at least one variant required. "
-            "Add branch/fork/variant path markers."
-        )
-
-    # Check 5: Story traceability (ST-XXX) - warning only
-    st_ids = re.findall(r"\bST-\d+\b", text)
-    if not st_ids:
-        warnings.append("No ST-XXX story traceability identifiers found in user journey")
-
-    # Check 6: Source traceability (SRC-XXX) - warning only
-    if "SRC-" not in text:
-        warnings.append("No SRC-XXX source traceability identifiers found in user journey")
-
-    # Check 7: Knowledge-state tags - warning only
-    if not any(tag in text for tag in ("FACT", "DECISION", "AI_INFERENCE", "UNKNOWN")):
-        warnings.append(
-            "No knowledge-state tags (FACT/DECISION/AI_INFERENCE/UNKNOWN) found in user journey"
-        )
-
-    quality_errors, quality_warnings = validate_quality_record(
-        text, required=(meta.get("quality_contract_version") == "1" and status in {"ready_for_human_review", "confirmed"})
-    )
-    errors.extend(quality_errors)
-    warnings.extend(quality_warnings)
-    return {"ok": not errors, "errors": errors, "warnings": warnings,
-            "issues": _make_issues(errors, warnings, path)}
-
-
-def resolve_artifact(path_arg: str | None) -> Path | None:
-    """Explicit path wins; otherwise auto-resolve the user-journey.md."""
-    if path_arg:
-        return Path(path_arg)
-    root = _project_root()
-    for glob in ARTIFACT_GLOBS:
-        for hit in sorted(root.glob(glob)):
-            return hit
-    return None
+    return {
+        "ok": not errors,
+        "errors": [x["message"] for x in errors],
+        "warnings": [x["message"] for x in warnings],
+        "issues": errors + warnings,
+    }
 
 
 def main() -> int:
-    p = argparse.ArgumentParser(description=__doc__)
-    p.add_argument("artifact", type=Path, nargs="?", default=None,
-                   help="Artifact path. Default: auto-resolve user-journey.md.")
-    p.add_argument("--json", action="store_true", dest="j")
-    args = p.parse_args()
-
-    path = resolve_artifact(args.artifact)
-    if path is None:
-        msg = (
-            f"No artifact provided and no {ARTIFACT_NAME} found under requirements/*/. "
-            f"Run: python3 validate_artifact.py <{ARTIFACT_NAME}> [--json]"
-        )
-        if args.j:
-            print(json.dumps({"ok": False, "errors": [msg], "warnings": []},
-                             ensure_ascii=False, indent=2))
-        else:
-            print(f"ERROR: {msg}")
-        return 2
-
-    r = validate(path)
-    if args.j:
-        print(json.dumps(r, ensure_ascii=False, indent=2))
-    else:
-        print("PASS" if r["ok"] else "FAIL")
-        for e in r["errors"]:
-            print(f"ERROR: {e}")
-        for w in r["warnings"]:
-            print(f"WARNING: {w}")
-    return 0 if r["ok"] else 1
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("artifact", type=Path)
+    parser.add_argument("--json", action="store_true", dest="as_json")
+    args = parser.parse_args()
+    result = validate(args.artifact)
+    print(json.dumps(result, ensure_ascii=False, indent=2) if args.as_json else ("PASS" if result["ok"] else "FAIL"))
+    return 0 if result["ok"] else 1
 
 
 if __name__ == "__main__":
-    sys.exit(main())
+    raise SystemExit(main())
