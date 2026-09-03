@@ -121,6 +121,24 @@ def validate(path: Path) -> dict[str, object]:
     if not re.search(r"FACT|DECISION|ASSUMPTION|AI_INFERENCE|UNKNOWN|CONFLICT", text):
         warnings.append(issue("MEDIUM", "uj.knowledge_state_missing", path, "No knowledge-state label found", False))
 
+    # 用户故事种子（P0-2）：当 granularity 含 product 时，期望主文档产品层展开段含「用户故事种子」子表
+    granularity = meta.get("granularity", "")
+    product_layer_active = "product" in granularity.lower()
+    if product_layer_active:
+        seed_pattern = r"候选用户故事种子|候选故事种子|用户故事种子"
+        if not re.search(seed_pattern, text):
+            warnings.append(issue("MEDIUM", "uj.seed_missing", path,
+                "granularity 含 product 但未发现「用户故事种子」子表；下游 user-stories skill 无种子可认领",
+                False))
+        else:
+            # ST-ID 格式自检（advisory）：ST-XXX 或 ST-UJ-XXX 形式
+            st_ids = re.findall(r"\bST-[A-Z0-9][A-Z0-9-]*\b", text)
+            invalid_ids = [s for s in set(st_ids) if not re.match(r"^ST(-[A-Z]{2,5})?-\d{3}$", s)]
+            if invalid_ids:
+                warnings.append(issue("MEDIUM", "uj.seed_id_format", path,
+                    f"用户故事种子 ID 格式不规范（应符合 ST[-前缀]-NNN）: {', '.join(sorted(invalid_ids)[:5])}；UJ 阶段为种子占位，下游 user-stories 落地时再确认",
+                    False))
+
     # 伴随文件定位：默认按 artifact 命名（`<stem>.governance.md`），找不到则回退到规范名（兼容旧用法）
     companion = path.with_name(f"{path.stem}.governance.md")
     if not companion.is_file():
