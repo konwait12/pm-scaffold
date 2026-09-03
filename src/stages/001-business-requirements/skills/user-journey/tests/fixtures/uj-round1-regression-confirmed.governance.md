@@ -2,7 +2,7 @@
 artifact_id: UJ-TEST-001
 main_artifact: uj-round1-regression-confirmed.md
 main_version: v0.1
-main_sha256: a7264410db06efc4ff6ef61737ea5cc1c126ecb461c86c548be0254ed18e7bc3
+main_sha256: 759e1d24293001cae02e5044140ce1750e12ca4ee6b5d6721d4e5937557050e3
 status: ready_for_human_review
 board_artifact: ""
 ---

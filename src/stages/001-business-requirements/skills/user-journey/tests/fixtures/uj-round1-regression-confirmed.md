@@ -67,6 +67,13 @@ granularity: business+product
 
 ### 产品层展开（granularity = business+product 时）
 
+#### 已选入口清单
+
+| 用户目的 | 已选入口（`<interaction>-<touchpoint>`） | 登记理由 |
+|---|---|---|
+| 查看 DP 详情 | `reminder_dp-sms_3rd_party`, `reminder_dp-email_trans`, `reminder_dp-inapp_reminder_center` | 短信 / 邮件 / 站内信 三渠道并列（同目的多入口，触发对比视图建议） |
+| 权益认领 | `confirm_arrival-inapp_modal` | 仅应用内入口（PM 决策） |
+
 #### 通知：候选用户故事种子
 
 | 候选故事 ID | 入口 | 故事描述 | 拆分理由 | 页面级设计 | 原型 |

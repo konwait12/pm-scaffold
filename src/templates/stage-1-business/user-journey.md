@@ -85,6 +85,28 @@ upstream_artifact_id: ""
    - AI 可以基于旅程节点生成 ST-ID 占位与故事描述草稿；但**拆分理由**与**页面级设计 / 原型**字段在 `status != confirmed` 时默认为「待确认」，由 PM 在 Generate 阶段勾选——AI 不替 PM 决定是否需要页面级设计或原型
    - 同一目的多入口（如"查看 DP 详情"短信 3 步 vs 邮件 4 步）必须**拆为多个独立 ST-ID**，并在拆分理由中标明"渠道差异"
    - **本 skill 不产出最终 ST-XXX**：UJ 阶段的 ST-ID 是「种子」，下游 user-stories skill 在 Generate 时按种子落最终 ST-ID；UJ 校验器对 ST-ID 格式仅做 advisory 检查（uj.seed_missing / uj.seed_id_format）
+6. **入口对比视图（按需生成）**：基础字段「已选入口清单」+ 可选「入口对比表」。按需触发的视图，不是默认结构——避免 AI 自作主张枚举入口，违背「不猜测」原则。
+   - **已选入口清单**（基础字段，必填）：PM 显式登记的入口集合，按用户目的分组；同一目的多入口必须登记为多项
+     ```markdown
+     | 用户目的 | 已选入口（`<interaction>-<touchpoint>`） | 登记理由 |
+     |---|---|---|
+     | 查看 DP 详情 | `reminder_dp-sms_3rd_party`, `reminder_dp-email_trans`, `reminder_dp-inapp_reminder_center` | 短信 / 邮件 / 站内信 三渠道并列 |
+     | 权益认领 | `confirm_arrival-inapp_modal` | 仅应用内入口（PM 决策） |
+     ```
+   - **入口对比表**（可选视图，触发条件：清单中任一用户目的有 ≥ 2 个入口时）：由 AI 检测到后**主动提示 PM**「检测到用户目的 `<X>` 有 N 个入口，是否生成对比视图？」，PM 确认后才生成。视图字段：
+     ```markdown
+     ### 入口对比视图：<用户目的 X>
+
+     | 入口 | 步骤数 | 关键差异 | 待确认项 |
+     |---|---|---|---|
+     | `reminder_dp-sms_3rd_party` | 3 | 短信外链 → 短链跳转 | 短链规则、退订指令 |
+     | `reminder_dp-email_trans` | 4 | 邮件内链 → 深链 + 二次确认 | 邮件模板、附件规则 |
+     | `reminder_dp-inapp_reminder_center` | 2 | 应用内直达，免登录态 | 应用版本兼容 |
+     ```
+   - **约束**：
+     - 已选入口清单是基础字段（每份含粒度含 product 的产物必填，未填则在「已选入口清单」段标 `待确认`）
+     - 入口对比表是可选视图，AI 不替 PM 决定是否生成；触发条件命中时必须主动提示
+     - 校验器对入口对比表缺失不阻断，但 seed 里有 ≥ 2 个同目的入口时发 advisory 提示（uj.comparison_view_suggested）
 
 每个子块须写明材料定位（页/节点/行号）与证据状态（FACT / DECISION / ASSUMPTION / AI_INFERENCE / UNKNOWN / CONFLICT）；缺证据的格子标 `待确认` 或 `UNKNOWN`，不替上游补全。
 

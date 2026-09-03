@@ -40,6 +40,7 @@ description: Turn raw business material into a human-readable project background
 | 起草主文档与治理文件 | `references/output-contract.md` | `references/business-constraint-taxonomy.md`、`references/positioning-stxswot.md`、`references/planning-report.md`、`references/value-complexity-matrix.md` |
 | AI Audit | `references/audit-checklist.md`、`references/anti-patterns.md` | `references/business-constraint-taxonomy.md`、`references/stakeholder-power-interest.md` |
 | PM/业务方评审 | `references/reviewer-checklist.md` | 与本次待确认事项直接相关的 reference |
+| 跨 skill 工程化约定 | `references/cross-cutting-conventions.md` | 版本协同 / 测试失败回收 / lite 链路传导——任何阶段跨 skill 协作时按需读 |
 
 如果按需文件与本次项目无关，不必读取。所有 reference 只提供分析、提问和审计方法，不是项目输入，不能加入案例细节或默认结论，也不能替代 PM 对事实、类型、目标和取舍的确认。
 

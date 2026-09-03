@@ -138,6 +138,28 @@ def validate(path: Path) -> dict[str, object]:
                 warnings.append(issue("MEDIUM", "uj.seed_id_format", path,
                     f"用户故事种子 ID 格式不规范（应符合 ST[-前缀]-NNN）: {', '.join(sorted(invalid_ids)[:5])}；UJ 阶段为种子占位，下游 user-stories 落地时再确认",
                     False))
+            # 入口对比视图（修订 5 P1-2）：advisory 自检——粒度含 product 时，期望主文档含「已选入口清单」段
+            if "已选入口清单" not in text:
+                warnings.append(issue("MEDIUM", "uj.entry_catalog_missing", path,
+                    "粒度含 product 但未发现「已选入口清单」基础字段；下游 user-stories 无法认领入口差异",
+                    False))
+            else:
+                # 检测是否有同目的多入口（≥ 2 个 interaction-touchpoint 入口登记到同一用户目的）——若命中提示生成对比视图
+                catalog_block = re.search(
+                    r"已选入口清单.*?(?=^##\s+|\Z)",
+                    text, re.MULTILINE | re.DOTALL,
+                )
+                if catalog_block:
+                    multi_entry_purposes = []
+                    for line in catalog_block.group(0).splitlines():
+                        # 表行：| 目的 | 入口1, 入口2, ... | 理由 |
+                        cells = [c.strip() for c in line.strip().strip("|").split("|")]
+                        if len(cells) >= 2 and re.match(r"^`?[a-z_]+-[a-z_0-9]+`?(,\s*`?[a-z_]+-[a-z_0-9]+`?)+$", cells[1]):
+                            multi_entry_purposes.append(cells[0])
+                    if multi_entry_purposes:
+                        warnings.append(issue("MEDIUM", "uj.comparison_view_suggested", path,
+                            f"检测到以下用户目的登记了 ≥ 2 个入口，建议生成「入口对比视图」: {', '.join(multi_entry_purposes)}；视图字段见模板第 6 项",
+                            False))
 
     # 伴随文件定位：默认按 artifact 命名（`<stem>.governance.md`），找不到则回退到规范名（兼容旧用法）
     companion = path.with_name(f"{path.stem}.governance.md")
