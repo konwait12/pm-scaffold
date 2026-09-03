@@ -11,7 +11,7 @@ description: Turn confirmed business background and raw journey material into a 
 
 - `user-journey.md`：人和 AI 都能直接阅读的旅程基线候选；
 - `user-journey.governance.md`：来源、知识状态、澄清、审计和主文档哈希；
-- 按需的 `user-journey.board.html`：用于人审的单文件可交互旅程审阅板，不是页面原型。
+- 默认输出 `user-journey.board.html`：本 skill 默认生成 Figma 风审阅板（触发条件见 §5 Generate「HTML 审阅板触发条件」段），用于人审的单文件可交互旅程审阅板，不是页面原型。
 
 不写用户故事卡片、范围基线、功能清单、页面、字段、接口、业务规则、状态机或验收标准。出现这些内容时，保留到角色行为和业务结果层，并路由到下游 skill。
 
@@ -168,7 +168,12 @@ description: Turn confirmed business background and raw journey material into a 
 
 状态只能是 `draft`、`needs_user_input`、`conditional_review` 或 `ready_for_human_review`，AI 永远不能写 `confirmed`。
 
-当多角色多阶段需要现场审阅，或 PM 明确要求可视化时，生成 `user-journey.board.html`：单文件、零外部网络依赖、按角色/阶段/路径筛选并可展开证据和未知项。它只呈现旅程材料，不新增页面、文案、功能或状态；具体契约见 `references/html-journey-board.md`。
+**HTML 审阅板触发条件（UJ 默认 / BG 不出）**：本 skill 默认生成 `user-journey.board.html`，仅当产物满足以下任一条件时跳过——① 单角色且单阶段且单路径（极简旅程无可视化收益）；② PM 显式说明本次不需要可视化产物；③ 产物处于 `draft` 之前的状态（预检阶段）。否则按下列规则生成：
+
+- **UJ 默认**：角色数 ≥ 2 **或** 阶段数 ≥ 3 **或** 路径类型 ≥ 2 → 必出 board.html；
+- **BG 默认不生成**：本 skill 不为 BG 产物生成 board.html；BG 模板的「可选审阅板」字段描述为「按需」，由 PM 在 BG Generate 时显式触发，且仅当产物含「角色 × 阶段 × 路径」任一维度 ≥ 2 项时才出。
+
+`user-journey.board.html` 是单文件、零外部网络依赖、按角色/阶段/路径筛选并可展开证据和未知项的 Figma 风中性模板。它只呈现旅程材料，不新增页面、文案、功能或状态；具体契约见 `references/html-journey-board.md`。模板在 `assets/user-journey-board.html`，使用时**只替换 `DATA` 对象**（`meta` / `stages` / `roles` / `nodes` / `edges` + 5 段可选附录），不重写样式与交互层；未填附录会自动隐藏。
 
 ### 6. Audit：重新阅读并反证
 

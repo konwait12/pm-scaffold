@@ -17,7 +17,7 @@ upstream_artifact_id: ""
 > 项目/需求：待确认
 > 一句话旅程叙事：待确认
 > 治理伴随文件：user-journey.governance.md
-> 可选审阅板：user-journey.board.html（Figma 风中性模板，复制 `assets/user-journey-board.html` 后只替换 DATA 对象；详见 `references/html-journey-board.md` 数据契约）
+> 默认审阅板：user-journey.board.html（Figma 风中性模板，复制 `assets/user-journey-board.html` 后只替换 DATA 对象；详见 `references/html-journey-board.md` 数据契约。生成触发条件见 SKILL.md §5 Generate「HTML 审阅板触发条件」段——本 skill 默认生成，仅在单角色/单阶段/单路径且 PM 未要求可视化时跳过。）
 >
 > **设计风格一致性**：HTML 审阅板视觉风格（顶部 sticky 工具条 / Frame 块 / 水平时间线 / MOT 节点金色光晕 / 路径类型 6 态边框 / 暗色模式）与 skill 产物（`user-journey.md` 嵌入的 HTML 产物、对比报告、UJ 治理文件、open-source 镜像）保持一致——避免 HTML 与 markdown 视觉规范漂移。
 
