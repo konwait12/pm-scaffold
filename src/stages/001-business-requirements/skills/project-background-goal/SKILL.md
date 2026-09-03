@@ -41,6 +41,7 @@ description: Turn raw business material into a human-readable project background
 | AI Audit | `references/audit-checklist.md`、`references/anti-patterns.md` | `references/business-constraint-taxonomy.md`、`references/stakeholder-power-interest.md` |
 | PM/业务方评审 | `references/reviewer-checklist.md` | 与本次待确认事项直接相关的 reference |
 | 跨 skill 工程化约定 | `references/cross-cutting-conventions.md` | 版本协同 / 测试失败回收 / lite 链路传导——任何阶段跨 skill 协作时按需读 |
+| 防冗杂约定 | `references/anti-bloat-conventions.md` | 空骨架红线 / 业务假设链——Generate 阶段必读，避免形式完整内容空 |
 
 如果按需文件与本次项目无关，不必读取。所有 reference 只提供分析、提问和审计方法，不是项目输入，不能加入案例细节或默认结论，也不能替代 PM 对事实、类型、目标和取舍的确认。
 
@@ -152,6 +153,19 @@ description: Turn raw business material into a human-readable project background
 | 迭代 | 为什么加/改、加/改后做什么 | 简短、需求级，不膨胀成项目章程 |
 
 目标可以暂时没有数字，但必须明确“如何判断”或链接到治理文件中的待确认问题；禁止凭空编造指标。
+
+## 结构性依赖登记引导（跨系统项目常遗漏）
+
+材料出现「能力由 global / 外部系统 / 其他团队提供」类信息时（常见形式：能力归属表格列、备注栏字段、口头补充），必须在主文档「约束与依赖」段登记为**结构性依赖条目**，每条注明：
+
+- **能力归属方**：global / 外部系统名 / 其他团队（按材料原文用词，不臆造）
+- **依赖对象**：被依赖的能力 / 数据 / 服务
+- **材料定位**：在原材料中的页码 / 章节 / 表行号
+
+**约束**：本 skill 只登记事实条目，不建产出维度（如「global/local 维度表」「能力归属列」等结构化产物维度属于需求梳理阶段 / project-scope skill 的职责）。当材料以表格列、备注栏等弱形式出现能力归属信息时，登记为待确认的依赖事实而非现成结构，避免下游 scope skill 取不到数据。
+
+**触发示例**：需求范围表有 global/local 能力归属列；BRD 备注栏写「XX 能力由总部提供」；会议纪要中口头提及「YY 系统由 IT 部门负责」——均触发本引导。
+
 
 ## 独立运行
 

@@ -38,6 +38,32 @@ def get_section(text: str, name: str) -> str:
 def substantive(value: str) -> bool:
     return len(re.sub(r"待确认|待补充|TBD|UNKNOWN|[-*#>|\s]", "", value)) >= 12
 
+
+def _strip_structural(text: str) -> str:
+    """结构化扫描 helper：去除 markdown 列表标记 / 代码块；表格行保留单元格内容。
+
+    W4 第⑤条：所有 in-text 类字符串检测必须走结构化扫描，避免误伤 markdown 表格分隔符
+    （`SRC-001 |`）、列表标记、代码块。
+    """
+    out: list[str] = []
+    in_code = False
+    for ln in text.splitlines():
+        s = ln.strip()
+        if s.startswith("```"):
+            in_code = not in_code
+            continue
+        if in_code:
+            continue
+        if s.startswith("|"):
+            # 表格行：去除首尾 | 与单元格分隔符，保留单元格内容
+            if re.fullmatch(r"\|[\s\-:|]+\|", s):
+                continue
+            cells = [c.strip() for c in s.strip("|").split("|")]
+            out.append(" ".join(cells))
+            continue
+        out.append(re.sub(r"^\s*[-*]\s+", "", ln))
+    return "\n".join(out)
+
 def finding(severity: str, check_id: str, message: str, blocking: bool = True) -> dict[str, object]:
     return {"severity": severity, "check_id": check_id, "message": message, "blocking": blocking}
 
@@ -60,10 +86,23 @@ def validate(path: Path) -> dict[str, object]:
     if missing_headings:
         errors.append(finding("CRITICAL", "bg.missing_headings", f"Missing headings: {', '.join(missing_headings)}"))
     forbidden = [name for name in document_headings if name in MACHINE_HEADINGS]
-    if forbidden or any(marker in text for marker in ("SRC-", "ReviewRecord", "SHA-256")):
+    # W4 第⑤条：机器治理标识检测走结构化扫描（避免 markdown 表格分隔符误伤）
+    body_for_gov = _strip_structural(text)
+    if forbidden or any(marker in body_for_gov for marker in ("ReviewRecord", "SHA-256")):
         errors.append(finding("CRITICAL", "bg.machine_governance_in_main", "Move machine governance records from the main document to its companion file."))
     if not substantive(get_section(text, "参考资料")):
         warnings.append(finding("MEDIUM", "bg.references_missing", "Reference list is empty or still a placeholder.", False))
+
+    # 空骨架红线（防冗杂约定 §1）：占位符密度 advisory
+    import re as _re
+    placeholder_pattern = r"待确认|待补充|TBD|TODO|UNKNOWN|\[空\]|^\s*-\s*$|^\s*\*\s*$"
+    total_lines = max(len([ln for ln in text.splitlines() if ln.strip()]), 1)
+    placeholder_lines = len([ln for ln in text.splitlines() if _re.search(placeholder_pattern, ln)])
+    density = placeholder_lines / total_lines
+    if density > 0.30:
+        warnings.append(finding("MEDIUM", "bg.bloat_warning",
+            f"占位符密度 {density:.0%}（{placeholder_lines}/{total_lines} 行）超过 30%；产物形式完整但内容可能为空骨架。详见 references/anti-bloat-conventions.md §1",
+            blocking=False))
     current = get_section(text, "当前现状与已有做法")
     goal = get_section(text, "目标与成功判断")
     background = get_section(text, "项目背景")

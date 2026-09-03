@@ -38,6 +38,7 @@ description: Turn confirmed business background and raw journey material into a 
 - 需要生成 HTML 审阅板：`references/html-journey-board.md`；
 - 触点/渠道/交互三层枚举协议（材料含多触点或多入口对比需求时）：`references/touchpoint-catalog.md`、`references/channel-catalog.md`、`references/interaction-catalog.md`、`references/touchpoint-coverage-matrix.md`；
 - 跨 skill 工程化约定（版本协同 / 测试失败回收 / lite 链路传导）：`references/cross-cutting-conventions.md`；
+- 防冗杂约定（空骨架红线 / 业务假设链）：`references/anti-bloat-conventions.md`；
 - 人工评审前：`references/reviewer-checklist.md`；
 - 反模式检查：`references/anti-patterns.md`。
 

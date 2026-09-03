@@ -22,8 +22,61 @@ def _bootstrap_scripts() -> None:
         p = p.parent
 
 
-_bootstrap_scripts()
-from validation_errors import make_issue
+# 自包含导入：优先用仓库内 scripts/validation_errors.py，缺失则降级为本地最小实现
+_local_v = Path(__file__).resolve().parent / "validation_errors.py"
+if _local_v.is_file():
+    if str(_local_v.parent) not in sys.path:
+        sys.path.insert(0, str(_local_v.parent))
+    from validation_errors import make_issue  # type: ignore
+else:
+    _bootstrap_scripts()
+    try:
+        from validation_errors import make_issue  # type: ignore
+    except ImportError:
+        # 最小自包含实现：校验器仓库克隆后零依赖可跑
+        VALID_SEVERITIES = {"CRITICAL", "HIGH", "MEDIUM", "INFO"}
+
+        def make_issue(severity, check_id, message, family="property_check",
+                       location="", field_path="", expected="", actual="",
+                       repair_hint="", source_ref="", blocking=True):
+            if severity not in VALID_SEVERITIES:
+                raise ValueError(f"severity '{severity}' not in {sorted(VALID_SEVERITIES)}")
+            return {
+                "severity": severity, "blocking": blocking, "check_id": check_id,
+                "check_family": family, "location": location, "field_path": field_path,
+                "message": message, "expectation": expected, "actual": actual,
+                "repair_hint": repair_hint, "source_ref": source_ref,
+            }
+
+
+def _strip_structural(text: str) -> str:
+    """结构化扫描 helper：去除 markdown 列表标记 / 代码块；表格行保留单元格内容。
+
+    W4 第⑤条：所有 in-text 类字符串检测必须走结构化扫描，避免误伤：
+    - markdown 表格行尾分隔符（`SRC-001 |`）—— 表格行保留单元格内容，只去掉分隔符 `|`
+    - 列表标记（`-` / `*` 起头）—— 移除标记，保留正文
+    - 代码块（``` ```）—— 整段跳过
+    """
+    out: list[str] = []
+    in_code = False
+    for ln in text.splitlines():
+        s = ln.strip()
+        if s.startswith("```"):
+            in_code = not in_code
+            continue
+        if in_code:
+            continue
+        if s.startswith("|"):
+            # 表格行：去除首尾 | 与单元格分隔符，保留单元格内容
+            # 跳过纯分隔行（| --- | --- |）
+            if re.fullmatch(r"\|[\s\-:|]+\|", s):
+                continue
+            cells = [c.strip() for c in s.strip("|").split("|")]
+            out.append(" ".join(cells))
+            continue
+        # 移除列表标记（保留正文）
+        out.append(re.sub(r"^\s*[-*]\s+", "", ln))
+    return "\n".join(out)
 
 
 REQUIRED_FIELDS = {
@@ -107,19 +160,33 @@ def validate(path: Path) -> dict[str, object]:
     if forbidden or any(marker in text for marker in ("ReviewRecord", "SHA-256", "SRC-001 |")):
         errors.append(issue("CRITICAL", "uj.governance_in_main", path, "Machine governance records must stay in user-journey.governance.md"))
 
-    if not re.search(r"角色|role|persona", text, re.IGNORECASE):
+    # W4 第⑤条：所有 in-text 检测改为结构化扫描（只扫段落正文，不扫表格分隔符 / 列表 / 代码块）
+    body_text = _strip_structural(text)
+    if not re.search(r"角色|role|persona", body_text, re.IGNORECASE):
         errors.append(issue("CRITICAL", "uj.role_missing", path, "No role definition found"))
-    if not re.search(r"阶段|phase|lifecycle", text, re.IGNORECASE):
+    if not re.search(r"阶段|phase|lifecycle", body_text, re.IGNORECASE):
         errors.append(issue("CRITICAL", "uj.lifecycle_missing", path, "No lifecycle phase definition found"))
-    if not re.search(r"情绪|emotion|痛点|机会|opportunity", text, re.IGNORECASE):
+    if not re.search(r"情绪|emotion|痛点|机会|opportunity", body_text, re.IGNORECASE):
         errors.append(issue("CRITICAL", "uj.emotion_missing", path, "No emotion, pain-point, or opportunity mapping found"))
-    path_tokens = re.findall(r"normal|alternative|exception|failure|handoff|recovery|正常|备选|异常|失败|交接|恢复", text, re.IGNORECASE)
+    path_tokens = re.findall(r"normal|alternative|exception|failure|handoff|recovery|正常|备选|异常|失败|交接|恢复", body_text, re.IGNORECASE)
     if len(set(token.lower() for token in path_tokens)) < 2:
         errors.append(issue("CRITICAL", "uj.path_diversity_missing", path, "Journey must distinguish a main path and at least one variant or explicitly record its absence"))
-    if not re.search(r"(?:SRC|BG)-\d+", text):
+    # W4 第③条：来源 ID 正则兼容带字母后缀（BG-DP-001 / UJ-DP-001 / BG-RSVP-001 等）
+    if not re.search(r"\b(?:SRC|BG|UJ|DEC|ISS)(?:-[A-Z]+)*-\d+\b", body_text):
         warnings.append(issue("MEDIUM", "uj.source_missing", path, "No upstream/source identifier found", False))
-    if not re.search(r"FACT|DECISION|ASSUMPTION|AI_INFERENCE|UNKNOWN|CONFLICT", text):
+    if not re.search(r"FACT|DECISION|ASSUMPTION|AI_INFERENCE|UNKNOWN|CONFLICT", body_text):
         warnings.append(issue("MEDIUM", "uj.knowledge_state_missing", path, "No knowledge-state label found", False))
+
+    # 空骨架红线（防冗杂约定 §1）：占位符密度 advisory —— W4 第⑤条：用结构化扫描
+    placeholder_pattern = r"待确认|待补充|TBD|TODO|UNKNOWN|\[空\]|^\s*-\s*$|^\s*\*\s*$"
+    body_lines = [ln for ln in body_text.splitlines() if ln.strip()]
+    total_lines = max(len(body_lines), 1)
+    placeholder_lines = sum(1 for ln in body_lines if re.search(placeholder_pattern, ln))
+    density = placeholder_lines / total_lines
+    if density > 0.30:
+        warnings.append(issue("MEDIUM", "uj.bloat_warning", path,
+            f"占位符密度 {density:.0%}（{placeholder_lines}/{total_lines} 行）超过 30%；产物形式完整但内容可能为空骨架。详见 references/anti-bloat-conventions.md §1",
+            False))
 
     # 用户故事种子（P0-2）：当 granularity 含 product 时，期望主文档产品层展开段含「用户故事种子」子表
     granularity = meta.get("granularity", "")
@@ -131,13 +198,18 @@ def validate(path: Path) -> dict[str, object]:
                 "granularity 含 product 但未发现「用户故事种子」子表；下游 user-stories skill 无种子可认领",
                 False))
         else:
-            # ST-ID 格式自检（advisory）：ST-XXX 或 ST-UJ-XXX 形式
-            st_ids = re.findall(r"\bST-[A-Z0-9][A-Z0-9-]*\b", text)
-            invalid_ids = [s for s in set(st_ids) if not re.match(r"^ST(-[A-Z]{2,5})?-\d{3}$", s)]
-            if invalid_ids:
-                warnings.append(issue("MEDIUM", "uj.seed_id_format", path,
-                    f"用户故事种子 ID 格式不规范（应符合 ST[-前缀]-NNN）: {', '.join(sorted(invalid_ids)[:5])}；UJ 阶段为种子占位，下游 user-stories 落地时再确认",
-                    False))
+            # W4 第④条：ST-ID 格式自检只扫描「候选用户故事种子」段内的表格行，不扫描正文文字（避免正文出现「ST-ID」字样被误报）
+            seed_block = re.search(
+                r"候选用户故事种子.*?(?=^##\s+|\Z)",
+                text, re.MULTILINE | re.DOTALL,
+            )
+            if seed_block:
+                st_ids = re.findall(r"\bST-[A-Z0-9][A-Z0-9-]*\b", seed_block.group(0))
+                invalid_ids = [s for s in set(st_ids) if not re.match(r"^ST(-[A-Z]{2,5})?-\d{3}$", s)]
+                if invalid_ids:
+                    warnings.append(issue("MEDIUM", "uj.seed_id_format", path,
+                        f"用户故事种子 ID 格式不规范（应符合 ST[-前缀]-NNN）: {', '.join(sorted(invalid_ids)[:5])}；UJ 阶段为种子占位，下游 user-stories 落地时再确认",
+                        False))
             # 入口对比视图（修订 5 P1-2）：advisory 自检——粒度含 product 时，期望主文档含「已选入口清单」段
             if "已选入口清单" not in text:
                 warnings.append(issue("MEDIUM", "uj.entry_catalog_missing", path,

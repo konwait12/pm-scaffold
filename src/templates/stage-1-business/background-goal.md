@@ -2,6 +2,8 @@
 artifact_id: BG-001
 version: v0.1
 status: draft
+# project_type 仅接受枚举值：重构 / 从 0 到 1 / 迭代 / 待确认
+# AI 判断与理由写在 background-goal.governance.md 的「类型判断与 PM 选择」段，frontmatter 只填枚举值或「待确认」
 project_type: 待确认
 owner: 待确认
 created_at: 待确认
