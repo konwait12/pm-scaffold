@@ -701,6 +701,41 @@ function renderAll() {
   renderBranches();
   renderEmpty();
   renderStates();
+  renderNewAppendices();
+}
+
+/* v1.11：护栏 ⑥⑦⑧⑨⑪⑫ 的 6 个新附录区（DATA 字段已在 v1.10 扩展；本函数挂到 render 层） */
+const NEW_APPENDIX_COLUMNS = {
+  uiMechanisms:        { title: "系统级 UI 提示机制",       guard: "⑥", columns: ["name", "trigger", "configurable", "default", "scope", "ev"] },
+  conditionalElements: { title: "按用户态切换的 UI 元素",   guard: "⑦", columns: ["condition", "element", "ev"] },
+  ctaConfigs:          { title: "CTA 动态配置",             guard: "⑧", columns: ["name", "configurable", "dimension", "default", "ev"] },
+  generatedObjects:    { title: "系统生成物",               guard: "⑨", columns: ["name", "dimension", "validity", "producer", "consumer", "ev"] },
+  entryLifecycle:      { title: "入口生命周期",             guard: "⑪", columns: ["entry", "lifecycle", "trigger", "closeCondition", "ev"] },
+  stageToStoryMap:     { title: "阶段 ↔ User Story 映射",   guard: "⑫", columns: ["stage", "stories", "relation", "note"] }
+};
+
+function renderNewAppendices() {
+  const anchor = document.querySelector("details.appendix:last-of-type");
+  if (!anchor) return;
+  Object.entries(NEW_APPENDIX_COLUMNS).forEach(([key, cfg]) => {
+    const arr = DATA[key];
+    if (!arr || !arr.length) return;
+    const det = document.createElement("details");
+    det.className = "appendix";
+    det.innerHTML = `
+      <summary>
+        <span class="ftitle">${esc(cfg.title)}</span>
+        <span class="ftag">护栏 ${esc(cfg.guard)} · ${arr.length} 条</span>
+        <span class="chev">▶</span>
+      </summary>
+      <div class="app-body">
+        <table class="t">
+          <thead><tr>${cfg.columns.map(c => `<th>${esc(c)}</th>`).join("")}</tr></thead>
+          <tbody>${arr.map(row => `<tr>${cfg.columns.map(c => `<td>${esc(row[c] ?? "—")}</td>`).join("")}</tr>`).join("")}</tbody>
+        </table>
+      </div>`;
+    anchor.parentNode.insertBefore(det, anchor.nextSibling);
+  });
 }
 
 renderAll();
