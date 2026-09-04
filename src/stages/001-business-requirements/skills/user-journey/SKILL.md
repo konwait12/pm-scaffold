@@ -170,6 +170,15 @@ description: Turn confirmed business background and raw journey material into a 
 
 **表格输出校验**：生成 Markdown 表格时，同一张表的每一行列数必须一致；单元格内若含括号、书名号或引号，必须成对保留在同一单元格内，不得被分隔符截断；表头每一列都要有语义列名，禁止出现空列名或仅含 `<br />` 的列。
 
+**产物可视化最小集（强制）**——禁止只交表格不交图，主文档至少含 2 张 mermaid：
+
+1. **旅程总览图**（必画）：`flowchart LR`，把「业务生命周期分解」表转成图形——主路径实线、异常/失败虚线、决策分支用菱形节点；放「业务生命周期分解」节尾；
+2. **情绪曲线图**（必画）：`journey` 图（mermaid 原生 journey 类型，满意度 1-10），按阶段 × 角色评分；材料无情绪证据时按路径类型推导并标 AI_INFERENCE（normal/alternative=7、handoff/exception/recovery=5、failure=3）；放「情绪与可观察信号」节尾；
+3. **状态机图**（条件必画）：材料定义资产/账户/订单状态流转时，用 `stateDiagram-v2` 画状态机；放「旅程覆盖与边界」或独立小节；
+4. 其余信息（品类对照 / 分支骨架 / 入口生命周期）用表格承载——表格适合精确对照，图形适合看流向，两者互补不互替。
+
+**飞书画板与外部图形引用**：原始材料若含飞书画板（whiteboard）或外部图形链接，主文档「参考资料」登记链接与一句话摘要即可，**不复制画板内容**（材料隔离：画板是材料证据，不是产物）；产物自身的图形只由本 skill 的 mermaid 生成，保证可版本管理与 diff。
+
 状态只能是 `draft`、`needs_user_input`、`conditional_review` 或 `ready_for_human_review`，AI 永远不能写 `confirmed`。
 
 **HTML 审阅板触发条件（UJ 默认 / BG 不出）**：本 skill 默认生成 `user-journey.board.html`，仅当产物满足以下任一条件时跳过——① 单角色且单阶段且单路径（极简旅程无可视化收益）；② PM 显式说明本次不需要可视化产物；③ 产物处于 `draft` 之前的状态（预检阶段）。否则按下列规则生成：
