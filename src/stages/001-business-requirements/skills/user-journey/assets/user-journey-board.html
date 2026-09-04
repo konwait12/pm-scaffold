@@ -215,10 +215,14 @@
   .node .touch-line::before { content: "◈ "; color: var(--ink-5); }
   .pain-badge { position: absolute; top: 6px; right: 8px; width: 15px; height: 15px; border-radius: 50%; background: var(--bad); color: #fff; font-size: 10px; font-weight: 700; display: flex; align-items: center; justify-content: center; cursor: help; }
 
-  /* v1.14 跨泳道跳转徽标 */
+  /* v1.14 跨泳道跳转徽标（v1.15 保留样式，节点不再输出；跳转语义由连线承载） */
   .jump-line { display: flex; flex-wrap: wrap; gap: 3px; margin-top: 3px; }
   .jump-tag { font-size: 9.5px; padding: 1px 5px; border-radius: 999px; background: var(--bg-soft); border: 1px solid var(--border); color: var(--ink-3); cursor: pointer; }
   .jump-tag:hover { background: var(--accent-soft, var(--bg-soft)); color: var(--accent); border-color: var(--accent); }
+
+  /* v1.15 连线：按路径类型着色 + hover 联动 */
+  .flow-edge.edge-related { opacity: 1 !important; stroke-width: 3; }
+  .flow-edge.edge-dimmed { opacity: 0.1 !important; }
 
   /* v1.13 品类差异高亮 */
   .diff-cell { background: var(--gold-soft); }
@@ -524,16 +528,6 @@ function applyMeta() {
 
 function renderFlow() {
   const fg = $("flow");
-  const NODE_META = Object.fromEntries(DATA.nodes.map(n => [n.id, n]));
-  const CROSS_EDGES = {};
-  (DATA.edges || []).forEach(([from, to]) => {
-    const f = NODE_META[from], t = NODE_META[to];
-    if (!f || !t) return;
-    if (f.r !== t.r || Math.abs(f.s - t.s) > 1) {
-      (CROSS_EDGES[from] = CROSS_EDGES[from] || []).push(to);
-    }
-  });
-  window.__CROSS_EDGES__ = CROSS_EDGES;
 
   let html = '<div class="lane-row stage-band" id="stage-band">';
   html += '<div class="lane-label"><span class="who">阶段</span></div>';
@@ -563,15 +557,12 @@ function renderNodeEl(n) {
   const motIds = new Set(DATA.meta.motIds || []);
   const isMot = motIds.has(n.id);
   const painBadge = n.pain && n.pain !== "—" ? `<span class="pain-badge" title="${esc(n.pain)}">!</span>` : "";
-  const jumps = (window.__CROSS_EDGES__ || {})[n.id] || [];
-  const jumpHtml = jumps.length ? `<div class="jump-line">${jumps.map(j => `<span class="jump-tag" data-jump="${esc(j)}" title="跨泳道关联：${esc(j)}">↗ ${esc(j)}</span>`).join("")}</div>` : "";
   return `<div class="node ${esc(n.path)} ${isMot ? "mot" : ""}" data-node="${esc(n.id)}" data-stage="${n.s}" data-role="${n.r}">
     ${painBadge}
     <div class="id">${esc(n.id)}</div>
     <div class="title">${esc(n.title)}</div>
     <div class="behavior">${esc(n.behavior || "")}</div>
     <div class="touch-line">◈ ${esc(n.touch || "—")}</div>
-    ${jumpHtml}
     <span class="path-tag">${esc(n.path)}</span>
   </div>`;
 }
@@ -580,16 +571,10 @@ function bindNodeClicks(root) {
   root.querySelectorAll(".node, .mx-pill").forEach(el => {
     el.addEventListener("click", () => openDrawer(el.getAttribute("data-node")));
   });
-  root.querySelectorAll(".jump-tag").forEach(el => {
-    el.addEventListener("click", ev => {
-      ev.stopPropagation();
-      openDrawer(el.getAttribute("data-jump"));
-    });
-  });
   bindHoverHighlight(root);
 }
 
-/* v1.12 hover 关联高亮（v1.14 修正：按流程边关联，不再按阶段/角色大范围高亮） */
+/* v1.12 hover 关联（v1.15：边邻居高亮 + 相连连线加粗，其余连线淡出） */
 function bindHoverHighlight(root) {
   const fg = $("flow");
   const neighbors = new Map();
@@ -609,10 +594,17 @@ function bindHoverHighlight(root) {
         nd.classList.toggle("related", on);
         nd.classList.toggle("dimmed", !on);
       });
+      fg.querySelectorAll(".flow-edge").forEach(p => {
+        const on = related.has(p.getAttribute("data-from")) && related.has(p.getAttribute("data-to"));
+        p.classList.toggle("edge-related", on);
+        p.classList.toggle("edge-dimmed", !on);
+      });
     });
     el.addEventListener("mouseleave", () => {
       fg.querySelectorAll(".related").forEach(x => x.classList.remove("related"));
       fg.querySelectorAll(".dimmed").forEach(x => x.classList.remove("dimmed"));
+      fg.querySelectorAll(".edge-related").forEach(x => x.classList.remove("edge-related"));
+      fg.querySelectorAll(".edge-dimmed").forEach(x => x.classList.remove("edge-dimmed"));
     });
   });
 }
@@ -629,7 +621,7 @@ function drawFlowEdges() {
     boxes[el.getAttribute("data-node")] = {
       left: r.left - gridRect.left, right: r.right - gridRect.left,
       top: r.top - gridRect.top, bottom: r.bottom - gridRect.top,
-      h: r.height
+      h: r.height, cx: r.left - gridRect.left + r.width / 2, cy: r.top - gridRect.top + r.height / 2
     };
   });
 
@@ -641,35 +633,46 @@ function drawFlowEdges() {
   fg.appendChild(svg);
 
   const defs = document.createElementNS("http://www.w3.org/2000/svg", "defs");
-  defs.innerHTML = `
-    <marker id="arr-normal" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-      <path d="M0 0 L10 5 L0 10 z" fill="#a3a3a3"/>
-    </marker>
-    <marker id="arr-back" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-      <path d="M0 0 L10 5 L0 10 z" fill="#737373"/>
-    </marker>
-  `;
+  const EDGE_COLORS = { normal: "#94a3b8", alternative: "#a78bfa", exception: "#ef4444", failure: "#ef4444", handoff: "#f59e0b", recovery: "#3b82f6", back: "#737373" };
+  defs.innerHTML = Object.keys(EDGE_COLORS).map(t => `
+    <marker id="arr-${t}" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5.5" markerHeight="5.5" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="${EDGE_COLORS[t]}"/>
+    </marker>`).join("");
   svg.appendChild(defs);
 
-  (DATA.edges || []).forEach(([from, to, type]) => {
+  /* v1.15 连线引擎：同泳道水平流 / 跨泳道垂直 S 曲线（源底部出→泳道间隙→目标顶部入，天然避开节点行） */
+  (DATA.edges || []).forEach(([from, to]) => {
     const f = window.__NODE_META__ && window.__NODE_META__[from], t = window.__NODE_META__ && window.__NODE_META__[to];
     if (!f || !t) return;
-    /* v1.14：只画同泳道相邻阶段的连线；跨泳道/跳阶段的关联由节点上的 ↗ 跳转徽标表达，避免乱飞的长曲线 */
-    if (f.r !== t.r || Math.abs(f.s - t.s) > 1) return;
     const a = boxes[from], b = boxes[to];
     if (!a || !b) return;
-    const back = type === "back";
-    const x1 = a.right + 2, y1 = a.top + a.h / 2;
-    const x2 = b.left - 2, y2 = b.top + b.h / 2;
-    const dx = Math.max(20, (x2 - x1) * 0.5);
-    const d = `M ${x1} ${y1} C ${x1 + dx} ${y1}, ${x2 - dx} ${y2}, ${x2} ${y2}`;
+    const type = t.path && EDGE_COLORS[t.path] ? t.path : "normal";
+    const color = EDGE_COLORS[type];
+    let d;
+    if (f.r === t.r) {
+      const x1 = a.right + 3, y1 = a.cy, x2 = b.left - 3, y2 = b.cy;
+      if (x2 > x1 + 8) {
+        const dx = Math.max(18, (x2 - x1) * 0.45);
+        d = `M ${x1} ${y1} C ${x1 + dx} ${y1}, ${x2 - dx} ${y2}, ${x2} ${y2}`;
+      } else {
+        const yb = Math.max(a.bottom, b.bottom) + 24;
+        d = `M ${a.cx} ${a.bottom + 2} C ${a.cx} ${yb}, ${b.cx} ${yb}, ${b.cx} ${b.bottom + 2}`;
+      }
+    } else {
+      const x1 = a.cx, y1 = a.bottom + 2, x2 = b.cx, y2 = b.top - 2;
+      const ym = (y1 + y2) / 2;
+      d = `M ${x1} ${y1} C ${x1} ${ym}, ${x2} ${ym}, ${x2} ${y2}`;
+    }
     const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
     path.setAttribute("d", d);
     path.setAttribute("fill", "none");
-    path.setAttribute("stroke", back ? "#737373" : "#a3a3a3");
-    path.setAttribute("stroke-width", "1.4");
-    if (back) path.setAttribute("stroke-dasharray", "3 3");
-    path.setAttribute("marker-end", `url(#${back ? "arr-back" : "arr-normal"})`);
+    path.setAttribute("stroke", color);
+    path.setAttribute("stroke-width", "2");
+    path.setAttribute("opacity", "0.6");
+    path.setAttribute("marker-end", `url(#arr-${type})`);
+    path.setAttribute("data-from", from);
+    path.setAttribute("data-to", to);
+    path.classList.add("flow-edge");
     svg.appendChild(path);
   });
 }
