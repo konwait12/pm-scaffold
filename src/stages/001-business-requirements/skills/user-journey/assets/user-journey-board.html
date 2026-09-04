@@ -195,10 +195,9 @@
   table.t tbody tr:hover { background: var(--bg-soft); }
   table.t .col-emph { background: var(--accent-soft); }
 
-  /* v1.12 hover 关联高亮 */
+  /* v1.16 hover：只亮当前节点 + 相连线；无 dimmed，其他元素不动 */
   .node.related { outline: 2px solid var(--accent); outline-offset: 1px; }
-  .lane.related { background: var(--bg-soft); border-radius: var(--radius); }
-  .node.dimmed { opacity: 0.35; }
+  .flow-edge.edge-related { opacity: 1 !important; stroke-width: 3; }
 
   /* v1.13 阶段带 */
   .stage-band { margin-bottom: 2px; }
@@ -222,7 +221,6 @@
 
   /* v1.15 连线：按路径类型着色 + hover 联动 */
   .flow-edge.edge-related { opacity: 1 !important; stroke-width: 3; }
-  .flow-edge.edge-dimmed { opacity: 0.1 !important; }
 
   /* v1.13 品类差异高亮 */
   .diff-cell { background: var(--gold-soft); }
@@ -574,38 +572,33 @@ function bindNodeClicks(root) {
   bindHoverHighlight(root);
 }
 
-/* v1.12 hover 关联（v1.15：边邻居高亮 + 相连连线加粗，其余连线淡出） */
+/* v1.16 hover（彻底简化）：只高亮当前节点 + 相连连线加粗；其他节点与泳道完全不动（修复「hover 一个格子其他也亮」） */
 function bindHoverHighlight(root) {
   const fg = $("flow");
-  const neighbors = new Map();
+  const edgeMap = new Map();
   (DATA.edges || []).forEach(([a, b]) => {
-    if (!neighbors.has(a)) neighbors.set(a, new Set());
-    if (!neighbors.has(b)) neighbors.set(b, new Set());
-    neighbors.get(a).add(b);
-    neighbors.get(b).add(a);
+    if (!edgeMap.has(a)) edgeMap.set(a, []);
+    if (!edgeMap.has(b)) edgeMap.set(b, []);
+    edgeMap.get(a).push([a, b]);
+    edgeMap.get(b).push([a, b]);
   });
-  root.querySelectorAll(".node").forEach(el => {
-    el.addEventListener("mouseenter", () => {
-      const id = el.getAttribute("data-node");
-      const related = new Set([id]);
-      (neighbors.get(id) || []).forEach(x => related.add(x));
-      fg.querySelectorAll(".node").forEach(nd => {
-        const on = related.has(nd.getAttribute("data-node"));
-        nd.classList.toggle("related", on);
-        nd.classList.toggle("dimmed", !on);
-      });
-      fg.querySelectorAll(".flow-edge").forEach(p => {
-        const on = related.has(p.getAttribute("data-from")) && related.has(p.getAttribute("data-to"));
-        p.classList.toggle("edge-related", on);
-        p.classList.toggle("edge-dimmed", !on);
-      });
+  root.addEventListener("mouseover", ev => {
+    const el = ev.target.closest(".node");
+    if (!el || !fg.contains(el)) return;
+    const id = el.getAttribute("data-node");
+    fg.querySelectorAll(".node.related").forEach(x => x.classList.remove("related"));
+    fg.querySelectorAll(".flow-edge.edge-related").forEach(x => x.classList.remove("edge-related"));
+    el.classList.add("related");
+    (edgeMap.get(id) || []).forEach(([a, b]) => {
+      fg.querySelectorAll(`.flow-edge[data-from="${a}"][data-to="${b}"]`).forEach(p => p.classList.add("edge-related"));
     });
-    el.addEventListener("mouseleave", () => {
-      fg.querySelectorAll(".related").forEach(x => x.classList.remove("related"));
-      fg.querySelectorAll(".dimmed").forEach(x => x.classList.remove("dimmed"));
-      fg.querySelectorAll(".edge-related").forEach(x => x.classList.remove("edge-related"));
-      fg.querySelectorAll(".edge-dimmed").forEach(x => x.classList.remove("edge-dimmed"));
-    });
+  });
+  root.addEventListener("mouseout", ev => {
+    const el = ev.target.closest(".node");
+    if (!el || !fg.contains(el)) return;
+    if (ev.relatedTarget && el.contains(ev.relatedTarget)) return;
+    fg.querySelectorAll(".node.related").forEach(x => x.classList.remove("related"));
+    fg.querySelectorAll(".flow-edge.edge-related").forEach(x => x.classList.remove("edge-related"));
   });
 }
 
