@@ -124,6 +124,15 @@ description: Turn raw business material into a human-readable project background
 
 主文档不能出现六态表、SRC 追溯矩阵、Constitution、ReviewRecord、哈希锚点或机器化问题寄存器。参考资料只用人可读的标题和链接/位置。
 
+**产物可视化最小集（强制）**——禁止只交文字+表格，主文档至少含 2 张 mermaid 图：
+
+1. **问题链路图**（必画）：`flowchart LR`，把「核心问题 → 影响 → 证据」串成链路，放「核心问题与证据」节尾；
+2. **目标链路图**（必画）：`flowchart LR`，把「基线 → 目标 → 衡量指标 → 时间窗口」串成链路，放「目标与成功判断」节尾；
+3. **干系人影响力矩阵**（推荐）：`quadrantChart`，权力 × 关注度四象限，放「角色与干系人」节内；
+4. **约束/依赖关系图**（可选）：`graph TD`，把时间/预算/合规/组织/数据/系统约束画出依赖，放「约束与依赖」节内。
+
+**发布到飞书 docx 时**：mermaid 代码块经 `lark-cli docs +create --doc-format markdown` 自动转为飞书原生画板（PM 可拖拽编辑）。
+
 ### 5. AI Audit
 
 生成后，AI 以“项目组成员”的视角重新阅读主文档，回答：
