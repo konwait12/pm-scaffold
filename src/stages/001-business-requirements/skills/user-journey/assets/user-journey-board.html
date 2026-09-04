@@ -215,6 +215,11 @@
   .node .touch-line::before { content: "◈ "; color: var(--ink-5); }
   .pain-badge { position: absolute; top: 6px; right: 8px; width: 15px; height: 15px; border-radius: 50%; background: var(--bad); color: #fff; font-size: 10px; font-weight: 700; display: flex; align-items: center; justify-content: center; cursor: help; }
 
+  /* v1.14 跨泳道跳转徽标 */
+  .jump-line { display: flex; flex-wrap: wrap; gap: 3px; margin-top: 3px; }
+  .jump-tag { font-size: 9.5px; padding: 1px 5px; border-radius: 999px; background: var(--bg-soft); border: 1px solid var(--border); color: var(--ink-3); cursor: pointer; }
+  .jump-tag:hover { background: var(--accent-soft, var(--bg-soft)); color: var(--accent); border-color: var(--accent); }
+
   /* v1.13 品类差异高亮 */
   .diff-cell { background: var(--gold-soft); }
   .ev-cell { color: var(--ink-4); font-size: 11px; }
@@ -519,6 +524,17 @@ function applyMeta() {
 
 function renderFlow() {
   const fg = $("flow");
+  const NODE_META = Object.fromEntries(DATA.nodes.map(n => [n.id, n]));
+  const CROSS_EDGES = {};
+  (DATA.edges || []).forEach(([from, to]) => {
+    const f = NODE_META[from], t = NODE_META[to];
+    if (!f || !t) return;
+    if (f.r !== t.r || Math.abs(f.s - t.s) > 1) {
+      (CROSS_EDGES[from] = CROSS_EDGES[from] || []).push(to);
+    }
+  });
+  window.__CROSS_EDGES__ = CROSS_EDGES;
+
   let html = '<div class="lane-row stage-band" id="stage-band">';
   html += '<div class="lane-label"><span class="who">阶段</span></div>';
   DATA.stages.forEach(s => {
@@ -536,7 +552,6 @@ function renderFlow() {
       html += `</div>`;
     });
     html += "</div>";
-    return html;
   }
   DATA.roles.forEach((r, i) => makeRow(i, r.who, r.goal));
   fg.innerHTML = html;
@@ -548,12 +563,15 @@ function renderNodeEl(n) {
   const motIds = new Set(DATA.meta.motIds || []);
   const isMot = motIds.has(n.id);
   const painBadge = n.pain && n.pain !== "—" ? `<span class="pain-badge" title="${esc(n.pain)}">!</span>` : "";
+  const jumps = (window.__CROSS_EDGES__ || {})[n.id] || [];
+  const jumpHtml = jumps.length ? `<div class="jump-line">${jumps.map(j => `<span class="jump-tag" data-jump="${esc(j)}" title="跨泳道关联：${esc(j)}">↗ ${esc(j)}</span>`).join("")}</div>` : "";
   return `<div class="node ${esc(n.path)} ${isMot ? "mot" : ""}" data-node="${esc(n.id)}" data-stage="${n.s}" data-role="${n.r}">
     ${painBadge}
     <div class="id">${esc(n.id)}</div>
     <div class="title">${esc(n.title)}</div>
     <div class="behavior">${esc(n.behavior || "")}</div>
-    <div class="touch-line">(touch) ${esc(n.touch || "—")}</div>
+    <div class="touch-line">◈ ${esc(n.touch || "—")}</div>
+    ${jumpHtml}
     <span class="path-tag">${esc(n.path)}</span>
   </div>`;
 }
@@ -562,24 +580,34 @@ function bindNodeClicks(root) {
   root.querySelectorAll(".node, .mx-pill").forEach(el => {
     el.addEventListener("click", () => openDrawer(el.getAttribute("data-node")));
   });
+  root.querySelectorAll(".jump-tag").forEach(el => {
+    el.addEventListener("click", ev => {
+      ev.stopPropagation();
+      openDrawer(el.getAttribute("data-jump"));
+    });
+  });
   bindHoverHighlight(root);
 }
 
-/* v1.12 hover 关联高亮（参考 emotion-graph）：hover 节点 → 同阶段/同角色节点与泳道高亮 */
+/* v1.12 hover 关联高亮（v1.14 修正：按流程边关联，不再按阶段/角色大范围高亮） */
 function bindHoverHighlight(root) {
   const fg = $("flow");
+  const neighbors = new Map();
+  (DATA.edges || []).forEach(([a, b]) => {
+    if (!neighbors.has(a)) neighbors.set(a, new Set());
+    if (!neighbors.has(b)) neighbors.set(b, new Set());
+    neighbors.get(a).add(b);
+    neighbors.get(b).add(a);
+  });
   root.querySelectorAll(".node").forEach(el => {
     el.addEventListener("mouseenter", () => {
-      const stage = el.getAttribute("data-stage");
-      const role = el.getAttribute("data-role");
-      fg.querySelectorAll(".lane").forEach(lane => {
-        const ls = lane.getAttribute("data-stage"), lr = lane.getAttribute("data-role");
-        lane.classList.toggle("related", ls === stage || lr === role);
-      });
+      const id = el.getAttribute("data-node");
+      const related = new Set([id]);
+      (neighbors.get(id) || []).forEach(x => related.add(x));
       fg.querySelectorAll(".node").forEach(nd => {
-        const ns = nd.getAttribute("data-stage"), nr = nd.getAttribute("data-role");
-        nd.classList.toggle("related", ns === stage || nr === role);
-        nd.classList.toggle("dimmed", !(ns === stage || nr === role));
+        const on = related.has(nd.getAttribute("data-node"));
+        nd.classList.toggle("related", on);
+        nd.classList.toggle("dimmed", !on);
       });
     });
     el.addEventListener("mouseleave", () => {
@@ -593,6 +621,7 @@ function drawFlowEdges() {
   const fg = $("flow");
   fg.querySelectorAll("svg.flow-svg").forEach(s => s.remove());
 
+  window.__NODE_META__ = Object.fromEntries(DATA.nodes.map(n => [n.id, n]));
   const gridRect = fg.getBoundingClientRect();
   const boxes = {};
   fg.querySelectorAll(".node").forEach(el => {
@@ -623,6 +652,10 @@ function drawFlowEdges() {
   svg.appendChild(defs);
 
   (DATA.edges || []).forEach(([from, to, type]) => {
+    const f = window.__NODE_META__ && window.__NODE_META__[from], t = window.__NODE_META__ && window.__NODE_META__[to];
+    if (!f || !t) return;
+    /* v1.14：只画同泳道相邻阶段的连线；跨泳道/跳阶段的关联由节点上的 ↗ 跳转徽标表达，避免乱飞的长曲线 */
+    if (f.r !== t.r || Math.abs(f.s - t.s) > 1) return;
     const a = boxes[from], b = boxes[to];
     if (!a || !b) return;
     const back = type === "back";
