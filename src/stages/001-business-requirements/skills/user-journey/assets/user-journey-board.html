@@ -200,6 +200,37 @@
   .lane.related { background: var(--bg-soft); border-radius: var(--radius); }
   .node.dimmed { opacity: 0.35; }
 
+  /* v1.13 阶段带 */
+  .stage-band { margin-bottom: 2px; }
+  .stage-cell { flex: 1; display: flex; flex-direction: column; gap: 2px; padding: 8px 12px; background: var(--bg-tile); border: 1px solid var(--border); border-radius: var(--radius-sm); position: relative; }
+  .stage-cell:not(:last-child)::after { content: "→"; position: absolute; right: -11px; top: 50%; transform: translateY(-50%); color: var(--ink-4); font-size: 12px; z-index: 2; }
+  .stage-cell .s-code { font-size: 10px; font-weight: 700; color: var(--accent); letter-spacing: 0.5px; }
+  .stage-cell .s-name { font-size: 12px; font-weight: 600; color: var(--ink-1); }
+  .stage-cell .s-trig { font-size: 10px; color: var(--ink-4); }
+
+  /* v1.13 节点卡增强 */
+  .node { position: relative; }
+  .node .behavior { font-size: 10.5px; color: var(--ink-3); line-height: 1.45; margin-top: 4px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .node .touch-line { font-size: 10px; color: var(--ink-4); margin-top: 3px; }
+  .node .touch-line::before { content: "◈ "; color: var(--ink-5); }
+  .pain-badge { position: absolute; top: 6px; right: 8px; width: 15px; height: 15px; border-radius: 50%; background: var(--bad); color: #fff; font-size: 10px; font-weight: 700; display: flex; align-items: center; justify-content: center; cursor: help; }
+
+  /* v1.13 品类差异高亮 */
+  .diff-cell { background: var(--gold-soft); }
+  .ev-cell { color: var(--ink-4); font-size: 11px; }
+
+  /* v1.13 E 表链 */
+  .et-item { margin-bottom: 14px; }
+  .et-item:last-child { margin-bottom: 0; }
+  .et-title { font-size: 12px; font-weight: 600; color: var(--ink-2); margin-bottom: 6px; }
+  .et-flow { display: flex; align-items: stretch; gap: 6px; }
+  .et-step { flex: 1; border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 7px 9px; font-size: 11px; color: var(--ink-2); line-height: 1.45; }
+  .et-step span { display: block; font-size: 9.5px; font-weight: 700; letter-spacing: 0.4px; text-transform: uppercase; margin-bottom: 3px; }
+  .et-step.t-trig span { color: var(--bad); } .et-step.t-sees span { color: var(--purple); }
+  .et-step.t-rec span { color: var(--accent); } .et-step.t-test span { color: var(--ink-4); }
+  .et-step.t-trig { border-color: var(--bad); border-style: dashed; }
+  .et-arrow { align-self: center; color: var(--ink-4); font-size: 13px; }
+
   /* Forms grid */
   .forms { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 10px; margin-top: 10px; }
   .form-card { padding: 10px 12px; border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--bg-frame); }
@@ -312,6 +343,10 @@
   </section>
 
   <!-- Appendices: optional护栏产物（提供空占位骨架，调用方按需填充） -->
+  <details class="appendix" id="ax-et" data-page-node-id="axETable001">
+    <summary><span class="ftitle">异常与恢复链路（E 表）</span><span class="fsub" id="et-sub">— 每条异常的 Trigger → User Sees → Recovery → Test</span><span class="ftag" id="et-count">0</span><span class="chev">▶</span></summary>
+    <div class="app-body"><div id="et-chain"></div></div>
+  </details>
   <details class="appendix" id="ax-forms" data-page-node-id="ptSLNGDEfKHJqlx7yzc7o3">
     <summary data-page-node-id="vUVPbhmLpxBvtZhh1IWkyJ"><span class="ftag" data-page-node-id="WRLmH0oBxH2yhOzmwlKjjJ">附 1</span><span class="ftitle" data-page-node-id="6Y4Yii27NVYrHnrXEiV90f">通知 / 提醒形态清单（护栏 2）</span><span class="fsub" data-page-node-id="GEz3v2iIEniMHtGT3NniBg">外部渠道 + 站内提醒逐条枚举</span><span class="chev" data-page-node-id="GdJrgGZ9WBPDrVeGizD0kc">▸</span></summary>
     <div class="app-body" data-page-node-id="pbFaFBOnzMw4uVVEj0lU3b"><div class="forms" id="forms" data-page-node-id="zXSn4xFKRWlGrGKJKn4F4d"></div></div>
@@ -447,6 +482,9 @@ const DATA = {
   ctaConfigs: [],
   /* 护栏 ⑨ 系统生成物（可选）—— 邀请码 / 二维码 / 一次性链接 / 凭证 */
   generatedObjects: [],
+
+  /* E 表异常恢复链路（可选）—— Trigger → User Sees → Recovery → Test */
+  eTable: [],
   /* 护栏 ⑪ 入口生命周期四列（可选）—— 现有/新增/已删除/待定 */
   entryLifecycle: [],
   /* 护栏 ⑫ 阶段 ↔ User Story 映射表（可选）—— 一对多映射，下游凭此认领 */
@@ -481,9 +519,14 @@ function applyMeta() {
 
 function renderFlow() {
   const fg = $("flow");
-  fg.innerHTML = "";
+  let html = '<div class="lane-row stage-band" id="stage-band">';
+  html += '<div class="lane-label"><span class="who">阶段</span></div>';
+  DATA.stages.forEach(s => {
+    html += `<div class="stage-cell"><span class="s-code">${esc(s.code)}</span><span class="s-name">${esc(s.name)}</span><span class="s-trig">${esc(s.trig || "")}</span></div>`;
+  });
+  html += "</div>";
   function makeRow(roleIdx, roleLabel, roleSub) {
-    let html = '<div class="lane-row">';
+    html += '<div class="lane-row">';
     html += `<div class="lane-label"><span class="who">${esc(roleLabel)}</span><span class="sub">${esc(roleSub)}</span></div>`;
     DATA.stages.forEach(s => {
       const cells = DATA.nodes.filter(n => n.r === roleIdx && n.s === s.idx && visibleNode(n));
@@ -495,7 +538,8 @@ function renderFlow() {
     html += "</div>";
     return html;
   }
-  fg.innerHTML = DATA.roles.map((r, i) => makeRow(i, r.who, r.goal)).join("");
+  DATA.roles.forEach((r, i) => makeRow(i, r.who, r.goal));
+  fg.innerHTML = html;
   bindNodeClicks(fg);
   drawFlowEdges();
 }
@@ -503,9 +547,13 @@ function renderFlow() {
 function renderNodeEl(n) {
   const motIds = new Set(DATA.meta.motIds || []);
   const isMot = motIds.has(n.id);
+  const painBadge = n.pain && n.pain !== "—" ? `<span class="pain-badge" title="${esc(n.pain)}">!</span>` : "";
   return `<div class="node ${esc(n.path)} ${isMot ? "mot" : ""}" data-node="${esc(n.id)}" data-stage="${n.s}" data-role="${n.r}">
+    ${painBadge}
     <div class="id">${esc(n.id)}</div>
     <div class="title">${esc(n.title)}</div>
+    <div class="behavior">${esc(n.behavior || "")}</div>
+    <div class="touch-line">(touch) ${esc(n.touch || "—")}</div>
     <span class="path-tag">${esc(n.path)}</span>
   </div>`;
 }
@@ -636,15 +684,42 @@ function renderForms() {
 function renderCategories() {
   if (!DATA.categories || !DATA.categories.length) { $("ax-categories").hidden = true; return; }
   $("ax-categories").hidden = false;
-  const catKeys = DATA.categories[0] ? Object.keys(DATA.categories[0]).filter(k => !["dim"].includes(k)) : [];
+  const catKeys = DATA.categories[0] ? Object.keys(DATA.categories[0]).filter(k => !["dim", "ev"].includes(k)) : [];
   $("cat-h-1").textContent = catKeys[0] || "品类 1";
   $("cat-h-2").textContent = catKeys[1] || "品类 2";
   const tbody = document.querySelector("#cat-table tbody");
   tbody.innerHTML = DATA.categories.map(r => `
     <tr>
       <td><strong>${esc(r.dim)}</strong></td>
-      ${catKeys.map(k => `<td>${esc(r[k])}</td>`).join("")}
+      ${catKeys.map(k => {
+        const vals = catKeys.map(kk => String(r[kk] ?? "").trim());
+        const isDiff = vals[0] !== vals[1];
+        return `<td class="${isDiff ? "diff-cell" : ""}">${esc(r[k])}</td>`;
+      }).join("")}
+      <td class="ev-cell">${esc(r.ev || "—")}</td>
     </tr>
+  `).join("");
+}
+
+/* v1.13：E 表异常恢复链路图形化——每个异常一条 Trigger → User Sees → Recovery → Test 卡片链 */
+function renderETable() {
+  const host = $("et-chain");
+  if (!host) return;
+  const arr = DATA.eTable;
+  if (!arr || !arr.length) { host.closest("details.appendix") ? host.closest("details.appendix").hidden = true : host.hidden = true; return; }
+  host.innerHTML = arr.map((e, i) => `
+    <div class="et-item">
+      <div class="et-title">E${i + 1} · ${esc(e.name || "")}</div>
+      <div class="et-flow">
+        <div class="et-step t-trig"><span>Trigger</span>${esc(e.trigger)}</div>
+        <div class="et-arrow">→</div>
+        <div class="et-step t-sees"><span>User Sees</span>${esc(e.sees)}</div>
+        <div class="et-arrow">→</div>
+        <div class="et-step t-rec"><span>Recovery</span>${esc(e.recovery)}</div>
+        <div class="et-arrow">→</div>
+        <div class="et-step t-test"><span>Test</span>${esc(e.test)}</div>
+      </div>
+    </div>
   `).join("");
 }
 
@@ -732,6 +807,7 @@ function renderAll() {
   renderBranches();
   renderEmpty();
   renderStates();
+  renderETable();
   renderEmotionCurve();
   renderNewAppendices();
 }
