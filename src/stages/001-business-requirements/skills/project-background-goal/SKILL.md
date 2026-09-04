@@ -41,6 +41,7 @@ description: Turn raw business material into a human-readable project background
 | AI Audit | `references/audit-checklist.md`、`references/anti-patterns.md` | `references/business-constraint-taxonomy.md`、`references/stakeholder-power-interest.md` |
 | PM/业务方评审 | `references/reviewer-checklist.md` | 与本次待确认事项直接相关的 reference |
 | 跨 skill 工程化约定 | `references/cross-cutting-conventions.md` | 版本协同 / 测试失败回收 / lite 链路传导——任何阶段跨 skill 协作时按需读 |
+| 思想引导（第一性原理思考） | `references/first-principles-thinking.md` | Generate 阶段必读；五问结果回填主文档已存在的节，不加新段 |
 | 防冗杂约定 | `references/anti-bloat-conventions.md` | 空骨架红线 / 业务假设链——Generate 阶段必读，避免形式完整内容空 |
 
 如果按需文件与本次项目无关，不必读取。所有 reference 只提供分析、提问和审计方法，不是项目输入，不能加入案例细节或默认结论，也不能替代 PM 对事实、类型、目标和取舍的确认。

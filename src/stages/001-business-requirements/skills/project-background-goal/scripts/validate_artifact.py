@@ -103,57 +103,6 @@ def validate(path: Path) -> dict[str, object]:
         warnings.append(finding("MEDIUM", "bg.bloat_warning",
             f"占位符密度 {density:.0%}（{placeholder_lines}/{total_lines} 行）超过 30%；产物形式完整但内容可能为空骨架。详见 references/anti-bloat-conventions.md §1",
             blocking=False))
-
-    # 护栏 B4：第一性原理段（advisory，不阻断）
-    # 触发：主文档含「## 第一性原理」段时，期望每条追问有实质回答
-    # 类型分支：迭代类型仅检查"根本问题 + 不做的代价"两条；其他类型五问全查
-    fp_section_match = _re.search(
-        r"^##\s+第一性原理\s*$(.*?)(?=^##\s+|\Z)",
-        text, _re.MULTILINE | _re.DOTALL,
-    )
-    if fp_section_match:
-        fp_section = fp_section_match.group(1).strip()
-        fp_lines = [ln.strip() for ln in fp_section.splitlines() if ln.strip()]
-        non_placeholder_fp = [
-            ln for ln in fp_lines
-            if not _re.search(placeholder_pattern, ln)
-            and not ln.startswith("<!--")
-            and not ln.startswith(">")
-        ]
-        # 5 问标识（rough match）
-        questions = {
-            "根本问题": ["根本问题", "真正要解决"],
-            "不做的代价": ["不解决", "不做的代价"],
-            "为什么是现在": ["为什么是现在", "时机"],
-            "核心假设": ["核心假设", "假设"],
-            "解决标志": ["解决标志", "标志"],
-        }
-        if project_type in {"重构", "从 0 到 1"} or not project_type:
-            required_keys = list(questions.keys())
-        else:  # 迭代类型：只查两条
-            required_keys = ["根本问题", "不做的代价"]
-        missing = []
-        for key in required_keys:
-            hit = any(
-                any(m in ln for m in questions[key])
-                and not _re.search(r"^[-*]\s*$|^\s*-\s*$|^\s*\*\s*$", ln)
-                for ln in non_placeholder_fp
-            )
-            if not hit:
-                missing.append(key)
-        # 关键修复：当 whole section 是模板占位描述时，non_placeholder_fp 也会包含模板
-        # 因此改用"原始模板占位描述句"判断：若五问每问都没真正回答，归为空壳
-        template_filler = (
-            "思想层追问" in fp_section
-            or "护栏 B4" in fp_section
-            or "类型分支写法" in fp_section
-        )
-        if missing and not template_filler:
-            warnings.append(finding("MEDIUM", "bg.first_principles_hollow",
-                f"第一性原理段未实质回答以下追问：{', '.join(missing)}；"
-                f"模板填空式思考会回避这些根本问题。建议 PM 在 Generate 阶段勾选" +
-                f"「本项目不适用」并登记理由（governance 第一性原理登记段）",
-                blocking=False))
     current = get_section(text, "当前现状与已有做法")
     goal = get_section(text, "目标与成功判断")
     background = get_section(text, "项目背景")
