@@ -179,6 +179,17 @@ description: Turn confirmed business background and raw journey material into a 
 
 **飞书画板与外部图形引用**：原始材料若含飞书画板（whiteboard）或外部图形链接，主文档「参考资料」登记链接与一句话摘要即可，**不复制画板内容**（材料隔离：画板是材料证据，不是产物）；产物自身的图形只由本 skill 的 mermaid 生成，保证可版本管理与 diff。
 
+**发布到飞书 docx 时：mermaid 转原生画板**——产物 md 里的 mermaid 代码块在发布为飞书文档时，通过 DocxXML 的 whiteboard 块转为**飞书原生画板**（PM 可在飞书里直接拖拽编辑，不是只读代码块）：
+
+```xml
+<whiteboard type="mermaid">
+flowchart LR
+  A[节点] --> B[节点]
+</whiteboard>
+```
+
+发布命令：`lark-cli docs +create/+update --doc-format xml`，content 中把 md 的 mermaid 代码块逐个转成上述 whiteboard 块；创建成功后返回 `block_type: whiteboard` 与 `block_token`。后续更新画板用 `lark-cli docs +whiteboard-update --input_format mermaid --whiteboard-token <token> --source @diagram.mmd`。区分两个场景：**材料里的画板**登记引用不复制（材料隔离）；**产物自身的 mermaid** 发布时转原生画板（可视化增强）。
+
 状态只能是 `draft`、`needs_user_input`、`conditional_review` 或 `ready_for_human_review`，AI 永远不能写 `confirmed`。
 
 **HTML 审阅板触发条件（UJ 默认 / BG 不出）**：本 skill 默认生成 `user-journey.board.html`，仅当产物满足以下任一条件时跳过——① 单角色且单阶段且单路径（极简旅程无可视化收益）；② PM 显式说明本次不需要可视化产物；③ 产物处于 `draft` 之前的状态（预检阶段）。否则按下列规则生成：
